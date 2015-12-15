@@ -9,6 +9,7 @@ my $org = "obophenotype";
 my $title;
 my $clean = 0;
 my $prep_initial_release = 1;
+my $no_commit = 0;
 while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     my $opt = shift @ARGV;
     if ($opt eq '-h' || $opt eq '--help') {
@@ -29,6 +30,9 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     }
     elsif ($opt eq '--no-release') {
         $prep_initial_release = 0;
+    }
+    elsif ($opt eq '--no-commit') {
+        $no_commit = 1;
     }
     elsif ($opt eq '-') {
     }
@@ -62,6 +66,12 @@ $targetdir =~ tr/a-z\-//cd;
 $targetdir = "target/$targetdir";
 mkdir("target") unless -d 'target';
 mkdir("$targetdir") unless -d $targetdir;
+
+if (-d "$targetdir/.git") {
+    print STDERR "It looks like there is a previous attempt here: $targetdir/.git\n";
+    print STDERR "I recommend blowing away and starting again using the '-c' option to clean\n";
+    die;
+}
 
 my $TEMPLATEDIR = 'template';
 
@@ -102,7 +112,7 @@ chdir($targetdir);
 
 runcmd("git init");
 runcmd("git add -A .");
-runcmd("git commit -m 'initial commit of ontology sources of $ontid using ontology-starter-kit' -a");
+runcmd("git commit -m 'initial commit of ontology sources of $ontid using ontology-starter-kit' -a") unless $no_commit;
 
 
 if ($prep_initial_release) {
@@ -115,10 +125,25 @@ if ($prep_initial_release) {
     runcmd("git add *{obo,owl}");
     runcmd("git add imports/*{obo,owl}");
     runcmd("git add subsets/*{obo,owl}");
-    runcmd("git commit -m 'initial release of $ontid using ontology-starter-kit' -a");
+    runcmd("git commit -m 'initial release of $ontid using ontology-starter-kit' -a") unless $no_commit;
 }
 
 runcmd("git status");
+
+print "NEXT STEPS:\n";
+print " 0. Example $targetdir and check it meets your expectations. If not blow it away and start again\n";
+print " 1. Go to: https://github.com/new\n";
+print " 2. The owner MUST be $org. The Repository name MUST be $title\n";
+print " 3. Do not initialize with a README (you already have one)\n";
+print " 4. Click Create\n";
+print " 5. See the section under '…or push an existing repository from the command line'\n";
+print "    E.g.:\n";
+print "cd $targetdir\n";
+print "git remote add origin git\@github.com:$org/$ontid.git\n";
+print "git push -u origin master\n\n";
+print "BE BOLD: you can always delete your repo and start again\n\n";
+
+
 exit 0;
 
 sub runcmd {

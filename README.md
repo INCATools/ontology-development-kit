@@ -36,18 +36,28 @@ An example:
 
     ./seed-my-ontology-repo.pl  -d chebi -d ro -u obophenotype -t "ontology-of-foos-and-bars" foobaro
 
-This will create your starter files in `target/ontology-of-foos-and-bars`
+This will create your starter files in
+`target/ontology-of-foos-and-bars`. It will also prepare an initial
+release and initialize a repository.
 
 ## Push to GitHub
 
 The starter kit will automatically initialize a git project, add all files and commit.
 
-You will need to create a project on GitHub. For example `obophenotype/ontology-of-foos-and-bars`
+You will need to create a project on GitHub.
+
+ 1. Go to: https://github.com/new
+ 2. The owner MUST be the org you selected with the `-u` option. The MUST be the one you set with `-t`.
+ 3. Do not initialize with a README (you already have one)
+ 4. Click Create
+ 5. See the section under "…or push an existing repository from the command line"
 
 Follow the instructions there. E.g.
 
 ```
 cd target/ontology-of-foos-and-bars
+git remote add origin git@github.com:obophenotype/foobar.git
+git push -u origin master
 ```
 
 Note: you can now mv `target/ontology-of-foos-and-bars` to anywhere you like in your home directory. Or you can do a fresh checkout from github
