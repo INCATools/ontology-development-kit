@@ -1,0 +1,6 @@
+http://purl.obolibrary.org/obo/XXX_0000001 ## Optional Label
+http://purl.obolibrary.org/obo/BFO_0000050 ## part of
+http://purl.obolibrary.org/obo/CHEBI_24431 ## chemical entity
+http://purl.obolibrary.org/obo/UBERON_0002048 ## lung
+http://purl.obolibrary.org/obo/CL_0000540 ## neuron
+http://purl.obolibrary.org/obo/GO_0008150 ## biological_process
