@@ -131,7 +131,7 @@ if ($prep_initial_release) {
 runcmd("git status");
 
 print "NEXT STEPS:\n";
-print " 0. Example $targetdir and check it meets your expectations. If not blow it away and start again\n";
+print " 0. Examine $targetdir and check it meets your expectations. If not blow it away and start again\n";
 print " 1. Go to: https://github.com/new\n";
 print " 2. The owner MUST be $org. The Repository name MUST be $title\n";
 print " 3. Do not initialize with a README (you already have one)\n";
