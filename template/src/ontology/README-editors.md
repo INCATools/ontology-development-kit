@@ -54,7 +54,7 @@ to release:
 
 If this looks good type:
 
-    make release
+    make prepare_release
 
 This generates derived files such as foobar.owl and foobar.obo and places
 them in the top level (../..). The versionIRI will be added.
