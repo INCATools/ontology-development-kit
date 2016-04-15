@@ -2,6 +2,9 @@
 
 Initialize a GitHub repo for managing your ontology the OBO Library way!
 
+For more details, see this post:
+https://douroucouli.wordpress.com/2015/12/16/creating-an-ontology-project-an-update/
+
 # Requirements
 
 Any Linux or OS X command line environment should work. You will minimally need the following installed:
