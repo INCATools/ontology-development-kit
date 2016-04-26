@@ -19,7 +19,7 @@ prepare_release: all
 $(ONT).owl: $(SRC)
 	$(ROBOT)  reason -i $< -r ELK -s true annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT).owl -o $@
 $(ONT).obo: $(ONT).owl
-	$(ROBOT) convert -i $< -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $(OBO)
+	$(ROBOT) convert -i $< -f obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $(OBO)
 
 
 IMPORTS = MY_IMPORTS_LIST
