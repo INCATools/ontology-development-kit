@@ -11,6 +11,7 @@ all: all_imports $(ONT).owl $(ONT).obo
 test: all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
+	mkdir -p $(RELEASEDIR)/imports &&\
 	cp imports/*{owl,obo} $(RELEASEDIR)/imports &&\
 	git add $(RELEASEDIR)/imports/*{obo,owl} &&\
 	(test -f subsets/*owl && cp subsets/*{owl,obo} $(RELEASEDIR)/subsets && git add $(RELEASEDIR)/subsets/* || echo "no subsets") &&\
