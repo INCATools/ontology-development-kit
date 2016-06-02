@@ -43,6 +43,8 @@ This will create your starter files in
 `target/ontology-of-foos-and-bars`. It will also prepare an initial
 release and initialize a repository.
 
+You can customize at this stage, or (recommended) after making an initial push to github
+
 ## Push to GitHub
 
 The starter kit will automatically initialize a git project, add all files and commit.
@@ -75,6 +77,17 @@ You will want to also:
 
  * enable travis
  * enable zenodo (optional)
+
+## Customizing
+
+You will likely want to customize the build process, and of course to edit the ontology.
+
+The main thing you will want to do is to modify the seeds that are
+used to build the imports. The ones that are there are just examples,
+edit them as you like. See the ROBOT docs and the [OBO
+Tutorial](https://github.com/jamesaoverton/obo-tutorial) for more
+info.
+
 
 ## More documentation
 
