@@ -37,7 +37,11 @@ name. In the window that appears, you can set the ID range by editing the defaul
 "ID:$sequence(<number of digits>,<minimum of range>,<maximum of range>)$"
 Thus, "FOOBAR:$sequence(8,2000000,2999999)$" will set a range of 8 digit IDs from 200000 
 to 2999999.  
- 
+
+## Setting ID ranges in Protege
+
+See the technical docs on http://obofoundry.org/
+
 ## Git Quick Guide
 
 TODO add instructions here
@@ -52,7 +56,8 @@ to release:
     cd src/ontology
     make
 
-If this looks good type:
+If this looks goo
+d type:
 
     make prepare_release
 
@@ -64,6 +69,10 @@ Commit and push these files.
     git commit -a
 
 And type a brief description of the release in the editor window
+
+Finally type
+
+    git push origin master
 
 IMMEDIATELY AFTERWARDS (do *not* make further modifications) go here:
 
