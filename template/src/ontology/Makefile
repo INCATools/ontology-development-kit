@@ -5,7 +5,7 @@ SRC=$(ONT)-edit.owl
 RELEASEDIR=../..
 ROBOT= robot
 OWLTOOLS= owltools
-
+USECAT= --use-catalog
 
 all: all_imports $(ONT).owl $(ONT).obo
 test: all
