@@ -17,13 +17,10 @@ entries:
   replacement: https://raw.githubusercontent.com/MY-GITHUB-ORG/foobar/v
 
 - prefix: /tracker/
-  replacement: https://code.google.com/p/cell-ontology/issues/detail?id=
-
-- prefix: /diffs/
-  replacement: https://cell-ontology.googlecode.com/svn/trunk/src/ontology/diffs/
+  replacement: https://github.com/MY-GITHUB-ORG/foobar/issues
 
 - prefix: /about/
-  replacement: http://www.ontobee.org/browser/rdf.php?o=FOOBAR&iri=http://purl.obolibrary.org/obo/
+  replacement: http://www.ontobee.org/ontology/FOOBAR?iri=http://purl.obolibrary.org/obo/
 
 ## generic fall-through, serve direct from github by default
 - prefix: /
