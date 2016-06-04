@@ -217,6 +217,14 @@ $sn  -d chebi -d ro -u obophenotype -t "ontology-of-foos-and-bars" foobaro
 
 See http://github.com/cmungall/ontology-starter-kit for details
 
+Options:
+
+ -d ONT1 ONT2 ... : a list of ontology IDs that will form the import modules
+ -u USER_OR_ORG   : a GitHub username or organization. 
+ -t TITLE         : a descriptive name for your ontology, e.g "Environment Ontology"
+ -c               : make a clean version
+ --no-commit      : do not run the commit operation 
+
 EOM
 }
 
