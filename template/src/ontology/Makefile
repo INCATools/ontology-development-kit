@@ -18,9 +18,9 @@ prepare_release: all
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release on github"
 
 $(ONT).owl: $(SRC)
-	$(ROBOT)  reason -i $< -r ELK -s true annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT).owl -o $@
+	$(ROBOT)  reason -i $< -r ELK relax reduce -r ELK annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT).owl -o $@
 $(ONT).obo: $(ONT).owl
-	$(ROBOT) convert -i $< -f obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $(OBO)
+	$(ROBOT) convert -i $< -f obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $@
 
 
 IMPORTS = MY_IMPORTS_LIST
