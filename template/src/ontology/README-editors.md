@@ -9,11 +9,11 @@ For more details on ontology management, please see the OBO tutorial:
 Do you have an ID range in the idranges file (foobar-idranges.owl),
 in this directory). If not, get one from the head curator. 
 
-The editors version is [foobar-edit.obo](foobar-edit.obo)
+The editors version is [foobar-edit.owl](foobar-edit.owl)
 
 ** DO NOT EDIT foobar.obo OR foobar.owl **
 
-foobar.obo is the release version
+foobar.owl is the release version
 
 The editors version can be edited using OBO-Edit. Protege can be used
 ONLY IF the version is 5beta-snapshot18 or higher. DO NOT EDIT WITH
