@@ -40,7 +40,9 @@ to 2999999.
 
 ## Setting ID ranges in Protege
 
-See the technical docs on http://obofoundry.org/
+We aim to put this up on the technical docs for OBO on http://obofoundry.org/
+
+For now, consult the [Protege Planteome Tutorial](https://github.com/Planteome/protege-tutorial/blob/master/presentations/protege_planteome_tutorial.doc?raw=true) and look for the section "new entities"
 
 ## Git Quick Guide
 
