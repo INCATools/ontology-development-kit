@@ -4,7 +4,7 @@ idspace: FOOBAR
 base_url: /obo/foobar
 
 products:
-- foorbar.owl: https://raw.githubusercontent.com/MY-GITHUB-ORG/master/foobar.owl
+- foobar.owl: https://raw.githubusercontent.com/MY-GITHUB-ORG/master/foobar.owl
 - foobar.obo: https://raw.githubusercontent.com/MY-GITHUB-ORG/master/foobar.obo
 
 term_browser: ontobee
