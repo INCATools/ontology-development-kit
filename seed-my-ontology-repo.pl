@@ -40,12 +40,14 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
         die "$opt";
     }
 }
-my $ontid = lc(shift @ARGV);
+my $ontid = shift @ARGV;
+if (!$ontid) {
+    die "MUST SPECIFY AN ONTOLOGY ID.\nRun script with -h for details";
+}
+$ontid = lc($ontid);
+
 my $prefix = uc($ontid);
 
-if (!$ontid) {
-    die "MUST SPECIFY AN ONTOLOGY ID. Run with -h for details";
-}
 
 if ($clean) {
     `rm -rf target`;
@@ -62,6 +64,8 @@ my $targetdir = lc($title);
 $targetdir =~ s/\W/-/g;
 $targetdir =~ s/_/-/g;
 $targetdir =~ tr/a-z\-//cd;
+
+my $repo_name = $targetdir;
 
 $targetdir = "target/$targetdir";
 mkdir("target") unless -d 'target';
@@ -130,18 +134,23 @@ if ($prep_initial_release) {
 
 runcmd("git status");
 
-print "NEXT STEPS:\n";
+print "\n\n####\nNEXT STEPS:\n";
 print " 0. Examine $targetdir and check it meets your expectations. If not blow it away and start again\n";
 print " 1. Go to: https://github.com/new\n";
-print " 2. The owner MUST be $org. The Repository name MUST be $title\n";
+print " 2. The owner MUST be $org. The Repository name MUST be $repo_name\n";
 print " 3. Do not initialize with a README (you already have one)\n";
 print " 4. Click Create\n";
 print " 5. See the section under '…or push an existing repository from the command line'\n";
 print "    E.g.:\n";
 print "cd $targetdir\n";
-print "git remote add origin git\@github.com:$org/$ontid.git\n";
+print "git remote add origin git\@github.com:$org/$repo_name.git\n";
 print "git push -u origin master\n\n";
 print "BE BOLD: you can always delete your repo and start again\n\n";
+print "\n";
+print "FINAL STEPS:\n";
+print "Folow your customized instructions here:\n\n";
+print "    https://github.com/$org/$repo_name/blob/master/src/ontology/README-editors.md\n";
+print "\n";
 
 
 exit 0;
@@ -183,6 +192,7 @@ sub replace {
     $s =~ s/MY_IMPORTS_LIST/$depends_str/g;
     $s =~ s/MY-ONTOLOGY-TITLE/$title/g;
     $s =~ s/MY-GITHUB-ORG/$org/g;
+    $s =~ s/MY-REPO-NAME/$repo_name/g;
     return $s;
 }
 
@@ -209,11 +219,11 @@ sub usage {
     <<EOM;
 $sn [-d IMPORTED-ONTOLOGY-ID]* [-u GITHUB-USER-OR-ORG] [-t TITLE] [-c] ONTOLOGY-ID
 
-Generates an ontology repo from templates. Will be built in target/ONTOLOGY-ID
+Generates an ontology repo from templates, into the target/ directory
 
 Example:
 
-$sn  -d chebi -d ro -u obophenotype -t "ontology-of-foos-and-bars" foobaro
+$sn  -d po -d ro -d pato -u obophenotype -t "Triffid Behavior ontology" triffo
 
 See http://github.com/cmungall/ontology-starter-kit for details
 
@@ -221,7 +231,7 @@ Options:
 
  -d ONT1 ONT2 ... : a list of ontology IDs that will form the import modules
  -u USER_OR_ORG   : a GitHub username or organization. 
- -t TITLE         : a descriptive name for your ontology, e.g "Environment Ontology"
+ -t TITLE         : a descriptive name for your ontology, e.g "Sloth Behavior Ontology"
  -c               : make a clean version
  --no-commit      : do not run the commit operation 
 

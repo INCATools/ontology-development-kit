@@ -1,33 +1,34 @@
 These notes are for the EDITORS of foobar
 
-For more details on ontology management, please see the OBO tutorial:
+This project was created using the [ontology starter kit](https://github.com/cmungall/ontology-starter-kit). See the site for details.
 
- * https://github.com/jamesaoverton/obo-tutorial
+For more details on ontology management, please see the [OBO tutorial](https://github.com/jamesaoverton/obo-tutorial) or the [Protege Planteome Tutorial](https://github.com/Planteome/protege-tutorial)
 
 ## Editors Version
 
-Do you have an ID range in the idranges file (foobar-idranges.owl),
-in this directory). If not, get one from the head curator. 
+Make sure you have an ID range in the [idranges file](foobar-idranges.owl)
+
+If you do not have one, get one from the head curator.
 
 The editors version is [foobar-edit.owl](foobar-edit.owl)
 
-** DO NOT EDIT foobar.obo OR foobar.owl **
+** DO NOT EDIT foobar.obo OR foobar.owl in the top level directory **
 
-foobar.owl is the release version
+[../../foobar.owl] is the release version
 
-The editors version can be edited using OBO-Edit. Protege can be used
-ONLY IF the version is 5beta-snapshot18 or higher. DO NOT EDIT WITH
-PREVIOUS VERSIONS.
+To edit, open the file in Protege. First make sure you have the repository checked out, see [../../../..](top level) for details.
 
 ## ID Ranges
-
-TODO - these are not set up
 
 These are stored in the file
 
  * [foobar-idranges.owl](foobar-idranges.owl)
 
 ** ONLY USE IDs WITHIN YOUR RANGE!! **
+
+If you have only just set up this repository, modify the idranges file
+and add yourself or other editors. Note Protege does not read the file
+- it is up to you to ensure correct Protege configuration.
 
 ## Setting ID ranges in OBO-Edit
 
@@ -44,9 +45,6 @@ We aim to put this up on the technical docs for OBO on http://obofoundry.org/
 
 For now, consult the [Protege Planteome Tutorial](https://github.com/Planteome/protege-tutorial/blob/master/presentations/protege_planteome_tutorial.doc?raw=true) and look for the section "new entities"
 
-## Git Quick Guide
-
-TODO add instructions here
 
 ## Release Manager notes
 
@@ -78,8 +76,8 @@ Finally type
 
 IMMEDIATELY AFTERWARDS (do *not* make further modifications) go here:
 
- * https://github.com/MY-GITHUB-ORG/foobar/releases
- * https://github.com/MY-GITHUB-ORG/foobar/releases/new
+ * https://github.com/MY-GITHUB-ORG/MY-REPO-NAME/releases
+ * https://github.com/MY-GITHUB-ORG/MY-REPO-NAME/releases/new
 
 The value of the "Tag version" field MUST be
 
@@ -106,11 +104,7 @@ For questions on this contact Chris Mungall or email obo-admin AT obofoundry.org
 
 # Travis Continuous Integration System
 
-Check the build status here: [![Build Status](https://travis-ci.org/MY-GITHUB-ORG/foobar.svg?branch=master)](https://travis-ci.org/foobar-ontology/foobar)
+Check the build status here: [![Build Status](https://travis-ci.org/MY-GITHUB-ORG/MY-REPO-NAME.svg?branch=master)](https://travis-ci.org/MY-GITHUB-ORG/MY-REPO-NAME)
 
-This replaces Jenkins for this ontology
+Note: if you have only just created this project you will need to authorize travis for this repo. Go to [https://travis-ci.org/profile/MY-GITHUB-ORG](https://travis-ci.org/profile/MY-GITHUB-ORG) for details
 
-## General Guidelines
-
-See:
-http://wiki.geneontology.org/index.php/Curator_Guide:_General_Conventions
