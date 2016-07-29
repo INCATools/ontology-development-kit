@@ -16,7 +16,7 @@ The editors version is [foobar-edit.owl](foobar-edit.owl)
 
 [../../foobar.owl] is the release version
 
-To edit, open the file in Protege. First make sure you have the repository checked out, see [../../../..](top level) for details.
+To edit, open the file in Protege. First make sure you have the repository cloned, see [the GitHub project](https://github.com/MY-GITHUB-ORG/MY-REPO-NAME) for details.
 
 ## ID Ranges
 
@@ -30,14 +30,6 @@ If you have only just set up this repository, modify the idranges file
 and add yourself or other editors. Note Protege does not read the file
 - it is up to you to ensure correct Protege configuration.
 
-## Setting ID ranges in OBO-Edit
-
-In the Metadata menu, select the ID manager option. You can set the ID range of any 
-profile you create here by clicking on the settings icon (cog wheels) next to the profile 
-name. In the window that appears, you can set the ID range by editing the default rule: 
-"ID:$sequence(<number of digits>,<minimum of range>,<maximum of range>)$"
-Thus, "FOOBAR:$sequence(8,2000000,2999999)$" will set a range of 8 digit IDs from 200000 
-to 2999999.  
 
 ## Setting ID ranges in Protege
 
