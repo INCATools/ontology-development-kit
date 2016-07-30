@@ -13,7 +13,7 @@ before_script:
   - wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O bin/owltools-oort-all.jar
   - wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot -O bin/robot
   - wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot.jar -O bin/robot.jar
-  - wget https://raw.githubusercontent.com/cmungall/pattern2owl/master/apply-pattern.py -O bin/apply-pattern.py
+  - wget --no-check-certificate https://raw.githubusercontent.com/cmungall/pattern2owl/master/apply-pattern.py -O bin/apply-pattern.py
   - chmod +x bin/*
 
 # command to run tests

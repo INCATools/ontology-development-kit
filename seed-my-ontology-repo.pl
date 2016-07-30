@@ -4,12 +4,17 @@ use strict;
 use File::Find qw(finddepth);
 use File::Basename;
 
+my $n_errors = 0;
+
+
 my @depends = ();
 my $org = "obophenotype";
 my $title;
 my $clean = 0;
 my $prep_initial_release = 1;
 my $no_commit = 0;
+my $force = 0;
+my $skip_install = 0;
 while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     my $opt = shift @ARGV;
     if ($opt eq '-h' || $opt eq '--help') {
@@ -27,6 +32,12 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     }
     elsif ($opt eq '-c' || $opt eq '--clean') {
         $clean = 1;
+    }
+    elsif ($opt eq '-f' || $opt eq '--force') {
+        $force = 1;
+    }
+    elsif ($opt eq '-s' || $opt eq '--skip-install') {
+        $skip_install = 1;
     }
     elsif ($opt eq '--no-release') {
         $prep_initial_release = 0;
@@ -77,6 +88,7 @@ if (-d "$targetdir/.git") {
     die;
 }
 
+
 my $TEMPLATEDIR = 'template';
 
 my @files;
@@ -111,13 +123,20 @@ while (my $f = shift @files) {
     }
 }
 
+install() unless $skip_install;
 ## NOTE: all ops in this dir from now on
 chdir($targetdir);
+runcmd("mkdir bin") unless -d "bin";
+runcmd("cp ../../bin/* bin/");
+$ENV{PATH} = "$ENV{PATH}:$ENV{PWD}/bin";
 
 runcmd("git init");
 runcmd("git add -A .");
 runcmd("git commit -m 'initial commit of ontology sources of $ontid using ontology-starter-kit' -a") unless $no_commit;
 
+if ($n_errors) {
+    print STDERR "WARNING: encountered errors - the commands below may not work\n";
+}
 
 if ($prep_initial_release) {
     print STDERR "Preparing initial release, may take a few minutes, or longer if you depend on large ontologies like chebi\n";
@@ -125,14 +144,16 @@ if ($prep_initial_release) {
     runcmd($cmd);
     
     runcmd("git add src/ontology/imports/*{obo,owl}");
-    runcmd("git add src/ontology/subsets/*{obo,owl}");
+    runcmd("git add src/ontology/subsets/*{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git add $ontid.{obo,owl}");
     runcmd("git add imports/*{obo,owl}");
-    runcmd("git add subsets/*{obo,owl}");
+    runcmd("git add subsets/*{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git commit -m 'initial release of $ontid using ontology-starter-kit' -a") unless $no_commit;
 }
 
 runcmd("git status");
+
+
 
 print "\n\n####\nNEXT STEPS:\n";
 print " 0. Examine $targetdir and check it meets your expectations. If not blow it away and start again\n";
@@ -155,10 +176,32 @@ print "\n";
 
 exit 0;
 
+sub install {
+    return if -f "bin/apply-pattern.py";
+    runcmd("mkdir bin") unless -d "bin";
+    runcmd("wget http://build.berkeleybop.org/userContent/owltools/owltools -O bin/owltools") unless -f "bin/owltools";
+    runcmd("wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O bin/ontology-release-runner") unless -f "bin/ontology-release-runner";
+    runcmd("wget http://build.berkeleybop.org/userContent/owltools/owltools-runner-all.jar -O bin/owltools-runner-all.jar") unless -f "owltools-runner-all.jar";
+    runcmd("wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O bin/owltools-oort-all.jar") unless -f "owltools-oort-all.jar";
+    runcmd("wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot -O bin/robot");
+    runcmd("wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot.jar -O bin/robot.jar") unless -f "bin/robot.jar";
+    runcmd("wget --no-check-certificate https://raw.githubusercontent.com/cmungall/pattern2owl/master/apply-pattern.py -O bin/apply-pattern.py");
+    runcmd("chmod +x bin/*");
+
+}
+
 sub runcmd {
     my $cmd = shift;
     print "EXECUTING: $cmd\n";
-    print `$cmd`;
+    my $err = system($cmd);
+    if ($err) {
+        print STDERR "ERROR RUNNING: $cmd\n";
+        $n_errors ++;
+        if (!$force) {
+            die "Exiting. Run with '-f' to force execution and ignore errors";
+        }
+    }
+    #print `$cmd`;
 }
 
 sub copy_template {
