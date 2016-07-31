@@ -22,7 +22,9 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
         exit 0;
     }
     elsif ($opt eq '-d' || $opt eq '--depends') {
-        push(@depends, shift @ARGV);
+        while (scalar(@ARGV) && $ARGV[0] !~ m@^\-@) {
+            push(@depends, shift @ARGV);
+        }
     }
     elsif ($opt eq '-u' || $opt eq '--user') {
         $org = shift @ARGV;
