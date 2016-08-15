@@ -43,4 +43,4 @@ mirror/%.owl: $(SRC)
 .PRECIOUS: mirror/%.owl
 
 release: $(ONT).owl $(ONT).obo
-	cp $^ $RELEASEDIR && cp imports/* $RELEASEDIR/imports
+	cp $^ $(RELEASEDIR) && cp imports/* $(RELEASEDIR)/imports
