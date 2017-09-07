@@ -1,0 +1,15 @@
+prefix oio: <http://www.geneontology.org/formats/oboInOwl#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?x ?xl ?y ?yl ?z ?zl WHERE 
+{
+  ?x rdfs:subClassOf ?y ;
+     rdfs:label ?xl .
+  ?y rdfs:subClassOf+ ?z ;
+     rdfs:label ?yl .
+  ?x rdfs:subClassOf ?z .
+  ?z rdfs:label ?zl .
+
+
+}

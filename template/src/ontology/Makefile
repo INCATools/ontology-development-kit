@@ -6,9 +6,10 @@ RELEASEDIR=../..
 ROBOT= robot
 OWLTOOLS= owltools
 USECAT= --use-catalog
+SPARQLDIR = ../sparql
 
 all: all_imports $(ONT).owl $(ONT).obo
-test: all
+test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
 	mkdir -p $(RELEASEDIR)/imports &&\
@@ -44,3 +45,25 @@ mirror/%.owl: $(SRC)
 
 release: $(ONT).owl $(ONT).obo
 	cp $^ $(RELEASEDIR) && cp imports/* $(RELEASEDIR)/imports
+
+# ----------------------------------------
+# SPARQL QUERIES: Q/C
+# ----------------------------------------
+
+# these live in the ../sparql directory, and have suffix -violation.sparql
+# adding the name here will make the violation check live
+VCHECKS = equivalent-classes trailing-whitespace owldef-self-reference xref-syntax-violation nolabels-violation.sparql
+
+# run all violation checks
+VQUERIES = $(foreach V,$(VCHECKS),$(SPARQLDIR)/$V-violation.sparql)
+sparql_test: $(SRC)
+	robot verify -i $< --queries $(VQUERIES) -O reports/
+
+# ----------------------------------------
+# SPARQL QUERIES: REPORTS
+# ----------------------------------------
+
+REPORTS = basic-report class-count-by-prefix edges xrefs obsoletes synonyms
+REPORT_ARGS = $(foreach V,$(REPORTS),-s $(SPARQLDIR)/$V.sparql reports/$V.tsv)
+all_reports: $(SRC)
+	robot query -f tsv -i $< $(REPORT_ARGS)
