@@ -31,11 +31,11 @@ and add yourself or other editors. Note Protege does not read the file
 - it is up to you to ensure correct Protege configuration.
 
 
-## Setting ID ranges in Protege
+### Setting ID ranges in Protege
 
 We aim to put this up on the technical docs for OBO on http://obofoundry.org/
 
-For now, consult the [Protege Planteome Tutorial](https://github.com/Planteome/protege-tutorial/blob/master/presentations/protege_planteome_tutorial.doc?raw=true) and look for the section "new entities"
+For now, consult the [GO Tutorial on configuring Protege](http://go-protege-tutorial.readthedocs.io/en/latest/Entities.html#new-entities)
 
 
 ## Release Manager notes
