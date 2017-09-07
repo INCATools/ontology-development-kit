@@ -1,6 +1,6 @@
 ## Before you write a new request, please consider the following: 
 
-- **Does the term already exist?** Before submitting suggestions for new ontology terms, check whether the term exist, either as a primary term or a synonym term. You can search using [OLS](http://www.ebi.ac.uk/ols/ontologies/foobar]
+- **Does the term already exist?** Before submitting suggestions for new ontology terms, check whether the term exist, either as a primary term or a synonym term. You can search using [OLS](http://www.ebi.ac.uk/ols/ontologies/foobar)
 
 ## Guidelines for creating GitHub tickets with contributions to the ontology:
 
