@@ -14,7 +14,7 @@ The editors version is [foobar-edit.owl](foobar-edit.owl)
 
 ** DO NOT EDIT foobar.obo OR foobar.owl in the top level directory **
 
-[../../foobar.owl] is the release version
+[../../foobar.owl](../../foobar.owl) is the release version
 
 To edit, open the file in Protege. First make sure you have the repository cloned, see [the GitHub project](https://github.com/MY-GITHUB-ORG/MY-REPO-NAME) for details.
 
