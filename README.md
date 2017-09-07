@@ -22,7 +22,7 @@ The kit will also try to make an initial ontology release, unless you tell it no
 
 ## Download this starter package
 
-It's recommended you get a release version: https://github.com/cmungall/ontology-starter-kit/releases
+It's recommended you get a release version: https://github.com/INCATools/ontology-starter-kit/releases
 
 ## Initialize
 
@@ -91,7 +91,7 @@ See the README-editors.md file that has been generated for your project.
 
 ## Troubleshooting.
 
-If you have issues, file them here: https://github.com/cmungall/ontology-starter-kit/issues
+If you have issues, file them here: https://github.com/INCATools/ontology-starter-kit/issues
 
 Some things to check:
 
