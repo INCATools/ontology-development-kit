@@ -3,3 +3,4 @@ src/ontology/mirror
 src/ontology/mirror/*
 src/ontology/foobar.obo
 src/ontology/foobar.owl
+semantic.cache

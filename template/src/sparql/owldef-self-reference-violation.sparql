@@ -1,0 +1,11 @@
+prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix oio: <http://www.geneontology.org/formats/oboInOwl#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?c
+WHERE {
+  { ?c owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first ?c ] ] }
+    UNION
+  { ?c owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first [ owl:someValuesFrom ?c ] ] ] }
+}

@@ -1,0 +1,13 @@
+# home: hp
+prefix hasDbXref: <http://www.geneontology.org/formats/oboInOwl#hasDbXref>
+prefix oio: <http://www.geneontology.org/formats/oboInOwl#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?c ?x WHERE 
+{
+  ?c hasDbXref: ?x .
+
+  FILTER( regex(STR(?x), " ") || regex(STR(?x), ";") || STR(?x) = ""  )
+
+}
