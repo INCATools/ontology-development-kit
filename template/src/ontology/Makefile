@@ -78,7 +78,7 @@ release: $(ONT).owl $(ONT).obo
 
 # these live in the ../sparql directory, and have suffix -violation.sparql
 # adding the name here will make the violation check live
-VCHECKS = equivalent-classes trailing-whitespace owldef-self-reference xref-syntax-violation nolabels-violation.sparql
+VCHECKS = equivalent-classes trailing-whitespace owldef-self-reference xref-syntax nolabels
 
 # run all violation checks
 VQUERIES = $(foreach V,$(VCHECKS),$(SPARQLDIR)/$V-violation.sparql)
