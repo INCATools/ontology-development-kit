@@ -14,7 +14,8 @@ before_script:
   - chmod +x bin/*
 
 # command to run tests
-script: make test
+# https://github.com/INCATools/ontology-starter-kit/issues/25
+script: bash -c "make test"
 
 #after_success:
 #  coveralls
