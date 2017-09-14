@@ -116,7 +116,8 @@ info.
 
 The OSK is designed for creating a new repo for a new ontology. It can still be used to help figure out how to migrate an existing github repository to the OSK structure. There are different ways to do this.
 
- * Run osk as if creating a new repo. Manually compare this with your existing repo and use `git mv` to rearrange
+ * Manually compare your ontology against the [template](https://github.com/INCATools/ontology-starter-kit/tree/master/template) folder and make necessary adjustments
+ * Run osk as if creating a new repo. Manually compare this with your existing repo and use `git mv` to rearrange, and adding any missing files by copying them across and doing a `git add`
  * Create a new repo de novo and abandon your existing one, using github issue mover to move tickets across.
  
  Obviously the second method is not ideal as you lose your github history. Note even with `git mv` history tracking becomes harder
