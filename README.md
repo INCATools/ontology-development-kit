@@ -112,7 +112,7 @@ edit them as you like. See the ROBOT docs and the [OBO
 Tutorial](https://github.com/jamesaoverton/obo-tutorial) for more
 info.
 
-## Adapting an existing ontology
+## Adapting an existing ontology repo
 
 The OSK is designed for creating a new repo for a new ontology. It can still be used to help figure out how to migrate an existing github repository to the OSK structure. There are different ways to do this.
 
