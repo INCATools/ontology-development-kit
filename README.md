@@ -2,8 +2,10 @@
 
 Initialize a GitHub repo for managing your ontology the OBO Library way!
 
-For more details, see this post:
-https://douroucouli.wordpress.com/2015/12/16/creating-an-ontology-project-an-update/
+For more details, see
+
+ * [Creating an ontology project](https://douroucouli.wordpress.com/2015/12/16/creating-an-ontology-project-an-update/)
+ * [OBO Workshop Slides](https://docs.google.com/presentation/d/1JPAaDl6Nitxet9NVqWI30eIygcerYAjdMIGmxbRtIn0/edit?usp=sharing)
 
 # Requirements
 
@@ -109,6 +111,15 @@ used to build the imports. The ones that are there are just examples,
 edit them as you like. See the ROBOT docs and the [OBO
 Tutorial](https://github.com/jamesaoverton/obo-tutorial) for more
 info.
+
+## Adapting an existing ontology
+
+The OSK is designed for creating a new repo for a new ontology. It can still be used to help figure out how to migrate an existing github repository to the OSK structure. There are different ways to do this.
+
+ * Run osk as if creating a new repo. Manually compare this with your existing repo and use `git mv` to rearrange
+ * Create a new repo de novo and abandon your existing one, using github issue mover to move tickets across.
+ 
+ Obviously the second method is not ideal as you lose your github history. Note even with `git mv` history tracking becomes harder
 
 ## More documentation
 
