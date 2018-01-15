@@ -114,6 +114,8 @@ while (my $f = shift @files) {
     }
     $tf = "$targetdir/$tf";
     if ($tf =~ m@MY-IMPORTED@) {
+        # special case: if the filename has MY-IMPORTED in it,
+        # use this as a template to make one file for each ontology dependency
         foreach my $depend (@depends) {
             $_ = $tf;
             s@MY-IMPORTED@$depend@;
@@ -209,8 +211,8 @@ sub runcmd {
 }
 
 sub copy_template {
-    my $f = shift;
-    my $tf = shift;
+    my $f = shift;   ## source file
+    my $tf = shift;  ## target file
     open(F, "$TEMPLATEDIR/$f") || die $f;
     recursive_mkdir($tf);
     print STDERR "WRITING: $tf\n";
@@ -232,6 +234,7 @@ sub copy_template {
     close(F);
 }
 
+# replace variable names in template with variable values
 sub replace {
     my $s = shift;
     $s =~ s/foobar/$ontid/g;
