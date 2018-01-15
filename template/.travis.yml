@@ -28,7 +28,8 @@ branches:
     - master
     - test-travis
 
-### UNCOMMENT THIS AND ADD YOUR DETAILS:
-#notifications:
-#  email:
-#    - YOURNAME@YOU.ORG
+### Add your own lists here
+### See https://github.com/INCATools/ontology-starter-kit/issues/35
+notifications:
+  email:
+    - obo-ci-reports-all@groups.io
