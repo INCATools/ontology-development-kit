@@ -1,0 +1,24 @@
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX replaced_by: <http://purl.obolibrary.org/obo/IAO_0100001>
+PREFIX consider: <http://www.geneontology.org/formats/oboInOwl#consider>
+
+SELECT ?cls ?clsLabel ?rule WHERE {
+       ?cls a owl:Class  ;
+            rdfs:label ?clsLabel ;
+	    owl:deprecated "true"^^xsd:boolean
+        {
+          {
+            FILTER ( ! regex(str(?clsLabel), "^obsolete ") )
+            BIND ("obsolete label must start with obsolete" AS ?rule)
+          }
+          UNION
+          {
+            ?cls rdfs:subClassOf ?parent
+            BIND("no logical axioms for obsolete" AS ?rule)
+          }
+        }
+}
+ORDER BY ?cls
