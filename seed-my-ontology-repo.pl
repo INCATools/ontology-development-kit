@@ -15,6 +15,7 @@ my $prep_initial_release = 1;
 my $no_commit = 0;
 my $force = 0;
 my $skip_install = 0;
+my $use_docker = 0;
 while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     my $opt = shift @ARGV;
     if ($opt eq '-h' || $opt eq '--help') {
@@ -40,6 +41,10 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     }
     elsif ($opt eq '-s' || $opt eq '--skip-install') {
         $skip_install = 1;
+    }
+    elsif ($opt eq '-D' || $opt eq '--use-docker') {
+        $skip_install = 1;
+        $use_docker = 1;
     }
     elsif ($opt eq '--no-release') {
         $prep_initial_release = 0;
@@ -128,6 +133,7 @@ while (my $f = shift @files) {
     }
 }
 
+
 install() unless $skip_install;
 ## NOTE: all ops in this dir from now on
 chdir($targetdir);
@@ -146,7 +152,12 @@ if ($n_errors) {
 
 if ($prep_initial_release) {
     print STDERR "Preparing initial release, may take a few minutes, or longer if you depend on large ontologies like chebi\n";
-    my $cmd = "cd src/ontology && make prepare_release && echo SUCCESS || echo FAILURE";
+    my $MAKE = "make prepare_release";
+    if ($use_docker) {
+        $MAKE = "./run.sh $MAKE";
+    }
+    #my $cmd = "cd src/ontology && $MAKE && echo SUCCESS || echo FAILURE";
+    my $cmd = "cd src/ontology && $MAKE";
     runcmd($cmd);
     
     runcmd("git add src/ontology/imports/*{obo,owl}") if @depends;
@@ -198,12 +209,13 @@ sub install {
 
 sub runcmd {
     my $cmd = shift;
+    my $exit_on_fail = shift;
     print "EXECUTING: $cmd\n";
     my $err = system($cmd);
     if ($err) {
         print STDERR "ERROR RUNNING: $cmd\n";
         $n_errors ++;
-        if (!$force) {
+        if (!$force || $exit_on_fail) {
             die "Exiting. Run with '-f' to force execution and ignore errors";
         }
     }
@@ -232,6 +244,9 @@ sub copy_template {
     }
     close(OF);
     close(F);
+    if ($tf =~ m@\.sh$@) {
+        runcmd("chmod +x $tf");        
+    }
 }
 
 # replace variable names in template with variable values

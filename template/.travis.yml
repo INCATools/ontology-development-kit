@@ -1,23 +1,15 @@
 ## REMEMBER TO SET UP YOUR GITHUB REPO FOR TRAVIS
 ## Go to: https://travis-ci.org/MY-GITHUB-ORG for details
-language: java
-jdk:
-  - oraclejdk8
+sudo: required
 
-before_script:
-  - mkdir -p bin
-  - export PATH=$PATH:$PWD/bin
-  - wget http://build.berkeleybop.org/userContent/owltools/owltools -O bin/owltools
-  - wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O bin/ontology-release-runner
-  - wget http://build.berkeleybop.org/userContent/owltools/owltools-runner-all.jar -O bin/owltools-runner-all.jar
-  - wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O bin/owltools-oort-all.jar
-  - wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot -O bin/robot
-  - wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot.jar -O bin/robot.jar
-  - wget --no-check-certificate https://raw.githubusercontent.com/cmungall/pattern2owl/master/apply-pattern.py -O bin/apply-pattern.py
-  - chmod +x bin/*
+services:
+  - docker
+
+before_install:
+  - docker pull cmungall/osk
 
 # command to run tests
-script: cd src/ontology && make test
+script: cd src/ontology && ./run.sh make test
 
 #after_success:
 #  coveralls
