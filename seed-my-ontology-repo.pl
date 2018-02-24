@@ -16,6 +16,8 @@ my $no_commit = 0;
 my $force = 0;
 my $skip_install = 0;
 my $use_docker = 0;
+my $email = "";
+
 while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     my $opt = shift @ARGV;
     if ($opt eq '-h' || $opt eq '--help') {
@@ -46,6 +48,9 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
         $skip_install = 1;
         $use_docker = 1;
     }
+    elsif ($opt eq '-e' || $opt eq '--email') {
+        $email = shift @ARGV;
+    }
     elsif ($opt eq '--no-release') {
         $prep_initial_release = 0;
     }
@@ -66,9 +71,8 @@ $ontid = lc($ontid);
 
 my $prefix = uc($ontid);
 
-
 if ($clean) {
-    `rm -rf target`;
+    `rm -rf target/*`;
 }
 
 if (!$title) {
@@ -95,6 +99,13 @@ if (-d "$targetdir/.git") {
     die;
 }
 
+if ($email eq "") {
+    print STDERR "Must supply email address with -e|--email <email>\n";
+    die;
+} else {
+    runcmd("git config --global user.name $org");
+    runcmd("git config --global user.email $email");
+}
 
 my $TEMPLATEDIR = 'template';
 
@@ -102,9 +113,9 @@ my @files;
 finddepth(sub {
     return if($_ eq '.' || $_ eq '..');
     push @files, $File::Find::name;
-          }, 
-          $TEMPLATEDIR
-    );
+},
+$TEMPLATEDIR
+);
 #push(@files, "$TEMPLATEDIR/.gitignore");
 
 while (my $f = shift @files) {
@@ -159,7 +170,7 @@ if ($prep_initial_release) {
     #my $cmd = "cd src/ontology && $MAKE && echo SUCCESS || echo FAILURE";
     my $cmd = "cd src/ontology && $MAKE";
     runcmd($cmd);
-    
+
     runcmd("git add src/ontology/imports/*{obo,owl}") if @depends;
     runcmd("git add src/ontology/subsets/*{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git add $ontid.{obo,owl}");
@@ -245,7 +256,7 @@ sub copy_template {
     close(OF);
     close(F);
     if ($tf =~ m@\.sh$@) {
-        runcmd("chmod +x $tf");        
+        runcmd("chmod +x $tf");
     }
 }
 
@@ -282,24 +293,23 @@ sub usage {
     my $sn = scriptname();
 
     <<EOM;
-$sn [-d IMPORTED-ONTOLOGY-ID]* [-u GITHUB-USER-OR-ORG] [-t TITLE] [-c] ONTOLOGY-ID
+    $sn [-d IMPORTED-ONTOLOGY-ID]* [-u GITHUB-USER-OR-ORG] [-t TITLE] [-c] ONTOLOGY-ID
 
-Generates an ontology repo from templates, into the target/ directory
+    Generates an ontology repo from templates, into the target/ directory
 
-Example:
+    Example:
 
-$sn  -d po -d ro -d pato -u obophenotype -t "Triffid Behavior ontology" triffo
+    $sn  -d po -d ro -d pato -u obophenotype -t "Triffid Behavior ontology" triffo
 
-See http://github.com/cmungall/ontology-starter-kit for details
+    See http://github.com/cmungall/ontology-starter-kit for details
 
-Options:
+    Options:
 
- -d ONT1 ONT2 ... : a list of ontology IDs that will form the import modules
- -u USER_OR_ORG   : a GitHub username or organization. 
- -t TITLE         : a descriptive name for your ontology, e.g "Sloth Behavior Ontology"
- -c               : make a clean version
- --no-commit      : do not run the commit operation 
+    -d ONT1 ONT2 ... : a list of ontology IDs that will form the import modules
+    -u USER_OR_ORG   : a GitHub username or organization.
+    -t TITLE         : a descriptive name for your ontology, e.g "Sloth Behavior Ontology"
+    -c               : make a clean version
+    --no-commit      : do not run the commit operation
 
 EOM
 }
-

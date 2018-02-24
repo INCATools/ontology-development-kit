@@ -34,7 +34,7 @@ RUN tar -zxvf dosdp-tools-$V.tgz && mv dosdp-tools-$V /tools/dosdp-tools
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
 
 WORKDIR /opt/starter-kit
-COPY seed-my-ontology-repo.pl .
-RUN chmod +x seed-my-ontology-repo.pl
+ADD . /opt/starter-kit/
+RUN chmod +x ./seed-my-ontology-repo.pl
 
-CMD ./seed-my-ontology-repo.pl
+CMD ./seed-my-ontology-repo.pl --help
