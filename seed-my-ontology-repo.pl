@@ -101,10 +101,11 @@ if (-d "$targetdir/.git") {
 
 if ($email eq "") {
     print STDERR "Must supply email address with -e|--email <email>\n";
-    $email = 'ontologywizard@example.org';
 }
-runcmd("git config --global user.name $org");
-runcmd("git config --global user.email $email");
+else {
+    runcmd("git config --global user.name $org");
+    runcmd("git config --global user.email $email");
+}
 
 my $TEMPLATEDIR = 'template';
 
