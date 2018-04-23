@@ -60,7 +60,7 @@ imports/%_import.owl: mirror/%.owl imports/%_terms.txt
 # this can be useful for spot-checks and diffs.
 # we set strict mode to false by default. For discussion see https://github.com/owlcs/owlapi/issues/752
 imports/%_import.obo: imports/%_import.owl
-	$(ROBOT) convert --check false -i $< -o -f obo $@.tmp && mv $@.tmp $@
+	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp && mv $@.tmp $@
 
 # clone remote ontology locally, perfoming some excision of relations and annotations
 mirror/%.owl: $(SRC)
