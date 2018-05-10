@@ -149,11 +149,11 @@ if ($prep_initial_release) {
     my $cmd = "cd src/ontology && make prepare_release && echo SUCCESS || echo FAILURE";
     runcmd($cmd);
     
-    runcmd("git add src/ontology/imports/*{obo,owl}") if @depends;
-    runcmd("git add src/ontology/subsets/*{obo,owl}") if -d "src/ontology/subsets";
-    runcmd("git add $ontid.{obo,owl}");
-    runcmd("git add imports/*{obo,owl}") if @depends;
-    runcmd("git add subsets/*{obo,owl}") if -d "src/ontology/subsets";
+    runcmd("git add src/ontology/imports/*.owl src/ontology/imports/*.obo") if @depends;
+    runcmd("git add src/ontology/subsets/*.owl src/ontology/subsets/*.obo") if -d "src/ontology/subsets";
+    runcmd("git add $ontid.owl $ontid.obo");
+    runcmd("git add imports/*.owl imports/*.obo") if @depends;
+    runcmd("git add subsets/*.owl subsets/*.obo") if -d "src/ontology/subsets";
     runcmd("git commit -m 'initial release of $ontid using ontology-starter-kit' -a") unless $no_commit;
 }
 
