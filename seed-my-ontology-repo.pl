@@ -171,11 +171,12 @@ if ($prep_initial_release) {
     my $cmd = "cd src/ontology && $MAKE";
     runcmd($cmd);
 
-    runcmd("git add src/ontology/imports/*{obo,owl}") if @depends;
-    runcmd("git add src/ontology/subsets/*{obo,owl}") if -d "src/ontology/subsets";
+    runcmd("git add src/ontology/imports/*.{obo,owl}") if @depends;
+    runcmd("git add src/ontology/imports/*.{obo,owl}") if @depends;
+    runcmd("git add src/ontology/subsets/*.{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git add $ontid.{obo,owl}");
-    runcmd("git add imports/*{obo,owl}") if @depends;
-    runcmd("git add subsets/*{obo,owl}") if -d "src/ontology/subsets";
+    runcmd("git add imports/*.{obo,owl}") if @depends;
+    runcmd("git add subsets/*.{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git commit -m 'initial release of $ontid using ontology-starter-kit' -a") unless $no_commit;
 }
 
@@ -222,6 +223,20 @@ sub runcmd {
     my $cmd = shift;
     my $exit_on_fail = shift;
     print "EXECUTING: $cmd\n";
+
+    # not all shells support {...} syntax
+    # we auto-unfold these here
+    # see https://github.com/INCATools/ontology-starter-kit/pull/49
+    if ($cmd =~ m@(.*)\{(.*)\}(.*)@) {
+        my ($pre, $matchlist, $post) = ($1,$2,$3);
+        my @expansions = split(/,/, $matchlist);
+        print "Expanded: $matchlist => @expansions\n";
+        foreach (@expansions) {
+            runcmd("$pre$_$post", $exit_on_fail);
+        }
+        return;
+        
+    }
     my $err = system($cmd);
     if ($err) {
         print STDERR "ERROR RUNNING: $cmd\n";
