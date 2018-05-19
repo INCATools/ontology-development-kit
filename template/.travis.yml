@@ -6,7 +6,7 @@ services:
   - docker
 
 before_install:
-  - docker pull cmungall/osk
+  - docker pull obolibrary/osk
 
 # command to run tests
 script: cd src/ontology && ./run.sh make test
