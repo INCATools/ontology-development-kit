@@ -15,6 +15,9 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
+RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/owltools
+RUN wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O /tools/ontology-release-runner
+RUN wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar
 RUN wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot -O /tools/robot
 RUN wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot.jar -O /tools/robot.jar
 RUN chmod +x /tools/*

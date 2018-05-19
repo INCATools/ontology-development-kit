@@ -1,12 +1,14 @@
-VERSION = "v0.0.1" 
-IM=cmungall/osk
+
+# Building docker image
+VERSION = "v0.0.2" 
+IM=obolibrary/osklite
 
 build:
 	@docker build -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 
 run:
-	docker run --rm -ti --name $(IM) osk
+	docker run --rm -ti --name osklite $(IM)
 
 publish: build
 	@docker push $(IM):$(VERSION) \

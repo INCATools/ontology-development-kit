@@ -13,16 +13,24 @@ test3:
 	 ./seed-my-ontology-repo.pl -c -d pato -d cl -d ro -t my-ontology3 myont
 
 # Building docker image
-VERSION = "v0.0.2" 
+#
+# Note: the current osk is currently a large image.
+# Use osklite where possible
+VERSION = "v0.0.3" 
 IM=obolibrary/osk
+
 
 build:
 	@docker build -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 
 run:
-	docker run --rm -ti --name $(IM)
+	docker run --rm -ti --name osk $(IM)
 
 publish: build
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
+
+publish-all: publish
+	cd docker/osklite && make publish VERSION=$(VERSION) && \
+	cd docker/oskfull && make publish VERSION=$(VERSION)
