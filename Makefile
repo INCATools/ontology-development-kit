@@ -13,7 +13,7 @@ test3:
 	 ./seed-my-ontology-repo.pl -c -d pato -d cl -d ro -t my-ontology3 myont
 
 # Building docker image
-VERSION = "v0.0.1" 
+VERSION = "v0.0.2" 
 IM=obolibrary/osk
 
 build:
@@ -21,7 +21,7 @@ build:
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 
 run:
-	docker run --rm -ti --name $(IM) osk
+	docker run --rm -ti --name $(IM)
 
 publish: build
 	@docker push $(IM):$(VERSION) \
