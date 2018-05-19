@@ -38,9 +38,9 @@ The `seed-my-ontology-repo.pl` command does everything you need. For help:
 
 An example:
 
-    ./seed-my-ontology-repo.pl  -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
+    ./seed-my-ontology-repo.pl -e myname@foo.com  -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
 
-You should change `cmungall` to either your username, or (preferably) a GitHub org which you have created.
+You should change `cmungall` to either your username, or (preferably) a GitHub org which you have created. Also put your own email after the `-e` (this is for git setup)
 
 You can list any set of dependencies you like after "-d". However, these must be the official OBO ontology IDs. See http://obofoundry.org for details.
 
