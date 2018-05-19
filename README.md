@@ -70,6 +70,24 @@ git push -u origin master
 
 Note: you can now mv `target/triffid-behavior-ontology` to anywhere you like in your home directory. Or you can do a fresh checkout from github
 
+## Edit and release cycle
+
+In your repo you will see a README-editors.md file that has been customized for your project. Follow these instructions.
+
+Generally the cycle is to:
+
+ - branch
+ - the edit the edit.owl file
+ - make test
+ - git commit
+ - git push
+
+To make a release
+
+`make prepare_release`
+
+Note that any make step can be preceded by run.sh if you have Docker installed
+
 ## OBO Library metadata
 
 The assumption here is that you are ahdering to OBO principles and
