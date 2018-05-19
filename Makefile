@@ -32,5 +32,5 @@ publish: build
 	&& docker push $(IM):latest
 
 publish-all: publish
-	cd docker/osklite && make publish VERSION=$(VERSION) && \
-	cd docker/oskfull && make publish VERSION=$(VERSION)
+	(cd docker/osklite && make publish VERSION=$(VERSION)) && \
+	(cd docker/oskfull && make publish VERSION=$(VERSION))
