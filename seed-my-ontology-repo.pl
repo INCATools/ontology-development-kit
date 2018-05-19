@@ -100,7 +100,7 @@ if (-d "$targetdir/.git") {
 }
 
 if ($email eq "") {
-    print STDERR "Must supply email address with -e|--email <email>\n";
+    #print STDERR "Must supply email address with -e|--email <email>\n";
 }
 else {
     runcmd("git config --global user.name $org");
