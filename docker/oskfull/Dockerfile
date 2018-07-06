@@ -30,8 +30,8 @@ RUN apt-get update && \
   perl
 
 # Setup dosdp tools
-ENV V=0.6.1
-RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v0.6.1/dosdp-tools-$V.tgz
+ENV V=0.8
+RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$V/dosdp-tools-$V.tgz
 RUN tar -zxvf dosdp-tools-$V.tgz && mv dosdp-tools-$V /tools/dosdp-tools
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
 
