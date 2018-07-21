@@ -13,6 +13,9 @@ ROBOT= robot
 OWLTOOLS= owltools
 USECAT= --use-catalog
 SPARQLDIR = ../sparql
+DOSDP_SCHEMA=http:// # change to PURL when ready.
+PATTERN_TESTER=simple_pattern_tester.py
+DOSDPT=dosdp-tools
 
 # ----------------------------------------
 # Top-level targets
@@ -29,7 +32,7 @@ prepare_release: all
 	git add $(RELEASEDIR)/imports/*.owl &&\
 	(test -f subsets/*owl && cp subsets/* $(RELEASEDIR)/subsets && git add $(RELEASEDIR)/subsets/* || echo "no subsets") &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release on github"
-
+ 
 # ----------------------------------------
 # Main release targets
 # ----------------------------------------
@@ -83,14 +86,14 @@ release: $(ONT).owl $(ONT).obo
 # adding the name here will make the violation check live
 VCHECKS = equivalent-classes trailing-whitespace owldef-self-reference xref-syntax nolabels
 
-# run all violation checks
+#  run all violation checks
 VQUERIES = $(foreach V,$(VCHECKS),$(SPARQLDIR)/$V-violation.sparql)
 sparql_test: $(SRC)
 	robot verify -i $< --queries $(VQUERIES) -O reports/
 
 # ----------------------------------------
 # Sparql queries: Reports
-# ----------------------------------------
+ # ----------------------------------------
 
 REPORTS = basic-report class-count-by-prefix edges xrefs obsoletes synonyms
 REPORT_ARGS = $(foreach V,$(REPORTS),-s $(SPARQLDIR)/$V.sparql reports/$V.tsv)
@@ -103,3 +106,46 @@ all_reports: $(SRC)
 IM=build-$(ONT)
 build-docker:
 	docker build -t $(ONT) .
+
+# ----------------------------------------
+# Patterns (experimental)
+# ----------------------------------------
+
+# Test patterns for schema compliance:
+
+
+PATTERN_IMPORT_ONTOLOGIES = MY_IMPORTS_LIST 
+
+PATTERN_IMPORTS = pattern.owl seed.txt $(patsubst %, imports/%_terms.txt,$(IMPORTS)) $(patsubst %, imports/%_import.owl,$(PATTERN_IMPORT_ONTOLOGIES))
+
+pattern_test:
+	PATTERN_TESTER ../patterns/.
+
+
+# Better to make this an intermediate & merge with pattern.owl file having correct iri and import statements - configured by make
+../patterns/pattern.owl: 
+	$(DOSDPT) prototype --prefixes=../prefixes.yaml --template=. --outfile=$@  
+
+../patterns/imports/seed.txt: ../patterns/pattern.owl
+	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+
+../patterns/imports/%_terms.txt: ../patterns/imports/seed.txt
+	grep -i $(OBO)/$*_ $< > $@
+
+../patterns/imports/%_import.owl: mirror/%.owl ../patterns/imports/%_terms.txt
+	$(ROBOT) extract -i $< -T imports/$*_terms.txt --method BOT -O $(BASE)/$@ -o $@
+
+pattern_imports: $(PATTERN_IMPORTS)
+
+pattern_files := $(wildcard ../patterns/*.yaml)
+pattern_tsv_files := $(wildcard ../patterns/*.tsv)
+
+###  Now extend to roll individual definitions files from 
+###  See ultimate MakeFile for way of doing this
+
+# ../patterns/defintions.owl: ../patterns/definitions.owl
+	$(DOSDPT) generate ../patterns/util/prefixes.yaml --output $@ # DOSDP-tools command TBA or set of DOSDP-tools commands?  Latter requires make to find all filenames
+
+
+
+
