@@ -35,8 +35,9 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$V/dosd
 RUN tar -zxvf dosdp-tools-$V.tgz && mv dosdp-tools-$V /tools/dosdp-tools
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
 
-WORKDIR /opt/starter-kit
-ADD . /opt/starter-kit/
-RUN chmod +x ./seed-my-ontology-repo.pl
+# Python
+RUN pip3 install jsonschema ruamel.yaml requests jsonpath_rw
+RUN wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py && chmod +x /tools/*
 
-CMD ./seed-my-ontology-repo.pl --help
+
+CMD make -h
