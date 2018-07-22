@@ -59,7 +59,7 @@ seed.txt: $(SRC)
 # Should be able to drop this if robot can just take a big messy list of terms as input.
 
 imports/%_terms_combined.txt: seed.txt
-	grep -i $(OBO)/$*_$< | cat imports/%_terms.txt >  $@
+	cat $< imports/$*_terms.txt >  $@
 
 # Make this target to regenerate ALL
 all_imports: $(IMPORTS_OWL)
