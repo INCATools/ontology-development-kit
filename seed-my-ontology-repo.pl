@@ -326,5 +326,7 @@ sub usage {
     -c               : make a clean version
     --no-commit      : do not run the commit operation
 
+    Note the title is used to determine the repo/folder name, e.g. sloth-behavior-ontology
+
 EOM
 }
