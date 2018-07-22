@@ -1,3 +1,8 @@
 # oskfull
 
-Everything
+Contains everything:
+
+ - owltools
+ - oort
+ - robot
+ - dosdp-tools
