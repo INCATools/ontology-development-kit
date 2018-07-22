@@ -98,5 +98,11 @@ For questions on this contact Chris Mungall or email obo-admin AT obofoundry.org
 
 Check the build status here: [![Build Status](https://travis-ci.org/MY-GITHUB-ORG/MY-REPO-NAME.svg?branch=master)](https://travis-ci.org/MY-GITHUB-ORG/MY-REPO-NAME)
 
-Note: if you have only just created this project you will need to authorize travis for this repo. Go to [https://travis-ci.org/profile/MY-GITHUB-ORG](https://travis-ci.org/profile/MY-GITHUB-ORG) for details
+Note: if you have only just created this project you will need to authorize travis for this repo.
+
+ 1. Go to [https://travis-ci.org/profile/MY-GITHUB-ORG](https://travis-ci.org/profile/MY-GITHUB-ORG)
+ 2. click the "Sync account" button
+ 3. Click the tick symbol next to MY-REPO-NAME
+
+Travis builds should now be activated
 
