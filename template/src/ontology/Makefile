@@ -1,3 +1,8 @@
+# ----------------------------------------
+# Makefile for foobar
+# Generated using ontology-starter-kit
+# ----------------------------------------
+# <do not edit above this line>
 
 # ----------------------------------------
 # Standard Constants
