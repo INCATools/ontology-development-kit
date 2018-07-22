@@ -21,7 +21,7 @@ DOSDPT=dosdp-tools
 # Top-level targets
 # ----------------------------------------
 
-all: sparql_test all_imports $(ONT).owl $(ONT).obo
+all: sparql_test all_imports $(ONT).owl $(ONT).obo ../patterns/pattern.owl
 test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
@@ -118,13 +118,15 @@ PATTERN_IMPORT_ONTOLOGIES = MY_IMPORTS_LIST
 
 PATTERN_IMPORTS = pattern.owl seed.txt $(patsubst %, imports/%_terms.txt,$(IMPORTS)) $(patsubst %, imports/%_import.owl,$(PATTERN_IMPORT_ONTOLOGIES))
 
-pattern_test:
-	PATTERN_TESTER ../patterns/.
 
 
 # Better to make this an intermediate & merge with pattern.owl file having correct iri and import statements - configured by make
-../patterns/pattern.owl: 
-	$(DOSDPT) prototype --prefixes=../prefixes.yaml --template=. --outfile=$@  
+
+../patterns/pattern.owl: pattern_schema_checks
+	$(DOSDPT) prototype --prefixes=../prefixes.yaml --template=. --outfile=$@
+
+pattern_schema_checks:
+	simple_pattern_tester.py ../patterns # 2>&1 | tee $@
 
 ../patterns/imports/seed.txt: ../patterns/pattern.owl
 	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
@@ -144,7 +146,7 @@ pattern_tsv_files := $(wildcard ../patterns/*.tsv)
 ###  See ultimate MakeFile for way of doing this
 
 # ../patterns/defintions.owl: ../patterns/definitions.owl
-	$(DOSDPT) generate ../patterns/util/prefixes.yaml --output $@ # DOSDP-tools command TBA or set of DOSDP-tools commands?  Latter requires make to find all filenames
+#	$(DOSDPT) generate ../patterns/util/prefixes.yaml --output $@ # DOSDP-tools command TBA or set of DOSDP-tools commands?  Latter requires make to find all filenames
 
 
 
