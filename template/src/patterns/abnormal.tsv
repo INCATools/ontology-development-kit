@@ -1,4 +1,4 @@
-?defined_class	?defined_class_label	?entity	?entity_label
+defined_class	defined_class_label	entity	entity_label
 <http://purl.obolibrary.org/obo/MP_0012643>	"abnormal 5-aminolevulinate synthase activity"	<http://purl.obolibrary.org/obo/GO_0003870>	"5-aminolevulinate synthase activity"
 <http://purl.obolibrary.org/obo/MP_0004284>	"abnormal Descemet membrane"	<http://purl.obolibrary.org/obo/UBERON_0004367>	"Descemet's membrane"
 <http://purl.obolibrary.org/obo/MP_0013439>	"abnormal Harderian gland development"	<http://purl.obolibrary.org/obo/GO_0070384>	"Harderian gland development"
