@@ -26,7 +26,7 @@ DOSDPT=dosdp-tools
 # Top-level targets
 # ----------------------------------------
 
-all: sparql_test all_imports $(ONT).owl $(ONT).obo ../patterns/pattern.owl ../patterns/definitions.owl
+all: sparql_test all_imports $(ONT).owl $(ONT).obo ../patterns/pattern.owl 
 test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
@@ -60,7 +60,11 @@ IMPORTS = MY_IMPORTS_LIST
 IMPORTS_OWL = $(patsubst %, imports/%_import.owl,$(IMPORTS)) $(patsubst %, imports/%_import.obo,$(IMPORTS)) $(patsubst %, imports/%_terms.txt,$(IMPORTS))
 
 # generate seed with all referenced entities
-seed.txt: $(SRC)
+
+ed_definitions_merged.owl: $(SRC) ../patterns/definitions.owl
+	$(ROBOT) merge -i $(SRC) -i ../patterns/definitions.owl -o $@
+
+seed.txt: ed_definitions_merged.owl
 	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
 
 # Generate terms.txt for each import.  # Assume OBO-style Possibly hacky step?
@@ -167,17 +171,12 @@ $(IMS)/patterns/%.ofn: ../patterns/%.yaml ../patterns/%.tsv $(ONT)-edit.owl
 
 pattern_modules := $(patsubst %.yaml, $(IMS)/patterns/%.ofn, $(notdir $(wildcard ../patterns/*.yaml)))
 
-test_ps:
-	echo $(pattern_modules)
-
 ../patterns/definitions.owl: $(pattern_modules)
 	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(PREFIX)/$(ONT)-patterns.ofn -o $@
 
-###  Now extend to roll individual definitions files from 
-###  See ultimate MakeFile for way of doing this
 
-# ../patterns/defintions.owl: ../patterns/definitions.owl
-#	$(DOSDPT) generate ../patterns/util/prefixes.yaml --output $@ # DOSDP-tools command TBA or set of DOSDP-tools commands?  Latter requires make to find all filenames
+
+
 
 
 
