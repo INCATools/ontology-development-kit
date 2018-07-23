@@ -4,6 +4,14 @@ This project was created using the [ontology starter kit](https://github.com/cmu
 
 For more details on ontology management, please see the [OBO tutorial](https://github.com/jamesaoverton/obo-tutorial) or the [Gene Ontology Editors Tutorial](go-protege-tutorial.readthedocs.io)
 
+You may also want to read the [GO ontology editors guide](http://go-ontology.readthedocs.org/)
+
+## Requirements
+
+ 1. Protege (for editing)
+ 2. A git client (we assume command line git)
+ 3. [docker](https://www.docker.com/get-docker) (for managing releases)
+
 ## Editors Version
 
 Make sure you have an ID range in the [idranges file](foobar-idranges.owl)
@@ -37,21 +45,41 @@ We aim to put this up on the technical docs for OBO on http://obofoundry.org/
 
 For now, consult the [GO Tutorial on configuring Protege](http://go-protege-tutorial.readthedocs.io/en/latest/Entities.html#new-entities)
 
+## Imports
+
+All import modules are in the [imports/](imports/) folder.
+
+There are two ways to include new classes in an import module
+
+ 1. Reference an external ontology class in the edit ontology. In Protege: "add new entity", then paste in the PURL
+ 2. Add to the imports/foo_terms.txt file
+
+After doing this, you can run
+
+`./run.sh make all_imports`
+
+to regenerate imports.
+
+Note: the foo_terms.txt file may include 'starter' classes seeded from the ontology starter kit. It is safe to remove these.
 
 ## Release Manager notes
 
 You should only attempt to make a release AFTER the edit version is
 committed and pushed, and the travis build passes.
 
+These instructions assume you have
+[docker](https://www.docker.com/get-docker). This folder has a script
+[run.sh](run.sh) that wraps docker commands.
+
 to release:
 
     cd src/ontology
-    make
+    ./run.sh make
 
 If this looks goo
 d type:
 
-    make prepare_release
+    ./run.sh make prepare_release
 
 This generates derived files such as foobar.owl and foobar.obo and places
 them in the top level (../..). The versionIRI will be added.
