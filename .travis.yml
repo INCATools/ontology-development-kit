@@ -1,21 +1,15 @@
-language: java
-jdk:
-  - oraclejdk8
+sudo: required
 
-before_script:
-  - mkdir -p bin
-  - export PATH=$PATH:$PWD/bin
-  - wget http://build.berkeleybop.org/userContent/owltools/owltools -O bin/owltools
-  - wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O bin/ontology-release-runner
-  - wget http://build.berkeleybop.org/userContent/owltools/owltools-runner-all.jar -O bin/owltools-runner-all.jar
-  - wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O bin/owltools-oort-all.jar
-  - wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot -O bin/robot
-  - wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot.jar -O bin/robot.jar
-  - chmod +x bin/*
+services:
+  - docker
+
+before_install:
+  - docker pull obolibrary/oskfull
 
 # command to run tests
 # https://github.com/INCATools/ontology-starter-kit/issues/25
-script: bash -c "make test"
+script:
+  - docker run -v $PWD/:/work -w /work --rm -ti obolibrary/oskfull make test EMAIL_ARGS='-e obo-ci-reports-all@groups.io'
 
 #after_success:
 #  coveralls

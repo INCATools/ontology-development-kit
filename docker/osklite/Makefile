@@ -1,6 +1,6 @@
 
 # Building docker image
-VERSION = "v0.0.2" 
+VERSION = "v0.0.4" 
 IM=obolibrary/osklite
 
 build:
