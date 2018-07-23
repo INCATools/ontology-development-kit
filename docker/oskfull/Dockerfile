@@ -1,4 +1,5 @@
 FROM openjdk:8
+MAINTAINER Chris Mungall <cjmungall@lbl.gov>
 
 ##RUN apt-get -y update && apt-get install -y software-properties-common python-software-properties
 RUN apt-get install -y curl
@@ -30,7 +31,7 @@ RUN apt-get update && \
   perl
 
 # Setup dosdp tools
-ENV V=0.8
+ENV V=0.9-beta.1
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$V/dosdp-tools-$V.tgz
 RUN tar -zxvf dosdp-tools-$V.tgz && mv dosdp-tools-$V /tools/dosdp-tools
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
