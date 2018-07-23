@@ -160,7 +160,7 @@ pattern_tsv_files := $(wildcard ../patterns/*.tsv)
 # TODO - move declarations like this to top
 IMS=target/intermediates
 
-$(IMS)/patterns/%.ofn: ../patterns/%.yaml ../patterns/%.tsv $(ONT_DIR)/$(ONT)-edit.ofn
+$(IMS)/patterns/%.ofn: ../patterns/%.yaml ../patterns/%.tsv $(ONT)-edit.owl
 	mkdir -p $(IMS)/patterns &&\
 	dosdp-tools generate --catalog=catalog-v001.xml --infile=$(word 2, $^) --template=$< --ontology=$(word 3, $^) --obo-prefixes=true --outfile=$@
 
