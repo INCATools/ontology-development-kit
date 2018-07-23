@@ -1,4 +1,5 @@
 FROM openjdk:8
+MAINTAINER Chris Mungall <cjmungall@lbl.gov>
 
 ##RUN apt-get -y update && apt-get install -y software-properties-common python-software-properties
 RUN apt-get install -y curl
@@ -30,13 +31,14 @@ RUN apt-get update && \
   perl
 
 # Setup dosdp tools
-ENV V=0.8
+ENV V=0.9-beta.1
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$V/dosdp-tools-$V.tgz
 RUN tar -zxvf dosdp-tools-$V.tgz && mv dosdp-tools-$V /tools/dosdp-tools
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
 
-WORKDIR /opt/starter-kit
-ADD . /opt/starter-kit/
-RUN chmod +x ./seed-my-ontology-repo.pl
+# Python
+RUN pip3 install jsonschema ruamel.yaml requests jsonpath_rw
+RUN wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py && chmod +x /tools/*
 
-CMD ./seed-my-ontology-repo.pl --help
+
+CMD make -h

@@ -9,20 +9,16 @@ For more details, see
 
 # Requirements
 
-Any Linux or OS X command line environment should work. You will minimally need the following installed:
+To run this kit to generate a new ontology repo, you will need
 
- * perl
- * git
- * java8
+ 1. [docker](https://www.docker.com/get-docker)
+ 2. A git client
 
-The kit will also try to make an initial ontology release, unless you tell it not to. It will attempt to download the following dependencies:
+It is possible to do this without docker, see below for instructions
 
- * robot
- * owltools
+# Generating an ontology project
 
-# Protocol
-
-## Download this starter package
+## 1. Download this starter package
 
 It's recommended you get a release version: https://github.com/INCATools/ontology-starter-kit/releases
 
@@ -32,13 +28,13 @@ First you must be in the root level of the starter kit
 
     cd ontology-starter-kit
 
-The `seed-my-ontology-repo.pl` command does everything you need. For help:
+The `seed-via-docker.sh` command does everything you need. For help:
 
-    ./seed-my-ontology-repo.pl  -h
+    ./seed-via-docker.sh  -h
 
 An example:
 
-    ./seed-my-ontology-repo.pl   -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
+    ./seed-via-docker.sh   -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
 
 You can list any set of dependencies you like after "-d". However, these must be the official OBO ontology IDs. See http://obofoundry.org for details.
 

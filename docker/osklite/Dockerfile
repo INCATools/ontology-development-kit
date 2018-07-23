@@ -1,4 +1,5 @@
 FROM openjdk:8-jdk-alpine
+MAINTAINER Chris Mungall <cjmungall@lbl.gov>
 
 RUN apk add --update make
 
@@ -10,6 +11,12 @@ RUN wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin
 RUN wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot.jar -O /tools/robot.jar
 RUN chmod +x /tools/*
 ENV PATH "/tools/:$PATH"
+
+# Setup dosdp tools
+ENV V=0.9-beta.1
+RUN wget -nv  https://github.com/INCATools/dosdp-tools/releases/download/v$V/dosdp-tools-$V.tgz
+RUN tar -zxvf dosdp-tools-$V.tgz && mv dosdp-tools-$V /tools/dosdp-tools
+ENV PATH "/tools/dosdp-tools/bin:$PATH"
 
 CMD make -h
 
