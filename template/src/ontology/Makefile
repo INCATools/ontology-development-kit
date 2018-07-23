@@ -21,7 +21,7 @@ DOSDPT=dosdp-tools
 # Top-level targets
 # ----------------------------------------
 
-all: sparql_test all_imports $(ONT).owl $(ONT).obo ../patterns/pattern.owl
+all: sparql_test all_imports $(ONT).owl $(ONT).obo ../patterns/pattern.owl ../patterns/definitions.owl
 test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
@@ -141,6 +141,22 @@ pattern_imports: $(PATTERN_IMPORTS)
 
 pattern_files := $(wildcard ../patterns/*.yaml)
 pattern_tsv_files := $(wildcard ../patterns/*.tsv)
+
+# TODO - move declarations like this to top
+IMS=target/intermediates
+
+$(IMS)/patterns/%.ofn: src/patterns/%.yaml src/patterns/%.tsv target/$(ONT)-edit-imports.ofn $(ONT_DIR)/$(ONT)-edit.ofn
+	mkdir -p $(IMS)/patterns &&\
+	dosdp-tools generate --catalog=$(UTIL)/catalog-v001.xml --infile=$(word 2, $^) --template=$< --ontology=$(ONT_DIR)/$(ONT)-edit.ofn --obo-prefixes=true --outfile=$@
+
+# This is broken!
+pattern_modules := $(patsubst %.yaml, $(IMS)/patterns/%.ofn, $(notdir $(wildcard ../patterns/*.yaml)))
+
+test_ps:
+	echo $(pattern_modules)
+
+../patterns/definitions.owl: $(pattern_modules)
+	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(PREFIX)/$(ONT)-patterns.ofn -o $@
 
 ###  Now extend to roll individual definitions files from 
 ###  See ultimate MakeFile for way of doing this
