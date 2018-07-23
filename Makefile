@@ -1,7 +1,7 @@
 # This makefile is purely for running tests on the complete ontology-starter-kit package on travis;
 # users should not need to use this
 
-EMAIL_ARGS=""
+EMAIL_ARGS=
 
 test: test1 test2
 
