@@ -26,7 +26,7 @@ DOSDPT=dosdp-tools
 # Top-level targets
 # ----------------------------------------
 
-all: sparql_test all_imports $(ONT).owl $(ONT).obo ../patterns/pattern.owl 
+all: sparql_test all_imports pattern $(ONT).owl $(ONT).obo 
 test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
@@ -133,16 +133,12 @@ build-docker:
 # Test patterns for schema compliance:
 
 
-PATTERN_IMPORT_ONTOLOGIES = MY_IMPORTS_LIST 
-
-PATTERN_IMPORTS = pattern.owl seed.txt $(patsubst %, imports/%_terms.txt,$(IMPORTS)) $(patsubst %, imports/%_import.owl,$(PATTERN_IMPORT_ONTOLOGIES))
-
-
+PATTERN_IMPORTS = ../patterns/pattern.owl ../patterns/imports/seed_sorted.txt $(patsubst %, ../patterns/imports/%_import.owl,$(IMPORTS))
 
 # Better to make this an intermediate & merge with pattern.owl file having correct iri and import statements - configured by make
 
 ../patterns/pattern.owl: pattern_schema_checks
-	$(DOSDPT) prototype --prefixes=../prefixes.yaml --template=. --outfile=$@
+	$(DOSDPT) prototype --obo-prefixes --template=../patterns --outfile=$@
 
 pattern_schema_checks:
 	simple_pattern_tester.py ../patterns # 2>&1 | tee $@
@@ -150,13 +146,16 @@ pattern_schema_checks:
 ../patterns/imports/seed.txt: ../patterns/pattern.owl
 	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
 
-../patterns/imports/%_terms.txt: ../patterns/imports/seed.txt
-	grep -i $(OBO)/$*_ $< > $@
+../patterns/imports/seed_sorted.txt: ../patterns/imports/seed.txt
+	cat ../patterns/imports/seed.txt | sort | uniq > $@
 
-../patterns/imports/%_import.owl: mirror/%.owl ../patterns/imports/%_terms.txt
-	$(ROBOT) extract -i $< -T imports/$*_terms.txt --method BOT -O $(BASE)/$@ -o $@
+#../patterns/imports/%_terms.txt: ../patterns/imports/seed.txt
+#	grep -i $(OBO)/$*_ $< > $@ || true  # Returns 1 if grep is empty
 
-pattern_imports: $(PATTERN_IMPORTS)
+../patterns/imports/%_import.owl: mirror/%.owl ../patterns/imports/seed_sorted.txt
+	$(ROBOT) extract -i $< -T ../patterns/imports/seed_sorted.txt --method BOT -O mirror/$*.owl -o $@
+
+pattern: $(PATTERN_IMPORTS)
 
 pattern_files := $(wildcard ../patterns/*.yaml)
 pattern_tsv_files := $(wildcard ../patterns/*.tsv)
