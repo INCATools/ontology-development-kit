@@ -26,7 +26,7 @@ DOSDPT=dosdp-tools
 # Top-level targets
 # ----------------------------------------
 
-all: sparql_test all_imports pattern $(ONT).owl $(ONT).obo 
+all: sparql_test all_imports patterns $(ONT).owl $(ONT).obo 
 test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
@@ -147,7 +147,7 @@ PATTERN_IMPORTS = ../patterns/pattern.owl ../patterns/imports/seed_sorted.txt $(
 pattern_schema_checks:
 	simple_pattern_tester.py ../patterns # 2>&1 | tee $@
 
-../patterns/imports/seed.txt: ../patterns/pattern.owl
+./patterns/imports/seed.txt: ../patterns/pattern.owl
 	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
 
 ../patterns/imports/seed_sorted.txt: ../patterns/imports/seed.txt
@@ -159,7 +159,7 @@ pattern_schema_checks:
 ../patterns/imports/%_import.owl: mirror/%.owl ../patterns/imports/seed_sorted.txt
 	$(ROBOT) extract -i $< -T ../patterns/imports/seed_sorted.txt --method BOT -O mirror/$*.owl annotate --ontology-iri $(OBO)/$(ONT)/patterns/imports/$@ -o $@
 
-pattern: $(PATTERN_IMPORTS)
+patterns: $(PATTERN_IMPORTS)
 
 pattern_files := $(wildcard ../patterns/*.yaml)
 pattern_tsv_files := $(wildcard ../patterns/*.tsv)
