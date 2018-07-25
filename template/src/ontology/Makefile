@@ -105,10 +105,14 @@ release: $(ONT).owl $(ONT).obo
 # adding the name here will make the violation check live
 VCHECKS = equivalent-classes trailing-whitespace owldef-self-reference xref-syntax nolabels
 
+# Only needed until robot supports catalogs
+
+
+
 #  run all violation checks
 VQUERIES = $(foreach V,$(VCHECKS),$(SPARQLDIR)/$V-violation.sparql)
 sparql_test: $(SRC)
-	robot verify -i $< --queries $(VQUERIES) -O reports/
+	robot verify  --catalog catalog-v001.xml -i $< --queries $(VQUERIES) -O reports/
 
 # ----------------------------------------
 # Sparql queries: Reports
@@ -138,7 +142,7 @@ PATTERN_IMPORTS = ../patterns/pattern.owl ../patterns/imports/seed_sorted.txt $(
 # Better to make this an intermediate & merge with pattern.owl file having correct iri and import statements - configured by make
 
 ../patterns/pattern.owl: pattern_schema_checks
-	$(DOSDPT) prototype --obo-prefixes --template=../patterns --outfile=$@
+	$(DOSDPT) prototype --obo-prefixes --template=../patterns annotate --ontology-iri $(OBO)/$(ONT)/patterns/pattern.owl --outfile=$@
 
 pattern_schema_checks:
 	simple_pattern_tester.py ../patterns # 2>&1 | tee $@
@@ -153,7 +157,7 @@ pattern_schema_checks:
 #	grep -i $(OBO)/$*_ $< > $@ || true  # Returns 1 if grep is empty
 
 ../patterns/imports/%_import.owl: mirror/%.owl ../patterns/imports/seed_sorted.txt
-	$(ROBOT) extract -i $< -T ../patterns/imports/seed_sorted.txt --method BOT -O mirror/$*.owl -o $@
+	$(ROBOT) extract -i $< -T ../patterns/imports/seed_sorted.txt --method BOT -O mirror/$*.owl annotate --ontology-iri $(OBO)/$(ONT)/patterns/imports/$@ -o $@
 
 pattern: $(PATTERN_IMPORTS)
 
@@ -165,13 +169,13 @@ IMS=target/intermediates
 
 $(IMS)/patterns/%.ofn: ../patterns/%.yaml ../patterns/%.tsv $(ONT)-edit.owl
 	mkdir -p $(IMS)/patterns &&\
-	dosdp-tools generate --catalog=catalog-v001.xml --infile=$(word 2, $^) --template=$< --ontology=$(word 3, $^) --obo-prefixes=true --outfile=$@
+	dosdp-tools generate --catalog=catalog-v001.xml --infile=$(word 2, $^) --template=$< --ontology=$(word 3, $^) --obo-prefixes=true  --outfile=$@
 
 
 pattern_modules := $(patsubst %.yaml, $(IMS)/patterns/%.ofn, $(notdir $(wildcard ../patterns/*.yaml)))
 
 ../patterns/definitions.owl: $(pattern_modules)
-	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(PREFIX)/$(ONT)-patterns.ofn -o $@
+	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(OBO)/$(ONT)/patterns/defintions.owl -o $@
 
 
 
