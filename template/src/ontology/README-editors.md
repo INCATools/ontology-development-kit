@@ -87,7 +87,7 @@ between design patterns.
 
 To compile design patterns to terms run:
 
-`./run.sh make definitions.owl`
+`./run.sh make ../patterns/definitions.owl`
 
 This generates a file (`src/patterns/definitions.owl`) which is
 imported into the editors file.
