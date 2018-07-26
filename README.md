@@ -51,7 +51,7 @@ The starter kit will automatically initialize a git project, add all files and c
 You will need to create a project on GitHub.
 
  1. Go to: https://github.com/new
- 2. The owner MUST be the org you selected with the `-u` option. The MUST be the one you set with `-t`.
+ 2. The owner MUST be the org you selected with the `-u` option. The name MUST be the one you set with `-t`.
  3. Do not initialize with a README (you already have one)
  4. Click Create
  5. See the section under "…or push an existing repository from the command line"
