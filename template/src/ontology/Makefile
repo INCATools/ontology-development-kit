@@ -26,7 +26,7 @@ DOSDPT=dosdp-tools
 # Top-level targets
 # ----------------------------------------
 
-all: sparql_test all_imports patterns $(ONT).owl $(ONT).obo 
+all: all_imports sparql_test patterns $(ONT).owl $(ONT).obo 
 test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
@@ -137,17 +137,17 @@ build-docker:
 # Test patterns for schema compliance:
 
 
-PATTERN_IMPORTS = ../patterns/pattern.owl ../patterns/imports/seed_sorted.txt $(patsubst %, ../patterns/imports/%_import.owl,$(IMPORTS))
+PATTERN_IMPORTS = ../patterns/pattern.owl $(patsubst %, ../patterns/imports/%_import.owl,$(IMPORTS))
 
 # Better to make this an intermediate & merge with pattern.owl file having correct iri and import statements - configured by make
 
 ../patterns/pattern.owl: pattern_schema_checks
-	$(DOSDPT) prototype --obo-prefixes --template=../patterns annotate --ontology-iri $(OBO)/$(ONT)/patterns/pattern.owl --outfile=$@
+	$(DOSDPT) prototype --obo-prefixes --template=../patterns --outfile=$@
 
 pattern_schema_checks:
-	simple_pattern_tester.py ../patterns # 2>&1 | tee $@
+	simple_pattern_tester.py ../patterns/ # 2>&1 | tee $@
 
-./patterns/imports/seed.txt: ../patterns/pattern.owl
+../patterns/imports/seed.txt: ../patterns/pattern.owl
 	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
 
 ../patterns/imports/seed_sorted.txt: ../patterns/imports/seed.txt
@@ -157,7 +157,7 @@ pattern_schema_checks:
 #	grep -i $(OBO)/$*_ $< > $@ || true  # Returns 1 if grep is empty
 
 ../patterns/imports/%_import.owl: mirror/%.owl ../patterns/imports/seed_sorted.txt
-	$(ROBOT) extract -i $< -T ../patterns/imports/seed_sorted.txt --method BOT -O mirror/$*.owl annotate --ontology-iri $(OBO)/$(ONT)/patterns/imports/$@ -o $@
+	$(ROBOT) extract -i $< -T ../patterns/imports/seed_sorted.txt --method BOT -O mirror/$*.owl annotate --ontology-iri $(OBO)/$(ONT)/patterns/imports/$*_import.owl -o $@
 
 patterns: $(PATTERN_IMPORTS)
 
