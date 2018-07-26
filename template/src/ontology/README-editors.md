@@ -85,6 +85,10 @@ In addition to running standard tests, this command generates an owl
 file (`src/patterns/pattern.owl`), which demonstrates the relationships
 between design patterns.
 
+(At the time of writing, the following import statements need to be
+added to `src/patterns/pattern.owl` for all imports generated in
+`src/imports/*_import.owl`.   This will be automated in a future release.')
+
 To compile design patterns to terms run:
 
 `./run.sh make ../patterns/definitions.owl`
