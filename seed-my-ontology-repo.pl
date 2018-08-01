@@ -15,6 +15,9 @@ my $prep_initial_release = 1;
 my $no_commit = 0;
 my $force = 0;
 my $skip_install = 0;
+my $use_docker = 0;
+my $email = "";
+
 while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     my $opt = shift @ARGV;
     if ($opt eq '-h' || $opt eq '--help') {
@@ -41,6 +44,13 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     elsif ($opt eq '-s' || $opt eq '--skip-install') {
         $skip_install = 1;
     }
+    elsif ($opt eq '-D' || $opt eq '--use-docker') {
+        $skip_install = 1;
+        $use_docker = 1;
+    }
+    elsif ($opt eq '-e' || $opt eq '--email') {
+        $email = shift @ARGV;
+    }
     elsif ($opt eq '--no-release') {
         $prep_initial_release = 0;
     }
@@ -61,9 +71,8 @@ $ontid = lc($ontid);
 
 my $prefix = uc($ontid);
 
-
 if ($clean) {
-    `rm -rf target`;
+    `rm -rf target/*`;
 }
 
 if (!$title) {
@@ -90,16 +99,44 @@ if (-d "$targetdir/.git") {
     die;
 }
 
+if ($email eq "") {
+    #print STDERR "Must supply email address with -e|--email <email>\n";
+}
+else {
+    runcmd("git config --global user.name $org");
+    runcmd("git config --global user.email $email");
+}
 
 my $TEMPLATEDIR = 'template';
 
 my @files;
-finddepth(sub {
-    return if($_ eq '.' || $_ eq '..');
-    push @files, $File::Find::name;
-          }, 
-          $TEMPLATEDIR
-    );
+#finddepth(sub {
+#    return if($_ eq '.' || $_ eq '..');
+#    push @files, $File::Find::name;
+#},
+#$TEMPLATEDIR
+#);
+
+my @dirs = ($TEMPLATEDIR);
+
+while (@dirs) {
+	my $thisdir = shift @dirs;
+	opendir my $dh, $thisdir;
+	while (my $entry = readdir $dh) {
+		next if $entry eq '.';
+		next if $entry eq '..';
+
+		my $fullname = "$thisdir/$entry";
+		print "FOUND: $fullname \n";
+
+		if (-d $fullname) {
+			push @dirs, $fullname;
+		} else {
+			push @files, $fullname;
+		}
+	}
+}
+
 #push(@files, "$TEMPLATEDIR/.gitignore");
 
 while (my $f = shift @files) {
@@ -128,6 +165,7 @@ while (my $f = shift @files) {
     }
 }
 
+
 install() unless $skip_install;
 ## NOTE: all ops in this dir from now on
 chdir($targetdir);
@@ -146,14 +184,20 @@ if ($n_errors) {
 
 if ($prep_initial_release) {
     print STDERR "Preparing initial release, may take a few minutes, or longer if you depend on large ontologies like chebi\n";
-    my $cmd = "cd src/ontology && make prepare_release && echo SUCCESS || echo FAILURE";
+    my $MAKE = "make prepare_release";
+    if ($use_docker) {
+        $MAKE = "./run.sh $MAKE";
+    }
+    #my $cmd = "cd src/ontology && $MAKE && echo SUCCESS || echo FAILURE";
+    my $cmd = "cd src/ontology && $MAKE";
     runcmd($cmd);
-    
-    runcmd("git add src/ontology/imports/*{obo,owl}") if @depends;
-    runcmd("git add src/ontology/subsets/*{obo,owl}") if -d "src/ontology/subsets";
+
+    runcmd("git add src/ontology/imports/*.{obo,owl}") if @depends;
+    runcmd("git add src/ontology/imports/*.{obo,owl}") if @depends;
+    runcmd("git add src/ontology/subsets/*.{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git add $ontid.{obo,owl}");
-    runcmd("git add imports/*{obo,owl}") if @depends;
-    runcmd("git add subsets/*{obo,owl}") if -d "src/ontology/subsets";
+    runcmd("git add imports/*.{obo,owl}") if @depends;
+    runcmd("git add subsets/*.{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git commit -m 'initial release of $ontid using ontology-starter-kit' -a") unless $no_commit;
 }
 
@@ -198,12 +242,26 @@ sub install {
 
 sub runcmd {
     my $cmd = shift;
+    my $exit_on_fail = shift;
     print "EXECUTING: $cmd\n";
+
+    # not all shells support {...} syntax
+    # we auto-unfold these here
+    # see https://github.com/INCATools/ontology-starter-kit/pull/49
+    if ($cmd =~ m@(.*)\{(.*)\}(.*)@) {
+        my ($pre, $matchlist, $post) = ($1,$2,$3);
+        my @expansions = split(/,/, $matchlist);
+        print "Expanded: $matchlist => @expansions\n";
+        foreach (@expansions) {
+            runcmd("$pre$_$post", $exit_on_fail);
+        }
+        return;
+    }
     my $err = system($cmd);
     if ($err) {
         print STDERR "ERROR RUNNING: $cmd\n";
         $n_errors ++;
-        if (!$force) {
+        if (!$force || $exit_on_fail) {
             die "Exiting. Run with '-f' to force execution and ignore errors";
         }
     }
@@ -232,6 +290,9 @@ sub copy_template {
     }
     close(OF);
     close(F);
+    if ($tf =~ m@\.sh$@) {
+        runcmd("chmod +x $tf");
+    }
 }
 
 # replace variable names in template with variable values
@@ -267,24 +328,25 @@ sub usage {
     my $sn = scriptname();
 
     <<EOM;
-$sn [-d IMPORTED-ONTOLOGY-ID]* [-u GITHUB-USER-OR-ORG] [-t TITLE] [-c] ONTOLOGY-ID
+    $sn [-d IMPORTED-ONTOLOGY-ID]* [-u GITHUB-USER-OR-ORG] [-t TITLE] [-c] ONTOLOGY-ID
 
-Generates an ontology repo from templates, into the target/ directory
+    Generates an ontology repo from templates, into the target/ directory
 
-Example:
+    Example:
 
-$sn  -d po -d ro -d pato -u obophenotype -t "Triffid Behavior ontology" triffo
+    $sn  -d po -d ro -d pato -u obophenotype -t "Triffid Behavior ontology" triffo
 
-See http://github.com/cmungall/ontology-starter-kit for details
+    See http://github.com/cmungall/ontology-starter-kit for details
 
-Options:
+    Options:
 
- -d ONT1 ONT2 ... : a list of ontology IDs that will form the import modules
- -u USER_OR_ORG   : a GitHub username or organization. 
- -t TITLE         : a descriptive name for your ontology, e.g "Sloth Behavior Ontology"
- -c               : make a clean version
- --no-commit      : do not run the commit operation 
+    -d ONT1 ONT2 ... : a list of ontology IDs that will form the import modules
+    -u USER_OR_ORG   : a GitHub username or organization.
+    -t TITLE         : a descriptive name for your ontology, e.g "Sloth Behavior Ontology"
+    -c               : make a clean version
+    --no-commit      : do not run the commit operation
+
+    Note the title is used to determine the repo/folder name, e.g. sloth-behavior-ontology
 
 EOM
 }
-

@@ -1,4 +1,10 @@
 # ----------------------------------------
+# Makefile for foobar
+# Generated using ontology-starter-kit
+# ----------------------------------------
+# <do not edit above this line>
+
+# ----------------------------------------
 # Standard Constants
 # ----------------------------------------
 # these can be overwritten on the command line
@@ -22,9 +28,11 @@ test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
 	mkdir -p $(RELEASEDIR)/imports &&\
-	cp imports/*{owl,obo} $(RELEASEDIR)/imports &&\
-	git add $(RELEASEDIR)/imports/*{obo,owl} &&\
-	(test -f subsets/*owl && cp subsets/*{owl,obo} $(RELEASEDIR)/subsets && git add $(RELEASEDIR)/subsets/* || echo "no subsets") &&\
+	cp imports/*.owl $(RELEASEDIR)/imports &&\
+	cp imports/*.obo $(RELEASEDIR)/imports &&\
+	git add $(RELEASEDIR)/imports/*.obo &&\
+	git add $(RELEASEDIR)/imports/*.owl &&\
+	(test -f subsets/*owl && cp subsets/* $(RELEASEDIR)/subsets && git add $(RELEASEDIR)/subsets/* || echo "no subsets") &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release on github"
 
 # ----------------------------------------
@@ -46,13 +54,23 @@ $(ONT).obo: $(ONT).owl
 # These can be regenerated with make all_imports
 
 IMPORTS = MY_IMPORTS_LIST
-IMPORTS_OWL = $(patsubst %, imports/%_import.owl,$(IMPORTS)) $(patsubst %, imports/%_import.obo,$(IMPORTS))
+IMPORTS_OWL = $(patsubst %, imports/%_import.owl,$(IMPORTS)) $(patsubst %, imports/%_import.obo,$(IMPORTS)) $(patsubst %, imports/%_terms.txt,$(IMPORTS))
+
+# generate seed with all referenced entities
+seed.txt: $(SRC)
+	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+
+# Generate terms.txt for each import.  # Assume OBO-style Possibly hacky step?
+# Should be able to drop this if robot can just take a big messy list of terms as input.
+
+imports/%_terms_combined.txt: seed.txt
+	cat $< imports/$*_terms.txt >  $@
 
 # Make this target to regenerate ALL
 all_imports: $(IMPORTS_OWL)
 
 # Use ROBOT, driven entirely by terms lists NOT from source ontology
-imports/%_import.owl: mirror/%.owl imports/%_terms.txt
+imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	$(ROBOT) extract -i $< -T imports/$*_terms.txt --method BOT -O $(BASE)/$@ -o $@
 .PRECIOUS: imports/%_import.owl
 
@@ -64,7 +82,7 @@ imports/%_import.obo: imports/%_import.owl
 
 # clone remote ontology locally, perfoming some excision of relations and annotations
 mirror/%.owl: $(SRC)
-	$(OWLTOOLS) $(OBO)/$*.owl --remove-annotation-assertions -l -s -d --remove-dangling-annotations  -o $@
+	$(ROBOT) convert -I $(OBO)/$*.owl -o $@
 .PRECIOUS: mirror/%.owl
 
 # ----------------------------------------
@@ -95,3 +113,10 @@ REPORTS = basic-report class-count-by-prefix edges xrefs obsoletes synonyms
 REPORT_ARGS = $(foreach V,$(REPORTS),-s $(SPARQLDIR)/$V.sparql reports/$V.tsv)
 all_reports: $(SRC)
 	robot query -f tsv -i $< $(REPORT_ARGS)
+
+# ----------------------------------------
+# Docker (experimental)
+# ----------------------------------------
+IM=build-$(ONT)
+build-docker:
+	docker build -t $(ONT) .
