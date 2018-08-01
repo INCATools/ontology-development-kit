@@ -110,12 +110,33 @@ else {
 my $TEMPLATEDIR = 'template';
 
 my @files;
-finddepth(sub {
-    return if($_ eq '.' || $_ eq '..');
-    push @files, $File::Find::name;
-},
-$TEMPLATEDIR
-);
+#finddepth(sub {
+#    return if($_ eq '.' || $_ eq '..');
+#    push @files, $File::Find::name;
+#},
+#$TEMPLATEDIR
+#);
+
+my @dirs = ($TEMPLATEDIR);
+
+while (@dirs) {
+	my $thisdir = shift @dirs;
+	opendir my $dh, $thisdir;
+	while (my $entry = readdir $dh) {
+		next if $entry eq '.';
+		next if $entry eq '..';
+
+		my $fullname = "$thisdir/$entry";
+		print "FOUND: $fullname \n";
+
+		if (-d $fullname) {
+			push @dirs, $fullname;
+		} else {
+			push @files, $fullname;
+		}
+	}
+}
+
 #push(@files, "$TEMPLATEDIR/.gitignore");
 
 while (my $f = shift @files) {
@@ -235,7 +256,6 @@ sub runcmd {
             runcmd("$pre$_$post", $exit_on_fail);
         }
         return;
-        
     }
     my $err = system($cmd);
     if ($err) {
