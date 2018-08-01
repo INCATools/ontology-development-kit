@@ -14,7 +14,6 @@ my $clean = 0;
 my $prep_initial_release = 1;
 my $no_commit = 0;
 my $force = 0;
-my $skip_install = 0;
 my $use_docker = 0;
 my $email = "";
 
@@ -41,11 +40,7 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     elsif ($opt eq '-f' || $opt eq '--force') {
         $force = 1;
     }
-    elsif ($opt eq '-s' || $opt eq '--skip-install') {
-        $skip_install = 1;
-    }
     elsif ($opt eq '-D' || $opt eq '--use-docker') {
-        $skip_install = 1;
         $use_docker = 1;
     }
     elsif ($opt eq '-e' || $opt eq '--email') {
@@ -166,7 +161,6 @@ while (my $f = shift @files) {
 }
 
 
-install() unless $skip_install;
 ## NOTE: all ops in this dir from now on
 chdir($targetdir);
 
@@ -226,19 +220,6 @@ print "\n";
 
 exit 0;
 
-sub install {
-    return if -f "bin/apply-pattern.py";
-    runcmd("mkdir bin") unless -d "bin";
-    runcmd("wget http://build.berkeleybop.org/userContent/owltools/owltools -O bin/owltools") unless -f "bin/owltools";
-    runcmd("wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O bin/ontology-release-runner") unless -f "bin/ontology-release-runner";
-    runcmd("wget http://build.berkeleybop.org/userContent/owltools/owltools-runner-all.jar -O bin/owltools-runner-all.jar") unless -f "owltools-runner-all.jar";
-    runcmd("wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O bin/owltools-oort-all.jar") unless -f "owltools-oort-all.jar";
-    runcmd("wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot -O bin/robot");
-    runcmd("wget http://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot.jar -O bin/robot.jar") unless -f "bin/robot.jar";
-    runcmd("wget --no-check-certificate https://raw.githubusercontent.com/cmungall/pattern2owl/master/apply-pattern.py -O bin/apply-pattern.py");
-    runcmd("chmod +x bin/*");
-
-}
 
 sub runcmd {
     my $cmd = shift;

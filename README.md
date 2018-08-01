@@ -32,6 +32,8 @@ The `seed-via-docker.sh` command does everything you need. For help:
 
     ./seed-via-docker.sh  -h
 
+(Windows user: replace `seed-via-docker.sh` with `seed-via-docker.bat`)
+
 An example:
 
     ./seed-via-docker.sh   -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
