@@ -74,9 +74,11 @@ imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	$(ROBOT) extract -i $< -T imports/$*_terms.txt --method BOT -O $(BASE)/$@ -o $@
 .PRECIOUS: imports/%_import.owl
 
-# Add '--check false' flag if your OWL is not obo-strict
+# convert imports to obo.
+# this can be useful for spot-checks and diffs.
+# we set strict mode to false by default. For discussion see https://github.com/owlcs/owlapi/issues/752
 imports/%_import.obo: imports/%_import.owl
-	$(ROBOT) convert -i $< -o $@
+	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp && mv $@.tmp $@
 
 # clone remote ontology locally, perfoming some excision of relations and annotations
 mirror/%.owl: $(SRC)
