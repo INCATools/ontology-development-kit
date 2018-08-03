@@ -9,4 +9,4 @@
 # we therefore map the whole repo (../..) to a docker volume.
 #
 # See README-editors.md for more details.
-docker run -v $PWD/../../:/work -w /work/src/ontology --rm -ti obolibrary/oskfull "$@"
+docker run -v $PWD/../../:/work -w /work/src/ontology --rm -ti obolibrary/osklite "$@"
