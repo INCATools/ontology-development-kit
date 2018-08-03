@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-alpine
 MAINTAINER Chris Mungall <cjmungall@lbl.gov>
 
-RUN apk add --update make
+RUN apk add --update make python3
 
 WORKDIR /tools
 
@@ -17,6 +17,10 @@ ENV V=0.9-beta.1
 RUN wget -nv  https://github.com/INCATools/dosdp-tools/releases/download/v$V/dosdp-tools-$V.tgz
 RUN tar -zxvf dosdp-tools-$V.tgz && mv dosdp-tools-$V /tools/dosdp-tools
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
+
+# Python
+RUN pip3 install jsonschema ruamel.yaml requests jsonpath_rw
+RUN wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py && chmod +x /tools/*
 
 CMD make -h
 
