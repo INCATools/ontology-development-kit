@@ -1,14 +1,14 @@
 
 # Building docker image
-VERSION = "v0.0.5" 
-IM=obolibrary/oskfull
+VERSION = "v1.1.1" 
+IM=obolibrary/odkfull
 
 build:
 	@docker build -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 
 run:
-	docker run --rm -ti --name oskfull $(IM)
+	docker run --rm -ti --name odkfull $(IM)
 
 clean:
 	docker kill $(IM) || echo not running ;
@@ -17,3 +17,7 @@ clean:
 publish: build
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
+
+test: build
+	docker images | grep oskfull &&\
+	cd ../.. && make test CMD=./seed-via-docker.sh
