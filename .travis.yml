@@ -9,7 +9,7 @@ before_install:
 # command to run tests
 # https://github.com/INCATools/ontology-starter-kit/issues/25
 script:
-  - docker run -v $PWD/:/work -w /work --rm -ti obolibrary/oskfull make test EMAIL_ARGS='-e obo-ci-reports-all@groups.io'
+  - docker run -v $PWD/:/work -w /work --rm -ti obolibrary/odkfull make test EMAIL_ARGS='-e obo-ci-reports-all@groups.io'
 
 #after_success:
 #  coveralls
