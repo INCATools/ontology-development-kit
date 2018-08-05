@@ -168,10 +168,6 @@ runcmd("git init");
 runcmd("git add -A .");
 runcmd("git commit -m 'initial commit of ontology sources of $ontid using ontology-starter-kit' -a") unless $no_commit;
 
-runcmd("mkdir bin") unless -d "bin";
-runcmd("cp ../../bin/* bin/");
-$ENV{PATH} = "$ENV{PATH}:$ENV{PWD}/bin";
-
 if ($n_errors) {
     print STDERR "WARNING: encountered errors - the commands below may not work\n";
 }
