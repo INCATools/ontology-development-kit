@@ -1,2 +1,2 @@
 defined_class	defined_class_label	entity	entity_label
-MP:0012643	"abnormal 5-aminolevulinate synthase activity"	GO:0003870	"5-aminolevulinate synthase activity"
+X:0000001	"Default defined class"	BFO:0000001	"Entity (BFO)"
