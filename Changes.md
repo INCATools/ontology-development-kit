@@ -1,4 +1,19 @@
-# 1.1.1
+# v1.1.2
+
+## Changes
+
+ * added interactive mode
+ * added [DOSDP](https://github.com/INCATools/dead_simple_owl_design_patterns/blob/master/src/simple_pattern_tester.py) support
+
+## Docker
+
+ * [odkfull](https://hub.docker.com/r/obolibrary/odkfull/tags/) v1.1.2 includes robot 1.1.0
+
+## Migration guide
+
+This release adds a new template in the `src/patterns` folder. These can be copied across to an existing repo.
+
+# v1.1.1
 
 ## Changes
 
