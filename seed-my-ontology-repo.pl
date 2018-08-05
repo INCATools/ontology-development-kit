@@ -16,6 +16,26 @@ my $no_commit = 0;
 my $force = 0;
 my $use_docker = 0;
 my $email = "";
+my $interactive = 0;
+
+
+print '           ._____     '; print "\n";
+print '  ____   __| _/  | __ '; print "\n";
+print ' /  _ \ / __ ||  |/ / '; print "\n";
+print '(  <_> ) /_/ ||    <  '; print "\n";
+print ' \____/\____ ||__|_ \ '; print "\n";
+print '            \/     \/ '; print "\n";
+
+
+print "Welcome to the ontology development kit repository creator!\n";
+print "For full instructions, see https://github.com/INCATools/ontology-development-kit/issues!\n\n";
+
+if (scalar(@ARGV) == 0) {
+    print "No arguments specified: entering interactive mode\n";
+    print "If this is not your intention, ctrl-C to quit.\n";
+    print "Run with -h option for help.\n\n";
+    $interactive = 1;
+}
 
 while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     my $opt = shift @ARGV;
@@ -43,6 +63,9 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
     elsif ($opt eq '-D' || $opt eq '--use-docker') {
         $use_docker = 1;
     }
+    elsif ($opt eq '-I' || $opt eq '--interactive') {
+        $interactive = 1;
+    }
     elsif ($opt eq '-e' || $opt eq '--email') {
         $email = shift @ARGV;
     }
@@ -58,10 +81,37 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
         die "$opt";
     }
 }
-my $ontid = shift @ARGV;
-if (!$ontid) {
-    die "MUST SPECIFY AN ONTOLOGY ID.\nRun script with -h for details";
+my $ontid;
+
+if ($interactive) {
+    print "================\n";
+    print "INTERACTIVE MODE\n";
+    print "================\n";
+    print "\nHit ctrl-C to start again\n\n";
+    question(\$ontid,
+             "ontid",
+             "What is the OBO ontology ID / ID prefix of your ontology?",
+             "For example: mp, go, triffo.\nNote that the ID prefix will be auto-capitalized");
+    question(\$title,
+             "title",
+             "What is the name/title of your ontology?",
+             "For example: triffid behavior ontology.\nTwo to three words recommended. This will be used to derive the github repository name");
+    question(\@depends,
+             "dependencies",
+             "What ontologies should be used to make imports (separate list with spaces)?",
+             "For example: 'ro po envo'.\nSee obofoundry.org for a list of ontology ids");
+    question(\$org,
+             "org",
+             "What is the github oranization or username?",
+             "For example: obophenotype, cmungall, geneontology.");
 }
+else {
+    $ontid = shift @ARGV;
+    if (!$ontid) {
+        die "MUST SPECIFY AN ONTOLOGY ID.\nRun script with -h for details";
+    }
+}
+
 $ontid = lc($ontid);
 
 my $prefix = uc($ontid);
@@ -115,8 +165,9 @@ my @files;
 my @dirs = ($TEMPLATEDIR);
 
 while (@dirs) {
-	my $thisdir = shift @dirs;
-	opendir my $dh, $thisdir;
+    my $thisdir = shift @dirs;
+    my $dh;
+	opendir $dh, $thisdir;
 	while (my $entry = readdir $dh) {
 		next if $entry eq '.';
 		next if $entry eq '..';
@@ -216,6 +267,26 @@ print "\n";
 
 exit 0;
 
+sub question {
+    my ($varref, $short, $question, $info) = @_;
+    print "\n$question\n$info\n:: $short > ";
+    my $answered = 0;
+    while (!$answered) {
+        my $answer = <STDIN>;
+        chomp $answer;
+        $answer =~ s@^\s+@@;
+        $answer =~ s@\s+$@@;
+        if (ref $varref eq 'ARRAY') {
+            @$varref = split(' ', $answer);
+        }
+        else {
+            $$varref = $answer;
+        }
+        if ($answer) {
+            $answered = 1;
+        }
+    }
+}
 
 sub runcmd {
     my $cmd = shift;
