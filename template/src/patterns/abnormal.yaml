@@ -1,0 +1,41 @@
+pattern_name: abnormal
+pattern_iri: http://purl.oboibrary.org/obo/upheno/patterns/abnormal
+
+classes:
+  quality: PATO:0000001
+  abnormal: PATO:0000460
+  entity: BFO:0000001
+
+relations: 
+  inheres_in: RO:0000052
+  qualifier: RO:0002573
+  has_part: BFO:0000051
+  
+
+
+annotationProperties:
+  exact_synonym: oio:hasExactSynonym 
+
+vars:
+  entity: "'entity'"
+
+name:
+  text: "abnormal %s"
+  vars:
+   - entity
+
+annotations:
+  - annotationProperty: exact_synonym
+    text: "abnormality of %s"
+    vars:
+     - entity
+
+def:
+  text: "Abnormality of %s."
+  vars:
+    - entity
+
+equivalentTo:
+  text: "'has_part' some ('quality' and ('inheres_in' some %s) and ('qualifier' some 'abnormal'))"
+  vars:
+    - entity
