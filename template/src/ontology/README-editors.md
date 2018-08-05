@@ -93,8 +93,9 @@ To compile design patterns to terms run:
 
 `./run.sh make ../patterns/definitions.owl`
 
-This generates a file (`src/patterns/definitions.owl`) which is
-imported into the editors file.
+This generates a file (`src/patterns/definitions.owl`).  You then need
+to add an import statement to the editor's file to import the
+definitions file.
 
 
 ## Release Manager notes
