@@ -32,6 +32,10 @@ The `seed-via-docker.sh` command does everything you need. For help:
 
     ./seed-via-docker.sh  -h
 
+(Windows user: replace `seed-via-docker.sh` with `seed-via-docker.bat`)
+
+The very first time you run this it may be slow, while docker downloads necessary images. Subsequent runs should be much faster!
+
 An example:
 
     ./seed-via-docker.sh   -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
