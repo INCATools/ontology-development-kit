@@ -26,7 +26,7 @@ It's recommended you get a release version: https://github.com/INCATools/ontolog
 
 First you must be in the root level of the starter kit
 
-    cd ontology-starter-kit
+    cd ontology-development-kit
 
 The `seed-via-docker.sh` command does everything you need. For help:
 
@@ -35,6 +35,12 @@ The `seed-via-docker.sh` command does everything you need. For help:
 (Windows user: replace `seed-via-docker.sh` with `seed-via-docker.bat`)
 
 The very first time you run this it may be slow, while docker downloads necessary images. Subsequent runs should be much faster!
+
+You can either run the script in interactive mode, or passing details via command line argument
+
+For interactive mode, just run the script without any arguments:
+
+    ./seed-via-docker.sh
 
 An example:
 
