@@ -30,9 +30,11 @@ print '            \/     \/ '; print "\n";
 print "Welcome to the ontology development kit repository creator!\n";
 print "For full instructions, see https://github.com/INCATools/ontology-development-kit/issues!\n\n";
 
+print "ARGUMENTS: [ @ARGV ]\n";
+
 if (scalar(@ARGV) == 0) {
     print "No arguments specified: entering interactive mode\n";
-    print "If this is not your intention, ctrl-C to quit.\n";
+    print "If this is not your intention, answer \"!\" to any question to quit.\n";
     print "Run with -h option for help.\n\n";
     $interactive = 1;
 }
@@ -81,13 +83,14 @@ while (scalar(@ARGV) && $ARGV[0] =~ /^\-/) {
         die "$opt";
     }
 }
+
 my $ontid;
 
-if ($interactive) {
+if ($interactive || (!scalar(@ARGV) && !$title)) {
     print "================\n";
     print "INTERACTIVE MODE\n";
     print "================\n";
-    print "\nHit ctrl-C to start again\n\n";
+    print "\nEnter '!' as answer to quit and start again\n\n";
     question(\$ontid,
              "ontid",
              "What is the OBO ontology ID / ID prefix of your ontology?",
@@ -115,6 +118,13 @@ else {
 $ontid = lc($ontid);
 
 my $prefix = uc($ontid);
+
+if (!@depends) {
+    print STDERR "You MUST specify at least one dependency to build an OBO ontology.\n";
+    print STDERR "Note that new dependencies can be added later.\n";
+    print STDERR "If you are unsure, just use 'ro'. This can be specified with the -d option, or in interactive mode.\n";
+    exit 1;
+}
 
 if ($clean) {
     `rm -rf target/*`;
@@ -276,6 +286,12 @@ sub question {
         chomp $answer;
         $answer =~ s@^\s+@@;
         $answer =~ s@\s+$@@;
+
+        if ($answer =~ m@\!@) {
+            print "QUITTING\n";
+            exit 1;
+        }
+        
         if (ref $varref eq 'ARRAY') {
             @$varref = split(' ', $answer);
         }
@@ -283,6 +299,7 @@ sub question {
             $$varref = $answer;
         }
         if ($answer) {
+            print " * $short=\"$answer\"\n";
             $answered = 1;
         }
     }

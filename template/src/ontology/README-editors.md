@@ -1,6 +1,6 @@
 These notes are for the EDITORS of foobar
 
-This project was created using the [ontology starter kit](https://github.com/cmungall/ontology-starter-kit). See the site for details.
+This project was created using the [ontology development kit](https://github.com/cmungall/ontology-development-kit). See the site for details.
 
 For more details on ontology management, please see the [OBO tutorial](https://github.com/jamesaoverton/obo-tutorial) or the [Gene Ontology Editors Tutorial](go-protege-tutorial.readthedocs.io)
 
@@ -16,7 +16,7 @@ You may also want to read the [GO ontology editors guide](http://go-ontology.rea
 
 Make sure you have an ID range in the [idranges file](foobar-idranges.owl)
 
-If you do not have one, get one from the head curator.
+If you do not have one, get one from the maintainer of this repo.
 
 The editors version is [foobar-edit.owl](foobar-edit.owl)
 
@@ -25,6 +25,15 @@ The editors version is [foobar-edit.owl](foobar-edit.owl)
 [../../foobar.owl](../../foobar.owl) is the release version
 
 To edit, open the file in Protege. First make sure you have the repository cloned, see [the GitHub project](https://github.com/MY-GITHUB-ORG/MY-REPO-NAME) for details.
+
+You should discuss the git workflow you should use with the maintainer
+of this repo, who should document it here. If you are the maintainer,
+you can contact the odk developers for assistance. You may want to
+copy the flow an existing project, for example GO: [Gene Ontology
+Editors Tutorial](go-protege-tutorial.readthedocs.io).
+
+In general, it is bad practice to commit changes to master. It is
+better to make changes on a branch, and make Pull Requests.
 
 ## ID Ranges
 
@@ -101,7 +110,7 @@ definitions file.
 ## Release Manager notes
 
 You should only attempt to make a release AFTER the edit version is
-committed and pushed, and the travis build passes.
+committed and pushed, AND the travis build passes.
 
 These instructions assume you have
 [docker](https://www.docker.com/get-docker). This folder has a script
@@ -109,15 +118,24 @@ These instructions assume you have
 
 to release:
 
+first type
+
+    git branch
+
+to make sure you are on master
+
     cd src/ontology
-    ./run.sh make
+    ./build.sh
 
 If this looks good type:
 
-    ./run.sh make prepare_release
+    ./prepare_release.sh
 
 This generates derived files such as foobar.owl and foobar.obo and places
-them in the top level (../..). The versionIRI will be added.
+them in the top level (../..).
+
+Note that the versionIRI value automatically will be added, and will
+end with YYYY-MM-DD, as per OBO guidelines.
 
 Commit and push these files.
 
@@ -125,7 +143,7 @@ Commit and push these files.
 
 And type a brief description of the release in the editor window
 
-Finally type
+Finally type:
 
     git push origin master
 
@@ -134,15 +152,20 @@ IMMEDIATELY AFTERWARDS (do *not* make further modifications) go here:
  * https://github.com/MY-GITHUB-ORG/MY-REPO-NAME/releases
  * https://github.com/MY-GITHUB-ORG/MY-REPO-NAME/releases/new
 
-The value of the "Tag version" field MUST be
+__IMPORTANT__: The value of the "Tag version" field MUST be
 
     vYYYY-MM-DD
 
 The initial lowercase "v" is REQUIRED. The YYYY-MM-DD *must* match
-what is in the versionIRI of the derived foobar.owl (data-version in
-foobar.obo).
+what is in the `owl:versionIRI` of the derived foobar.owl (`data-version` in
+foobar.obo). This will be today's date.
+
+This cannot be changed after the fact, be sure to get this right!
 
 Release title should be YYYY-MM-DD, optionally followed by a title (e.g. "january release")
+
+You can also add release notes (this can also be done after the fact). These are in markdown format.
+In future we will have better tools for auto-generating release notes.
 
 Then click "publish release"
 
