@@ -1,3 +1,14 @@
+# v1.1.3
+
+## Changes
+
+ * fixing bug in which running seed-via-docker did not enter interactive mode when no arguments provided
+ * added convenience wrapper scripts
+
+## Migration guide
+
+ * New .sh scripts in src/ontology can be directly copied across
+
 # v1.1.2
 
 ## Changes
