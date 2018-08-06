@@ -1,5 +1,7 @@
 # ontology-development-kit
 
+[![Build Status](https://travis-ci.org/INCATools/ontology-development-kit.svg?branch=master)](https://travis-ci.org/INCATools/ontology-development-kit)
+
 Initialize a GitHub repo for managing your ontology the OBO Library way!
 
 For more details, see
