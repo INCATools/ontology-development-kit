@@ -5,3 +5,6 @@ src/ontology/foobar.obo
 src/ontology/foobar.owl
 semantic.cache
 bin/
+src/ontology/seed.txt
+src/ontology/target/
+src/ontology/dosdp-tools.log
