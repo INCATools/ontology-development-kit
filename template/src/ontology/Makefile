@@ -88,7 +88,7 @@ imports/%_import.obo: imports/%_import.owl
 	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp && mv $@.tmp $@
 
 # clone remote ontology locally, perfoming some excision of relations and annotations
-mirror/%.owl: $(SRC)
+mirror/%.owl:
 	$(ROBOT) convert -I $(OBO)/$*.owl -o $@
 .PRECIOUS: mirror/%.owl
 
