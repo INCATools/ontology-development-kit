@@ -28,7 +28,7 @@ print '            \/     \/ '; print "\n";
 
 
 print "Welcome to the ontology development kit repository creator!\n";
-print "For full instructions, see https://github.com/INCATools/ontology-development-kit/issues!\n\n";
+print "For full instructions, see https://github.com/INCATools/ontology-development-kit!\n\n";
 
 print "ARGUMENTS: [ @ARGV ]\n";
 
