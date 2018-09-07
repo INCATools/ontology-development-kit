@@ -3,5 +3,3 @@ bin/
 semantic.cache
 .DS_Store
 template/src/patterns/catalog-v001.xml
-src/patterns/imports/seed_sorted.txt
-src/ontology/ed_definitions_merged.owl
