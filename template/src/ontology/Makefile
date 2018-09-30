@@ -48,7 +48,7 @@ prepare_release: all
 $(ONT).owl: $(SRC)
 	$(ROBOT)  reason -i $< -r ELK -e none relax reduce -r ELK annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT).owl -o $@
 $(ONT).obo: $(ONT).owl
-	$(ROBOT) convert -i $< -f obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $@
+	$(ROBOT) convert --check false -i $< -f obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $@
 
 # ----------------------------------------
 # Import modules
@@ -162,7 +162,7 @@ pattern_schema_checks:
 ../patterns/imports/%_import.owl: mirror/%.owl ../patterns/imports/seed_sorted.txt
 	$(ROBOT) extract -i $< -T ../patterns/imports/seed_sorted.txt --method BOT -O mirror/$*.owl annotate --ontology-iri $(OBO)/$(ONT)/patterns/imports/$*_import.owl -o $@
 
-patterns: $(PATTERN_IMPORTS)
+.PHONY: patterns $(PATTERN_IMPORTS)
 
 pattern_files := $(wildcard ../patterns/*.yaml)
 pattern_tsv_files := $(wildcard ../patterns/*.tsv)
