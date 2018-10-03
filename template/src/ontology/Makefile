@@ -29,7 +29,8 @@ IMPORTS = MY_IMPORTS_LIST
 # Top-level targets
 # ----------------------------------------
 
-all: all_imports sparql_test patterns $(ONT).owl $(ONT).obo
+all: patterns all_imports sparql_test $(ONT).owl $(ONT).obo
+	echo 'Release files created successfully.'
 test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
@@ -48,9 +49,12 @@ prepare_release: all
 # by default we use Elk to perform a reason-relax-reduce chain
 # after that we annotate the ontology with the release versionInfo
 $(ONT).owl: $(SRC)
-	$(ROBOT)  reason -i $< -r ELK -e none relax reduce -r ELK annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT).owl -o $@
+	$(ROBOT)  reason -i $< -r ELK -e none relax reduce -r ELK annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT).owl -o $@ &&\
+	echo "$(ONT).owl successfully created."
+
 $(ONT).obo: $(ONT).owl
-	$(ROBOT) convert --check false -i $< -f obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $@
+	$(ROBOT) convert --check false -i $< -f obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $@ &&\
+	echo "$(ONT).obo successfully created."
 
 # ----------------------------------------
 # Import modules
