@@ -165,7 +165,7 @@ build-docker:
 	DOSDP_TEMP_TERMS=$(DOSDP_TEMP)/terms
 	DOSDP_TEMP_ONTOLOGIES=$(DOSDP_TEMP)/ontologies
 
-	patterns: ../patterns/pattern.owl ../patterns/definitions.owl
+	.PHONY patterns: ../patterns/pattern.owl ../patterns/definitions.owl
 
 	pattern_clean:
 		rm -r $(DOSDP_TEMP)

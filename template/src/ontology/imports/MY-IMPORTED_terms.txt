@@ -32,4 +32,4 @@ http://purl.obolibrary.org/obo/FMA_50592
 http://purl.obolibrary.org/obo/FMA_85802
 http://purl.obolibrary.org/obo/FYPO_0000001
 http://purl.obolibrary.org/obo/GENEPIO_0002034
-
+http://purl.obolibrary.org/obo/BFO_0000001
