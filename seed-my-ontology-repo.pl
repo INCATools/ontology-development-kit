@@ -2,6 +2,7 @@
 
 use strict;
 use File::Find qw(finddepth);
+use File::Path qw( rmtree );
 use File::Basename;
 
 my $n_errors = 0;
@@ -126,9 +127,6 @@ if (!@depends) {
     exit 1;
 }
 
-if ($clean) {
-    `rm -rf target/*`;
-}
 
 if (!$title) {
     $title = $ontid;
@@ -145,6 +143,14 @@ $targetdir =~ tr/a-z\-//cd;
 my $repo_name = $targetdir;
 
 $targetdir = "target/$targetdir";
+
+if ($clean) {
+    print "Cleaning directory..";
+    if (-d "$targetdir") {
+      rmtree $targetdir;
+  }
+}
+
 mkdir("target") unless -d 'target';
 mkdir("$targetdir") unless -d $targetdir;
 
