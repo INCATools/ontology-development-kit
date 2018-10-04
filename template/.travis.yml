@@ -9,7 +9,7 @@ before_install:
   - docker pull obolibrary/odkfull
 
 # command to run tests
-script: cd src/ontology && make test
+script: cd src/ontology && ./run.sh make test
 
 #after_success:
 #  coveralls
