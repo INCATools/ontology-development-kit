@@ -13,6 +13,7 @@ RUN apt-get -y update && \
 WORKDIR /tools
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+ENV ROBOT v1.2.0-alpha-1
 
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
@@ -20,8 +21,8 @@ RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/ow
     wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O /tools/ontology-release-runner && \
     wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar
     
-RUN wget https://github.com/ontodev/robot/releases/download/v1.1.0/robot.jar -O /tools/robot.jar && \
-    wget https://raw.githubusercontent.com/ontodev/robot/v1.1.0/bin/robot -O /tools/robot && \
+RUN wget https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar -O /tools/robot.jar && \
+    wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
     
 ENV PATH "/tools/:$PATH"
