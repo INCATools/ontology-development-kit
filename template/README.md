@@ -25,4 +25,4 @@ Please use this GitHub repository's [Issue tracker](https://github.com/MY-GITHUB
 
 ## Acknowledgements
 
-This ontology repository was created using the [ontology starter kit](https://github.com/INCATools/ontology-starter-kit)
+This ontology repository was created using the [ontology development kit](https://github.com/INCATools/ontology-development-kit).

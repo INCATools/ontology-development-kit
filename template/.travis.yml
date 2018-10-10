@@ -21,7 +21,7 @@ branches:
     - test-travis
 
 ### Add your own lists here
-### See https://github.com/INCATools/ontology-starter-kit/issues/35
+### See https://github.com/INCATools/ontology-development-kit/issues/35
 notifications:
   email:
     - obo-ci-reports-all@groups.io

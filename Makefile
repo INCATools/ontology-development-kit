@@ -1,4 +1,4 @@
-# This makefile is purely for running tests on the complete ontology-starter-kit package on travis;
+# This makefile is purely for running tests on the complete ontology-development-kit package on travis;
 # users should not need to use this
 
 # command used in make test.

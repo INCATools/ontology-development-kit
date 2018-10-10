@@ -1,6 +1,6 @@
 # ----------------------------------------
 # Makefile for foobar
-# Generated using ontology-starter-kit
+# Generated using ontology-development-kit
 # ----------------------------------------
 # <do not edit above this line>
 
