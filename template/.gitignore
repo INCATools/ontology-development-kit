@@ -3,6 +3,7 @@ src/ontology/mirror
 src/ontology/mirror/*
 src/ontology/foobar.obo
 src/ontology/foobar.owl
+src/ontology/foobar-base.owl
 semantic.cache
 bin/
 src/ontology/seed.txt

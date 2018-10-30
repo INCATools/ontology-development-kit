@@ -253,6 +253,7 @@ if ($prep_initial_release) {
     runcmd("git add src/ontology/imports/*.{obo,owl}") if @depends;
     runcmd("git add src/ontology/subsets/*.{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git add $ontid.{obo,owl}");
+    runcmd("git add $ontid-base.owl");
     runcmd("git add imports/*.{obo,owl}") if @depends;
     runcmd("git add subsets/*.{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git commit -m 'initial release of $ontid using ontology-development-kit' -a") unless $no_commit;
