@@ -32,10 +32,13 @@ test: sparql_test all
 prepare_release: all
 	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
 	mkdir -p $(RELEASEDIR)/imports &&\
+	mkdir -p $(RELEASEDIR)/patterns &&\
 	cp imports/*.owl $(RELEASEDIR)/imports &&\
 	cp imports/*.obo $(RELEASEDIR)/imports &&\
+	cp ../patterns/definitions.owl $(RELEASEDIR)/patterns &&\
 	git add $(RELEASEDIR)/imports/*.obo &&\
 	git add $(RELEASEDIR)/imports/*.owl &&\
+	git add $(RELEASEDIR)/patterns/*.owl &&\
 	(test -f subsets/*owl && cp subsets/* $(RELEASEDIR)/subsets && git add $(RELEASEDIR)/subsets/* || echo "no subsets") &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release on github"
 
