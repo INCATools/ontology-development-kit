@@ -1,9 +1,21 @@
+"""
+Generate artefacts (Makefile, default ontology edit file, imports) from a project configuration
+
+See https://github.com/ontodev/robot/issues/37
+
+SUBJECT TO CHANGE!
+
+To test:
+
+python3 odk/odk.py create_makefile -c examples/envo.yaml
+"""
 from typing import Optional, Set, List, Union, Dict, Any
 from dataclasses import dataclass, field
 from jinja2 import Template
 from dacite import from_dict
 import yaml
 
+# Primitive Types
 OntologyHandle = str ## E.g. uberon, cl; also subset names
 Person = str ## ORCID or github handle
 
@@ -136,26 +148,6 @@ class Generator(object):
         project = from_dict(data_class=OntologyProject, data=obj)
         self.context = ExecutionContext(project=project)
     
-    def test_init(self):
-        obj = {'id':'foo', 'repo':'foo', 'reasoner':'elk',
-               'import_group': {
-                   'imports':[
-                       { 'id': 'uberon', 'rebuild_if_source_changes':False }
-                   ]}}
-        project = from_dict(data_class=OntologyProject, data=obj)
-        self.context = ExecutionContext(project=project)
-        
-    def test_generate(self):
-        obj = {'id':'foo', 'repo':'foo', 'reasoner':'elk',
-               'import_group': {
-                   'imports':[
-                       { 'id': 'uberon', 'rebuild_if_source_changes':False }
-                   ]}}
-        project = from_dict(data_class=OntologyProject, data=obj)
-        print(project)
-        template = Template('Hello {{ name }} welcome to {{ project.id }}!')
-        return template.render(project=project, name='John Doe')
-    
 
 import click
 
@@ -170,7 +162,6 @@ def cli():
 @click.option("output", "-o")
 def create_makefile(config, input, output):
     mg = Generator()
-    #mg.test_init()
     mg.load_config(config)
     print(mg.context)
     print(mg.generate())
