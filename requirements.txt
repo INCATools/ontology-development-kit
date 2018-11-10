@@ -1,0 +1,3 @@
+jinja2 >= 0.0
+dacite >= 0.0
+dataclasses >= 0.0
