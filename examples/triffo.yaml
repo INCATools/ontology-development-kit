@@ -3,5 +3,7 @@ title: Triffid Behavior ontology
 github_org: cmungall
 repo: triffo
 import_group:
-  ids: [ro, pato]
+  ids:
+    - ro
+    - pato
   

@@ -31,7 +31,7 @@ DOSDPT=dosdp-tools
 all: all_imports sparql_test patterns all_assets
 
 {% if project.import_group is defined %}
-IMPORTS = {{ project.import_group.ids }}
+IMPORTS ={% for imp in project.import_group.ids %} {{ imp }}{% endfor %}
 {% else %}
 IMPORTS = 
 {% endif %}
@@ -135,7 +135,7 @@ mirror/{{ ont }}.trigger: $(SRC)
 mirror/{{ ont }}.trigger:
 {% endif %}
 mirror/{{ ont }}.owl: mirror/{{ ont }}-trigger
-	$(ROBOT) convert -I $(OBO)/$*.owl -o $@
+	$(ROBOT) convert -I $(OBO)/{{ ont }}.owl -o $@
 .PRECIOUS: mirror/%.owl
 {% endfor %}
 {% endif %}

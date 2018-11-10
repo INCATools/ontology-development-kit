@@ -1,0 +1,13 @@
+id: envo
+title: Environment ontology
+github_org: cmungall
+repo: triffo
+import_group:
+  ids:
+    - ro
+    - pato
+    - uberon
+  imports:
+    - id: uberon
+      use_base: True
+  
