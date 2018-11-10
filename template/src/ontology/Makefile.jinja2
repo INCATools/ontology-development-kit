@@ -1,0 +1,236 @@
+# ----------------------------------------
+# Makefile for {{ project.id }}
+# Generated using ontology-starter-kit
+# ----------------------------------------
+# <do not edit above this line>
+
+# ----------------------------------------
+# Standard Constants
+# ----------------------------------------
+# these can be overwritten on the command line
+
+OBO=http://purl.obolibrary.org/obo
+ONT={{ project.id }}
+BASE=$(OBO)/$(ONT)
+SRC=$(ONT)-edit.owl
+RELEASEDIR=../..
+PATTERNDIR=../patterns
+ROBOT= robot
+SPARQLDIR = ../sparql
+OBO_FORMAT_OPTIONS =
+{% if project.use_dosdps %}
+DOSDP_SCHEMA=http:// # change to PURL when ready.
+PATTERN_TESTER=simple_pattern_tester.py
+DOSDPT=dosdp-tools
+{% endif %}
+
+# ----------------------------------------
+# Top-level targets
+# ----------------------------------------
+
+all: all_imports sparql_test patterns all_assets
+
+{% if project.import_group is defined %}
+IMPORTS = {{ project.import_group.ids }}
+{% else %}
+IMPORTS = 
+{% endif %}
+IMPORT_ROOTS = $(patsubst %, imports/%_import, $(IMPORTS))
+IMPORT_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl $(n).obo $(n).json)  imports/axioms.owl
+IMPORTS_OWL = $(foreach n,$(IMPORT_ROOTS), $(n).owl)  imports/axioms.owl
+
+{% if project.subset_group is defined %}
+SUBSETS = {{ project.subset_group.ids }}
+{% else %}
+SUBSETS = 
+{% endif %}
+SUBSET_ROOTS = $(patsubst %, subsets/%, $(SUBSETS))
+SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(n).owl $(n).obo $(n).json)
+
+MAIN_PRODUCTS = $(ONT) $(ONT)-base
+MAIN_FILES = $(foreach n,$(MAIN_PRODUCTS), $(n).owl $(n).obo $(n).json)
+ARTEFACTS = \
+  $(IMPORT_FILES) \
+  $(MAIN_FILES) \
+  $(REPORT_FILES) \
+  $(SUBSET_FILES)
+
+ASSETS = $(MAIN_FILES) $(SUBSET_FILES) $(IMPORT_FILES)
+
+show_assets:
+	echo $(ASSETS)
+	du -sh $(ASSETS)
+
+prepare_release: $(ASSETS)
+	rsync -R $^ $(RELEASEDIR) &&\
+	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release on github"
+
+prepare_initial_release: prepare_release
+	cd $(RELEASEDIR) && git add $(ASSETS)
+
+# ----------------------------------------
+# Main release targets
+# ----------------------------------------
+
+# by default we use {{ project.reasoner }} to perform a reason-relax-reduce chain
+# after that we annotate the ontology with the release versionInfo
+$(ONT).owl: $(SRC)
+	$(ROBOT)  reason -i $< -r {{ project.reasoner }} relax reduce -r {{ project.reasoner }} annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT).owl -o $@
+$(ONT).obo: $(ONT).owl
+	$(ROBOT) convert -i $< -f $(OBO_FORMAT_OPTIONS) obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $@
+$(ONT).json: $(ONT).owl
+	$(ROBOT) convert -i $< -f json -o $(ONT).json.tmp && mv $(ONT).obo.tmp $@
+
+# ----------------------------------------
+# Import modules
+# ----------------------------------------
+# Most ontologies are modularly constructed using portions of other ontologies
+# These live in the imports/ folder
+# These can be regenerated with make all_imports
+
+
+# generate seed with all referenced entities
+
+{% if project.use_dosdps %}
+ed_definitions_merged.owl: $(SRC) $(PATTERNDIR)/definitions.owl
+	$(ROBOT) merge -i $(SRC) -i $(PATTERNDIR)/definitions.owl -o $@
+
+seed.txt: ed_definitions_merged.owl
+	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+{% else %}
+seed.txt: $(SRC)
+	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+{% endif %}
+
+# Generate terms.txt for each import.  # Assume OBO-style Possibly hacky step?
+# Should be able to drop this if robot can just take a big messy list of terms as input.
+
+imports/%_terms_combined.txt: seed.txt
+	cat $< imports/$*_terms.txt | sort | uniq >  $@
+
+# Make this target to regenerate ALL
+all_imports: all_imports_owl
+all_imports_owl: $(IMPORTS_OWL)
+all_imports_obo: $(IMPORTS_OBO)
+
+# Use ROBOT, driven entirely by terms lists NOT from source ontology
+imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
+	$(ROBOT) extract -i $< -T imports/$*_terms_combined.txt --method BOT -O $(BASE)/$@ -o $@
+.PRECIOUS: imports/%_import.owl
+
+# convert imports to obo.
+# this can be useful for spot-checks and diffs.
+# we set strict mode to false by default. For discussion see https://github.com/owlcs/owlapi/issues/752
+imports/%_import.obo: imports/%_import.owl
+	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp && mv $@.tmp $@
+
+# clone remote ontology locally, perfoming some excision of relations and annotations
+{% if project.import_group is defined %}
+{% for ont in project.import_group.ids %}
+{% if ont.rebuild_if_source_changes %}
+## Upstream ontology is re-downloaded whenever source changes
+mirror/{{ ont }}.trigger: $(SRC)
+{% else %}
+## Upstream ontology is re-downloaded manually
+mirror/{{ ont }}.trigger:
+{% endif %}
+mirror/{{ ont }}.owl: mirror/{{ ont }}-trigger
+	$(ROBOT) convert -I $(OBO)/$*.owl -o $@
+.PRECIOUS: mirror/%.owl
+{% endfor %}
+{% endif %}
+
+# ----------------------------------------
+# Release
+# ----------------------------------------
+# copy from staging area (this directory) to top-level
+release: $(ONT).owl $(ONT).obo
+	cp $^ $(RELEASEDIR) && cp imports/* $(RELEASEDIR)/imports
+
+# ----------------------------------------
+# Sparql queries: Q/C
+# ----------------------------------------
+
+# these live in the ../sparql directory, and have suffix -violation.sparql
+# adding the name here will make the violation check live
+VCHECKS = equivalent-classes trailing-whitespace owldef-self-reference xref-syntax nolabels
+
+# Only needed until robot supports catalogs
+
+
+
+#  run all violation checks
+VQUERIES = $(foreach V,$(VCHECKS),$(SPARQLDIR)/$V-violation.sparql)
+sparql_test: $(SRC)
+	robot verify  --catalog catalog-v001.xml -i $< --queries $(VQUERIES) -O reports/
+
+# ----------------------------------------
+# Sparql queries: Reports
+ # ----------------------------------------
+
+REPORTS = basic-report class-count-by-prefix edges xrefs obsoletes synonyms
+REPORT_ARGS = $(foreach V,$(REPORTS),-s $(SPARQLDIR)/$V.sparql reports/$V.tsv)
+all_reports: $(SRC)
+	robot query -f tsv -i $< $(REPORT_ARGS)
+
+# ----------------------------------------
+# Docker (experimental)
+# ----------------------------------------
+IM=build-$(ONT)
+build-docker:
+	docker build -t $(ONT) .
+
+# ----------------------------------------
+# Patterns (experimental)
+# ----------------------------------------
+
+# Test patterns for schema compliance:
+
+
+PATTERN_IMPORTS = $(PATTERNDIR)/pattern.owl $(patsubst %, $(PATTERNDIR)/imports/%_import.owl,$(IMPORTS))
+
+# Better to make this an intermediate & merge with pattern.owl file having correct iri and import statements - configured by make
+
+$(PATTERNDIR)/pattern.owl: pattern_schema_checks
+	$(DOSDPT) prototype --obo-prefixes --template=$(PATTERNDIR) --outfile=$@
+
+pattern_schema_checks:
+	simple_pattern_tester.py $(PATTERNDIR)/ # 2>&1 | tee $@
+
+$(PATTERNDIR)/imports/seed.txt: $(PATTERNDIR)/pattern.owl
+	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+
+$(PATTERNDIR)/imports/seed_sorted.txt: $(PATTERNDIR)/imports/seed.txt
+	cat $(PATTERNDIR)/imports/seed.txt | sort | uniq > $@
+
+#$(PATTERNDIR)/imports/%_terms.txt: $(PATTERNDIR)/imports/seed.txt
+#	grep -i $(OBO)/$*_ $< > $@ || true  # Returns 1 if grep is empty
+
+$(PATTERNDIR)/imports/%_import.owl: mirror/%.owl $(PATTERNDIR)/imports/seed_sorted.txt
+	$(ROBOT) extract -i $< -T $(PATTERNDIR)/imports/seed_sorted.txt --method BOT -O mirror/$*.owl annotate --ontology-iri $(OBO)/$(ONT)/patterns/imports/$*_import.owl -o $@
+
+patterns: $(PATTERN_IMPORTS)
+
+pattern_files := $(wildcard $(PATTERNDIR)/*.yaml)
+pattern_tsv_files := $(wildcard $(PATTERNDIR)/*.tsv)
+
+# TODO - move declarations like this to top
+IMS=target/intermediates
+
+$(IMS)/patterns/%.ofn: $(PATTERNDIR)/%.yaml $(PATTERNDIR)/%.tsv $(ONT)-edit.owl
+	mkdir -p $(IMS)/patterns &&\
+	dosdp-tools generate --catalog=catalog-v001.xml --infile=$(word 2, $^) --template=$< --ontology=$(word 3, $^) --obo-prefixes=true  --outfile=$@
+
+
+pattern_modules := $(patsubst %.yaml, $(IMS)/patterns/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/*.yaml)))
+
+$(PATTERNDIR)/definitions.owl: $(pattern_modules)
+	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(OBO)/$(ONT)/patterns/defintions.owl -o $@
+
+
+
+
+
+
+
+
