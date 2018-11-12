@@ -124,20 +124,28 @@ imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 imports/%_import.obo: imports/%_import.owl
 	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp && mv $@.tmp $@
 
-# clone remote ontology locally, perfoming some excision of relations and annotations
-{% if project.import_group is defined %}
-{% for ont in project.import_group.ids %}
-{% if ont.rebuild_if_source_changes %}
-## Upstream ontology is re-downloaded whenever source changes
-mirror/{{ ont }}.trigger: $(SRC)
-{% else %}
-## Upstream ontology is re-downloaded manually
-mirror/{{ ont }}.trigger:
-{% endif %}
-mirror/{{ ont }}.owl: mirror/{{ ont }}-trigger
-	$(ROBOT) convert -I $(OBO)/{{ ont }}.owl -o $@
+
+# ----------------------------------------
+# Mirroring upstream ontologies
+# ----------------------------------------
+{% if project.import_group is defined -%}
+{% for ont in project.import_group.products %}
+
+## ONTOLOGY: {{ ont.id }}
+{% if ont.description  -%}
+## {{ ont.description }}
+{% endif -%}
+{% if ont.rebuild_if_source_changes -%}
+## Copy of {{ont.id}} is re-downloaded whenever source changes
+mirror/{{ ont.id }}.trigger: $(SRC)
+{% else -%}
+## Copy of {{ont.id}} is re-downloaded manually
+mirror/{{ ont.id }}.trigger:
+{% endif -%}
+mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}-trigger
+	$(ROBOT) convert -I $(OBO)/{{ ont.id }}.owl -o $@
 .PRECIOUS: mirror/%.owl
-{% endfor %}
+{% endfor -%}
 {% endif %}
 
 # ----------------------------------------
