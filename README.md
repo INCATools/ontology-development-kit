@@ -26,6 +26,8 @@ It's recommended you get a release version: https://github.com/INCATools/ontolog
 
 ## Initialize
 
+TODO: UPDATE TO SHOW PROJECT-BASED CONFIG
+
 First you must be in the root level of the starter kit
 
     cd ontology-development-kit

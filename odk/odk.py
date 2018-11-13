@@ -15,6 +15,12 @@ from dataclasses_jsonschema import JsonSchemaMixin
 from jinja2 import Template
 from dacite import from_dict
 import yaml
+import os
+from shutil import copyfile
+import logging
+
+logging.basicConfig(level=logging.INFO)
+TEMPLATE_SUFFIX = '.jinja2'
 
 # Primitive Types
 OntologyHandle = str ## E.g. uberon, cl; also subset names
@@ -191,9 +197,27 @@ class Generator(object):
             template = Template(file_.read())
         return template.render( project = self.context.project)
 
-    def load_config(self, config_file):
-        obj = yaml.load(config_file)
-        project = from_dict(data_class=OntologyProject, data=obj)
+    def load_config(self,
+                    config_file,
+                    imports=None,
+                    title=None,
+                    org=None,
+                    repo=None):
+        if config_file is None:
+            project = OntologyProject()
+        else:
+            obj = yaml.load(config_file)
+            project = from_dict(data_class=OntologyProject, data=obj)
+        if title:
+            project.title = title
+        if org:
+            project.github_org = org
+        if repo:
+            project.repo = repo
+        if imports:
+            if project.import_group is None:
+                project.import_group = ImportGroup()
+            project.import_group.ids = imports
         project.fill_missing()
         self.context = ExecutionContext(project=project)
     
@@ -205,11 +229,13 @@ def cli():
     pass
 
 @cli.command()
-#@click.option("config", "-c", type=click.Path(exists=True))
-@click.option("config", "-c", type=click.File('r'))
-@click.option("input", "-i", type=click.Path(exists=True))
-@click.option("output", "-o")
+@click.option('-C', '--config', type=click.File('r'))
+@click.option('-i', '--input',  type=click.Path(exists=True))
+@click.option('-o', '--output')
 def create_makefile(config, input, output):
+    """
+    For testing purposes
+    """
     mg = Generator()
     mg.load_config(config)
     print(mg.generate())
@@ -223,7 +249,77 @@ def dump_schema():
     """
     import json
     print(json.dumps(OntologyProject.json_schema(), sort_keys=True, indent=4))
-    
+
+
+@cli.command()
+@click.option('-C', '--config',       type=click.File('r'))
+@click.option('-T', '--templatedir',  default='./template/')
+@click.option('-D', '--outdir',       default='tmp')
+@click.option('-d', '--dependencies', multiple=True)
+@click.option('-t', '--title',        type=str)
+@click.option('-u', '--user',         type=str)
+@click.option('-v', '--verbose',      count=True)
+@click.argument('repo', nargs=-1)
+def seed(config, outdir, templatedir, dependencies, title, user, verbose, repo):
+    """
+    Seeds an ontology project
+    """
+    mg = Generator()
+    if len(repo) > 0:
+        if len(repo) > 1:
+            raise Exception('max one repo')
+        repo = repo[0]
+    else:
+        repo = None
+    mg.load_config(config,
+                   imports=dependencies,
+                   title=title,
+                   org=user,
+                   repo=repo)
+    for root, subdirs, files in os.walk(templatedir):
+        tdir = root.replace(templatedir,outdir+"/")
+        os.makedirs(tdir, exist_ok=True)
+        for f in files:
+            srcf = os.path.join(root, f)
+            tgtf = os.path.join(tdir, f)
+            logging.debug('  {} -> {}'.format(srcf, tgtf))
+            copyfile(srcf, tgtf)
+        for f in files:
+            srcf = os.path.join(root, f)
+            tgtf = os.path.join(tdir, f)
+            if tgtf.endswith(TEMPLATE_SUFFIX):
+                derived_file = tgtf.replace(TEMPLATE_SUFFIX, "")
+                with open(derived_file,"w") as s:
+                    if f.startswith("_dynamic"):
+                        logging.info('  Unpacking: {}'.format(derived_file))
+                        unpack_files(tdir, mg.generate(tgtf))
+                    else:
+                        logging.info('  Compiling: {} -> {}'.format(tgtf, derived_file))
+                        s.write(mg.generate(tgtf))
+
+def unpack_files(basedir, txt):
+    """
+    This unpacks a custom tar-like format in which multiple file paths
+    can be specified, separated by ^^^s
+    """
+    MARKER = '^^^ '
+    lines = txt.split("\n")
+    f = None
+    for line in lines:
+        if line.startswith(MARKER):
+            path = os.path.join(basedir, line.replace(MARKER, ""))
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            f = open(path,"w")
+            logging.info('  Unpacking into: {}'.format(path))
+        else:
+            if f is None:
+                if line == "":
+                    continue
+                else:
+                    raise Exception('File marker "{}" required in "{}"'.format(MARKER, line))
+            f.write(line + "\n")
+            
+                
 if __name__ == "__main__":
     cli()
 

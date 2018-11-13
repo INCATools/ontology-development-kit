@@ -1,6 +1,6 @@
 id: envo
 title: Environment ontology
-github_org: cmungall
+github_org: EnvironmentOntology
 repo: envo
 report_fail_on: NONE
 export_formats:

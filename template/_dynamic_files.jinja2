@@ -1,0 +1,29 @@
+{#-
+
+  Jinja2 Template for multile dynamic files
+
+  This is first expanded into a single text file;
+  Each entry starting with ^^^ denotes a single file
+
+-#}
+{% for imp in project.import_group.ids %}
+^^^ src/ontology/imports/{{ imp }}_import.owl
+<?xml version="1.0"?>
+<rdf:RDF 
+     xml:base="http://purl.obolibrary.org/obo/"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/">
+    <owl:Ontology rdf:about="{{ project.uribase }}/{{ project.id }}/imports/{{ imp }}_import.owl"/>
+
+    <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
+</rdf:RDF>
+^^^ src/ontology/imports/{{ imp }}_terms.txt
+{{ imp|upper }}:0000001
+{{ imp|upper }}:0000002
+{{ imp|upper }}:0000003
+{% endfor %}
