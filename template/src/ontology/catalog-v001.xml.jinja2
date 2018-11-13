@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+{% if project.import_group is defined %}
+  {% for imp in project.import_group.ids %}
+  <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/foobar/imports/{{imp}}_import.owl" uri="imports/{{imp}}_import.owl"/>
+  {% endfor %}
+{% endif %}
+{% if project.use_dosdp is defined %}  
+  <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/patterns/definitions.owl" uri="../patterns/definitions.owl"/>
+{% endif %}
+  <group id="Folder Repository, directory=, recursive=false, Auto-Update=false, version=2" prefer="public" xml:base=""/>
+</catalog>

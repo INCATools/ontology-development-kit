@@ -11,6 +11,7 @@ python3 odk/odk.py create_makefile -c examples/envo.yaml
 """
 from typing import Optional, Set, List, Union, Dict, Any
 from dataclasses import dataclass, field
+from dataclasses_jsonschema import JsonSchemaMixin
 from jinja2 import Template
 from dacite import from_dict
 import yaml
@@ -20,7 +21,7 @@ OntologyHandle = str ## E.g. uberon, cl; also subset names
 Person = str ## ORCID or github handle
 
 @dataclass
-class Product(object):
+class Product(JsonSchemaMixin):
     """
     abstract base class for all products.
 
@@ -68,7 +69,7 @@ class RoboTemplateProduct(Product):
     pass
 
 @dataclass
-class ProductGroup(object):
+class ProductGroup(JsonSchemaMixin):
     """
     abstract base class for all product groups.
 
@@ -95,6 +96,8 @@ class ProductGroup(object):
     rebuild_if_source_changes : bool = True
 
     def fill_missing(self):
+        if self.products is None:
+            self.products = []
         if self.ids is not None:
             for id in self.ids:
                 if id not in [p.id for p in self.products]:
@@ -128,7 +131,7 @@ class RoboTemplateGroup():
 
     
 @dataclass
-class OntologyProject(object):
+class OntologyProject(JsonSchemaMixin):
     """
     A configuration for an ontology project/repository
 
@@ -137,13 +140,17 @@ class OntologyProject(object):
     categories (more may be added)
     """
 
-    id : OntologyHandle = "" ## E.g. uberon, cl
-    title : str = ""
+    id : OntologyHandle = ""                     ## E.g. uberon, cl
+    title : str = ""                             ## 
     repo : str = ""
     github_org : str = ""
     robot_version: Optional[str] = None
     reasoner : str = 'ELK'
     use_dosdps : bool = True
+    report_fail_on : Optional[str] = None
+    obo_format_options : Optional[str] = None
+    uribase : str = 'http://purl.obolibrary.org/obo'
+    
     contact : Optional[Person] = None
     creators : Optional[List[Person]] = None
     contributors : Optional[List[Person]] = None
@@ -167,7 +174,7 @@ class OntologyProject(object):
             self.subset_group.fill_missing()
 
 @dataclass
-class ExecutionContext(object):
+class ExecutionContext(JsonSchemaMixin):
     """
     Top level object that is passed to Jinja2 templates
     """
@@ -180,7 +187,6 @@ class Generator(object):
     context : ExecutionContext = ExecutionContext()
 
     def generate(self, input='template/src/ontology/Makefile.jinja2'):
-        print(self.context.project)
         with open(input) as file_:
             template = Template(file_.read())
         return template.render( project = self.context.project)
@@ -206,9 +212,18 @@ def cli():
 def create_makefile(config, input, output):
     mg = Generator()
     mg.load_config(config)
-    print(mg.context)
     print(mg.generate())
 
+@cli.command()
+def dump_schema():
+    """
+    Dumps the python schema as json schema.
+
+    Note: this is intended primarily at odk developers
+    """
+    import json
+    print(json.dumps(OntologyProject.json_schema(), sort_keys=True, indent=4))
+    
 if __name__ == "__main__":
     cli()
 

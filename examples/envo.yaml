@@ -1,7 +1,12 @@
 id: envo
 title: Environment ontology
 github_org: cmungall
-repo: triffo
+repo: envo
+report_fail_on: NONE
+export_formats:
+  - owl
+  - obo
+  - json
 import_group:
   ids:
     - ro
@@ -11,6 +16,11 @@ import_group:
     - id: ro
       description: We use RO blah
       use_base: True
+subset_group:
+  ids:
+    - EnvO-Lite-GSC
+    - envoEmpo
+    - envoPolar
 
 
   
