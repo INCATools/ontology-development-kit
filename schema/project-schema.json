@@ -1,0 +1,159 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "ImportGroup": {
+            "description": "ImportGroup(ids: Union[List[str], NoneType] = None, disabled: bool = False, rebuild_if_source_changes: bool = True, products: Union[List[__main__.ImportProduct], NoneType] = None)",
+            "properties": {
+                "disabled": {
+                    "type": "boolean"
+                },
+                "ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "products": {
+                    "items": {
+                        "$ref": "#/definitions/ImportProduct"
+                    },
+                    "type": "array"
+                },
+                "rebuild_if_source_changes": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "disabled",
+                "rebuild_if_source_changes"
+            ],
+            "type": "object"
+        },
+        "PatternGroup": {
+            "description": "PatternGroup(ids: Union[List[str], NoneType] = None, disabled: bool = False, rebuild_if_source_changes: bool = True, products: Union[List[__main__.PatternProduct], NoneType] = None)",
+            "properties": {
+                "disabled": {
+                    "type": "boolean"
+                },
+                "ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "products": {
+                    "items": {
+                        "$ref": "#/definitions/PatternProduct"
+                    },
+                    "type": "array"
+                },
+                "rebuild_if_source_changes": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "disabled",
+                "rebuild_if_source_changes"
+            ],
+            "type": "object"
+        },
+        "SubsetGroup": {
+            "description": "SubsetGroup(ids: Union[List[str], NoneType] = None, disabled: bool = False, rebuild_if_source_changes: bool = True, products: Union[List[__main__.SubsetProduct], NoneType] = None)",
+            "properties": {
+                "disabled": {
+                    "type": "boolean"
+                },
+                "ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "products": {
+                    "items": {
+                        "$ref": "#/definitions/SubsetProduct"
+                    },
+                    "type": "array"
+                },
+                "rebuild_if_source_changes": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "disabled",
+                "rebuild_if_source_changes"
+            ],
+            "type": "object"
+        }
+    },
+    "description": "\n    A configuration for an ontology project/repository\n\n    This is divided into project-wide settings, plus\n    groups of products. Products are grouped into 4\n    categories (more may be added)\n    ",
+    "properties": {
+        "contact": {
+            "type": "string"
+        },
+        "contributors": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "creators": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "github_org": {
+            "type": "string"
+        },
+        "id": {
+            "type": "string"
+        },
+        "import_group": {
+            "$ref": "#/definitions/ImportGroup"
+        },
+        "obo_format_options": {
+            "type": "string"
+        },
+        "pattern_group": {
+            "$ref": "#/definitions/PatternGroup"
+        },
+        "reasoner": {
+            "type": "string"
+        },
+        "repo": {
+            "type": "string"
+        },
+        "report_fail_on": {
+            "type": "string"
+        },
+        "robot_version": {
+            "type": "string"
+        },
+        "robotemplate_group": {
+            "type": "object"
+        },
+        "subset_group": {
+            "$ref": "#/definitions/SubsetGroup"
+        },
+        "title": {
+            "type": "string"
+        },
+        "uribase": {
+            "type": "string"
+        },
+        "use_dosdps": {
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "id",
+        "title",
+        "repo",
+        "github_org",
+        "reasoner",
+        "use_dosdps",
+        "uribase"
+    ],
+    "type": "object"
+}
