@@ -27,3 +27,65 @@
 {{ imp|upper }}:0000002
 {{ imp|upper }}:0000003
 {% endfor %}
+^^^ src/metadata/{{ project.id }}.md
+---
+layout: ontology_detail
+id: {{ project.id }}
+title: {{ project.title }}
+jobs:
+  - id: https://travis-ci.org/{{ project.github_org }}/{{ project.repo }}
+    type: travis-ci
+build:
+  checkout: git clone https://github.com/{{ project.github_org }}/{{ project.repo }}.git
+  system: git
+  path: "."
+contact:
+  email: {{ project.contact.email }}
+  label: {{ project.contact.name }}
+  github: {{ project.contact.github }}
+description: {{ project.title }} is an ontology...
+domain: stuff
+homepage: https://github.com/{{ project.github_org }}/{{ project.repo }}
+products:
+  - id: {{ project.id }}.owl
+  - id: {{ project.id }}.obo
+dependencies:
+{% for imp in project.import_group.ids -%}
+- id: {{ imp }}
+{% endfor %}
+tracker: https://github.com/{{ project.github_org }}/{{ project.repo }}/issues
+license:
+  url: http://creativecommons.org/licenses/by/3.0/
+  label: CC-BY
+---
+
+Enter a detailed description of your ontology here
+^^^ src/metadata/{{ project.id }}.yml
+# PURL configuration for http://purl.obolibrary.org/obo/{{ project.id }}
+
+idspace: {{ project.id|upper }}
+base_url: /obo/{{ project.id }}
+
+products:
+- {{ project.id }}.owl: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/{{ project.id }}.owl
+- {{ project.id }}.obo: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/{{ project.id }}.obo
+
+term_browser: ontobee
+example_terms:
+- {{ project.id }}_0000000
+
+entries:
+
+- prefix: /releases/
+  replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/v
+
+- prefix: /tracker/
+  replacement: https://github.com/{{ project.github_org }}/{{ project.repo }}/issues
+
+- prefix: /about/
+  replacement: http://www.ontobee.org/ontology/{{ project.id|upper }}?iri=http://purl.obolibrary.org/obo/
+
+## generic fall-through, serve direct from github by default
+- prefix: /
+  replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/
+
