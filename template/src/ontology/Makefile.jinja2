@@ -135,7 +135,7 @@ prepare_initial_release: prepare_release
 # ----------------------------------------
 # we assume OWL as source
 %.obo: %.owl
-	$(ROBOT) convert -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
+	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
 %.ttl: %.owl
 	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
 %.json: %.owl

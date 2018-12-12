@@ -1,9 +1,8 @@
+#!/usr/bin/env python3
 """
 Generate artefacts (Makefile, default ontology edit file, imports) from a project configuration
 
 See https://github.com/ontodev/robot/issues/37
-
-SUBJECT TO CHANGE!
 
 To test:
 
@@ -25,6 +24,7 @@ TEMPLATE_SUFFIX = '.jinja2'
 # Primitive Types
 OntologyHandle = str ## E.g. uberon, cl; also subset names
 Person = str ## ORCID or github handle
+Email = str ## must be of NAME@DOMAIN form
 
 @dataclass
 class Product(JsonSchemaMixin):
@@ -156,6 +156,7 @@ class OntologyProject(JsonSchemaMixin):
     reasoner : str = 'ELK'
     use_dosdps : bool = False
     report_fail_on : Optional[str] = None
+    travis_emails : Optional[List[Email]] = None ## ['obo-ci-reports-all@groups.io']
     #obo_format_options : Optional[str] = None
     obo_format_options : str = ""
     uribase : str = 'http://purl.obolibrary.org/obo'
@@ -256,15 +257,16 @@ def dump_schema():
 
 @cli.command()
 @click.option('-C', '--config',       type=click.File('r'))
+@click.option('-c', '--clean/--no-clean', default=False)
 @click.option('-T', '--templatedir',  default='./template/')
-@click.option('-D', '--outdir',       default='tmp')
+@click.option('-D', '--outdir',       default=None)
 @click.option('-d', '--dependencies', multiple=True)
 @click.option('-t', '--title',        type=str)
 @click.option('-u', '--user',         type=str)
 @click.option('-s', '--source',       type=str)
 @click.option('-v', '--verbose',      count=True)
 @click.argument('repo', nargs=-1)
-def seed(config, outdir, templatedir, dependencies, title, user, source, verbose, repo):
+def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo):
     """
     Seeds an ontology project
     """
@@ -272,7 +274,7 @@ def seed(config, outdir, templatedir, dependencies, title, user, source, verbose
     mg = Generator()
     if len(repo) > 0:
         if len(repo) > 1:
-            raise Exception('max one repo')
+            raise Exception('max one repo; current={}'.format(repo))
         repo = repo[0]
     else:
         repo = None
@@ -281,6 +283,13 @@ def seed(config, outdir, templatedir, dependencies, title, user, source, verbose
                    title=title,
                    org=user,
                    repo=repo)
+    project = mg.context.project
+    if project.id is None or project.id == "":
+        project.id = repo
+    if outdir is None:
+        outdir = "tmp/{}".format(project.id)
+    if clean:
+        runcmd("rm -rf {}".format(outdir))
     for root, subdirs, files in os.walk(templatedir):
         tdir = root.replace(templatedir,outdir+"/")
         os.makedirs(tdir, exist_ok=True)
@@ -306,7 +315,6 @@ def seed(config, outdir, templatedir, dependencies, title, user, source, verbose
                         s.write(mg.generate(tgtf))
                         tgts.append(derived_file)
 
-    project = mg.context.project
     if source is not None:
         copyfile(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
     logging.info("Created files:")

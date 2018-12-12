@@ -122,6 +122,25 @@ Datatype: rdf:PlainLiteral
 {{ imp|upper }}:0000001
 {{ imp|upper }}:0000002
 {{ imp|upper }}:0000003
+{% if imp == 'ro' %}
+BFO:0000050
+RO:0002202
+{% endif %}
+{% if imp == 'bfo' %}
+BFO:0000040
+{% endif %}
+{% if imp == 'go' %}
+GO:0008150
+{% endif %}
+{% if imp == 'uberon' %}
+UBERON:0002048
+{% endif %}
+{% if imp == 'cl' %}
+UBERON:0002048
+{% endif %}
+{% if imp == 'pato' %}
+PATO:0000052
+{% endif %}
 {% endfor %}
 ^^^ src/metadata/{{ project.id }}.md
 ---

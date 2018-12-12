@@ -5,20 +5,23 @@
 # this can be changed to seed-via-docker.sh;
 # but this should NOT be the default for environments like travis which
 # run in a docker container anyway
-CMD = ./seed-my-ontology-repo.pl
+CMD = ./odk/odk.py seed
 
 EMAIL_ARGS=
 
-test: test1 test2
+test: test1 test2 test3 test4
 
 test1:
-	 $(CMD) $(EMAIL_ARGS) -c -d pato -t my-ontology1 myont
+	$(CMD) $(EMAIL_ARGS) -c -d pato -t my-ontology1 myont
 
 test2:
-	 $(CMD) $(EMAIL_ARGS) -c -d pato -d ro -t my-ontology2 myont
+	$(CMD) $(EMAIL_ARGS) -c -d pato -d ro -t my-ontology2 myont
 
 test3:
-	 $(CMD) $(EMAIL_ARGS) -c -d pato -d cl -d ro -t my-ontology3 myont
+	$(CMD) $(EMAIL_ARGS) -c -d pato -d cl -d ro -t my-ontology3 myont
+
+test4:
+	$(CMD) -c -C examples/triffo/project.yaml
 
 # Building docker image
 #
