@@ -1,0 +1,10 @@
+id: upa
+title: Unipathway
+github_org: geneontology
+repo: unipathway
+contact: amorgat
+edit_format: obo
+import_group:
+  ids:
+    - ro
+  

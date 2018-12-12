@@ -8,3 +8,5 @@ bin/
 src/ontology/seed.txt
 src/ontology/target/
 src/ontology/dosdp-tools.log
+*.tmp.obo
+*.tmp.owl

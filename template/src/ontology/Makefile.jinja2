@@ -51,7 +51,7 @@ all: all_imports all_main all_subsets sparql_test patterns all_assets
 ##
 ## By default this is the cross-product of {ont, ont-base} x FORMATS
 
-MAINS = $(ONT) $(ONT)-base
+MAIN_PRODUCTS = $(ONT) $(ONT)-base
 MAIN_FILES = $(foreach n,$(MAIN_PRODUCTS), $(n).owl $(n).obo $(n).json)
 
 all_main: $(MAIN_FILES)
@@ -67,6 +67,7 @@ IMPORTS =
 {% endif %}
 IMPORT_ROOTS = $(patsubst %, imports/%_import, $(IMPORTS))
 IMPORT_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl $(n).obo $(n).json)
+IMPORT_OWL_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl)
 
 all_imports: $(IMPORT_FILES)
 all_imports_owl: $(foreach n,$(IMPORT_ROOTS), $(n).owl)
@@ -109,9 +110,12 @@ ASSETS = \
   $(REPORT_FILES) \
   $(SUBSET_FILES)
 
+all_assets: $(ASSETS)
+
 show_assets:
 	echo $(ASSETS)
 	du -sh $(ASSETS)
+
 
 # ----------------------------------------
 # Release Management
@@ -131,13 +135,13 @@ prepare_initial_release: prepare_release
 # ----------------------------------------
 # we assume OWL as source
 %.obo: %.owl
-	$(ROBOT) convert -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.obo.tmp && grep -v ^owl-axioms $*.obo.tmp $@
+	$(ROBOT) convert -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
 %.ttl: %.owl
-	$(ROBOT) convert -i $< -f obo -o $*.obo.tmp && mv $*.obo.tmp $@
+	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
 %.json: %.owl
-	$(ROBOT) convert -i $< -f json -o $*.json.tmp && mv $*.obo.tmp $@
+	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
 
-%.gz: %:
+%.gz: %
 	gzip -c $< > $@.tmp && mv $@.tmp $@
 
 # ----------------------------------------
@@ -153,14 +157,16 @@ $(ONT).owl: $(SRC)
 		 relax \
 		 reduce -r {{ project.reasoner }} \
 		 remove --select imports \
-	         merge  $(patsubst %, -i %, $(IMPORT_FILES))  \
+	         merge  $(patsubst %, -i %, $(IMPORT_OWL_FILES))  \
 	         annotate --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
 
 # requires robot 1.2
-$(ONT)-base.owl: $(SRC) $(PATTERNDIR)/definitions.owl
+$(ONT)-base.owl: $(SRC)
 	$(ROBOT) remove --input $< --select imports \
-	         merge  -i $(PATTERNDIR)/definitions.owl \
-		 annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@ &&\
+{% if project.use_dosdps -%}
+	merge  -i $(PATTERNDIR)/definitions.owl \
+{% endif -%}
+	annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@ &&\
 	echo "$(ONT)-base.owl successfully created."
 
 # ----------------------------------------
@@ -222,7 +228,7 @@ mirror/{{ ont.id }}.trigger: $(SRC)
 mirror/{{ ont.id }}.trigger:
 {% endif -%}
 ## TODO: download first, as this appears to be faster
-mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}-trigger
+mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 	$(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@
 .PRECIOUS: mirror/%.owl
 {% endfor -%}
@@ -270,6 +276,8 @@ IM=build-$(ONT)
 build-docker:
 	docker build -t $(ONT) .
 
+{% if project.use_dosdps %}
+
 # ----------------------------------------
 # Patterns (experimental)
 # ----------------------------------------
@@ -313,6 +321,7 @@ pattern_modules := $(patsubst %.yaml, $(IMS)/patterns/%.ofn, $(notdir $(wildcard
 $(PATTERNDIR)/definitions.owl: $(pattern_modules)
 	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(ONTBASE)/patterns/defintions.owl -o $@
 
+{% endif %}
 
 
 

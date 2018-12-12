@@ -37,6 +37,7 @@ class Product(JsonSchemaMixin):
     id : str
     description: Optional[str] = None
     rebuild_if_source_changes : bool = True
+    robot_memory_gb : int = None
 
 @dataclass
 class SubsetProduct(Product):
@@ -150,11 +151,13 @@ class OntologyProject(JsonSchemaMixin):
     title : str = ""                             ## 
     repo : str = ""
     github_org : str = ""
+    edit_format : Optional[str] = None
     robot_version: Optional[str] = None
     reasoner : str = 'ELK'
-    use_dosdps : bool = True
+    use_dosdps : bool = False
     report_fail_on : Optional[str] = None
-    obo_format_options : Optional[str] = None
+    #obo_format_options : Optional[str] = None
+    obo_format_options : str = ""
     uribase : str = 'http://purl.obolibrary.org/obo'
     
     contact : Optional[Person] = None
@@ -258,12 +261,14 @@ def dump_schema():
 @click.option('-d', '--dependencies', multiple=True)
 @click.option('-t', '--title',        type=str)
 @click.option('-u', '--user',         type=str)
+@click.option('-s', '--source',       type=str)
 @click.option('-v', '--verbose',      count=True)
 @click.argument('repo', nargs=-1)
-def seed(config, outdir, templatedir, dependencies, title, user, verbose, repo):
+def seed(config, outdir, templatedir, dependencies, title, user, source, verbose, repo):
     """
     Seeds an ontology project
     """
+    tgts = []
     mg = Generator()
     if len(repo) > 0:
         if len(repo) > 1:
@@ -284,6 +289,8 @@ def seed(config, outdir, templatedir, dependencies, title, user, verbose, repo):
             tgtf = os.path.join(tdir, f)
             logging.debug('  {} -> {}'.format(srcf, tgtf))
             copyfile(srcf, tgtf)
+            if not f.startswith("_dynamic"):
+                tgts.append(tgtf)
         for f in files:
             srcf = os.path.join(root, f)
             tgtf = os.path.join(tdir, f)
@@ -292,10 +299,47 @@ def seed(config, outdir, templatedir, dependencies, title, user, verbose, repo):
                 with open(derived_file,"w") as s:
                     if f.startswith("_dynamic"):
                         logging.info('  Unpacking: {}'.format(derived_file))
-                        unpack_files(tdir, mg.generate(tgtf))
+                        tgts += unpack_files(tdir, mg.generate(tgtf))
+                        os.remove(derived_file)
                     else:
                         logging.info('  Compiling: {} -> {}'.format(tgtf, derived_file))
                         s.write(mg.generate(tgtf))
+                        tgts.append(derived_file)
+
+    project = mg.context.project
+    if source is not None:
+        copyfile(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
+    logging.info("Created files:")
+    for tgt in tgts:
+        logging.info("  File: {}".format(tgt))
+    runcmd("cd {dir} && git init && git add {files}".
+           format(dir=outdir,
+                  files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
+    runcmd("cd {}/src/ontology && make && git commit -m 'initial commit' -a && make prepare_initial_release && git commit -m 'first release'".format(outdir))
+    print("\n\n####\nNEXT STEPS:")
+    print(" 0. Examine {} and check it meets your expectations. If not blow it away and start again".format(outdir))
+    print(" 1. Go to: https://github.com/new")
+    print(" 2. The owner MUST be {org}. The Repository name MUST be {repo}".format(org=project.github_org, repo=project.repo))
+    print(" 3. Do not initialize with a README (you already have one)")
+    print(" 4. Click Create")
+    print(" 5. See the section under '…or push an existing repository from the command line'")
+    print("    E.g.:")
+    print("cd {}".format(outdir))
+    print("git remote add origin git\@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
+    print("git push -u origin master\n")
+    print("BE BOLD: you can always delete your repo and start again\n")
+    print("")
+    print("FINAL STEPS:")
+    print("Folow your customized instructions here:\n")
+    print("    https://github.com/{org}/{repo}/blob/master/src/ontology/README-editors.md".format(org=project.github_org, repo=project.repo))
+    print("")
+
+
+def runcmd(cmd):
+    logging.info("RUNNING: {}".format(cmd))
+    if os.system(cmd) != 0:
+        raise Exception('Failed: {}'.format(cmd))
+    
 
 def unpack_files(basedir, txt):
     """
@@ -305,11 +349,15 @@ def unpack_files(basedir, txt):
     MARKER = '^^^ '
     lines = txt.split("\n")
     f = None
+    tgts = []
     for line in lines:
         if line.startswith(MARKER):
             path = os.path.join(basedir, line.replace(MARKER, ""))
             os.makedirs(os.path.dirname(path), exist_ok=True)
+            if f != None:
+                f.close()
             f = open(path,"w")
+            tgts.append(path)
             logging.info('  Unpacking into: {}'.format(path))
         else:
             if f is None:
@@ -318,6 +366,9 @@ def unpack_files(basedir, txt):
                 else:
                     raise Exception('File marker "{}" required in "{}"'.format(MARKER, line))
             f.write(line + "\n")
+    if f != None:
+        f.close()
+    return tgts
             
                 
 if __name__ == "__main__":
