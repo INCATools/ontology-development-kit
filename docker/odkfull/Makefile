@@ -1,6 +1,6 @@
 
 # Building docker image
-VERSION = "v1.1.8" 
+VERSION = "v1.1.9" 
 IM=obolibrary/odkfull
 
 build:

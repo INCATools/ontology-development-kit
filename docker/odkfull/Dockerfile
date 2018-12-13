@@ -7,7 +7,7 @@ RUN apt-get -y update && \
   apt-get update && \
   apt-get upgrade -y && \
   apt-get install -q -y python3-pip perl && \
-  pip3 install jsonschema ruamel.yaml requests jsonpath_rw && \
+  pip3 install jsonschema ruamel.yaml requests jsonpath_rw pandas && \
   apt-get remove -y python-pip
 
 WORKDIR /tools
