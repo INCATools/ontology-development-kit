@@ -51,7 +51,7 @@ $(ONT).obo: $(ONT).owl
 	$(ROBOT) convert --check false -i $< -f obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $@
 	
 $(ONT)-base.owl: $(SRC) ../patterns/definitions.owl
-	$(ROBOT) remove --input $< --select imports --output $@ &&\
+	$(ROBOT) remove --trim false --input $< --select imports --output $@ &&\
 	$(ROBOT) merge -i $@ -i ../patterns/definitions.owl annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT)-base.owl annotate --ontology-iri $(BASE)/$(ONT)-base.owl -o $@ &&\
 	echo "$(ONT)-base.owl successfully created."
 # ----------------------------------------
