@@ -6,6 +6,17 @@
   Each entry starting with ^^^ denotes a single file
 
 -#}
+{#-
+
+  Ontology source file, e.g. src/ontology/foo-edit.owl
+
+  We seed this with basic info such as ontology IRI and
+  a fake root class (this can be customized).
+
+  Note that when running odk.py, you can pass in a --source
+  argument to substitute this with your own edit file
+
+-#}
 ^^^ src/ontology/{{ project.id }}-edit.{{ project.edit_format }}
 {% if project.edit_format == "obo" %}
 {% for imp in project.import_group.ids %}
@@ -48,7 +59,13 @@ AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | u
 {% endif %}
 {% for imp in project.import_group.ids %}
 
+{#-
+
+  ID ranges file
+
+-#}
 ^^^ src/ontology/{{ project.id }}-idranges.owl
+## ID Ranges File
 Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 Prefix: idsfor: <http://purl.obolibrary.org/obo/IAO_0000598>
 Prefix: dc: <http://purl.org/dc/elements/1.1/>
@@ -60,8 +77,6 @@ Prefix: iddigits: <http://purl.obolibrary.org/obo/IAO_0000596>
 Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 Prefix: idrange: <http://purl.obolibrary.org/obo/ro/idrange/>
 Prefix: owl: <http://www.w3.org/2002/07/owl#>
-
-
 
 Ontology: <http://purl.obolibrary.org/obo/{{ project.id }}/{{ project.id }}-idranges.owl>
 
@@ -103,6 +118,17 @@ Datatype: idrange:2
 Datatype: xsd:integer
 Datatype: rdf:PlainLiteral
 
+^^^ src/ontology/{{ project.id }}.Makefile
+## Customize Makefile settings for {{project.id}}
+## 
+## If you need to customize your Makefile, make
+## changes here rather than in the main Makefile
+
+{#-
+
+  Imports files, one per import
+
+-#}
 ^^^ src/ontology/imports/{{ imp }}_import.owl
 <?xml version="1.0"?>
 <rdf:RDF 
@@ -118,6 +144,17 @@ Datatype: rdf:PlainLiteral
 
     <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
 </rdf:RDF>
+{#-
+
+  Import Term files
+
+  We seed each of these with some random terms. This is a little unsatisfactory and fragile;
+  ROBOT extract will fail if it cannot find any of the terms. While this doesn't matter in the long term,
+  as the ontology maintainer will provide their own lists, but it is problematic for the initial seed.
+
+  TODO: Decide if we should either query ontobee for seed terms OR have the seed list provided in the project.yaml
+
+-#}
 ^^^ src/ontology/imports/{{ imp }}_terms.txt
 {{ imp|upper }}:0000001
 {{ imp|upper }}:0000002
@@ -142,6 +179,15 @@ UBERON:0002048
 PATO:0000052
 {% endif %}
 {% endfor %}
+{#-
+
+  Metadata files.
+
+  These are convenient for submission to OBO. Note that OBO maintains two files, a .md and a .yml
+
+  TODO: include a script that makes it easy for maintainers to do this.
+
+-#}
 ^^^ src/metadata/{{ project.id }}.md
 ---
 layout: ontology_detail
@@ -163,7 +209,17 @@ domain: stuff
 homepage: https://github.com/{{ project.github_org }}/{{ project.repo }}
 products:
   - id: {{ project.id }}.owl
+    name: "{{ project.title }} main release in OWL format"
   - id: {{ project.id }}.obo
+    name: "{{ project.title }} additional release in OBO format"
+  - id: {{ project.id }}.json
+    name: "{{ project.title }} additional release in OBOJSon format"
+  - id: {{ project.id }}/{{ project.id }}-base.owl
+    name: "{{ project.title }} main release in OWL format"
+  - id: {{ project.id }}/{{ project.id }}-base.obo
+    name: "{{ project.title }} additional release in OBO format"
+  - id: {{ project.id }}/{{ project.id }}-base.json
+    name: "{{ project.title }} additional release in OBOJSon format"
 dependencies:
 {% for imp in project.import_group.ids -%}
 - id: {{ imp }}
@@ -174,7 +230,9 @@ license:
   label: CC-BY
 ---
 
-Enter a detailed description of your ontology here
+Enter a detailed description of your ontology here. You can use arbitrary markdown and HTML.
+You can also embed images too.
+
 ^^^ src/metadata/{{ project.id }}.yml
 # PURL configuration for http://purl.obolibrary.org/obo/{{ project.id }}
 
@@ -203,4 +261,3 @@ entries:
 ## generic fall-through, serve direct from github by default
 - prefix: /
   replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/
-

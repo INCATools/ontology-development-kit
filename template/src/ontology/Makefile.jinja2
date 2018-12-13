@@ -162,7 +162,7 @@ $(ONT).owl: $(SRC)
 
 # requires robot 1.2
 $(ONT)-base.owl: $(SRC)
-	$(ROBOT) remove --input $< --select imports \
+	$(ROBOT) remove  --input $< --select imports \
 {% if project.use_dosdps -%}
 	merge  -i $(PATTERNDIR)/definitions.owl \
 {% endif -%}
@@ -232,6 +232,16 @@ mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 	$(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@
 .PRECIOUS: mirror/%.owl
 {% endfor -%}
+{% endif %}
+
+{% if project.subset_group is defined %}
+# ----------------------------------------
+# Subsets
+# ----------------------------------------
+subsets/%.tsv: subsets/%.owl
+	$(ROBOT) query -f tsv -i $< -s ../sparql/labels.sparql $@
+subsets/%.owl: $(ONT).owl
+	owltools --use-catalog $< --extract-ontology-subset --fill-gaps --subset $* -o $@.tmp.owl && mv $@.tmp.owl $@
 {% endif %}
 
 # ----------------------------------------
@@ -323,6 +333,7 @@ $(PATTERNDIR)/definitions.owl: $(pattern_modules)
 
 {% endif %}
 
+include {{ project.id }}.Makefile
 
 
 

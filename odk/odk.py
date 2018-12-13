@@ -4,9 +4,10 @@ Generate artefacts (Makefile, default ontology edit file, imports) from a projec
 
 See https://github.com/ontodev/robot/issues/37
 
-To test:
+For help on command line usage:
 
-python3 odk/odk.py create_makefile -c examples/envo.yaml
+odk.py 
+
 """
 from typing import Optional, Set, List, Union, Dict, Any
 from dataclasses import dataclass, field
@@ -32,7 +33,10 @@ class Product(JsonSchemaMixin):
     abstract base class for all products.
 
     Here, a product is something that is produced by an ontology workflow.
-    A product can be manifested in different formats
+    A product can be manifested in different formats.
+    
+    For example, goslim_prok is a subset (aka slim) product from GO,
+    this can be manifest as obo, owl, json
     """
     id : str
     description: Optional[str] = None
@@ -59,11 +63,10 @@ class ImportProduct(Product):
 
 @dataclass
 class PatternProduct(Product):
-    """
-    Represents a DOSDP template
+    """Represents a DOSDP template product
     
-    The products here can be CSVs ('parse'ing OWL) or
-    they may be OWL (generating)
+    The products here can be manfested as CSVs (from 'parse'ing OWL)
+    or they may be OWL (from the dosdp 'generate' command)
     """
     pass
 
@@ -157,7 +160,6 @@ class OntologyProject(JsonSchemaMixin):
     use_dosdps : bool = False
     report_fail_on : Optional[str] = None
     travis_emails : Optional[List[Email]] = None ## ['obo-ci-reports-all@groups.io']
-    #obo_format_options : Optional[str] = None
     obo_format_options : str = ""
     uribase : str = 'http://purl.obolibrary.org/obo'
     
@@ -165,6 +167,7 @@ class OntologyProject(JsonSchemaMixin):
     creators : Optional[List[Person]] = None
     contributors : Optional[List[Person]] = None
 
+    # product groups
     import_group : Optional[ImportGroup] = None
     subset_group : Optional[SubsetGroup] = None
     pattern_group : Optional[PatternGroup] = None
