@@ -162,7 +162,7 @@ $(ONT).owl: $(SRC)
 
 # requires robot 1.2
 $(ONT)-base.owl: $(SRC)
-	$(ROBOT) remove  --input $< --select imports \
+	$(ROBOT) remove --trim false --input $< --select imports \
 {% if project.use_dosdps -%}
 	merge  -i $(PATTERNDIR)/definitions.owl \
 {% endif -%}
