@@ -154,7 +154,7 @@ class OntologyProject(JsonSchemaMixin):
     title : str = ""                             ## 
     repo : str = ""
     github_org : str = ""
-    edit_format : Optional[str] = None
+    edit_format : str = 'owl'
     robot_version: Optional[str] = None
     reasoner : str = 'ELK'
     use_dosdps : bool = False

@@ -2,6 +2,8 @@
 
   Jinja2 Template for multile dynamic files
 
+  See odk.py for how this is processed.
+
   This is first expanded into a single text file;
   Each entry starting with ^^^ denotes a single file
 
@@ -16,11 +18,11 @@
   Note that when running odk.py, you can pass in a --source
   argument to substitute this with your own edit file
 
--#}
+#}
 ^^^ src/ontology/{{ project.id }}-edit.{{ project.edit_format }}
 {% if project.edit_format == "obo" %}
 {% for imp in project.import_group.ids %}
-import: http://purl.obolibrary.org/obo/foobar/imports/{{ imp }}_import.owl
+import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp }}_import.owl
 {% endfor %}
 ontology: {{project.id}}
 
@@ -29,7 +31,7 @@ id: {{ project.id | upper }}:00000000
 name: root node
 
 {% else %}
-Prefix(:=<http://purl.obolibrary.org/obo/foobar.owl#>)
+Prefix(:=<http://purl.obolibrary.org/obo/{{ project.id }}.owl#>)
 Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
 Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
 Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
@@ -39,7 +41,7 @@ Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
 
 Ontology(<http://purl.obolibrary.org/obo/{{ project.id }}.owl>
 {% for imp in project.import_group.ids %}
-Import(<http://purl.obolibrary.org/obo/foobar/imports/{{ imp }}_import.owl>)
+Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp }}_import.owl>)
 {% endfor %}
 Annotation(rdfs:comment "{{ project.title }}")
 
@@ -50,7 +52,7 @@ Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000
 #   Classes
 ############################
 
-# Class: <http://purl.obolibrary.org/obo/FOOBAR_00000000> (foobar)
+# Class: <http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>
 
 AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000> "root node"@en)
 
@@ -63,7 +65,7 @@ AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | u
 
   ID ranges file
 
--#}
+#}
 ^^^ src/ontology/{{ project.id }}-idranges.owl
 ## ID Ranges File
 Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -128,7 +130,7 @@ Datatype: rdf:PlainLiteral
 
   Imports files, one per import
 
--#}
+#}
 ^^^ src/ontology/imports/{{ imp }}_import.owl
 <?xml version="1.0"?>
 <rdf:RDF 
@@ -154,7 +156,7 @@ Datatype: rdf:PlainLiteral
 
   TODO: Decide if we should either query ontobee for seed terms OR have the seed list provided in the project.yaml
 
--#}
+#}
 ^^^ src/ontology/imports/{{ imp }}_terms.txt
 {{ imp|upper }}:0000001
 {{ imp|upper }}:0000002
@@ -187,7 +189,7 @@ PATO:0000052
 
   TODO: include a script that makes it easy for maintainers to do this.
 
--#}
+#}
 ^^^ src/metadata/{{ project.id }}.md
 ---
 layout: ontology_detail
