@@ -26,7 +26,7 @@ It's recommended you get a release version: https://github.com/INCATools/ontolog
 
 ## Initialize
 
-TODO: UPDATE TO SHOW PROJECT-BASED CONFIG
+TODO: UPDATE DOCS FOR NEW PYTHON odk.py - NOT YET WRAPPED IN DOCKER
 
 First you must be in the root level of the starter kit
 
@@ -40,13 +40,17 @@ The `seed-via-docker.sh` command does everything you need. For help:
 
 The very first time you run this it may be slow, while docker downloads necessary images. Subsequent runs should be much faster!
 
-You can either run the script in interactive mode, or passing details via command line argument
+NEW: You can either pass in arguments on the command line, or use a `project.yaml` file. See the [examples](examples) folder for examples
 
 For interactive mode, just run the script without any arguments:
 
     ./seed-via-docker.sh
 
 An example:
+
+    ./seed-via-docker.sh   -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
+
+Via a conf file:
 
     ./seed-via-docker.sh   -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
 
