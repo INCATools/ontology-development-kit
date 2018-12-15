@@ -26,6 +26,7 @@ TEMPLATE_SUFFIX = '.jinja2'
 OntologyHandle = str ## E.g. uberon, cl; also subset names
 Person = str ## ORCID or github handle
 Email = str ## must be of NAME@DOMAIN form
+Url = str
 
 @dataclass
 class Product(JsonSchemaMixin):
@@ -41,7 +42,7 @@ class Product(JsonSchemaMixin):
     id : str
     description: Optional[str] = None
     rebuild_if_source_changes : bool = True
-    robot_memory_gb : int = None
+    robot_memory_gb : Optional[int] = None
 
 @dataclass
 class SubsetProduct(Product):
@@ -59,7 +60,7 @@ class ImportProduct(Product):
     Imports are typically built from an upstream source,
     but this can be configured
     """
-    pass
+    mirror_from: Optional[Url] = None
 
 @dataclass
 class PatternProduct(Product):
@@ -199,7 +200,7 @@ class ExecutionContext(JsonSchemaMixin):
 class Generator(object):
     context : ExecutionContext = ExecutionContext()
 
-    def generate(self, input='template/src/ontology/Makefile.jinja2'):
+    def generate(self, input):
         with open(input) as file_:
             template = Template(file_.read())
         return template.render( project = self.context.project)
@@ -237,15 +238,16 @@ def cli():
 
 @cli.command()
 @click.option('-C', '--config', type=click.File('r'))
+@click.option('-T', '--templatedir',  default='./template/')
 @click.option('-i', '--input',  type=click.Path(exists=True))
 @click.option('-o', '--output')
-def create_makefile(config, input, output):
+def create_makefile(config, templatedir, input, output):
     """
     For testing purposes
     """
     mg = Generator()
     mg.load_config(config)
-    print(mg.generate())
+    print(mg.generate('{}/src/ontology/Makefile.jinja2'.format(templatedir)))
 
 @cli.command()
 def dump_schema():
