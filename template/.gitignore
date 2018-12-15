@@ -3,6 +3,7 @@ src/ontology/mirror
 src/ontology/mirror/*
 src/ontology/foobar.obo
 src/ontology/foobar.owl
+src/ontology/foobar-base.owl
 semantic.cache
 bin/
 src/ontology/seed.txt
@@ -10,3 +11,6 @@ src/ontology/target/
 src/ontology/dosdp-tools.log
 *.tmp.obo
 *.tmp.owl
+src/patterns/imports/seed_sorted.txt
+src/ontology/ed_definitions_merged.owl
+src/ontology/patterns 

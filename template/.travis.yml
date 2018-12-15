@@ -6,10 +6,10 @@ services:
   - docker
 
 before_install:
-  - docker pull obolibrary/osklite
+  - docker pull obolibrary/odkfull
 
 # command to run tests
-script: cd src/ontology && ./run.sh make test
+script: cd src/ontology && make test
 
 #after_success:
 #  coveralls
@@ -21,7 +21,7 @@ branches:
     - test-travis
 
 ### Add your own lists here
-### See https://github.com/INCATools/ontology-starter-kit/issues/35
+### See https://github.com/INCATools/ontology-development-kit/issues/35
 notifications:
   email:
     - obo-ci-reports-all@groups.io

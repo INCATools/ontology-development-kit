@@ -2,6 +2,7 @@
 
 use strict;
 use File::Find qw(finddepth);
+use File::Path qw( rmtree );
 use File::Basename;
 
 my $n_errors = 0;
@@ -28,7 +29,7 @@ print '            \/     \/ '; print "\n";
 
 
 print "Welcome to the ontology development kit repository creator!\n";
-print "For full instructions, see https://github.com/INCATools/ontology-development-kit/issues!\n\n";
+print "For full instructions, see https://github.com/INCATools/ontology-development-kit!\n\n";
 
 print "ARGUMENTS: [ @ARGV ]\n";
 
@@ -126,9 +127,6 @@ if (!@depends) {
     exit 1;
 }
 
-if ($clean) {
-    `rm -rf target/*`;
-}
 
 if (!$title) {
     $title = $ontid;
@@ -145,6 +143,14 @@ $targetdir =~ tr/a-z\-//cd;
 my $repo_name = $targetdir;
 
 $targetdir = "target/$targetdir";
+
+if ($clean) {
+    print "Cleaning directory..";
+    if (-d "$targetdir") {
+      rmtree $targetdir;
+  }
+}
+
 mkdir("target") unless -d 'target';
 mkdir("$targetdir") unless -d $targetdir;
 
@@ -227,7 +233,7 @@ chdir($targetdir);
 
 runcmd("git init");
 runcmd("git add -A .");
-runcmd("git commit -m 'initial commit of ontology sources of $ontid using ontology-starter-kit' -a") unless $no_commit;
+runcmd("git commit -m 'initial commit of ontology sources of $ontid using ontology-development-kit' -a") unless $no_commit;
 
 if ($n_errors) {
     print STDERR "WARNING: encountered errors - the commands below may not work\n";
@@ -247,9 +253,10 @@ if ($prep_initial_release) {
     runcmd("git add src/ontology/imports/*.{obo,owl}") if @depends;
     runcmd("git add src/ontology/subsets/*.{obo,owl}") if -d "src/ontology/subsets";
     runcmd("git add $ontid.{obo,owl}");
+    runcmd("git add $ontid-base.owl");
     runcmd("git add imports/*.{obo,owl}") if @depends;
     runcmd("git add subsets/*.{obo,owl}") if -d "src/ontology/subsets";
-    runcmd("git commit -m 'initial release of $ontid using ontology-starter-kit' -a") unless $no_commit;
+    runcmd("git commit -m 'initial release of $ontid using ontology-development-kit' -a") unless $no_commit;
 }
 
 runcmd("git status");
@@ -312,7 +319,7 @@ sub runcmd {
 
     # not all shells support {...} syntax
     # we auto-unfold these here
-    # see https://github.com/INCATools/ontology-starter-kit/pull/49
+    # see https://github.com/INCATools/ontology-development-kit/pull/49
     if ($cmd =~ m@(.*)\{(.*)\}(.*)@) {
         my ($pre, $matchlist, $post) = ($1,$2,$3);
         my @expansions = split(/,/, $matchlist);
@@ -401,7 +408,7 @@ sub usage {
 
     $sn  -d po -d ro -d pato -u obophenotype -t "Triffid Behavior ontology" triffo
 
-    See http://github.com/cmungall/ontology-starter-kit for details
+    See http://github.com/cmungall/ontology-development-kit for details
 
     Options:
 

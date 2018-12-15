@@ -3,3 +3,5 @@ bin/
 semantic.cache
 tmp/
 venv/
+.DS_Store
+template/src/patterns/catalog-v001.xml

@@ -6,8 +6,9 @@ Initialize a GitHub repo for managing your ontology the OBO Library way!
 
 For more details, see
 
- * [Article](https://douroucouli.wordpress.com/2018/08/06/new-version-of-ontology-development-kit-now-with-docker-support/)
- * [OBO Workshop Slides](https://docs.google.com/presentation/d/1JPAaDl6Nitxet9NVqWI30eIygcerYAjdMIGmxbRtIn0/edit?usp=sharing)
+ * [2018 Article](https://douroucouli.wordpress.com/2018/08/06/new-version-of-ontology-development-kit-now-with-docker-support/)
+ * [ICBO Workshop Slides 2018](https://docs.google.com/presentation/d/1nIybviEEJiRKHO2rkBMZsQ0QjtsHyU01_-9beZqD_Z4/edit?usp=sharing)
+ * [ICBO Workshop Slides 2017](https://docs.google.com/presentation/d/1JPAaDl6Nitxet9NVqWI30eIygcerYAjdMIGmxbRtIn0/edit?usp=sharing)
 
 # Requirements
 
@@ -20,15 +21,15 @@ It is possible to do this without docker, see below for instructions
 
 # Generating an ontology project
 
-## 1. Download this starter package
+## 1. Download the ontology development kit
 
-It's recommended you get a release version: https://github.com/INCATools/ontology-starter-kit/releases
+It's recommended you get a release version: https://github.com/INCATools/ontology-development-kit/releases
 
 ## Initialize
 
 TODO: UPDATE DOCS FOR NEW PYTHON odk.py - NOT YET WRAPPED IN DOCKER
 
-First you must be in the root level of the starter kit
+First you must be in the root level of the kit
 
     cd ontology-development-kit
 
@@ -64,7 +65,7 @@ You can customize at this stage, or (recommended) after making an initial push t
 
 ## Push to GitHub
 
-The starter kit will automatically initialize a git project, add all files and commit.
+The development kit will automatically initialize a git project, add all files and commit.
 
 You will need to create a project on GitHub.
 
@@ -123,7 +124,7 @@ See the README-editors.md file that has been generated for your project.
 
 ## Troubleshooting.
 
-If you have issues, file them here: https://github.com/INCATools/ontology-starter-kit/issues
+If you have issues, file them here: https://github.com/INCATools/ontology-development-kit/issues
 
 Some things to check:
 
@@ -146,7 +147,7 @@ info.
 
 The ODK is designed for creating a new repo for a new ontology. It can still be used to help figure out how to migrate an existing github repository to the ODK structure. There are different ways to do this.
 
- * Manually compare your ontology against the [template](https://github.com/INCATools/ontology-starter-kit/tree/master/template) folder and make necessary adjustments
+ * Manually compare your ontology against the [template](https://github.com/INCATools/ontology-development-kit/tree/master/template) folder and make necessary adjustments
  * Run the seed script as if creating a new repo. Manually compare this with your existing repo and use `git mv` to rearrange, and adding any missing files by copying them across and doing a `git add`
  * Create a new repo de novo and abandon your existing one, using github issue mover to move tickets across.
  

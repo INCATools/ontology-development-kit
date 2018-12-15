@@ -1,8 +1,8 @@
 These notes are for the EDITORS of foobar
 
-This project was created using the [ontology development kit](https://github.com/cmungall/ontology-development-kit). See the site for details.
+This project was created using the [ontology development kit](https://github.com/INCATools/ontology-development-kit). See the site for details.
 
-For more details on ontology management, please see the [OBO tutorial](https://github.com/jamesaoverton/obo-tutorial) or the [Gene Ontology Editors Tutorial](go-protege-tutorial.readthedocs.io)
+For more details on ontology management, please see the [OBO tutorial](https://github.com/jamesaoverton/obo-tutorial) or the [Gene Ontology Editors Tutorial](https://go-protege-tutorial.readthedocs.io/en/latest/)
 
 You may also want to read the [GO ontology editors guide](http://go-ontology.readthedocs.org/)
 
@@ -30,7 +30,7 @@ You should discuss the git workflow you should use with the maintainer
 of this repo, who should document it here. If you are the maintainer,
 you can contact the odk developers for assistance. You may want to
 copy the flow an existing project, for example GO: [Gene Ontology
-Editors Tutorial](go-protege-tutorial.readthedocs.io).
+Editors Tutorial](https://go-protege-tutorial.readthedocs.io/en/latest/).
 
 In general, it is bad practice to commit changes to master. It is
 better to make changes on a branch, and make Pull Requests.
