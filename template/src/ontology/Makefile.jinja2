@@ -27,6 +27,7 @@ SRC =                       $(ONT)-edit.$(EDIT_FORMAT)
 ROBOT=                      robot
 RELEASEDIR=                 ../..
 PATTERNDIR=                 ../patterns
+REPORTDIR=                 reports
 SPARQLDIR =                 ../sparql
 REPORT_FAIL_ON =            {{ project.report_fail_on|default('ERROR') }}
 OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
@@ -45,7 +46,7 @@ DOSDPT=                      dosdp-tools
 # Top-level targets
 # ----------------------------------------
 
-all: all_imports all_main all_subsets sparql_test patterns all_assets
+all: all_imports all_main all_subsets sparql_test patterns all_reports all_assets
 
 ## -- main targets --
 ##
@@ -61,7 +62,7 @@ all_main: $(MAIN_FILES)
 ## By default this is the cross-product of IMPORT_MODULES x FORMATS
 
 {% if project.import_group is defined %}
-IMPORTS = {% for imp in project.import_group.ids %} {{ imp }}{% endfor %}
+IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %}
 {% else %}
 IMPORTS = 
 {% endif %}
@@ -80,7 +81,7 @@ all_imports_obo: $(foreach n,$(IMPORT_ROOTS), $(n).obo)
 ## Note we also include TSV as a format
 
 {% if project.subset_group is defined %}
-SUBSETS = {% for x in project.subset_group.ids %} {{ x }}{% endfor %}
+SUBSETS = {% for x in project.subset_group.products %} {{ x.id }}{% endfor %}
 {% else %}
 SUBSETS = 
 {% endif %}
@@ -93,7 +94,7 @@ all_subsets: $(SUBSET_FILES)
 ##
 
 {% if project.pattern_group is defined %}
-PATTERNS = {% for x in project.pattern_group.ids %} {{ x }}{% endfor %}
+PATTERNS = {% for x in project.pattern_group.products %} {{ x.id }}{% endfor %}
 {% else %}
 PATTERNS = 
 {% endif %}
@@ -101,6 +102,15 @@ PATTERN_ROOTS = $(patsubst %, $(PATTERNDIR)/%, $(PATTERNS))
 PATTERN_FILES = $(foreach n,$(PATTERN_ROOTS), $(n).owl)
 
 all_patterns: $(PATTERN_FILES)
+
+## -- dosdp pattern targets --
+##
+
+OBO_REPORT = $(ONT)-obo-report
+REPORTS = $(OBO_REPORT)
+REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
+
+all_reports: all_reports_onestep $(REPORT_FILES)
 
 ## -- all files/assets --
 
@@ -188,11 +198,11 @@ seed.txt: $(SRC)
 	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
 {% endif %}
 
-# Generate terms.txt for each import.  # Assume OBO-style Possibly hacky step?
+# Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
 # Should be able to drop this if robot can just take a big messy list of terms as input.
 
-imports/%_terms_combined.txt: seed.txt
-	cat $< imports/$*_terms.txt | sort | uniq >  $@
+imports/%_terms_combined.txt: seed.txt imports/%_terms.txt
+	cat $^ | grep -v ^# | sort | uniq >  $@
 
 # -- Generate Import Modules --
 #
@@ -272,15 +282,16 @@ sparql_test: $(SRC)
 # ----------------------------------------
 # ROBOT report
 # ----------------------------------------
-reports/%-report.tsv: %.owl
-	$(ROBOT) report -i $< --fail-on $(REPORT_FAIL_ON)
+reports/%-obo-report.tsv: %.owl
+	$(ROBOT) report -i $< --fail-on $(REPORT_FAIL_ON) -o $@
 
 # ----------------------------------------
 # Sparql queries: Exports
 # ----------------------------------------
 
 SPARQL_EXPORTS_ARGS = $(foreach V,$(SPARQL_EXPORTS),-s $(SPARQLDIR)/$V.sparql reports/$V.tsv)
-all_reports: $(SRC)
+# This combines all into one single command
+all_reports_onestep: $(SRC)
 	$(ROBOT) query -f tsv -i $< $(SPARQL_EXPORTS_ARGS)
 
 
