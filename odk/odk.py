@@ -18,6 +18,7 @@ from jinja2 import Template
 from dacite import from_dict
 import yaml
 import os
+import shutil
 from shutil import copyfile
 import logging
 
@@ -534,7 +535,8 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     if outdir is None:
         outdir = "target/{}".format(project.id)
     if clean:
-        runcmd("rm -rf {}".format(outdir))
+        if os.path.exists(outdir):
+            shutil.rmtree(outdir)
     for root, subdirs, files in os.walk(templatedir):
         tdir = root.replace(templatedir,outdir+"/")
         os.makedirs(tdir, exist_ok=True)
