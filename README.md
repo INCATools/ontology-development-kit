@@ -9,52 +9,36 @@ For more details, see
  * [Article](https://douroucouli.wordpress.com/2018/08/06/new-version-of-ontology-development-kit-now-with-docker-support/)
  * [OBO Workshop Slides](https://docs.google.com/presentation/d/1JPAaDl6Nitxet9NVqWI30eIygcerYAjdMIGmxbRtIn0/edit?usp=sharing)
 
-# Requirements
+# Instructions: Create a new ontology project
 
-To run this kit to generate a new ontology repo, you will need
+We will walk you though the steps to make a new ontology project
 
- 1. [docker](https://www.docker.com/get-docker)
- 2. A git client
+## 1. Install and Start Docker
 
-It is possible to do this without docker, see below for instructions
+ * [docker](https://www.docker.com/get-docker)
 
-# Generating an ontology project
+See below for an alternative protocol where you install the software yourself rather than use Docker
 
-## 1. Download this starter package
+## 2. Download the wrapper script
 
-It's recommended you get a release version: https://github.com/INCATools/ontology-starter-kit/releases
+ * Linux/Mac: [seed-via-docker.sh](https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/seed-via-docker.sh)
+ * PC: [seed-via-docker.bat](https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/seed-via-docker.bat)
 
-## Initialize
+## 3. Run the wrapper script
 
-TODO: UPDATE DOCS FOR NEW PYTHON odk.py - NOT YET WRAPPED IN DOCKER
+First, make sure you have Docker running (you will see the Docker whale in your toolbar on a Mac)
 
-First you must be in the root level of the starter kit
+You can either pass in a `project.yaml` file that specifies your ontology project setup, or you can pass arguments on the command line.
 
-    cd ontology-development-kit
-
-The `seed-via-docker.sh` command does everything you need. For help:
-
-    ./seed-via-docker.sh  -h
-
-(Windows user: replace `seed-via-docker.sh` with `seed-via-docker.bat`)
-
-The very first time you run this it may be slow, while docker downloads necessary images. Subsequent runs should be much faster!
-
-NEW: You can either pass in arguments on the command line, or use a `project.yaml` file. See the [examples](examples) folder for examples
-
-For interactive mode, just run the script without any arguments:
-
-    ./seed-via-docker.sh
-
-An example:
+Passing arguments on the command line:
 
     ./seed-via-docker.sh   -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
 
-Via a conf file:
+Using a the predefined [examples/triffo/project.yaml](examples/triffo/project.yaml) file:
 
-    ./seed-via-docker.sh   -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
+    ./seed-via-docker.sh -C examples/triffo/project.yaml
 
-You can list any set of dependencies you like after "-d". However, these must be the official OBO ontology IDs. See http://obofoundry.org for details.
+**NOTE** The very first time you run this it may be slow, while docker downloads necessary images. Don't worry, subsequent runs should be much faster!
 
 This will create your starter files in
 `target/triffid-behavior-ontology`. It will also prepare an initial
@@ -62,7 +46,7 @@ release and initialize a local repository (not yet pushed to GitHub).
 
 You can customize at this stage, or (recommended) after making an initial push to github
 
-## Push to GitHub
+## 4. Push to GitHub
 
 The starter kit will automatically initialize a git project, add all files and commit.
 
@@ -84,7 +68,7 @@ git push -u origin master
 
 Note: you can now mv `target/triffid-behavior-ontology` to anywhere you like in your home directory. Or you can do a fresh checkout from github
 
-## Edit and release cycle
+## Next Steps: Edit and release cycle
 
 In your repo you will see a README-editors.md file that has been customized for your project. Follow these instructions.
 
@@ -136,11 +120,13 @@ Some things to check:
 
 You will likely want to customize the build process, and of course to edit the ontology.
 
-The main thing you will want to do is to modify the seeds that are
-used to build the imports. The ones that are there are just examples,
-edit them as you like. See the ROBOT docs and the [OBO
-Tutorial](https://github.com/jamesaoverton/obo-tutorial) for more
-info.
+We recommend that you do not edit the main Makefile, but instead the supplemental one (e.g. myont.Makefile) is src/ontology
+
+## Regenerating configuration files in an existing project
+
+DOCUMENTATION TODO
+
+You can recreate the Makefile by running `odk.py create_makefile -C project.yaml`
 
 ## Adapting an existing ontology repo
 
@@ -165,3 +151,8 @@ releases to assist in upgrading.
 ## More documentation
 
 You will find additional documentation in the src/ontology/README-editors.md file in your repo
+
+## Alterantive to Docker
+
+You can run the seed script without docker, you will need Python3.6 or
+higher and Java. See requirements.txt for python requirements.

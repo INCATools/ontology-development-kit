@@ -1,2 +1,2 @@
 #!/bin/sh
-docker run -v $PWD:/work -w /work --rm -ti obolibrary/odkfull ./odk/odk.py "$@"
+docker run -v $HOME/.gitconfig:/root/.gitconfig -v $PWD:/work -w /work --rm -ti obolibrary/odkfull /tools/odk.py seed "$@"
