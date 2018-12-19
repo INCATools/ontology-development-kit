@@ -24,8 +24,17 @@ RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/ow
 RUN wget https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
-    
+
+RUN (echo "#!/usr/bin/env sh" && curl -L https://github.com/lihaoyi/Ammonite/releases/download/1.4.4/2.12-1.4.4) >/tools/amm && \
+    chmod +x /tools/amm
+
+# Avoid repeated downloads of script dependencies by mounting the local coursier cache: docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
+ENV COURSIER_CACHE "/tools/.coursier-cache"
+
 ENV PATH "/tools/:$PATH"
+
+# Force precompile of ammonite files
+RUN amm /dev/null
 
 # Setup dosdp tools
 ENV V=0.10.1
