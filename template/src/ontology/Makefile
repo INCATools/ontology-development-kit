@@ -27,10 +27,10 @@ DOSDPT=dosdp-tools
 # Top-level targets
 # ----------------------------------------
 
-all: all_imports sparql_test patterns $(ONT).owl $(ONT).obo
+all: all_imports sparql_test patterns $(ONT).owl $(ONT).obo $(ONT)-base.owl
 test: sparql_test all
 prepare_release: all
-	cp $(ONT).owl $(ONT).obo $(RELEASEDIR) &&\
+	cp $(ONT).owl $(ONT).obo $(ONT)-base.owl $(RELEASEDIR) &&\
 	mkdir -p $(RELEASEDIR)/imports &&\
 	cp imports/*.owl $(RELEASEDIR)/imports &&\
 	cp imports/*.obo $(RELEASEDIR)/imports &&\
@@ -49,7 +49,11 @@ $(ONT).owl: $(SRC)
 	$(ROBOT)  reason -i $< -r ELK -e none relax reduce -r ELK annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT).owl -o $@
 $(ONT).obo: $(ONT).owl
 	$(ROBOT) convert --check false -i $< -f obo -o $(ONT).obo.tmp && mv $(ONT).obo.tmp $@
-
+	
+$(ONT)-base.owl: $(SRC) ../patterns/definitions.owl
+	$(ROBOT) remove --input $< --select imports --output $@ &&\
+	$(ROBOT) merge -i $@ -i ../patterns/definitions.owl annotate -V $(BASE)/releases/`date +%Y-%m-%d`/$(ONT)-base.owl annotate --ontology-iri $(BASE)/$(ONT)-base.owl -o $@ &&\
+	echo "$(ONT)-base.owl successfully created."
 # ----------------------------------------
 # Import modules
 # ----------------------------------------
@@ -97,7 +101,7 @@ mirror/%.owl:
 # Release
 # ----------------------------------------
 # copy from staging area (this directory) to top-level
-release: $(ONT).owl $(ONT).obo
+release: $(ONT).owl $(ONT).obo $(ONT)-base.owl
 	cp $^ $(RELEASEDIR) && cp imports/* $(RELEASEDIR)/imports
 
 # ----------------------------------------
@@ -115,7 +119,7 @@ VCHECKS = equivalent-classes trailing-whitespace owldef-self-reference xref-synt
 #  run all violation checks
 VQUERIES = $(foreach V,$(VCHECKS),$(SPARQLDIR)/$V-violation.sparql)
 sparql_test: $(SRC)
-	robot verify  --catalog catalog-v001.xml -i $< --queries $(VQUERIES) -O reports/
+	$(ROBOT) verify  --catalog catalog-v001.xml -i $< --queries $(VQUERIES) -O reports/
 
 # ----------------------------------------
 # Sparql queries: Reports
@@ -124,7 +128,7 @@ sparql_test: $(SRC)
 REPORTS = basic-report class-count-by-prefix edges xrefs obsoletes synonyms
 REPORT_ARGS = $(foreach V,$(REPORTS),-s $(SPARQLDIR)/$V.sparql reports/$V.tsv)
 all_reports: $(SRC)
-	robot query -f tsv -i $< $(REPORT_ARGS)
+	$(ROBOT) query -f tsv -i $< $(REPORT_ARGS)
 
 # ----------------------------------------
 # Docker (experimental)

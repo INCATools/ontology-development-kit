@@ -1,5 +1,5 @@
 pattern_name: abnormal
-pattern_iri: http://purl.oboibrary.org/obo/upheno/patterns/abnormal
+pattern_iri: http://purl.obolibrary.org/obo/upheno/patterns/abnormal
 
 classes:
   quality: PATO:0000001
