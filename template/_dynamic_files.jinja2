@@ -1,0 +1,269 @@
+{#-
+
+  Jinja2 Template for multile dynamic files
+
+  See odk.py for how this is processed.
+
+  This is first expanded into a single text file;
+  Each entry starting with ^^^ denotes a single file
+
+-#}
+{#-
+
+  Ontology source file, e.g. src/ontology/foo-edit.owl
+
+  We seed this with basic info such as ontology IRI and
+  a fake root class (this can be customized).
+
+  Note that when running odk.py, you can pass in a --source
+  argument to substitute this with your own edit file
+
+#}
+^^^ src/ontology/{{ project.id }}-edit.{{ project.edit_format }}
+{% if project.edit_format == "obo" %}
+{% if project.import_group is defined -%}
+{% for imp in project.import_group.products %}
+import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl
+{% endfor %}
+{% endif %}
+ontology: {{project.id}}
+
+[Term]
+id: {{ project.id | upper }}:00000000
+name: root node
+
+{% else %}
+Prefix(:=<http://purl.obolibrary.org/obo/{{ project.id }}.owl#>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+
+
+Ontology(<http://purl.obolibrary.org/obo/{{ project.id }}.owl>
+{% if project.import_group is defined -%}
+{% for imp in project.import_group.products %}
+Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl>)
+{% endfor %}
+
+{% endif %}
+Annotation(rdfs:comment "{{ project.title }}")
+
+Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>))
+
+
+############################
+#   Classes
+############################
+
+# Class: <http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>
+
+AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000> "root node"@en)
+
+
+)
+{% endif %}
+{#-
+
+  ID ranges file
+
+#}
+^^^ src/ontology/{{ project.id }}-idranges.owl
+## ID Ranges File
+Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix: idsfor: <http://purl.obolibrary.org/obo/IAO_0000598>
+Prefix: dc: <http://purl.org/dc/elements/1.1/>
+Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix: allocatedto: <http://purl.obolibrary.org/obo/IAO_0000597>
+Prefix: xml: <http://www.w3.org/XML/1998/namespace>
+Prefix: idprefix: <http://purl.obolibrary.org/obo/IAO_0000599>
+Prefix: iddigits: <http://purl.obolibrary.org/obo/IAO_0000596>
+Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix: idrange: <http://purl.obolibrary.org/obo/ro/idrange/>
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+
+Ontology: <http://purl.obolibrary.org/obo/{{ project.id }}/{{ project.id }}-idranges.owl>
+
+
+Annotations: 
+    idsfor: "{{ project.id | upper }}",
+    idprefix: "http://purl.obolibrary.org/obo/{{ project.id | upper }}_",
+    iddigits: 7
+
+AnnotationProperty: idprefix:
+
+    
+AnnotationProperty: iddigits:
+
+    
+AnnotationProperty: idsfor:
+
+    
+AnnotationProperty: allocatedto:
+
+Datatype: idrange:1
+
+    Annotations: 
+        allocatedto: "ONTOLOGY-CREATOR"
+    
+    EquivalentTo: 
+        xsd:integer[>= 0 , <= 999999]
+
+    
+Datatype: idrange:2
+
+    Annotations: 
+        allocatedto: "ADDITIONAL EDITOR"
+    
+    EquivalentTo: 
+        xsd:integer[>= 1000000 , <= 1999999]
+    
+    
+Datatype: xsd:integer
+Datatype: rdf:PlainLiteral
+
+^^^ src/ontology/{{ project.id }}.Makefile
+## Customize Makefile settings for {{project.id}}
+## 
+## If you need to customize your Makefile, make
+## changes here rather than in the main Makefile
+
+{#-
+
+  Imports files, one per import
+
+#}
+{% for imp in project.import_group.products %}
+^^^ src/ontology/imports/{{ imp.id }}_import.owl
+<?xml version="1.0"?>
+<rdf:RDF 
+     xml:base="http://purl.obolibrary.org/obo/"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/">
+    <owl:Ontology rdf:about="{{ project.uribase }}/{{ project.id }}/imports/{{ imp.id }}_import.owl"/>
+
+    <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
+</rdf:RDF>
+{#-
+
+  Import Term files
+
+  We seed each of these with some random terms. This is a little unsatisfactory and fragile;
+  ROBOT extract will fail if it cannot find any of the terms. While this doesn't matter in the long term,
+  as the ontology maintainer will provide their own lists, but it is problematic for the initial seed.
+
+  TODO: Decide if we should either query ontobee for seed terms OR have the seed list provided in the project.yaml
+
+#}
+^^^ src/ontology/imports/{{ imp.id }}_terms.txt
+{{ imp.id|upper }}:0000001
+{{ imp.id|upper }}:0000002
+{{ imp.id|upper }}:0000003
+{% if imp.id == 'ro' %}
+BFO:0000050
+RO:0002202
+{% endif %}
+{% if imp.id == 'bfo' %}
+BFO:0000040
+{% endif %}
+{% if imp.id == 'go' %}
+GO:0008150
+{% endif %}
+{% if imp.id == 'uberon' %}
+UBERON:0002048
+{% endif %}
+{% if imp.id == 'cl' %}
+UBERON:0002048
+{% endif %}
+{% if imp.id == 'pato' %}
+PATO:0000052
+{% endif %}
+{% endfor %}
+{#-
+
+  Metadata files.
+
+  These are convenient for submission to OBO. Note that OBO maintains two files, a .md and a .yml
+
+  TODO: include a script that makes it easy for maintainers to do this.
+
+#}
+^^^ src/metadata/{{ project.id }}.md
+---
+layout: ontology_detail
+id: {{ project.id }}
+title: {{ project.title }}
+jobs:
+  - id: https://travis-ci.org/{{ project.github_org }}/{{ project.repo }}
+    type: travis-ci
+build:
+  checkout: git clone https://github.com/{{ project.github_org }}/{{ project.repo }}.git
+  system: git
+  path: "."
+contact:
+  email: {{ project.contact.email }}
+  label: {{ project.contact.name }}
+  github: {{ project.contact.github }}
+description: {{ project.title }} is an ontology...
+domain: stuff
+homepage: https://github.com/{{ project.github_org }}/{{ project.repo }}
+products:
+  - id: {{ project.id }}.owl
+    name: "{{ project.title }} main release in OWL format"
+  - id: {{ project.id }}.obo
+    name: "{{ project.title }} additional release in OBO format"
+  - id: {{ project.id }}.json
+    name: "{{ project.title }} additional release in OBOJSon format"
+  - id: {{ project.id }}/{{ project.id }}-base.owl
+    name: "{{ project.title }} main release in OWL format"
+  - id: {{ project.id }}/{{ project.id }}-base.obo
+    name: "{{ project.title }} additional release in OBO format"
+  - id: {{ project.id }}/{{ project.id }}-base.json
+    name: "{{ project.title }} additional release in OBOJSon format"
+dependencies:
+{% for imp in project.import_group.products -%}
+- id: {{ imp.id }}
+{% endfor %}
+tracker: https://github.com/{{ project.github_org }}/{{ project.repo }}/issues
+license:
+  url: http://creativecommons.org/licenses/by/3.0/
+  label: CC-BY
+---
+
+Enter a detailed description of your ontology here. You can use arbitrary markdown and HTML.
+You can also embed images too.
+
+^^^ src/metadata/{{ project.id }}.yml
+# PURL configuration for http://purl.obolibrary.org/obo/{{ project.id }}
+
+idspace: {{ project.id|upper }}
+base_url: /obo/{{ project.id }}
+
+products:
+- {{ project.id }}.owl: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/{{ project.id }}.owl
+- {{ project.id }}.obo: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/{{ project.id }}.obo
+
+term_browser: ontobee
+example_terms:
+- {{ project.id }}_0000000
+
+entries:
+
+- prefix: /releases/
+  replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/v
+
+- prefix: /tracker/
+  replacement: https://github.com/{{ project.github_org }}/{{ project.repo }}/issues
+
+- prefix: /about/
+  replacement: http://www.ontobee.org/ontology/{{ project.id|upper }}?iri=http://purl.obolibrary.org/obo/
+
+## generic fall-through, serve direct from github by default
+- prefix: /
+  replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/

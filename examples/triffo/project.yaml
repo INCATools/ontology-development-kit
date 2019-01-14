@@ -1,0 +1,9 @@
+id: triffo
+title: Triffid Behavior ontology
+github_org: cmungall
+repo: triffo
+import_group:
+  products:
+    - id: ro
+    - id: bfo
+    - id: pato

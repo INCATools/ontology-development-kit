@@ -1,4 +1,4 @@
-These notes are for the EDITORS of foobar
+These notes are for the EDITORS of {{ project.id }}
 
 This project was created using the [ontology development kit](https://github.com/INCATools/ontology-development-kit). See the site for details.
 
@@ -14,17 +14,17 @@ You may also want to read the [GO ontology editors guide](http://go-ontology.rea
 
 ## Editors Version
 
-Make sure you have an ID range in the [idranges file](foobar-idranges.owl)
+Make sure you have an ID range in the [idranges file]({{ project.id }}-idranges.owl)
 
 If you do not have one, get one from the maintainer of this repo.
 
-The editors version is [foobar-edit.owl](foobar-edit.owl)
+The editors version is [{{ project.id }}-edit.owl]({{ project.id }}-edit.owl)
 
-** DO NOT EDIT foobar.obo OR foobar.owl in the top level directory **
+** DO NOT EDIT {{ project.id }}.obo OR {{ project.id }}.owl in the top level directory **
 
-[../../foobar.owl](../../foobar.owl) is the release version
+[../../{{ project.id }}.owl](../../{{ project.id }}.owl) is the release version
 
-To edit, open the file in Protege. First make sure you have the repository cloned, see [the GitHub project](https://github.com/MY-GITHUB-ORG/MY-REPO-NAME) for details.
+To edit, open the file in Protege. First make sure you have the repository cloned, see [the GitHub project](https://github.com/{{ project.github_org }}/{{ project.repo }}) for details.
 
 You should discuss the git workflow you should use with the maintainer
 of this repo, who should document it here. If you are the maintainer,
@@ -39,7 +39,7 @@ better to make changes on a branch, and make Pull Requests.
 
 These are stored in the file
 
- * [foobar-idranges.owl](foobar-idranges.owl)
+ * [{{ project.id }}-idranges.owl]({{ project.id }}-idranges.owl)
 
 ** ONLY USE IDs WITHIN YOUR RANGE!! **
 
@@ -131,7 +131,7 @@ If this looks good type:
 
     ./prepare_release.sh
 
-This generates derived files such as foobar.owl and foobar.obo and places
+This generates derived files such as {{ project.id }}.owl and {{ project.id }}.obo and places
 them in the top level (../..).
 
 Note that the versionIRI value automatically will be added, and will
@@ -149,16 +149,16 @@ Finally type:
 
 IMMEDIATELY AFTERWARDS (do *not* make further modifications) go here:
 
- * https://github.com/MY-GITHUB-ORG/MY-REPO-NAME/releases
- * https://github.com/MY-GITHUB-ORG/MY-REPO-NAME/releases/new
+ * https://github.com/{{ project.github_org }}/{{ project.repo }}/releases
+ * https://github.com/{{ project.github_org }}/{{ project.repo }}/releases/new
 
 __IMPORTANT__: The value of the "Tag version" field MUST be
 
     vYYYY-MM-DD
 
 The initial lowercase "v" is REQUIRED. The YYYY-MM-DD *must* match
-what is in the `owl:versionIRI` of the derived foobar.owl (`data-version` in
-foobar.obo). This will be today's date.
+what is in the `owl:versionIRI` of the derived {{ project.id }}.owl (`data-version` in
+{{ project.id }}.obo). This will be today's date.
 
 This cannot be changed after the fact, be sure to get this right!
 
@@ -175,20 +175,19 @@ The PURLs are already configured to pull from github. This means that
 BOTH ontology purls and versioned ontology purls will resolve to the
 correct ontologies. Try it!
 
- * http://purl.obolibrary.org/obo/foobar.owl <-- current ontology PURL
- * http://purl.obolibrary.org/obo/foobar/releases/YYYY-MM-DD.owl <-- change to the release you just made
+ * http://purl.obolibrary.org/obo/{{ project.id }}.owl <-- current ontology PURL
+ * http://purl.obolibrary.org/obo/{{ project.id }}/releases/YYYY-MM-DD.owl <-- change to the release you just made
 
 For questions on this contact Chris Mungall or email obo-admin AT obofoundry.org
 
 # Travis Continuous Integration System
 
-Check the build status here: [![Build Status](https://travis-ci.org/MY-GITHUB-ORG/MY-REPO-NAME.svg?branch=master)](https://travis-ci.org/MY-GITHUB-ORG/MY-REPO-NAME)
+Check the build status here: [![Build Status](https://travis-ci.org/{{ project.github_org }}/{{ project.repo }}.svg?branch=master)](https://travis-ci.org/{{ project.github_org }}/{{ project.repo }})
 
 Note: if you have only just created this project you will need to authorize travis for this repo.
 
- 1. Go to [https://travis-ci.org/profile/MY-GITHUB-ORG](https://travis-ci.org/profile/MY-GITHUB-ORG)
+ 1. Go to [https://travis-ci.org/profile/{{ project.github_org }}](https://travis-ci.org/profile/{{ project.github_org }})
  2. click the "Sync account" button
- 3. Click the tick symbol next to MY-REPO-NAME
+ 3. Click the tick symbol next to {{ project.repo }}
 
 Travis builds should now be activated
-

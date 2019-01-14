@@ -1,0 +1,20 @@
+id: go
+title: "Gene Ontology (mini example)"
+github_org: geneontology
+repo: go
+#report_fail_on: ERROR
+report_fail_on: None
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: ro
+subset_group:
+  products:
+    - id: goslim_metagenomics
+    - id: goslim_virus
+
+
+  

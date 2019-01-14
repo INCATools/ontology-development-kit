@@ -5,40 +5,53 @@
 # this can be changed to seed-via-docker.sh;
 # but this should NOT be the default for environments like travis which
 # run in a docker container anyway
-CMD = ./seed-my-ontology-repo.pl
+CMD = ./odk/odk.py seed
 
 EMAIL_ARGS=
 
-test: test1 test2
+test: test1 test2 test3 test4 test-go-mini
 
 test1:
-	 $(CMD) $(EMAIL_ARGS) -c -d pato -t my-ontology1 myont
+	$(CMD) $(EMAIL_ARGS) -c -d pato -t my-ontology1 myont
 
 test2:
-	 $(CMD) $(EMAIL_ARGS) -c -d pato -d ro -t my-ontology2 myont
+	$(CMD) $(EMAIL_ARGS) -c -d pato -d ro -t my-ontology2 myont
 
 test3:
-	 $(CMD) $(EMAIL_ARGS) -c -d pato -d cl -d ro -t my-ontology3 myont
+	$(CMD) $(EMAIL_ARGS) -c -d pato -d cl -d ro -t my-ontology3 myont
+
+test4:
+	$(CMD) -c -C examples/triffo/project.yaml
+
+test-go-mini:
+	$(CMD) -c -C examples/go-mini/project.yaml -s examples/go-mini/go-edit.obo -D target/go-mini
+
+schema/project-schema.json:
+	./odk/odk.py dump-schema > $@
 
 # Building docker image
-#
-# Note: the current osk is currently a large image.
-# Use osklite where possible
-VERSION = "v0.0.3" 
-IM=obolibrary/osk
+VERSION = "v1.1.2" 
+IM=obolibrary/odkfull
 
-
-build:
+docker-build:
 	@docker build -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 
-run:
-	docker run --rm -ti --name osk $(IM)
+docker-run:
+	docker run --rm -ti --name odkfull $(IM)
 
-publish: build
+docker-clean:
+	docker kill $(IM) || echo not running ;
+	docker rm $(IM) || echo not made 
+
+docker-publish: docker-build
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
 
-publish-all: publish
-	(cd docker/osklite && make publish VERSION=$(VERSION)) && \
-	(cd docker/oskfull && make publish VERSION=$(VERSION))
+docker-test: docker-build
+	docker images | grep odkfull &&\
+	make test CMD=./seed-via-docker.sh
+
+docker-publish-all: docker-publish
+	(cd docker/osklite && make publish VERSION=$(VERSION))
+
