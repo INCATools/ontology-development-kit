@@ -3,3 +3,4 @@ bin/
 semantic.cache
 tmp/
 venv/
+.DS_Store
