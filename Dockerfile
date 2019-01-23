@@ -23,24 +23,25 @@ RUN apk update \
 && apk add --no-cache bash \
 && apk add --no-cache --virtual=build-dependencies unzip \
 && apk add --no-cache curl \
-&& apk add --no-cache openjdk8-jre
+&& apk add --no-cache openjdk8-jre \
+&& apk add --no-cache rsync
 
 
 
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
-ENV ROBOT v1.2.0
+ENV ROBOT v1.3.0
 
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
 RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/owltools && \
     wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O /tools/ontology-release-runner && \
     wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar
-    
+
 RUN wget https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
-    
+
 ENV PATH "/tools/:$PATH"
 
 # Setup dosdp tools
@@ -52,7 +53,7 @@ ENV PATH "/tools/dosdp-tools/bin:$PATH"
 RUN wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py && chmod +x /tools/*
 
 RUN apk add --no-cache make && apk add --no-cache git
-RUN apk add --nocache rsync
+RUN apk add --no-cache rsync
 
 COPY template/ /tools/templates/
 COPY odk/ /tools/
