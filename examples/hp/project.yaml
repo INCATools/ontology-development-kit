@@ -1,0 +1,29 @@
+id: hp
+title: "Human Phenotype Ontology"
+github_org: obophenotype
+repo: human-phenotype-ontology
+#report_fail_on: ERROR
+report_fail_on: ERROR
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: nbo
+      mirror_from: https://raw.githubusercontent.com/monarch-ebi-dev/ontologies/master/nbo-base.owl
+      use_base: FALSE
+    - id: pr
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: hsapdv
+    - id: pato
+    - id: cl
+      mirror_from: https://raw.githubusercontent.com/obophenotype/cell-ontology/master/cl-base.owl
+      use_base: FALSE
+    - id: mpath
+
+
+  

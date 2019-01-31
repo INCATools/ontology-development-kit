@@ -1,6 +1,6 @@
 ### From https://stackoverflow.com/questions/51121875/how-to-run-docker-with-python-and-java
 ### 1. Get Linux
-FROM alpine:3.7
+FROM alpine:3.9
 
 ### 2. Get Python, PIP
 
@@ -15,7 +15,9 @@ rm -r /root/.cache
 WORKDIR /tools
 COPY requirements.txt /tools/
 
-RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requests jsonpath_rw
+RUN apk add --no-cache make automake gcc g++ subversion python3-dev
+RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy
+RUN pip3 install pandas
 
 ### 2. Get Java via the package manager
 RUN apk update \
@@ -23,13 +25,14 @@ RUN apk update \
 && apk add --no-cache bash \
 && apk add --no-cache --virtual=build-dependencies unzip \
 && apk add --no-cache curl \
-&& apk add --no-cache openjdk8-jre
+&& apk add --no-cache openjdk8-jre \
+&& apk add --no-cache rsync
 
 
 
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
-ENV ROBOT v1.2.0
+ENV ROBOT v1.3.0
 
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
@@ -51,8 +54,8 @@ ENV PATH "/tools/dosdp-tools/bin:$PATH"
 # dosdp python
 RUN wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py && chmod +x /tools/*
 
-RUN apk add --no-cache make && apk add --no-cache git
-RUN apk add --nocache rsync
+RUN apk add --no-cache git
+RUN apk add --no-cache rsync
 
 COPY template/ /tools/templates/
 COPY odk/ /tools/
