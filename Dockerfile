@@ -55,7 +55,6 @@ ENV PATH "/tools/dosdp-tools/bin:$PATH"
 RUN wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py && chmod +x /tools/*
 
 RUN apk add --no-cache git
-RUN apk add --no-cache rsync
 
 COPY template/ /tools/templates/
 COPY odk/ /tools/
