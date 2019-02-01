@@ -20,7 +20,7 @@ test2:
 test3:
 	$(CMD) $(EMAIL_ARGS) -c -d pato -d cl -d ro -t my-ontology3 myont
 
-test4: git
+test4:
 	$(CMD) -c -C examples/triffo/project.yaml
 
 test-go-mini:
