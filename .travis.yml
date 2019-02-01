@@ -5,6 +5,8 @@ services:
 
 before_install:
   - docker pull obolibrary/odkfull
+  - git config --global user.email "you@owlsemtest.com"
+  - git config --global user.name "Unknown Name"
 
 # command to run tests
 # https://github.com/INCATools/ontology-starter-kit/issues/25

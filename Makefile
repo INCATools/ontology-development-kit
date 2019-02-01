@@ -11,17 +11,13 @@ EMAIL_ARGS=
 
 test: test1 test2 test3 test4 test-go-mini
 
-git: 
-	git config --global user.email "you@owlsemtest.com"
-	git config --global user.name "Unknown Name"
-
-test1: git
+test1:
 	$(CMD) $(EMAIL_ARGS) -c -d pato -t my-ontology1 myont
 
-test2: git
+test2:
 	$(CMD) $(EMAIL_ARGS) -c -d pato -d ro -t my-ontology2 myont
 
-test3: git
+test3:
 	$(CMD) $(EMAIL_ARGS) -c -d pato -d cl -d ro -t my-ontology3 myont
 
 test4: git
