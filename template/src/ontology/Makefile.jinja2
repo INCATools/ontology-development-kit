@@ -192,10 +192,10 @@ ed_definitions_merged.owl: $(SRC) $(PATTERNDIR)/definitions.owl
 	$(ROBOT) merge -i $(SRC) -i $(PATTERNDIR)/definitions.owl -o $@
 
 seed.txt: ed_definitions_merged.owl
-	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
 {% else %}
 seed.txt: $(SRC)
-	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
 {% endif %}
 
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
@@ -254,7 +254,7 @@ mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 # Subsets
 # ----------------------------------------
 subsets/%.tsv: subsets/%.owl
-	$(ROBOT) query -f tsv -i $< -s ../sparql/labels.sparql $@
+	$(ROBOT) query --use-graphs true -f tsv -i $< -s ../sparql/labels.sparql $@
 subsets/%.owl: $(ONT).owl
 	owltools --use-catalog $< --extract-ontology-subset --fill-gaps --subset $* -o $@.tmp.owl && mv $@.tmp.owl $@
 {% endif %}
@@ -292,7 +292,7 @@ reports/%-obo-report.tsv: %.owl
 SPARQL_EXPORTS_ARGS = $(foreach V,$(SPARQL_EXPORTS),-s $(SPARQLDIR)/$V.sparql reports/$V.tsv)
 # This combines all into one single command
 all_reports_onestep: $(SRC)
-	$(ROBOT) query -f tsv -i $< $(SPARQL_EXPORTS_ARGS)
+	$(ROBOT) query --use-graphs true -f tsv -i $< $(SPARQL_EXPORTS_ARGS)
 
 
 # ----------------------------------------
@@ -322,7 +322,7 @@ pattern_schema_checks:
 	simple_pattern_tester.py $(PATTERNDIR)/ # 2>&1 | tee $@
 
 $(PATTERNDIR)/imports/seed.txt: $(PATTERNDIR)/pattern.owl
-	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
 
 $(PATTERNDIR)/imports/seed_sorted.txt: $(PATTERNDIR)/imports/seed.txt
 	cat $(PATTERNDIR)/imports/seed.txt | sort | uniq > $@
