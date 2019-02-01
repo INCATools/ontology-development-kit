@@ -345,7 +345,7 @@ $(PATTERNDIR)/%.owl: $(PATTERNDIR)/%.yaml $(PATTERNDIR)/%.tsv $(SRC)
 pattern_modules := $(patsubst %.yaml, $(IMS)/patterns/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/*.yaml)))
 
 $(PATTERNDIR)/definitions.owl: $(pattern_modules)
-	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(ONTBASE)/patterns/defintions.owl -o definitions.ofn && mv definitions.ofn $@
+	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(ONTBASE)/patterns/defintions.owl -o $@.ofn && mv $@.ofn $@
 
 {% endif %}
 
