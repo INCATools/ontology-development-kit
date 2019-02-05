@@ -192,10 +192,10 @@ ed_definitions_merged.owl: $(SRC) $(PATTERNDIR)/definitions.owl
 	$(ROBOT) merge -i $(SRC) -i $(PATTERNDIR)/definitions.owl -o $@
 
 seed.txt: ed_definitions_merged.owl
-	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
 {% else %}
 seed.txt: $(SRC)
-	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
 {% endif %}
 
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
@@ -322,7 +322,7 @@ pattern_schema_checks:
 	simple_pattern_tester.py $(PATTERNDIR)/ # 2>&1 | tee $@
 
 $(PATTERNDIR)/imports/seed.txt: $(PATTERNDIR)/pattern.owl
-	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
 
 $(PATTERNDIR)/imports/seed_sorted.txt: $(PATTERNDIR)/imports/seed.txt
 	cat $(PATTERNDIR)/imports/seed.txt | sort | uniq > $@
