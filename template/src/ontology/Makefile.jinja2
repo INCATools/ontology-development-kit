@@ -254,7 +254,7 @@ mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 # Subsets
 # ----------------------------------------
 subsets/%.tsv: subsets/%.owl
-	$(ROBOT) query --use-graphs true -f tsv -i $< -s ../sparql/labels.sparql $@
+	$(ROBOT) query -f tsv -i $< -s ../sparql/labels.sparql $@
 subsets/%.owl: $(ONT).owl
 	owltools --use-catalog $< --extract-ontology-subset --fill-gaps --subset $* -o $@.tmp.owl && mv $@.tmp.owl $@
 {% endif %}
@@ -292,7 +292,7 @@ reports/%-obo-report.tsv: %.owl
 SPARQL_EXPORTS_ARGS = $(foreach V,$(SPARQL_EXPORTS),-s $(SPARQLDIR)/$V.sparql reports/$V.tsv)
 # This combines all into one single command
 all_reports_onestep: $(SRC)
-	$(ROBOT) query --use-graphs true -f tsv -i $< $(SPARQL_EXPORTS_ARGS)
+	$(ROBOT) query -f tsv -i $< $(SPARQL_EXPORTS_ARGS)
 
 
 # ----------------------------------------
