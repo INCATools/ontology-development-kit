@@ -162,28 +162,32 @@ Datatype: rdf:PlainLiteral
 
 #}
 ^^^ src/ontology/imports/{{ imp.id }}_terms.txt
-{{ imp.id|upper }}:0000001
-{{ imp.id|upper }}:0000002
-{{ imp.id|upper }}:0000003
-{% if imp.id == 'ro' %}
+{%- if imp.id == 'ro' %}
 BFO:0000050
 RO:0002202
-{% endif %}
-{% if imp.id == 'bfo' %}
+{%- elif imp.id == 'bfo' %}
 BFO:0000040
-{% endif %}
-{% if imp.id == 'go' %}
+{%- elif imp.id == 'go' %}
 GO:0008150
-{% endif %}
-{% if imp.id == 'uberon' %}
-UBERON:0002048
-{% endif %}
-{% if imp.id == 'cl' %}
-UBERON:0002048
-{% endif %}
-{% if imp.id == 'pato' %}
-PATO:0000052
-{% endif %}
+{%- elif imp.id == 'uberon' %}
+UBERON:0001062
+{%- elif imp.id == 'cl' %}
+CL:0000000
+{%- elif imp.id == 'pato' %}
+PATO:0000001
+{%- elif imp.id == 'mpath' %}
+MPATH:0
+{%- elif imp.id == 'chebi' %}
+CHEBI:24431
+{%- elif imp.id == 'hsapdv' %}
+http://purl.obolibrary.org/obo/HsapDv_0000000
+{%- elif imp.id == 'nbo' %}
+NBO:0000313
+{%- else %}
+{{ imp.id|upper }}:0000000
+{{ imp.id|upper }}:0000001
+{{ imp.id|upper }}:0000002
+{%- endif %}
 {% endfor %}
 {#-
 
