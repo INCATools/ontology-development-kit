@@ -338,11 +338,11 @@ patterns: $(PATTERN_IMPORTS)
 pattern_files := $(wildcard $(PATTERNDIR)/*.yaml)
 pattern_tsv_files := $(wildcard $(PATTERNDIR)/*.tsv)
 
-$(PATTERNDIR)/%.owl: $(PATTERNDIR)/%.yaml $(PATTERNDIR)/%.tsv $(SRC)
+$(PATTERNDIR)/%.ofn: $(PATTERNDIR)/%.yaml $(PATTERNDIR)/%.tsv $(SRC)
 	dosdp-tools generate --catalog=catalog-v001.xml --infile=$(word 2, $^) --template=$< --ontology=$(word 3, $^) --obo-prefixes=true  --outfile=$@
 
 
-pattern_modules := $(patsubst %.yaml, $(IMS)/patterns/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/*.yaml)))
+pattern_modules := $(patsubst %.yaml, $(PATTERNDIR)/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/*.yaml)))
 
 $(PATTERNDIR)/definitions.owl: $(pattern_modules)
 	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(ONTBASE)/patterns/defintions.owl -o $@
