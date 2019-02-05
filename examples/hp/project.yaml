@@ -4,6 +4,7 @@ github_org: obophenotype
 repo: human-phenotype-ontology
 #report_fail_on: ERROR
 report_fail_on: ERROR
+use_dosdps: TRUE
 export_formats:
   - owl
   - obo
