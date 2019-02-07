@@ -1,0 +1,20 @@
+id: ptt
+title: "Pattern Test Ontology"
+github_org: obophenotype
+repo: ptt
+report_fail_on: none
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: ro
+    - id: pato
+    - id: cl
+    - id: mpath
+pattern_pipelines_group:
+  products:
+    - id: manual
+    - id: auto
