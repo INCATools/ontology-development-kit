@@ -26,6 +26,9 @@
 import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl
 {% endfor %}
 {% endif %}
+{%- if project.use_dosdps %}
+import: http://purl.obolibrary.org/obo/{{ project.id }}/patterns/definitions.owl
+{% endif %}
 ontology: {{project.id}}
 
 [Term]
@@ -46,8 +49,12 @@ Ontology(<http://purl.obolibrary.org/obo/{{ project.id }}.owl>
 {% for imp in project.import_group.products %}
 Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl>)
 {% endfor %}
-
 {% endif %}
+
+{%- if project.use_dosdps %}
+Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/definitions.owl>)
+{% endif %}
+
 Annotation(rdfs:comment "{{ project.title }}")
 
 Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>))
@@ -271,3 +278,11 @@ entries:
 ## generic fall-through, serve direct from github by default
 - prefix: /
   replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/
+{#-
+    Example pattern implementation TSV
+#}
+{%- if project.use_dosdps %}
+^^^ src/patterns/data/default/abnormal.tsv
+defined_class	defined_class_label	entity	entity_label
+{{ project.id|upper }}:9999999	"Default defined class"	BFO:0000001	"Entity (BFO)"
+{%- endif %}

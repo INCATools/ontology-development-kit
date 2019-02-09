@@ -89,6 +89,15 @@ class ImportProduct(Product):
     mirror_from: Optional[Url] = None
     """if specified this URL is used rather than the default OBO PURL for the main OWL product"""
 
+@dataclass_json
+@dataclass
+class PatternPipelineProduct(Product):
+    """
+    Represents an individual pattern pipeline
+    Examples: manual curation pipeline, auto curation pipeline
+    Each pipeline gets their own specific directory
+    """
+    dosdp_tools_options: str = "--obo-prefixes=true"
 
 @dataclass_json
 @dataclass
@@ -209,7 +218,24 @@ class ImportGroup(ProductGroup):
         if self.products is None:
             self.products = []
         self.products.append(ImportProduct(id=id))
+
+@dataclass_json
+@dataclass
+class PatternPipelineGroup(ProductGroup):
+    """
+    A configuration section that consists of a list of `PatternPipelineProduct` descriptions
+
+    Controls the handling of patterns data in the "src/patterns/data" directory
+    """
     
+    products : Optional[List[PatternPipelineProduct]] = None
+    """all pipeline products"""
+
+    def _add_stub(self, id : OntologyHandle):
+        if self.products is None:
+            self.products = []
+        self.products.append(PatternPipelineProduct(id=id))
+            
 @dataclass_json
 @dataclass
 class PatternGroup(ProductGroup):
@@ -290,6 +316,9 @@ class OntologyProject(JsonSchemaMixin):
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
     
+    dosdp_tools_options: str = "--obo-prefixes=true"
+    """default parameters for dosdp-tools"""
+    
     report_fail_on : Optional[str] = None
     """see robot report docs for details. """
     
@@ -320,6 +349,9 @@ class OntologyProject(JsonSchemaMixin):
 
     pattern_group : Optional[PatternGroup] = None
     """Block that includes information on all DOSDP templates used"""
+    
+    pattern_pipelines_group : Optional[PatternPipelineGroup] = None
+    """Block that includes information on all ontology imports to be generated"""
 
     robotemplate_group : Optional[RoboTemplateGroup] = None
     """Block that includes information on all ROBOT templates used"""
@@ -336,6 +368,8 @@ class OntologyProject(JsonSchemaMixin):
             self.import_group.fill_missing()
         if self.subset_group is not None:
             self.subset_group.fill_missing()
+        if self.pattern_pipelines_group is not None:
+            self.pattern_pipelines_group.fill_missing()
 
 @dataclass
 class ExecutionContext(JsonSchemaMixin):
@@ -499,6 +533,7 @@ def dump_schema():
     import json
     print(json.dumps(OntologyProject.json_schema(), sort_keys=True, indent=4))
     print(json.dumps(ImportProduct.json_schema(), sort_keys=True, indent=4))
+    print(json.dumps(PatternPipelineProduct.json_schema(), sort_keys=True, indent=4))
 
 
 @cli.command()
