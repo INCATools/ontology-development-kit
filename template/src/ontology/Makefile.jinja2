@@ -167,7 +167,10 @@ ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/`date +%Y-%m-%d`/$@.owl
 
 # by default we use {{ project.reasoner }} to perform a reason-relax-reduce chain
 # after that we annotate the ontology with the release versionInfo
-$(ONT).owl: $(SRC) {% if project.use_dosdps %}$(PATTERNDIR)/definitions.owl{% endif %}
+{% if project.use_dosdps %}
+OTHER_SRC = $(PATTERNDIR)/definitions.owl
+{% endif %}
+$(ONT).owl: $(SRC) $(OTHER_SRC)
 	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
 		 relax \
 		 reduce -r {{ project.reasoner }} \
