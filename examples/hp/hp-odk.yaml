@@ -12,7 +12,7 @@ export_formats:
 import_group:
   products:
     - id: nbo
-      mirror_from: https://raw.githubusercontent.com/monarch-ebi-dev/ontologies/master/nbo-base.owl
+      mirror_from: http://purl.obolibrary.org/obo/nbo/nbo-base.owl
       use_base: FALSE
     - id: pr
     - id: go
@@ -22,7 +22,7 @@ import_group:
     - id: hsapdv
     - id: pato
     - id: cl
-      mirror_from: https://raw.githubusercontent.com/obophenotype/cell-ontology/master/cl-base.owl
+      mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl
       use_base: FALSE
     - id: mpath
 
