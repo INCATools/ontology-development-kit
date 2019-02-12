@@ -40,13 +40,14 @@ TODAY   := $(shell date +%Y-%m-%d)
 DOSDP_SCHEMA=                http:// # change to PURL when ready.
 PATTERN_TESTER=              simple_pattern_tester.py
 DOSDPT=                      dosdp-tools
+PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
 {% endif %}
 
 # ----------------------------------------
 # Top-level targets
 # ----------------------------------------
 
-all: all_imports all_main all_subsets sparql_test patterns all_reports all_assets
+all: all_imports patterns all_main all_subsets sparql_test all_reports all_assets
 
 ## -- main targets --
 ##
@@ -133,8 +134,12 @@ show_assets:
 
 # This should be executed by the release manager whenever time comes to make a release.
 # It will ensure that all assets/files are fresh, and will copy to release folder
-prepare_release: $(ASSETS)
-	rsync -R $^ $(RELEASEDIR) &&\
+prepare_release: $(ASSETS) $(PATTERN_RELEASE_FILES)
+	rsync -R $(ASSETS) $(RELEASEDIR) &&\
+  {% if project.use_dosdps -%}
+  mkdir -p $(RELEASEDIR)/patterns &&\
+  cp $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\
+  {% endif -%}
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release on github"
 
 prepare_initial_release: prepare_release
@@ -162,7 +167,10 @@ ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/`date +%Y-%m-%d`/$@.owl
 
 # by default we use {{ project.reasoner }} to perform a reason-relax-reduce chain
 # after that we annotate the ontology with the release versionInfo
-$(ONT).owl: $(SRC)
+{% if project.use_dosdps %}
+OTHER_SRC = $(PATTERNDIR)/definitions.owl
+{% endif %}
+$(ONT).owl: $(SRC) $(OTHER_SRC)
 	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
 		 relax \
 		 reduce -r {{ project.reasoner }} \
@@ -170,13 +178,13 @@ $(ONT).owl: $(SRC)
 	         merge  $(patsubst %, -i %, $(IMPORT_OWL_FILES))  \
 	         annotate --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
 
-# requires robot 1.2
-$(ONT)-base.owl: $(SRC)
-	$(ROBOT) remove --trim false --input $< --select imports \
+# requires robot 1.2. For some reason, the pipe between remove | merge does not work. 
+$(ONT)-base.owl: $(SRC) {% if project.use_dosdps %}$(PATTERNDIR)/definitions.owl{% endif %}
+	$(ROBOT) remove --trim false --input $< --select imports --output $@.tmp.owl && mv $@.tmp.owl $@ &&\
 {% if project.use_dosdps -%}
-	merge  -i $(PATTERNDIR)/definitions.owl \
+	$(ROBOT) merge -i $@ -i $(PATTERNDIR)/definitions.owl --output $@.tmp.owl && mv $@.tmp.owl $@ &&\
 {% endif -%}
-	annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@ &&\
+	$(ROBOT) annotate -i $@ --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@ &&\
 	echo "$(ONT)-base.owl successfully created."
 
 # ----------------------------------------
@@ -188,11 +196,9 @@ $(ONT)-base.owl: $(SRC)
 # seed.txt contains all referenced entities
 
 {% if project.use_dosdps %}
-ed_definitions_merged.owl: $(SRC) $(PATTERNDIR)/definitions.owl
-	$(ROBOT) merge -i $(SRC) -i $(PATTERNDIR)/definitions.owl -o $@
-
-seed.txt: ed_definitions_merged.owl
-	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
+seed.txt: $(SRC) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
+	cat $@.tmp $(PATTERNDIR)/all_pattern_terms.txt | sort | uniq >  $@
 {% else %}
 seed.txt: $(SRC)
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
@@ -310,42 +316,72 @@ build-docker:
 
 # Test patterns for schema compliance:
 
+.PHONY: .FORCE
 
-PATTERN_IMPORTS = $(PATTERNDIR)/pattern.owl $(patsubst %, $(PATTERNDIR)/imports/%_import.owl,$(IMPORTS))
+.PHONY: patterns
+patterns: all_imports $(PATTERNDIR)/pattern.owl $(PATTERNDIR)/definitions.owl
 
-# Better to make this an intermediate & merge with pattern.owl file having correct iri and import statements - configured by make
+.PHONY: pattern_clean
+pattern_clean:
+	echo "Not implemented"
 
-$(PATTERNDIR)/pattern.owl: pattern_schema_checks
-	$(DOSDPT) prototype --obo-prefixes --template=$(PATTERNDIR) --outfile=$@
+pattern_schema_checks: $(PATTERNDIR)/dosdp-patterns
+	simple_pattern_tester.py $(PATTERNDIR)/dosdp-patterns/ # 2>&1 | tee $@
 
-pattern_schema_checks:
-	simple_pattern_tester.py $(PATTERNDIR)/ # 2>&1 | tee $@
+#This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now). It downloads all patterns specified in external.txt
+$(PATTERNDIR)/dosdp-patterns: .FORCE
+	< $(PATTERNDIR)/dosdp-patterns/external.txt tr '\n' '\0' | sed 's!.*/!!' | xargs -0 -I{} rm -f $(PATTERNDIR)/dosdp-patterns/{} &&\
+	< $(PATTERNDIR)/dosdp-patterns/external.txt tr '\n' '\0' | xargs -0 -I{} wget -q {} -P $(PATTERNDIR)/dosdp-patterns
 
-$(PATTERNDIR)/imports/seed.txt: $(PATTERNDIR)/pattern.owl
+$(PATTERNDIR)/pattern.owl: pattern_schema_checks $(PATTERNDIR)/dosdp-patterns
+	$(DOSDPT) prototype --obo-prefixes --template=$(PATTERNDIR)/dosdp-patterns --outfile=$@
+
+individual_patterns_default := $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv)))
+pattern_term_lists_default := $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.txt, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv)))
+
+{% if project.pattern_pipelines_group is defined %}
+{% for pipeline in project.pattern_pipelines_group.products %}
+individual_patterns_{{ pipeline.id }} := $(patsubst %.tsv, $(PATTERNDIR)/data/{{ pipeline.id }}/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv)))
+pattern_term_lists_{{ pipeline.id }} := $(patsubst %.tsv, $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv)))
+{% endfor %}
+{% endif %}
+
+# Generating the individual pattern modules and merging them into definitions.owl
+$(PATTERNDIR)/definitions.owl: prepare_patterns $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}
+	$(ROBOT) merge $(addprefix -i , $(individual_patterns_default)) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(addprefix -i , $(individual_patterns_{{ pipeline.id }})){% endfor %}{% endif %} annotate --ontology-iri $(ONTBASE)/patterns/definitions.owl  --version-iri $(ONTBASE)/releases/$(TODAY)/patterns/definitions.owl -o definitions.ofn &&\
+	mv definitions.ofn $@
+
+$(PATTERNDIR)/data/default/%.ofn: $(PATTERNDIR)/data/default/%.tsv $(PATTERNDIR)/dosdp-patterns/%.yaml $(SRC) all_imports .FORCE
+	dosdp-tools generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^) {{ project.dosdp_tools_options }} --outfile=$@
+
+{% if project.pattern_pipelines_group is defined %}
+{% for pipeline in project.pattern_pipelines_group.products %}
+$(PATTERNDIR)/data/{{ pipeline.id }}/%.ofn: $(PATTERNDIR)/data/{{ pipeline.id }}/%.tsv $(PATTERNDIR)/dosdp-patterns/%.yaml $(SRC) all_imports .FORCE
+	dosdp-tools generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^){{ pipeline.dosdp_tools_options }} --outfile=$@
+{% endfor %}
+{% endif %}
+
+# Generating the seed file from all the TSVs
+$(PATTERNDIR)/all_pattern_terms.txt: $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %} $(PATTERNDIR)/pattern_owl_seed.txt
+	cat $^ | sort | uniq > $@
+	
+$(PATTERNDIR)/pattern_owl_seed.txt: $(PATTERNDIR)/pattern.owl
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
 
-$(PATTERNDIR)/imports/seed_sorted.txt: $(PATTERNDIR)/imports/seed.txt
-	cat $(PATTERNDIR)/imports/seed.txt | sort | uniq > $@
+$(PATTERNDIR)/data/default/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERNDIR)/data/default/%.tsv .FORCE
+	dosdp-tools terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@
 
-#$(PATTERNDIR)/imports/%_terms.txt: $(PATTERNDIR)/imports/seed.txt
-#	grep -i $(URIBASE)/$*_ $< > $@ || true  # Returns 1 if grep is empty
+.PHONY: prepare_patterns
+prepare_patterns:	
+	touch $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %} &&\
+  touch $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}
 
-$(PATTERNDIR)/imports/%_import.owl: mirror/%.owl $(PATTERNDIR)/imports/seed_sorted.txt
-	$(ROBOT) extract -i $< -T $(PATTERNDIR)/imports/seed_sorted.txt --method BOT -O mirror/$*.owl annotate --ontology-iri $(ONTBASE)/patterns/imports/$*_import.owl -o $@
-
-patterns: $(PATTERN_IMPORTS)
-
-pattern_files := $(wildcard $(PATTERNDIR)/*.yaml)
-pattern_tsv_files := $(wildcard $(PATTERNDIR)/*.tsv)
-
-$(PATTERNDIR)/%.ofn: $(PATTERNDIR)/%.yaml $(PATTERNDIR)/%.tsv $(SRC)
-	dosdp-tools generate --catalog=catalog-v001.xml --infile=$(word 2, $^) --template=$< --ontology=$(word 3, $^) --obo-prefixes=true  --outfile=$@
-
-
-pattern_modules := $(patsubst %.yaml, $(PATTERNDIR)/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/*.yaml)))
-
-$(PATTERNDIR)/definitions.owl: $(pattern_modules)
-	$(ROBOT) merge $(addprefix -i , $(pattern_modules)) annotate --ontology-iri $(ONTBASE)/patterns/defintions.owl -o $@.ofn && mv $@.ofn $@
+{% if project.pattern_pipelines_group is defined -%}
+{% for pipeline in project.pattern_pipelines_group.products %}
+$(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERNDIR)/data/{{ pipeline.id }}/%.tsv .FORCE
+	dosdp-tools terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@
+{% endfor %}
+{% endif -%}
 
 {% endif %}
 

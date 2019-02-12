@@ -6,7 +6,7 @@
   <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/imports/{{imp.id}}_import.owl" uri="imports/{{imp.id}}_import.owl"/>
   {% endfor %}
 {% endif %}
-{% if project.use_dosdp is defined %}  
+{%- if project.use_dosdps %} 
   <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/patterns/definitions.owl" uri="../patterns/definitions.owl"/>
 {% endif %}
   <group id="Folder Repository, directory=, recursive=false, Auto-Update=false, version=2" prefer="public" xml:base=""/>
