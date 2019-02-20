@@ -1,0 +1,28 @@
+id: cl
+title: "Cell Ontology"
+github_org: obophenotype
+repo: cell-ontology
+#report_fail_on: ERROR
+report_fail_on: None
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: pr
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: clo
+    - id: pato
+    - id: ncbitaxon
+pattern_pipelines_group:
+  products:
+    - id: clustering
+      dosdp_tools_options: "--obo-prefixes=true"
+
+
+  
