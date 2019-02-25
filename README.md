@@ -20,14 +20,17 @@ We will walk you though the steps to make a new ontology project
 
 See below for an alternative protocol where you install the software yourself rather than use Docker
 
-## 2. Download the wrapper script
+## 2. Download the wrapper script and pull latest ODK version
 
  * Linux/Mac: [seed-via-docker.sh](https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/seed-via-docker.sh)
  * PC: [seed-via-docker.bat](https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/seed-via-docker.bat)
+ * First, make sure you have Docker running (you will see the Docker whale in your toolbar on a Mac)
+ * To make sure you have the latest version of the ODK installed, run in the command line 
+
+    `docker pull obolibrary/odkfull`
+
 
 ## 3. Run the wrapper script
-
-First, make sure you have Docker running (you will see the Docker whale in your toolbar on a Mac)
 
 You can either pass in a `project.yaml` file that specifies your ontology project setup, or you can pass arguments on the command line.
 
