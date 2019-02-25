@@ -29,6 +29,7 @@ See below for an alternative protocol where you install the software yourself ra
 
     `docker pull obolibrary/odkfull`
 
+**NOTE** The very first time you run this it may be slow, while docker downloads necessary images. Don't worry, subsequent runs should be much faster!
 
 ## 3. Run the wrapper script
 
@@ -42,7 +43,7 @@ Using a the predefined [examples/triffo/project.yaml](examples/triffo/project.ya
 
     ./seed-via-docker.sh -C examples/triffo/project.yaml
 
-**NOTE** The very first time you run this it may be slow, while docker downloads necessary images. Don't worry, subsequent runs should be much faster!
+You can add a -c (lowercase) just before the -C (capital c) in the command to first delete any previous attempt to generate your ontology with the ODK, and then replaces it with a completely new one.
 
 This will create your starter files in
 `target/triffid-behavior-ontology`. It will also prepare an initial
