@@ -18,6 +18,7 @@ from jinja2 import Template
 from dacite import from_dict
 import yaml
 import os
+import subprocess
 import shutil
 from shutil import copyfile
 import logging
@@ -635,7 +636,12 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
 
 def runcmd(cmd):
     logging.info("RUNNING: {}".format(cmd))
-    if os.system(cmd) != 0:
+    p = subprocess.Popen([cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    (out, err) = p.communicate()
+    logging.info('OUT: {}')
+    if err:
+        logging.error(err)
+    if p.returncode != 0:
         raise Exception('Failed: {}'.format(cmd))
     
 
