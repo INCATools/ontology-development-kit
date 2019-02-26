@@ -47,7 +47,8 @@ PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern
 # Top-level targets
 # ----------------------------------------
 
-all: all_imports patterns all_main all_subsets sparql_test all_reports all_assets
+all: all_imports {% if project.use_dosdps %}patterns {% endif %}all_main all_subsets sparql_test all_reports all_assets
+test: sparql_test all_reports $(ONT).owl
 
 ## -- main targets --
 ##

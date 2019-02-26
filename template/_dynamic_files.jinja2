@@ -285,4 +285,11 @@ entries:
 ^^^ src/patterns/data/default/abnormal.tsv
 defined_class	defined_class_label	entity	entity_label
 {{ project.id|upper }}:9999999	"Default defined class"	BFO:0000001	"Entity (BFO)"
+{%- if project.pattern_pipelines_group is defined %}
+{% for pipeline in project.pattern_pipelines_group.products %}
+^^^ src/patterns/data/{{ pipeline.id }}/abnormal.tsv
+defined_class	defined_class_label	entity	entity_label
+{{ project.id|upper }}:9999999	"Default defined class"	BFO:0000001	"Entity (BFO)"
+{% endfor %}
+{%- endif %}
 {%- endif %}
