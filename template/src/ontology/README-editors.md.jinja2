@@ -61,7 +61,7 @@ All import modules are in the [imports/](imports/) folder.
 There are two ways to include new classes in an import module
 
  1. Reference an external ontology class in the edit ontology. In Protege: "add new entity", then paste in the PURL
- 2. Add to the imports/foo_terms.txt file
+ 2. Add to the imports/{{ project.id }}_terms.txt file
 
 After doing this, you can run
 
@@ -69,7 +69,7 @@ After doing this, you can run
 
 to regenerate imports.
 
-Note: the foo_terms.txt file may include 'starter' classes seeded from
+Note: the {{ project.id }}_terms.txt file may include 'starter' classes seeded from
 the ontology starter kit. It is safe to remove these.
 
 ## Design patterns

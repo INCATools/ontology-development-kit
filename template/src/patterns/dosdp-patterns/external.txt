@@ -1,1 +1,1 @@
-https://raw.githubusercontent.com/obophenotype/upheno/master/src/patterns/abnormal.yaml
+http://purl.obolibrary.org/obo/upheno/patterns/abnormalAnatomicalEntity.yaml
