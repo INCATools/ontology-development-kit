@@ -357,7 +357,7 @@ $(PATTERNDIR)/data/default/%.ofn: $(PATTERNDIR)/data/default/%.tsv $(PATTERNDIR)
 {% if project.pattern_pipelines_group is defined %}
 {% for pipeline in project.pattern_pipelines_group.products %}
 $(PATTERNDIR)/data/{{ pipeline.id }}/%.ofn: $(PATTERNDIR)/data/{{ pipeline.id }}/%.tsv $(PATTERNDIR)/dosdp-patterns/%.yaml $(SRC) all_imports .FORCE
-	dosdp-tools generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^){{ pipeline.dosdp_tools_options }} --outfile=$@
+	dosdp-tools generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^) {{ pipeline.dosdp_tools_options }} --outfile=$@
 {% endfor %}
 {% endif %}
 
