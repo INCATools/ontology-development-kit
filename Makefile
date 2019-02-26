@@ -37,7 +37,7 @@ VERSION = "v1.2.5"
 IM=obolibrary/odkfull
 
 docker-build:
-	@docker build -t $(IM):$(VERSION) . \
+	@docker build --no-cache -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 
 docker-run:
