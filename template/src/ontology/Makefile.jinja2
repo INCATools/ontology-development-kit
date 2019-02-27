@@ -177,6 +177,9 @@ $(ONT).owl: $(SRC) $(OTHER_SRC)
 		 reduce -r {{ project.reasoner }} \
 		 remove --select imports \
 	         merge  $(patsubst %, -i %, $(IMPORT_OWL_FILES))  \
+           {% if project.use_dosdps -%}
+           merge  $(patsubst %, -i %, $(OTHER_SRC))  \
+           {% endif -%}
 	         annotate --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
 
 # requires robot 1.2. For some reason, the pipe between remove | merge does not work. 
