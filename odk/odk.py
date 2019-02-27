@@ -597,6 +597,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
                     if f.startswith("_dynamic"):
                         logging.info('  Unpacking: {}'.format(derived_file))
                         tgts += unpack_files(tdir, mg.generate(srcf))
+                        s.close()
                         os.remove(derived_file)
                     else:
                         logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
