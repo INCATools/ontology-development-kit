@@ -3,24 +3,41 @@ title: Environment ontology
 github_org: EnvironmentOntology
 repo: envo
 report_fail_on: NONE
+use_dosdps: TRUE
 export_formats:
   - owl
   - obo
   - json
 import_group:
-  ids:
-    - ro
-    - pato
-    - uberon
   products:
     - id: ro
-      description: We use RO blah
       use_base: True
+    - id: pato
+      use_base: True
+    - id: uberon
+      use_base: True
+    - id: chebi
+    - id: pco
+    - id: foodon
+    - id: go
+      use_base: True
+    - id: ncbitaxon
+    - id: obi
+    - id: po
+    - id: iao
+    - id: fao
+    - id: agro
 subset_group:
-  ids:
-    - EnvO-Lite-GSC
-    - envoEmpo
-    - envoPolar
+  products:
+    - id: EnvO-Lite-GSC
+    - id: envoEmpo
+    - id: envoPolar
+pattern_pipelines_group:
+  products:
+    - id: entity_attribute
+      dosdp_tools_options: "--obo-prefixes=true"
+    - id: entity_attribute_location
+      dosdp_tools_options: "--obo-prefixes=true"
 
 
   
