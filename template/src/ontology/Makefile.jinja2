@@ -26,8 +26,11 @@ EDIT_FORMAT=                {{ project.edit_format|default('owl') }}
 SRC =                       $(ONT)-edit.$(EDIT_FORMAT)
 ROBOT=                      robot
 RELEASEDIR=                 ../..
-PATTERNDIR=                 ../patterns
-REPORTDIR=                 reports
+{% if project.pattern_pipelines_group %}
+PATTERNDIR=                 {{ project.pattern_pipelines_group.pattern_directory }}
+PATTERN_XSV_FORMAT=         {{ project.pattern_pipelines_group.pattern_xsv_format }}
+{% endif %}
+REPORTDIR=                  reports
 SPARQLDIR =                 ../sparql
 REPORT_FAIL_ON =            {{ project.report_fail_on|default('ERROR') }}
 OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
@@ -101,9 +104,9 @@ PATTERNS = {% for x in project.pattern_group.products %} {{ x.id }}{% endfor %}
 PATTERNS = 
 {% endif %}
 PATTERN_ROOTS = $(patsubst %, $(PATTERNDIR)/%, $(PATTERNS))
-PATTERN_FILES = $(foreach n,$(PATTERN_ROOTS), $(n).owl)
+PATTERN_OWL_FILES = $(foreach n,$(PATTERN_ROOTS), $(n).owl)
 
-all_patterns: $(PATTERN_FILES)
+all_patterns: $(PATTERN_OWL_FILES)
 
 ## -- dosdp pattern targets --
 ##
@@ -368,7 +371,7 @@ $(PATTERNDIR)/data/{{ pipeline.id }}/%.ofn: $(PATTERNDIR)/data/{{ pipeline.id }}
 # Generating the seed file from all the TSVs
 $(PATTERNDIR)/all_pattern_terms.txt: $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %} $(PATTERNDIR)/pattern_owl_seed.txt
 	cat $^ | sort | uniq > $@
-	
+
 $(PATTERNDIR)/pattern_owl_seed.txt: $(PATTERNDIR)/pattern.owl
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
 

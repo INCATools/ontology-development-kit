@@ -98,7 +98,15 @@ class PatternPipelineProduct(Product):
     Examples: manual curation pipeline, auto curation pipeline
     Each pipeline gets their own specific directory
     """
+    
     dosdp_tools_options: str = "--obo-prefixes=true"
+    """options that are passed to DOSDP-tools"""
+    
+    pattern_directory : str = "../patterns"
+    """folder in which the source pattern YAML is stored"""
+    
+    xsv_format : str = "tsv"
+    """format and file extension for dosdp files (cvs or tsv)"""
 
 @dataclass_json
 @dataclass
