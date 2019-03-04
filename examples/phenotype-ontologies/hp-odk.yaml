@@ -13,7 +13,6 @@ import_group:
   products:
     - id: nbo
       mirror_from: http://purl.obolibrary.org/obo/nbo/nbo-base.owl
-      use_base: FALSE
     - id: pr
     - id: go
     - id: uberon 
@@ -23,7 +22,6 @@ import_group:
     - id: pato
     - id: cl
       mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl
-      use_base: FALSE
     - id: mpath
 
 

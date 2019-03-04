@@ -39,6 +39,10 @@ IM=obolibrary/odkfull
 docker-build:
 	@docker build --no-cache -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
+	
+docker-build-use-cache:
+	@docker build -t $(IM):$(VERSION) . \
+	&& docker tag $(IM):$(VERSION) $(IM):latest
 
 docker-run:
 	docker run --rm -ti --name odkfull $(IM)
