@@ -334,8 +334,8 @@ pattern_schema_checks: $(PATTERNDIR)/dosdp-patterns
 
 #This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now). It downloads all patterns specified in external.txt
 $(PATTERNDIR)/dosdp-patterns: .FORCE
-	< $(PATTERNDIR)/dosdp-patterns/external.txt tr '\n' '\0' | sed 's!.*/!!' | xargs -0 -I{} rm -f $(PATTERNDIR)/dosdp-patterns/{} &&\
-	< $(PATTERNDIR)/dosdp-patterns/external.txt tr '\n' '\0' | xargs -0 -I{} wget -q {} -P $(PATTERNDIR)/dosdp-patterns
+	cat $(PATTERNDIR)/dosdp-patterns/external.txt | sed 's!.*/!!' | sed 's! !!g' |  xargs -I{} rm -f $(PATTERNDIR)/dosdp-patterns/{}
+	cat $(PATTERNDIR)/dosdp-patterns/external.txt | sed 's! !!g' | xargs -I{} wget -q {} -P $(PATTERNDIR)/dosdp-patterns
 
 $(PATTERNDIR)/pattern.owl: pattern_schema_checks $(PATTERNDIR)/dosdp-patterns
 	$(DOSDPT) prototype --obo-prefixes --template=$(PATTERNDIR)/dosdp-patterns --outfile=$@
