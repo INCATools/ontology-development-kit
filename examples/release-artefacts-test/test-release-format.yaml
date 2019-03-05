@@ -1,0 +1,26 @@
+id: rtb
+title: "Release Test B Ontology"
+github_org: obophenotype
+repo: rtb
+report_fail_on: none
+namespaces: 
+  - http://purl.obolibrary.org/obo/PTT_
+  - http://purl.obolibrary.org/obo/PATO_
+release_artefacts: 
+  - simple
+  - non-classified
+  - simple-non-classified
+  - basic
+  - base
+  - full
+primary_release: simple
+export_formats:
+  - owl
+  - obo
+  - json
+  - ttl
+import_group:
+  products:
+    - id: ro
+    - id: pato
+    - id: mpath
