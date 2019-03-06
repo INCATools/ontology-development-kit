@@ -23,11 +23,14 @@
 {% if project.edit_format == "obo" %}
 {% if project.import_group is defined -%}
 {% for imp in project.import_group.products %}
-import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl
+import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.obo
 {% endfor %}
 {% endif %}
 {%- if project.use_dosdps %}
 import: http://purl.obolibrary.org/obo/{{ project.id }}/patterns/definitions.owl
+{%- if project.import_pattern_ontology %}
+import: http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl
+{% endif -%}
 {% endif %}
 ontology: {{project.id}}
 
@@ -53,6 +56,9 @@ Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_imp
 
 {%- if project.use_dosdps %}
 Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/definitions.owl>)
+{%- if project.import_pattern_ontology %}
+Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl>)
+{% endif -%}
 {% endif %}
 
 Annotation(rdfs:comment "{{ project.title }}")
@@ -293,22 +299,25 @@ entries:
     Example pattern implementation TSV
 #}
 {%- if project.use_dosdps %}
-^^^ src/patterns/data/default/abnormal.tsv
-defined_class	defined_class_label	entity	entity_label
+^^^ src/patterns/data/default/abnormalAnatomicalEntity.tsv
+defined_class	defined_class_label	anatomical_entity	anatomical_entity_label
 {{ project.id|upper }}:9999999	"Default defined class"	BFO:0000001	"Entity (BFO)"
 {%- if project.pattern_pipelines_group is defined %}
-{% for pipeline in project.pattern_pipelines_group.products %}
-^^^ src/patterns/data/{{ pipeline.id }}/abnormal.tsv
-defined_class	defined_class_label	entity	entity_label
+{%- for pipeline in project.pattern_pipelines_group.products %}
+^^^ src/patterns/data/{{ pipeline.id }}/abnormalAnatomicalEntity.tsv
+defined_class	defined_class_label	anatomical_entity	anatomical_entity_label
 {{ project.id|upper }}:9999999	"Default defined class"	BFO:0000001	"Entity (BFO)"
-{% endfor %}
+{%- endfor %}
 {%- endif %}
 {%- endif %}
+{#-
+    SPARQL QUERY to collect all terms that belong to an ontology
+#}
 ^^^ src/sparql/{{ project.id }}_terms.sparql
 SELECT DISTINCT ?term
 WHERE {
   { ?s1 ?p1 ?term . }
   UNION
   { ?term ?p2 ?o2 . }
-  FILTER(isIRI(?term) && regex(str(?term), UCASE("{{ project.id }}_")))
+  FILTER(isIRI(?term) && (regex(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || regex(str(?term), "{{ ns }}"){% endfor %}{% endif %})
 }
