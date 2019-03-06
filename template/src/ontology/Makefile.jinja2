@@ -174,6 +174,34 @@ $(ONT)-{{ release }}.json: $(ONT)-{{ release }}.owl
 	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
 {% endif -%}
 {% endfor -%}
+{% if 'base' not in project.release_artefacts -%}
+{% if 'obo' in project.export_formats -%}
+$(ONT)-base.obo: $(ONT)-base.owl
+	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
+{% endif -%}
+{% if 'ttl' in project.export_formats -%}
+$(ONT)-base.ttl: $(ONT)-base.owl
+	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
+{% endif -%}
+{% if 'json' in project.export_formats -%}
+$(ONT)-base.json: $(ONT)-base.owl
+	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
+{% endif -%}
+{% endif -%}
+{% if 'full' not in project.release_artefacts -%}
+{% if 'obo' in project.export_formats -%}
+$(ONT)-full.obo: $(ONT)-full.owl
+	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
+{% endif -%}
+{% if 'ttl' in project.export_formats -%}
+$(ONT)-full.ttl: $(ONT)-full.owl
+	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
+{% endif -%}
+{% if 'json' in project.export_formats -%}
+$(ONT)-full.json: $(ONT)-full.owl
+	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
+{% endif -%}
+{% endif -%}
 
 # ----------------------------------------
 # Initiating Step: Reason over source
