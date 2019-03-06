@@ -9,7 +9,7 @@ CMD = ./odk/odk.py seed
 
 EMAIL_ARGS=
 
-test: test1 test2 test3 test4 test-go-mini test-patterns
+test: test1 test2 test3 test4 test-go-mini test-patterns test-release1 test-release2 test-release3
 
 test1:
 	$(CMD) $(EMAIL_ARGS) -c -d pato -t my-ontology1 myont
@@ -28,6 +28,15 @@ test-go-mini:
 
 test-patterns:
 	$(CMD) -c -C examples/pattern-test/project.yaml
+
+test-release1:
+	$(CMD) -c -C examples/release-artefacts-test/test-release-format-patterns.yaml
+	
+test-release2:
+	$(CMD) -c -C examples/release-artefacts-test/test-release-format.yaml
+
+test-release3:
+	$(CMD) -c -C examples/release-artefacts-test/test-release.yaml
 
 schema/project-schema.json:
 	./odk/odk.py dump-schema > $@
@@ -55,7 +64,7 @@ docker-publish: docker-build
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
 
-docker-test: docker-build
+docker-test: docker-build-use-cache
 	docker images | grep odkfull &&\
 	make test CMD=./seed-via-docker.sh
 
