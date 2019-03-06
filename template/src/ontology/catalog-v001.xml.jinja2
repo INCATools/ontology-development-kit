@@ -8,6 +8,9 @@
 {% endif %}
 {%- if project.use_dosdps %} 
   <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/patterns/definitions.owl" uri="../patterns/definitions.owl"/>
+{%- if project.import_pattern_ontology %} 
+  <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/patterns/pattern.owl" uri="../patterns/pattern.owl"/>
+{% endif -%}
 {% endif %}
   <group id="Folder Repository, directory=, recursive=false, Auto-Update=false, version=2" prefer="public" xml:base=""/>
 </catalog>
