@@ -317,5 +317,5 @@ WHERE {
   { ?s1 ?p1 ?term . }
   UNION
   { ?term ?p2 ?o2 . }
-  FILTER(isIRI(?term) && (regex(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || regex(str(?term), "{{ ns }}"){% endfor %}{% endif %})
+  FILTER(isIRI(?term) && (regex(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || regex(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
