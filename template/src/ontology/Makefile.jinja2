@@ -215,7 +215,7 @@ ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/`date +%Y-%m-%d`/$@.owl
 OTHER_SRC = $(PATTERNDIR)/definitions.owl
 {% endif %}
 
-$(ONTOLOGYTERMS): $(SRC)
+$(ONTOLOGYTERMS): $(SRC) .FORCE
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
 
 {% for format in project.export_formats %} 
@@ -242,14 +242,19 @@ $(ONT)-base.owl: $(SRC) $(OTHER_SRC)
 		{% if project.use_dosdps %}merge $(patsubst %, -i %, $(OTHER_SRC)) \
 		{% endif %}annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
 
+# Full: The full artefacts with imports merged, reasoned
+$(ONT)-full.owl: $(SRC) $(OTHER_SRC)
+	$(ROBOT) merge --input $< \
+		reason --reasoner {{ project.reasoner }} \
+		relax \
+		reduce -r {{ project.reasoner }} \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+
 {% if 'non-classified' in project.release_artefacts or project.primary_release == 'non-classified' -%}
 # foo-non-classified: (edit->imports-merged)
-# removed anonymous parents and equivalnce classes
-# remove --select "parents equivalents" --select anonymous
 $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
-	$(ROBOT) remove --input $< --select imports \
-		{% if project.use_dosdps %}merge $(patsubst %, -i %, $(OTHER_SRC)) \
-		{% endif %}annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+	$(ROBOT) merge --input $< \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
 {% endif -%}
 
 {% if 'simple' in project.release_artefacts or project.primary_release == 'simple' -%}
@@ -261,6 +266,7 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		{% endif %}relax \
 		reduce -r {{ project.reasoner }} \
+		filter --term-file $(ONTOLOGYTERMS) --trim true \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
 {% endif -%}
 
@@ -270,30 +276,25 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 	$(ROBOT) remove --input $< --select imports \
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
-{% endif %}		relax \
+		{% endif %}relax \
 		reduce -r {{ project.reasoner }} \
 		filter --term-file $(ONTOLOGYTERMS) --trim true \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
 {% endif -%}
 
-$(ONT)-full.owl: $(SRC) $(OTHER_SRC)
-	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
-		relax \
-		reduce -r {{ project.reasoner }} \
-		remove --select imports \
-		merge  $(patsubst %, -i %, $(IMPORT_OWL_FILES))  \
-{% if project.use_dosdps %}		merge  $(patsubst %, -i %, $(OTHER_SRC))  \
-{% endif %}		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
-
 {% if 'basic' in project.release_artefacts or project.primary_release == 'basic' -%}
 # foo-basic: A version of -simple containing only relationships using relations on a configurable whitelist (default = BFO:0000050 (?)). See above (David comment) for explanation.
 # removes any axioms that contains one of the ops that not in the whitelist file
 
-$(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(KEEPRELATIONS)
-	$(ROBOT) remove --input $< --select imports \
-		remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
-		{% if project.use_dosdps %}merge $(patsubst %, -i %, $(OTHER_SRC)) \
-		{% endif %}annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+$(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
+	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
+		remove --select imports \
+		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
+		{% endif %}remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
+		relax \
+		reduce -r {{ project.reasoner }} \
+		filter --term-file $(ONTOLOGYTERMS) --trim true \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
 {% endif -%}
 
 # ----------------------------------------
