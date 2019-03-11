@@ -89,7 +89,9 @@ To make a release
 
 `make prepare_release`
 
-Note that any make step can be preceded by run.sh if you have Docker installed
+Note that any make step can be preceded by run.sh if you have Docker installed:
+
+`sh run.sh make prepare_release`
 
 ## OBO Library metadata
 
