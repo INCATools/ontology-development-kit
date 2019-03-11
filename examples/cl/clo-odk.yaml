@@ -1,0 +1,25 @@
+id: clo
+title: "Cell Line Ontology"
+github_org: CLO-ontology
+repo: CLO
+#report_fail_on: ERROR
+report_fail_on: None
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: bfo
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: doid
+    - id: pato
+    - id: cl
+      mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl
+    - id: iao
+    - id: ncbitaxon
+      mirror_from: https://raw.githubusercontent.com/matentzn/large-ontology-dependencies/master/ncbitaxon.owl.gz
+    - id: obi
