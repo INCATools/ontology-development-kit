@@ -241,7 +241,7 @@ $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
 $(ONT)-base.owl: $(SRC) $(OTHER_SRC)
 	$(ROBOT) remove --input $< --select imports \
 		{% if project.use_dosdps %}merge $(patsubst %, -i %, $(OTHER_SRC)) \
-		{% endif %}annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+		{% endif %}annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 
 # Full: The full artefacts with imports merged, reasoned
 $(ONT)-full.owl: $(SRC) $(OTHER_SRC)
@@ -249,13 +249,13 @@ $(ONT)-full.owl: $(SRC) $(OTHER_SRC)
 		reason --reasoner {{ project.reasoner }} \
 		relax \
 		reduce -r {{ project.reasoner }} \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 
 {% if 'non-classified' in project.release_artefacts or project.primary_release == 'non-classified' -%}
 # foo-non-classified: (edit->imports-merged)
 $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 	$(ROBOT) merge --input $< \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 {% if 'simple' in project.release_artefacts or project.primary_release == 'simple' -%}
@@ -268,7 +268,7 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 		{% endif %}relax \
 		reduce -r {{ project.reasoner }} \
 		filter --term-file $(ONTOLOGYTERMS) --trim true \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 {% if 'simple-non-classified' in project.release_artefacts or project.primary_release == 'simple-non-classified' -%}   
@@ -280,7 +280,7 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 		{% endif %}relax \
 		reduce -r {{ project.reasoner }} \
 		filter --term-file $(ONTOLOGYTERMS) --trim true \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 {% if 'basic' in project.release_artefacts or project.primary_release == 'basic' -%}
@@ -295,7 +295,7 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
 		relax \
 		reduce -r {{ project.reasoner }} \
 		filter --term-file $(ONTOLOGYTERMS) --trim true \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 # ----------------------------------------
@@ -326,7 +326,7 @@ imports/%_terms_combined.txt: seed.txt imports/%_terms.txt
 # This pattern uses ROBOT to generate an import module
 imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	$(ROBOT) extract -i $< -T imports/$*_terms_combined.txt --method BOT \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 .PRECIOUS: imports/%_import.owl
 
 {% if 'obo' in project.export_formats -%}
@@ -334,15 +334,15 @@ imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 # this can be useful for spot-checks and diffs.
 # we set strict mode to false by default. For discussion see https://github.com/owlcs/owlapi/issues/752
 imports/%_import.obo: imports/%_import.owl
-	$(ROBOT) convert --check false -i $< -f obo -o $@
+	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp.obo && mv $@.tmp.obo $@
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 imports/%_import.ttl: imports/%_import.owl
-	$(ROBOT) convert --check false -i $< -f ttl -o $@
+	$(ROBOT) convert --check false -i $< -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
 {% endif -%}
 {% if 'json' in project.export_formats -%}
 imports/%_import.json: imports/%_import.owl
-	$(ROBOT) convert --check false -i $< -f json -o $@
+	$(ROBOT) convert --check false -i $< -f json -o $@.tmp.json && mv $@.tmp.json $@
 {% endif -%}
 
 # ----------------------------------------
@@ -366,10 +366,10 @@ mirror/{{ ont.id }}.trigger:
 {% endif -%}
 {% if ont.mirror_from %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	$(ROBOT) convert -I {{ ont.mirror_from }} -o $@
+	$(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl && mv $@.tmp.owl $@
 {% else %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	$(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@
+	$(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@
 {% endif %}
 .PRECIOUS: mirror/%.owl
 {% endfor -%}
