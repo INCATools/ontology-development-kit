@@ -43,10 +43,16 @@ DOSDPT=                      dosdp-tools
 PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
 {% endif %}
 
+
+FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
+FORMATS_INCL_TSV = $(sort $(FORMAT) tsv)
+RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %} {{ release }}{% endfor %} base full)
+ 
 # ----------------------------------------
 # Top-level targets
 # ----------------------------------------
 
+.PHONY: .FORCE
 all: all_imports {% if project.use_dosdps %}patterns {% endif %}all_main all_subsets sparql_test all_reports all_assets
 test: sparql_test all_reports $(ONT).owl
 
@@ -54,8 +60,9 @@ test: sparql_test all_reports $(ONT).owl
 ##
 ## By default this is the cross-product of {ont, ont-base} x FORMATS
 
-MAIN_PRODUCTS = $(ONT) $(ONT)-base
-MAIN_FILES = $(foreach n,$(MAIN_PRODUCTS), $(n).owl $(n).obo $(n).json)
+MAIN_PRODUCTS = $(sort $(foreach r,$(RELEASE_ARTEFACTS), $(ONT)-$(r)) $(ONT))
+MAIN_GZIPPED = {% if project.gzip_main %}$(foreach f,$(FORMATS), $(ONT).$(f).gz){% endif %}
+MAIN_FILES = $(foreach n,$(MAIN_PRODUCTS), $(foreach f,$(FORMATS), $(n).$(f))) $(MAIN_GZIPPED)
 
 all_main: $(MAIN_FILES)
 
@@ -69,13 +76,13 @@ IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %
 IMPORTS = 
 {% endif %}
 IMPORT_ROOTS = $(patsubst %, imports/%_import, $(IMPORTS))
-IMPORT_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl $(n).obo $(n).json)
+IMPORT_FILES = $(foreach n,$(IMPORT_ROOTS), $(foreach f,$(FORMATS), $(n).$(f)))
 IMPORT_OWL_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl)
 
 all_imports: $(IMPORT_FILES)
-all_imports_owl: $(foreach n,$(IMPORT_ROOTS), $(n).owl)
-all_imports_obo: $(foreach n,$(IMPORT_ROOTS), $(n).obo)
-
+{% for format in project.export_formats %} 
+all_imports_{{ format }}: $(foreach n,$(IMPORT_ROOTS), $(n).{{ format }})
+{% endfor %}
 
 ## -- subset targets --
 ##
@@ -88,7 +95,7 @@ SUBSETS = {% for x in project.subset_group.products %} {{ x.id }}{% endfor %}
 SUBSETS = 
 {% endif %}
 SUBSET_ROOTS = $(patsubst %, subsets/%, $(SUBSETS))
-SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(n).tsv $(n).owl $(n).obo $(n).json)
+SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(foreach f,$(FORMATS_INCL_TSV), $(n).$(f)))
 
 all_subsets: $(SUBSET_FILES)
 
@@ -108,7 +115,7 @@ all_patterns: $(PATTERN_FILES)
 ## -- dosdp pattern targets --
 ##
 
-OBO_REPORT = $(ONT)-obo-report
+OBO_REPORT = $(ONT)-base-obo-report
 REPORTS = $(OBO_REPORT)
 REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
 
@@ -133,6 +140,9 @@ show_assets:
 # Release Management
 # ----------------------------------------
 
+KEEPRELATIONS=keeprelations.txt
+ONTOLOGYTERMS=ontologyterms.txt
+
 # This should be executed by the release manager whenever time comes to make a release.
 # It will ensure that all assets/files are fresh, and will copy to release folder
 prepare_release: $(ASSETS) $(PATTERN_RELEASE_FILES)
@@ -147,18 +157,52 @@ prepare_initial_release: prepare_release
 	cd $(RELEASEDIR) && git add $(ASSETS)
 
 # ----------------------------------------
-# Generic Conversion
+# Export formats
 # ----------------------------------------
-# we assume OWL as source
-%.obo: %.owl
-	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
-%.ttl: %.owl
-	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
-%.json: %.owl
-	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
 
-%.gz: %
-	gzip -c $< > $@.tmp && mv $@.tmp $@
+
+{% for release in project.release_artefacts -%} 
+{% if 'obo' in project.export_formats -%}
+$(ONT)-{{ release }}.obo: $(ONT)-{{ release }}.owl
+	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
+{% endif -%}
+{% if 'ttl' in project.export_formats -%}
+$(ONT)-{{ release }}.ttl: $(ONT)-{{ release }}.owl
+	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
+{% endif -%}
+{% if 'json' in project.export_formats -%}
+$(ONT)-{{ release }}.json: $(ONT)-{{ release }}.owl
+	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
+{% endif -%}
+{% endfor -%}
+{% if 'base' not in project.release_artefacts -%}
+{% if 'obo' in project.export_formats -%}
+$(ONT)-base.obo: $(ONT)-base.owl
+	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
+{% endif -%}
+{% if 'ttl' in project.export_formats -%}
+$(ONT)-base.ttl: $(ONT)-base.owl
+	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
+{% endif -%}
+{% if 'json' in project.export_formats -%}
+$(ONT)-base.json: $(ONT)-base.owl
+	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
+{% endif -%}
+{% endif -%}
+{% if 'full' not in project.release_artefacts -%}
+{% if 'obo' in project.export_formats -%}
+$(ONT)-full.obo: $(ONT)-full.owl
+	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
+{% endif -%}
+{% if 'ttl' in project.export_formats -%}
+$(ONT)-full.ttl: $(ONT)-full.owl
+	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
+{% endif -%}
+{% if 'json' in project.export_formats -%}
+$(ONT)-full.json: $(ONT)-full.owl
+	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
+{% endif -%}
+{% endif -%}
 
 # ----------------------------------------
 # Initiating Step: Reason over source
@@ -171,25 +215,88 @@ ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/`date +%Y-%m-%d`/$@.owl
 {% if project.use_dosdps %}
 OTHER_SRC = $(PATTERNDIR)/definitions.owl
 {% endif %}
-$(ONT).owl: $(SRC) $(OTHER_SRC)
-	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
-		 relax \
-		 reduce -r {{ project.reasoner }} \
-		 remove --select imports \
-	         merge  $(patsubst %, -i %, $(IMPORT_OWL_FILES))  \
-           {% if project.use_dosdps -%}
-           merge  $(patsubst %, -i %, $(OTHER_SRC))  \
-           {% endif -%}
-	         annotate --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
 
-# requires robot 1.2. For some reason, the pipe between remove | merge does not work. 
-$(ONT)-base.owl: $(SRC) {% if project.use_dosdps %}$(PATTERNDIR)/definitions.owl{% endif %}
-	$(ROBOT) remove --trim false --input $< --select imports --output $@.tmp.owl && mv $@.tmp.owl $@ &&\
-{% if project.use_dosdps -%}
-	$(ROBOT) merge -i $@ -i $(PATTERNDIR)/definitions.owl --output $@.tmp.owl && mv $@.tmp.owl $@ &&\
+$(ONTOLOGYTERMS): $(SRC) all_imports
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
+
+{% for format in project.export_formats %} 
+{% if project.gzip_main -%}
+$(ONT).{{ format }}.gz: $(ONT).{{ format }}
+	gzip -c $< > $@.tmp && mv $@.tmp $@
+{% endif %}
+$(ONT).{{ format }}: $(ONT)-{{ project.primary_release }}.{{ format }}
+	cp $< $@
+{% endfor %}
+{% if 'owl' not in project.export_formats %}
+{% if project.gzip_main -%}
+$(ONT).owl.gz: $(ONT).owl
+	gzip -c $< > $@.tmp && mv $@.tmp $@
+{% endif %}
+$(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
+	cp $< $@
+{% endif %}
+
+
+# base: OTHER sources of interest, such as definitions owl
+$(ONT)-base.owl: $(SRC) $(OTHER_SRC)
+	$(ROBOT) remove --input $< --select imports \
+		{% if project.use_dosdps %}merge $(patsubst %, -i %, $(OTHER_SRC)) \
+		{% endif %}annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+
+# Full: The full artefacts with imports merged, reasoned
+$(ONT)-full.owl: $(SRC) $(OTHER_SRC)
+	$(ROBOT) merge --input $< \
+		reason --reasoner {{ project.reasoner }} \
+		relax \
+		reduce -r {{ project.reasoner }} \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+
+{% if 'non-classified' in project.release_artefacts or project.primary_release == 'non-classified' -%}
+# foo-non-classified: (edit->imports-merged)
+$(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
+	$(ROBOT) merge --input $< \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
-	$(ROBOT) annotate -i $@ --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@ &&\
-	echo "$(ONT)-base.owl successfully created."
+
+{% if 'simple' in project.release_artefacts or project.primary_release == 'simple' -%}
+# foo-simple: (edit->reason,relax,reduce,drop imports, drop every axiom which contains an entity outside the "namespaces of interest")
+# drop every axiom: filter --term-file keep_terms.txt --trim true
+$(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
+	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
+		remove --select imports \
+		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
+		{% endif %}relax \
+		reduce -r {{ project.reasoner }} \
+		filter --term-file $(ONTOLOGYTERMS) --trim true \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+{% endif -%}
+
+{% if 'simple-non-classified' in project.release_artefacts or project.primary_release == 'simple-non-classified' -%}   
+# foo-simple-non-classified (edit->relax,reduce,drop imports, drop every axiom which contains an entity outside the "namespaces of interest") <- aka the HPO use case, no reason.
+# Should this be the non-classified ontology with the drop foreign axiom filter? 
+$(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
+	$(ROBOT) remove --input $< --select imports \
+		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
+		{% endif %}relax \
+		reduce -r {{ project.reasoner }} \
+		filter --term-file $(ONTOLOGYTERMS) --trim true \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+{% endif -%}
+
+{% if 'basic' in project.release_artefacts or project.primary_release == 'basic' -%}
+# foo-basic: A version of -simple containing only relationships using relations on a configurable whitelist (default = BFO:0000050 (?)). See above (David comment) for explanation.
+# removes any axioms that contains one of the ops that not in the whitelist file
+
+$(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
+	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
+		remove --select imports \
+		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
+		{% endif %}remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
+		relax \
+		reduce -r {{ project.reasoner }} \
+		filter --term-file $(ONTOLOGYTERMS) --trim true \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+{% endif -%}
 
 # ----------------------------------------
 # Import modules
@@ -219,15 +326,24 @@ imports/%_terms_combined.txt: seed.txt imports/%_terms.txt
 # This pattern uses ROBOT to generate an import module
 imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	$(ROBOT) extract -i $< -T imports/$*_terms_combined.txt --method BOT \
-		 annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 .PRECIOUS: imports/%_import.owl
 
+{% if 'obo' in project.export_formats -%}
 # convert imports to obo.
 # this can be useful for spot-checks and diffs.
 # we set strict mode to false by default. For discussion see https://github.com/owlcs/owlapi/issues/752
 imports/%_import.obo: imports/%_import.owl
-	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp && mv $@.tmp $@
-
+	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp.obo && mv $@.tmp.obo $@
+{% endif -%}
+{% if 'ttl' in project.export_formats -%}
+imports/%_import.ttl: imports/%_import.owl
+	$(ROBOT) convert --check false -i $< -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
+{% endif -%}
+{% if 'json' in project.export_formats -%}
+imports/%_import.json: imports/%_import.owl
+	$(ROBOT) convert --check false -i $< -f json -o $@.tmp.json && mv $@.tmp.json $@
+{% endif -%}
 
 # ----------------------------------------
 # Mirroring upstream ontologies
@@ -250,10 +366,10 @@ mirror/{{ ont.id }}.trigger:
 {% endif -%}
 {% if ont.mirror_from %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	$(ROBOT) convert -I {{ ont.mirror_from }} -o $@
+	$(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl && mv $@.tmp.owl $@
 {% else %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	$(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@
+	$(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@
 {% endif %}
 .PRECIOUS: mirror/%.owl
 {% endfor -%}
@@ -319,8 +435,6 @@ build-docker:
 # ----------------------------------------
 
 # Test patterns for schema compliance:
-
-.PHONY: .FORCE
 
 .PHONY: patterns
 patterns: all_imports $(PATTERNDIR)/pattern.owl $(PATTERNDIR)/definitions.owl

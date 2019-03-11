@@ -314,9 +314,27 @@ class OntologyProject(JsonSchemaMixin):
     reasoner : str = 'ELK'
     """Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values"""
     
+    primary_release : str = 'full'
+    """Which release file should be published as the primary release artefact, i.e. foo.owl"""
+    
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
     
+    import_pattern_ontology : bool = False
+    """if true import pattern.owl"""
+    
+    gzip_main : bool = False
+    """if true add a gzipped version of the main artefact"""
+    
+    release_artefacts : List[str] = field(default_factory=lambda: ['full', 'base'])
+    """A list of release artefacts you wish to be exported."""
+    
+    export_formats : List[str] = field(default_factory=lambda: ['owl', 'obo'])
+    """A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl."""
+    
+    namespaces : Optional[List[str]] = None
+    """A list of namespaces that are considered at home in this ontology. Used for certain filter commands."""
+
     dosdp_tools_options: str = "--obo-prefixes=true"
     """default parameters for dosdp-tools"""
     
