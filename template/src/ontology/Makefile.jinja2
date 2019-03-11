@@ -52,6 +52,7 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %} {{ rel
 # Top-level targets
 # ----------------------------------------
 
+.PHONY: .FORCE
 all: all_imports {% if project.use_dosdps %}patterns {% endif %}all_main all_subsets sparql_test all_reports all_assets
 test: sparql_test all_reports $(ONT).owl
 
@@ -114,7 +115,7 @@ all_patterns: $(PATTERN_FILES)
 ## -- dosdp pattern targets --
 ##
 
-OBO_REPORT = $(ONT)-obo-report
+OBO_REPORT = $(ONT)-base-obo-report
 REPORTS = $(OBO_REPORT)
 REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
 
@@ -215,7 +216,7 @@ ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/`date +%Y-%m-%d`/$@.owl
 OTHER_SRC = $(PATTERNDIR)/definitions.owl
 {% endif %}
 
-$(ONTOLOGYTERMS): $(SRC) .FORCE
+$(ONTOLOGYTERMS): $(SRC) all_imports
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
 
 {% for format in project.export_formats %} 
@@ -434,8 +435,6 @@ build-docker:
 # ----------------------------------------
 
 # Test patterns for schema compliance:
-
-.PHONY: .FORCE
 
 .PHONY: patterns
 patterns: all_imports $(PATTERNDIR)/pattern.owl $(PATTERNDIR)/definitions.owl
