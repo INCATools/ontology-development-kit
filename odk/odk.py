@@ -311,6 +311,9 @@ class OntologyProject(JsonSchemaMixin):
     robot_settings: Optional[CommandSettings] = None
     """Settings to pass to ROBOT such as amount of memory to be used"""
     
+    robot_java_args: Optional[str] = ""
+    """Java args to pass to ROBOT at runtime, such as -Xmx6G"""
+    
     reasoner : str = 'ELK'
     """Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values"""
     

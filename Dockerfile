@@ -33,7 +33,7 @@ RUN apk update \
 
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
-ENV ROBOT v1.3.0
+ENV ROBOT v1.4.0
 
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
