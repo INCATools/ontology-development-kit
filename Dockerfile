@@ -1,6 +1,6 @@
 ### From https://stackoverflow.com/questions/51121875/how-to-run-docker-with-python-and-java
 ### 1. Get Linux
-FROM alpine:3.9
+FROM openjdk:8-jre-alpine3.9
 
 ### 2. Get Python, PIP
 
@@ -21,19 +21,18 @@ RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requ
 RUN pip3 install pandas
 
 ### 2. Get Java via the package manager
+
 RUN apk update \
-&& apk upgrade \
 && apk add --no-cache bash \
 && apk add --no-cache --virtual=build-dependencies unzip \
 && apk add --no-cache curl \
-&& apk add --no-cache openjdk8-jre \
 && apk add --no-cache rsync
 
-
+#&& apk upgrade \
 
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
-ENV ROBOT v1.3.0
+ENV ROBOT v1.4.0
 
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven

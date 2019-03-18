@@ -54,7 +54,8 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %} {{ rel
 
 .PHONY: .FORCE
 all: all_imports {% if project.use_dosdps %}patterns {% endif %}all_main all_subsets sparql_test all_reports all_assets
-test: sparql_test all_reports $(ONT).owl
+test: sparql_test all_reports
+	$(ROBOT) reason --input $(SRC) --reasoner ELK --output test.owl && rm test.owl && echo "Success"
 
 ## -- main targets --
 ##
@@ -115,7 +116,7 @@ all_patterns: $(PATTERN_FILES)
 ## -- dosdp pattern targets --
 ##
 
-OBO_REPORT = $(ONT)-base-obo-report
+OBO_REPORT = $(ONT)-edit-obo-report
 REPORTS = $(OBO_REPORT)
 REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
 
@@ -164,44 +165,76 @@ prepare_initial_release: prepare_release
 {% for release in project.release_artefacts -%} 
 {% if 'obo' in project.export_formats -%}
 $(ONT)-{{ release }}.obo: $(ONT)-{{ release }}.owl
-	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
+		convert --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 $(ONT)-{{ release }}.ttl: $(ONT)-{{ release }}.owl
-	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
+		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
 {% endif -%}
 {% if 'json' in project.export_formats -%}
 $(ONT)-{{ release }}.json: $(ONT)-{{ release }}.owl
-	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
+		convert --check false -f json -o $@.tmp.json && mv $@.tmp.json $@
 {% endif -%}
 {% endfor -%}
+
 {% if 'base' not in project.release_artefacts -%}
 {% if 'obo' in project.export_formats -%}
 $(ONT)-base.obo: $(ONT)-base.owl
-	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
+		convert --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 $(ONT)-base.ttl: $(ONT)-base.owl
-	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
+		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
 {% endif -%}
 {% if 'json' in project.export_formats -%}
 $(ONT)-base.json: $(ONT)-base.owl
-	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
+		convert --check false -f json -o $@.tmp.json && mv $@.tmp.json $@
 {% endif -%}
 {% endif -%}
+
 {% if 'full' not in project.release_artefacts -%}
 {% if 'obo' in project.export_formats -%}
 $(ONT)-full.obo: $(ONT)-full.owl
-	$(ROBOT) convert --check false -i $< -f obo $(OBO_FORMAT_OPTIONS) -o $*.tmp.obo && grep -v ^owl-axioms $*.tmp.obo > $@
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
+		convert --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 $(ONT)-full.ttl: $(ONT)-full.owl
-	$(ROBOT) convert -i $< -f ttl -o $*.tmp.ttl && mv $*.tmp.ttl $@
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
+		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
 {% endif -%}
 {% if 'json' in project.export_formats -%}
 $(ONT)-full.json: $(ONT)-full.owl
-	$(ROBOT) convert -i $< -f json -o $*.tmp.json && mv $*.tmp.json $@
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
+		convert --check false -f json -o $@.tmp.json && mv $@.tmp.json $@
 {% endif -%}
+{% endif -%}
+
+# Main release artefacts
+$(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
+	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY) \
+		convert -o $@.tmp.owl && mv $@.tmp.owl $@
+
+{% if 'obo' in project.export_formats -%}
+$(ONT).obo: $(ONT)-{{ project.primary_release }}.owl
+	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY) \
+		convert --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+{% endif -%}
+{% if 'ttl' in project.export_formats -%}
+$(ONT).ttl: $(ONT)-{{ project.primary_release }}.owl
+	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY) \
+		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
+{% endif -%}
+{% if 'json' in project.export_formats -%}
+$(ONT).json: $(ONT)-{{ project.primary_release }}.owl
+	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY) \
+		convert --check false -f json -o $@.tmp.json && mv $@.tmp.json $@
 {% endif -%}
 
 # ----------------------------------------
@@ -224,8 +257,6 @@ $(ONTOLOGYTERMS): $(SRC) all_imports
 $(ONT).{{ format }}.gz: $(ONT).{{ format }}
 	gzip -c $< > $@.tmp && mv $@.tmp $@
 {% endif %}
-$(ONT).{{ format }}: $(ONT)-{{ project.primary_release }}.{{ format }}
-	cp $< $@
 {% endfor %}
 {% if 'owl' not in project.export_formats %}
 {% if project.gzip_main -%}
@@ -267,19 +298,22 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		{% endif %}relax \
 		reduce -r {{ project.reasoner }} \
-		filter --term-file $(ONTOLOGYTERMS) --trim true \
+		filter --select ontology --term-file $(ONTOLOGYTERMS) --trim false \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 {% if 'simple-non-classified' in project.release_artefacts or project.primary_release == 'simple-non-classified' -%}   
 # foo-simple-non-classified (edit->relax,reduce,drop imports, drop every axiom which contains an entity outside the "namespaces of interest") <- aka the HPO use case, no reason.
 # Should this be the non-classified ontology with the drop foreign axiom filter? 
+# Consider adding remove --term "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace" 
+
 $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 	$(ROBOT) remove --input $< --select imports \
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
+		remove --axioms equivalent \
 		{% endif %}relax \
 		reduce -r {{ project.reasoner }} \
-		filter --term-file $(ONTOLOGYTERMS) --trim true \
+		filter --select ontology --term-file $(ONTOLOGYTERMS) --trim false \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 

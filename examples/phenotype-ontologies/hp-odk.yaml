@@ -2,9 +2,18 @@ id: hp
 title: "Human Phenotype Ontology"
 github_org: obophenotype
 repo: human-phenotype-ontology
-#report_fail_on: ERROR
-report_fail_on: ERROR
+report_fail_on: none
 use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
+namespaces: 
+  - http://purl.obolibrary.org/obo/HP_
+release_artefacts: 
+  - simple
+  - non-classified
+  - simple-non-classified
+  - basic
+  - full
+primary_release: simple-non-classified
 export_formats:
   - owl
   - obo
