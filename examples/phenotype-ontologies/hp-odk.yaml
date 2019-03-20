@@ -7,11 +7,10 @@ use_dosdps: TRUE
 dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
 namespaces: 
   - http://purl.obolibrary.org/obo/HP_
+  - http://purl.obolibrary.org/obo/hp
 release_artefacts: 
-  - simple
-  - non-classified
+  - base
   - simple-non-classified
-  - basic
   - full
 primary_release: simple-non-classified
 export_formats:
