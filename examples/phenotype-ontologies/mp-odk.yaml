@@ -1,0 +1,31 @@
+id: mp
+title: "Mammalian Phenotype Ontology"
+github_org: obophenotype
+repo: mammalian-phenotype-ontology
+report_fail_on: none
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true"
+namespaces: 
+  - http://purl.obolibrary.org/obo/MP_
+release_artefacts: 
+  - base
+  - simple-non-classified
+  - full
+primary_release: simple-non-classified
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products: 
+    - id: nbo
+      mirror_from: http://purl.obolibrary.org/obo/nbo/nbo-base.owl
+    - id: pr
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: pato
+    - id: cl
+      mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl
+    - id: mpath

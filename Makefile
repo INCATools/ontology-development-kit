@@ -60,6 +60,10 @@ docker-clean:
 	docker kill $(IM) || echo not running ;
 	docker rm $(IM) || echo not made 
 
+docker-publish-no-build:
+	@docker push $(IM):$(VERSION) \
+	&& docker push $(IM):latest
+	
 docker-publish: docker-build
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
