@@ -342,25 +342,25 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
 
 {% if project.use_dosdps %}
 seed.txt: $(SRC) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt
-	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
-	cat $@.tmp $(PATTERNDIR)/all_pattern_terms.txt | sort | uniq >  $@
+	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
+	cat $@.tmp $(PATTERNDIR)/all_pattern_terms.txt | sort | uniq >  $@; fi
 {% else %}
 seed.txt: $(SRC)
-	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
+	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
 {% endif %}
 
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
 # Should be able to drop this if robot can just take a big messy list of terms as input.
 
 imports/%_terms_combined.txt: seed.txt imports/%_terms.txt
-	cat $^ | grep -v ^# | sort | uniq >  $@
+	@if [ $(IMP) = true ]; then cat $^ | grep -v ^# | sort | uniq >  $@; fi
 
 # -- Generate Import Modules --
 #
 # This pattern uses ROBOT to generate an import module
 imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
-	$(ROBOT) extract -i $< -T imports/$*_terms_combined.txt --method BOT \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+	@if [ $(IMP) = true ]; then $(ROBOT) extract -i $< -T imports/$*_terms_combined.txt --method BOT \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 .PRECIOUS: imports/%_import.owl
 
 {% if 'obo' in project.export_formats -%}
@@ -368,21 +368,25 @@ imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 # this can be useful for spot-checks and diffs.
 # we set strict mode to false by default. For discussion see https://github.com/owlcs/owlapi/issues/752
 imports/%_import.obo: imports/%_import.owl
-	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp.obo && mv $@.tmp.obo $@
+	@if [ $(IMP) = true ]; then $(ROBOT) convert --check false -i $< -f obo -o $@.tmp.obo && mv $@.tmp.obo $@; fi
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 imports/%_import.ttl: imports/%_import.owl
-	$(ROBOT) convert --check false -i $< -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
+	@if [ $(IMP) = true ]; then $(ROBOT) convert --check false -i $< -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@; fi
 {% endif -%}
 {% if 'json' in project.export_formats -%}
 imports/%_import.json: imports/%_import.owl
-	$(ROBOT) convert --check false -i $< -f json -o $@.tmp.json && mv $@.tmp.json $@
+	@if [ $(IMP) = true ]; then $(ROBOT) convert --check false -i $< -f json -o $@.tmp.json && mv $@.tmp.json $@; fi
 {% endif -%}
 
 # ----------------------------------------
 # Mirroring upstream ontologies
 # ----------------------------------------
 #
+
+IMP=true # Global parameter to bypass import generation
+MIR=true # Global parameter to bypass mirror generation
+
 {% if project.import_group is defined -%}
 {% for ont in project.import_group.products %}
 
@@ -400,10 +404,10 @@ mirror/{{ ont.id }}.trigger:
 {% endif -%}
 {% if ont.mirror_from %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	$(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl && mv $@.tmp.owl $@
+	@if [ $(MIR) = true ] && [ $(IMP) = true ]; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% else %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	$(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@
+	@if [ $(MIR) = true ] && [ $(IMP) = true ]; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% endif %}
 .PRECIOUS: mirror/%.owl
 {% endfor -%}
@@ -518,7 +522,7 @@ $(PATTERNDIR)/all_pattern_terms.txt: $(pattern_term_lists_default) {% if project
 	cat $^ | sort | uniq > $@
 	
 $(PATTERNDIR)/pattern_owl_seed.txt: $(PATTERNDIR)/pattern.owl
-	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
+	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
 
 $(PATTERNDIR)/data/default/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERNDIR)/data/default/%.tsv .FORCE
 	dosdp-tools terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@
