@@ -1,0 +1,26 @@
+id: ddpheno
+title: "Dicty Phenotype Ontology"
+github_org: obophenotype
+repo: dicty-phenotype-ontology
+report_fail_on: none
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true"
+namespaces: 
+  - http://purl.obolibrary.org/obo/DDPHENO_
+license: CC-BY
+description: "Ontology about the phenotypes observed in Dicty"
+release_artefacts: 
+  - base
+  - full
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: iao
+    - id: go
+    - id: ro
+    - id: pato
+    - id: ddanat
