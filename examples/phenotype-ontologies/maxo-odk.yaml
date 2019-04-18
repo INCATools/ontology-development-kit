@@ -1,0 +1,27 @@
+id: maxo
+title: "Medical Action Ontology"
+github_org: monarch-initiative
+repo: MAxO
+report_fail_on: none
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true"
+namespaces: 
+  - http://purl.obolibrary.org/obo/MAXO_
+release_artefacts: 
+  - base
+  - full
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: iao
+    - id: go
+    - id: ro
+    - id: uberon
+pattern_pipelines_group:
+  products:
+    - id: manual
+      dosdp_tools_options: "--obo-prefixes=true"

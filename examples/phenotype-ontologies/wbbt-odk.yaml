@@ -2,7 +2,7 @@ id: wbbt
 title: "C. elegans Gross Anatomy Ontology"
 github_org: obophenotype
 repo: c-elegans-gross-anatomy-ontology
-report_fail_on: ERROR
+report_fail_on: none
 namespaces: 
   - http://purl.obolibrary.org/obo/WBbt_
 license: CC-BY
