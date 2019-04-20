@@ -1,4 +1,3 @@
-**The current version of the documentation has been moved to http://wiki.geneontology.org/index.php/Protege_setup_for_GO_Eds**
 
 # Initial Setup
 
@@ -11,9 +10,9 @@
 
 ## ID Ranges
 
-1. Curators and projects are assigned specific GO term ID ranges.
+1. Curators and projects are assigned specific ID ranges within the prefix for your ontology. See the README-editors.md for your ontology
 
-2. These ID ranges are stored in the file: [go-idranges.owl](https://github.com/geneontology/go-ontology/blob/master/src/ontology/go-idranges.owl)
+2. An example: [go-idranges.owl](https://github.com/geneontology/go-ontology/blob/master/src/ontology/go-idranges.owl)
 
 3. __NOTE:__ You should only use IDs within your range.
 
@@ -22,7 +21,7 @@
 
 ## Setting ID ranges in Protege
 
-1. Once you have your assigned ID range, you need to configure Protege so that your ID range is recorded in the Preferences menu.  Protege does not read the go-idranges.owl file.
+1. Once you have your assigned ID range, you need to configure Protege so that your ID range is recorded in the Preferences menu.  Protege does not read the idranges file.
 
 2. In the Protege menu, select Preferences.
 
