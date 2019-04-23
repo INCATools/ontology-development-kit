@@ -515,7 +515,7 @@ def cli():
 
 @cli.command()
 @click.option('-C', '--config', type=click.File('r'))
-@click.option('-T', '--templatedir',  default='./template/')
+@click.option('-T', '--templatedir',  default='/tools/templates/')
 @click.option('-i', '--input',  type=click.Path(exists=True))
 @click.option('-o', '--output')
 def create_makefile(config, templatedir, input, output):
@@ -528,7 +528,7 @@ def create_makefile(config, templatedir, input, output):
 
 @cli.command()
 @click.option('-C', '--config', type=click.File('r'))
-@click.option('-T', '--templatedir',  default='./template/')
+@click.option('-T', '--templatedir',  default='/tools/templates/')
 @click.option('-i', '--input',  type=click.Path(exists=True))
 @click.option('-o', '--output')
 def create_dynfile(config, templatedir, input, output):
@@ -567,7 +567,7 @@ def dump_schema():
 @cli.command()
 @click.option('-C', '--config',       type=click.File('r'))
 @click.option('-c', '--clean/--no-clean', default=False)
-@click.option('-T', '--templatedir',  default='./template/')
+@click.option('-T', '--templatedir',  default='/tools/templates/')
 @click.option('-D', '--outdir',       default=None)
 @click.option('-d', '--dependencies', multiple=True)
 @click.option('-t', '--title',        type=str)
@@ -600,6 +600,8 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     if clean:
         if os.path.exists(outdir):
             shutil.rmtree(outdir)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir, exist_ok=True)
     for root, subdirs, files in os.walk(templatedir):
         tdir = root.replace(templatedir,outdir+"/")
         os.makedirs(tdir, exist_ok=True)
