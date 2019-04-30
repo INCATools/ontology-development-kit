@@ -165,8 +165,7 @@ prepare_initial_release: prepare_release
 {% for release in project.release_artefacts -%} 
 {% if 'obo' in project.export_formats -%}
 $(ONT)-{{ release }}.obo: $(ONT)-{{ release }}.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
-		convert --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 $(ONT)-{{ release }}.ttl: $(ONT)-{{ release }}.owl
@@ -183,8 +182,7 @@ $(ONT)-{{ release }}.json: $(ONT)-{{ release }}.owl
 {% if 'base' not in project.release_artefacts -%}
 {% if 'obo' in project.export_formats -%}
 $(ONT)-base.obo: $(ONT)-base.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
-		convert --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 $(ONT)-base.ttl: $(ONT)-base.owl
@@ -201,8 +199,7 @@ $(ONT)-base.json: $(ONT)-base.owl
 {% if 'full' not in project.release_artefacts -%}
 {% if 'obo' in project.export_formats -%}
 $(ONT)-full.obo: $(ONT)-full.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
-		convert --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 $(ONT)-full.ttl: $(ONT)-full.owl
@@ -222,9 +219,8 @@ $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
 		convert -o $@.tmp.owl && mv $@.tmp.owl $@
 
 {% if 'obo' in project.export_formats -%}
-$(ONT).obo: $(ONT)-{{ project.primary_release }}.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY) \
-		convert --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+$(ONT).obo: $(ONT).owl
+	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 $(ONT).ttl: $(ONT)-{{ project.primary_release }}.owl
@@ -270,7 +266,7 @@ $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
 
 # base: OTHER sources of interest, such as definitions owl
 $(ONT)-base.owl: $(SRC) $(OTHER_SRC)
-	$(ROBOT) remove --input $< --select imports \
+	$(ROBOT) remove --input $< --select imports --trim false \
 		{% if project.use_dosdps %}merge $(patsubst %, -i %, $(OTHER_SRC)) \
 		{% endif %}annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 
@@ -294,11 +290,11 @@ $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 # drop every axiom: filter --term-file keep_terms.txt --trim true
 $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
-		remove --select imports \
+		remove --select imports --trim false \
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		{% endif %}relax \
 		reduce -r {{ project.reasoner }} \
-		filter --select ontology --term-file $(ONTOLOGYTERMS) --trim false \
+		filter --select ontology --term-file $(ONTOLOGYTERMS) --trim false --preserve-structure false \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
@@ -308,7 +304,7 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 # Consider adding remove --term "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace" 
 
 $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
-	$(ROBOT) remove --input $< --select imports \
+	$(ROBOT) remove --input $< --select imports --trim false \
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		remove --axioms equivalent \
 		{% endif %}relax \
@@ -323,12 +319,12 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 
 $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
 	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
-		remove --select imports \
+		remove --select imports --trim false \
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		{% endif %}remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
 		relax \
 		reduce -r {{ project.reasoner }} \
-		filter --term-file $(ONTOLOGYTERMS) --trim true \
+		filter --term-file $(ONTOLOGYTERMS) --trim true --preserve-structure false \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
