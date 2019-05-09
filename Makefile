@@ -42,7 +42,7 @@ schema/project-schema.json:
 	./odk/odk.py dump-schema > $@
 
 # Building docker image
-VERSION = "v1.2.11" 
+VERSION = "v1.2.12" 
 IM=obolibrary/odkfull
 
 docker-build:
