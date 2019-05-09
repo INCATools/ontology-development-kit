@@ -2,7 +2,7 @@ id: xpo
 title: "Xenopus Phenotype Ontology"
 github_org: obophenotype
 repo: xenopus-phenotype-ontology
-report_fail_on: none
+report_fail_on: ERROR
 use_dosdps: TRUE
 dosdp_tools_options: "--obo-prefixes=true"
 namespaces: 

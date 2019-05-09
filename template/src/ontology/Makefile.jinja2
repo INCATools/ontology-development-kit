@@ -304,7 +304,7 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 # Consider adding remove --term "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace" 
 
 $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
-	$(ROBOT) remove --input $< --select imports --trim false \
+	$(ROBOT) remove --input $< --select imports --trim true \
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		remove --axioms equivalent \
 		{% endif %}relax \
