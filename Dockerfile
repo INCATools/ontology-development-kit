@@ -34,6 +34,8 @@ RUN apk update \
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
 ENV ROBOT v1.4.0
 
+RUN apk --no-cache add openssl wget
+
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
 RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/owltools && \
