@@ -48,6 +48,9 @@ RUN wget https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar -O 
     
 ENV PATH "/tools/:$PATH"
 
+# Setup fastobo-validator
+RUN wget https://dl.bintray.com/fastobo/fastobo-validator/stable/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools
+
 # Setup dosdp tools
 ENV V=0.13.1
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$V/dosdp-tools-$V.tgz && tar -zxvf dosdp-tools-$V.tgz && mv dosdp-tools-$V /tools/dosdp-tools
