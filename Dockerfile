@@ -16,11 +16,9 @@ WORKDIR /tools
 COPY requirements.txt /tools/
 
 # The following row are required to build and install numpy, which is a prerequisite for pandas
-RUN apk add -t pandas-deps --no-cache make automake gcc g++ subversion python3-dev \
- && pip3 install -r requirements.txt \
- && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy \
- && pip3 install pandas \
- && apk del pandas-deps
+RUN apk add --no-cache make automake gcc g++ subversion python3-dev
+RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy
+RUN pip3 install pandas
 
 ### 2. Get Java via the package manager
 
