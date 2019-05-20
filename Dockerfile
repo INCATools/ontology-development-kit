@@ -16,9 +16,11 @@ WORKDIR /tools
 COPY requirements.txt /tools/
 
 # The following row are required to build and install numpy, which is a prerequisite for pandas
-RUN apk add --no-cache make automake gcc g++ subversion python3-dev
-RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy
-RUN pip3 install pandas
+RUN apk add -t pandas-deps --no-cache make automake gcc g++ subversion python3-dev \
+ && pip3 install -r requirements.txt \
+ && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy \
+ && pip3 install pandas \
+ && apk del pandas-deps
 
 ### 2. Get Java via the package manager
 
@@ -47,6 +49,9 @@ RUN wget https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar -O 
     chmod +x /tools/*
     
 ENV PATH "/tools/:$PATH"
+
+# Setup fastobo-validator
+RUN wget https://dl.bintray.com/fastobo/fastobo-validator/stable/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools
 
 # Setup dosdp tools
 ENV V=0.13.1
