@@ -34,6 +34,10 @@ OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
 SPARQL_VALIDATION_CHECKS =  equivalent-classes trailing-whitespace owldef-self-reference xref-syntax nolabels
 SPARQL_EXPORTS =            basic-report class-count-by-prefix edges xrefs obsoletes synonyms
 
+{%- if project.reasoner_configuration.equivalent_classes_allowed %}
+REASON_OPTS = --equivalent-classes-allowed {{ project.reasoner_configuration.equivalent_classes_allowed }}
+{% endif %}
+
 TODAY   := $(shell date +%Y-%m-%d)
 
 {%- if project.use_dosdps %}

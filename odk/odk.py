@@ -278,6 +278,19 @@ class ExportGroup(ProductGroup):
     directory : Directory = "reports/"
     """directory where exports are placed"""
 
+@dataclass_json
+@dataclass
+class ReasonerConfiguration(JsonSchemaMixin):
+    """
+    Configuration settings for reasoning.
+
+    These are mostly passed through to the robot reason command.
+    See http://robot.obolibrary.org/reason
+    """
+    
+    equivalent_classes_allowed : str = "asserted-only"
+    """settings determining behavior on detection of equivalence"""
+
     
 @dataclass_json
 @dataclass
@@ -383,6 +396,9 @@ class OntologyProject(JsonSchemaMixin):
 
     robotemplate_group : Optional[RoboTemplateGroup] = None
     """Block that includes information on all ROBOT templates used"""
+
+    reasoner_configuration : Optional[ReasonerConfiguration] = None
+    """Options for robot reason"""
 
     def fill_missing(self):
         """
@@ -595,6 +611,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     project = mg.context.project
     if project.id is None or project.id == "":
         project.id = repo
+    logging.info('Loaded project: {}'.format(project.id))    
     if outdir is None:
         outdir = "target/{}".format(project.id)
     if clean:
@@ -602,6 +619,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
             shutil.rmtree(outdir)
     if not os.path.exists(outdir):
         os.makedirs(outdir, exist_ok=True)
+    logging.info('Traversing: {}'.format(templatedir))    
     for root, subdirs, files in os.walk(templatedir):
         tdir = root.replace(templatedir,outdir+"/")
         os.makedirs(tdir, exist_ok=True)
