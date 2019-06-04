@@ -1,11 +1,10 @@
 # Dockerfiles for obolibrary/odk{full,lite}
 
-This folder containers Dockerfiles for building the images here:
+This folder containers Dockerfiles for building the versions of the ODK.
 
-https://hub.docker.com/r/obolibrary/
+Currently we only make one: odklite. See odklite folder for details.
 
-We make two: odklite and odkfull. See individual folders for details.
-The odk depends on odkfull.
+The main, most frequently maintained image however is odkfull: Instructions on how to build the ODK full can be found [here](https://github.com/INCATools/ontology-development-kit/blob/master/Makefile)
 
 Note that these containers are not intended to be built as part of the
 ontology generation process. They are here for obo admins to make and
