@@ -1,0 +1,12 @@
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix obo: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT ?cls WHERE
+{
+  {?cls a owl:ObjectProperty .}
+  UNION
+  {?x <http://www.geneontology.org/formats/oboInOwl#inSubset> ?cls}
+  UNION
+  {?x <http://www.geneontology.org/formats/oboInOwl#hasSynonymType> ?cls}
+  FILTER (!isBlank(?cls))
+}
