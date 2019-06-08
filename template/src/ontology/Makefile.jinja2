@@ -245,7 +245,7 @@ ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/`date +%Y-%m-%d`/$@.owl
 OTHER_SRC = $(PATTERNDIR)/definitions.owl
 {% endif %}
 
-$(ONTOLOGYTERMS): $(SRC) all_imports
+$(ONTOLOGYTERMS): $(SRC) $(OTHER_SRC)
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
 
 {% for format in project.export_formats %} 
@@ -290,7 +290,7 @@ $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 # drop every axiom: filter --term-file keep_terms.txt --trim true
 #		remove --select imports --trim false \
 
-simple_seed.txt: $(SRC) prepare_patterns $(ONTOLOGYTERMS)
+simple_seed.txt: $(SRC) $(ONTOLOGYTERMS)
 	$(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/simple-seed.sparql $@.tmp &&\
 	cat $@.tmp $(ONTOLOGYTERMS) | sort | uniq >  $@ &&\
 	echo "http://www.geneontology.org/formats/oboInOwl#SubsetProperty" >> $@ &&\
@@ -353,7 +353,7 @@ seed.txt: $(SRC) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt
 	cat $@.tmp $(PATTERNDIR)/all_pattern_terms.txt | sort | uniq >  $@; fi
 {% else %}
 seed.txt: $(SRC)
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
+	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/terms.sparql $@; fi
 {% endif %}
 
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
