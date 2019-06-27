@@ -6,7 +6,7 @@ See https://github.com/ontodev/robot/issues/37
 
 For help on command line usage:
 
-odk.py
+odk.py 
 
 """
 from typing import Optional, Set, List, Union, Dict, Any
@@ -50,20 +50,20 @@ class Product(JsonSchemaMixin):
 
     Here, a product is something that is produced by an ontology workflow.
     A product can be manifested in different formats.
-
+    
     For example, goslim_prok is a subset (aka slim) product from GO,
     this can be manifest as obo, owl, json
     """
-
+    
     id : str
     """ontology project identifier / shorthand; e.g. go, obi, envo"""
-
+    
     description: Optional[str] = None
     """A concise textual description of the product"""
-
+    
     rebuild_if_source_changes : bool = True
     """If false then previously downloaded versions of external ontologies are used"""
-
+    
     robot_settings : Optional[CommandSettings] = None
     """Amount of memory to provide for robot. Working with large products such as CHEBI imports may require additional memory"""
 
@@ -74,7 +74,7 @@ class SubsetProduct(Product):
     Represents an individual subset.
     Examples: goslim_prok (in go), eco_subset (in ro)
     """
-
+    
     creators : Optional[List[Person]] = None
     """list of people that are credited as creators/maintainers of the subset"""
 
@@ -86,7 +86,7 @@ class ImportProduct(Product):
     Examples: 'uberon' (in go)
     Imports are typically built from an upstream source, but this can be configured
     """
-
+    
     mirror_from: Optional[Url] = None
     """if specified this URL is used rather than the default OBO PURL for the main OWL product"""
 
@@ -104,7 +104,7 @@ class PatternPipelineProduct(Product):
 @dataclass
 class PatternProduct(Product):
     """Represents a DOSDP template product
-
+    
     The products here can be manfested as CSVs (from 'parse'ing OWL)
     or they may be OWL (from the dosdp 'generate' command)
     """
@@ -125,20 +125,20 @@ class ExportProduct(Product):
     """
     Represents a export product, such as one produced by a SPARQL query
     """
-
+    
     method : str = "sparql"
     """How the export is generated. Currently only SPARQL is supported"""
-
+    
     output_format : str = "tsv"
     """Output format, see robot query for details."""
-
+    
     is_validation_check : bool = False
     """If true, then the presence of one or more results in query results in pipeline fail. Note these are in addition to the main robot report command"""
 
     export_specification: Optional[str] = None
     """Specification such as a SPARQL query. If unset, assumes a default path of ../sparql/{{id}}.sparql"""
-
-
+    
+    
 @dataclass_json
 @dataclass
 class ProductGroup(JsonSchemaMixin):
@@ -163,13 +163,13 @@ class ProductGroup(JsonSchemaMixin):
     that don't do anything fancy, but at the price of overall
     complexity
     """
-
+    
     ids : Optional[List[OntologyHandle]] = None
     """potentially deprecated, specify explicit product list instead"""
-
+    
     disabled : bool = False
     """if set then this is not used"""
-
+    
     rebuild_if_source_changes : bool = True
     """if false then upstream ontology is re-downloaded any time edit file changes"""
 
@@ -188,13 +188,13 @@ class SubsetGroup(ProductGroup):
 
     Controls export of subsets/slims into the "subsets/" directory
     """
-
+    
     products : Optional[List[SubsetProduct]] = None
     """all subset products"""
-
+    
     directory : Directory = "subsets/"
     """directory where subsets are placed after extraction from ontology"""
-
+    
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
             self.products = []
@@ -208,7 +208,7 @@ class ImportGroup(ProductGroup):
 
     Controls extraction of import modules via robot extract into the "imports/" directory
     """
-
+    
     products : Optional[List[ImportProduct]] = None
     """all import products"""
 
@@ -228,7 +228,7 @@ class PatternPipelineGroup(ProductGroup):
 
     Controls the handling of patterns data in the "src/patterns/data" directory
     """
-
+    
     products : Optional[List[PatternPipelineProduct]] = None
     """all pipeline products"""
 
@@ -236,7 +236,7 @@ class PatternPipelineGroup(ProductGroup):
         if self.products is None:
             self.products = []
         self.products.append(PatternPipelineProduct(id=id))
-
+            
 @dataclass_json
 @dataclass
 class PatternGroup(ProductGroup):
@@ -244,23 +244,23 @@ class PatternGroup(ProductGroup):
     A configuration section that consists of a list of `PatternProduct` descriptions
 
     """
-
+    
     products : Optional[List[PatternProduct]] = None
     """all DOSDP pattern products"""
 
     directory : Directory = "../patterns/"
     """directory where pattern source lives, also where TSV exported to"""
 
-
+    
 @dataclass_json
 @dataclass
 class RoboTemplateGroup():
     """
     A configuration section that consists of a list of `RoboTemplateProduct` descriptions
     """
-
+    
     directory : Directory = "../templates/"
-
+    
     products : Optional[List[RoboTemplateProduct]] = None
 
 @dataclass_json
@@ -271,14 +271,14 @@ class ExportGroup(ProductGroup):
 
     Controls generation of exports (typically SPARQL via robot query) into the "reports/" directory
     """
-
+    
     products : Optional[List[ExportProduct]] = None
     """all export products"""
 
     directory : Directory = "reports/"
     """directory where exports are placed"""
 
-
+    
 @dataclass_json
 @dataclass
 class OntologyProject(JsonSchemaMixin):
@@ -298,76 +298,76 @@ class OntologyProject(JsonSchemaMixin):
 
     repo : str = ""
     """Name of repo (do not include org). E.g. cell-ontology"""
-
+    
     github_org : str = ""
     """Name of github org or username where repo will live. Examples: obophenotype, cmungall"""
 
     edit_format : str = 'owl'
     """Format in which the edit file is managed, either obo or owl"""
-
+    
     robot_version: Optional[str] = None
     """Only set this if you want to pin to a specific robot version"""
-
+    
     robot_settings: Optional[CommandSettings] = None
     """Settings to pass to ROBOT such as amount of memory to be used"""
-
+    
     robot_java_args: Optional[str] = ""
     """Java args to pass to ROBOT at runtime, such as -Xmx6G"""
 
     use_external_date: bool = False
     """Flag to set if you want odk to use the host `date` rather than the docker internal `date`"""
-
+    
     reasoner : str = 'ELK'
     """Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values"""
-
+    
     primary_release : str = 'full'
     """Which release file should be published as the primary release artefact, i.e. foo.owl"""
-
+    
     license : str = 'Unspecified'
     """Which license is ontology supplied under; ideally CC-BY."""
-
+    
     description : str = 'None'
     """Provide a short description of the ontology"""
-
+    
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
-
+    
     import_pattern_ontology : bool = False
     """if true import pattern.owl"""
-
+    
     gzip_main : bool = False
     """if true add a gzipped version of the main artefact"""
-
+    
     release_artefacts : List[str] = field(default_factory=lambda: ['full', 'base'])
     """A list of release artefacts you wish to be exported."""
-
+    
     export_formats : List[str] = field(default_factory=lambda: ['owl', 'obo'])
     """A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl."""
-
+    
     namespaces : Optional[List[str]] = None
     """A list of namespaces that are considered at home in this ontology. Used for certain filter commands."""
 
     dosdp_tools_options: str = "--obo-prefixes=true"
     """default parameters for dosdp-tools"""
-
+    
     report_fail_on : Optional[str] = None
     """see robot report docs for details. """
-
+    
     travis_emails : Optional[List[Email]] = None ## ['obo-ci-reports-all@groups.io']
     """Emails to use in travis configurations. """
-
+    
     obo_format_options : str = ""
     """Additional args to pass to robot when saving to obo. TODO consider changing to a boolean for checks"""
-
+    
     uribase : str = 'http://purl.obolibrary.org/obo'
     """Base URI for PURLs. DO NOT MODIFY AT THIS TIME, code is still hardwired for OBO """
-
+    
     contact : Optional[Person] = None
     """Single contact for ontology as required by OBO"""
-
+    
     creators : Optional[List[Person]] = None
     """List of ontology creators (currently setting this has no effect)"""
-
+    
     contributors : Optional[List[Person]] = None
     """List of ontology contributors (currently setting this has no effect)"""
 
@@ -380,7 +380,7 @@ class OntologyProject(JsonSchemaMixin):
 
     pattern_group : Optional[PatternGroup] = None
     """Block that includes information on all DOSDP templates used"""
-
+    
     pattern_pipelines_group : Optional[PatternPipelineGroup] = None
     """Block that includes information on all ontology imports to be generated"""
 
@@ -410,7 +410,7 @@ class ExecutionContext(JsonSchemaMixin):
     project : Optional[OntologyProject] = None
     meta : str = ""
 
-
+    
 @dataclass
 class Generator(object):
     """
@@ -472,7 +472,7 @@ def save_project_yaml(project : OntologyProject, path : str):
     json_obj = json.loads(json_str)
     with open(path, "w") as f:
         f.write(yaml.dump(json_obj, default_flow_style=False))
-
+        
 def unpack_files(basedir, txt):
     """
     This unpacks a custom tar-like format in which multiple file paths
@@ -541,7 +541,7 @@ def create_dynfile(config, templatedir, input, output):
     mg = Generator()
     mg.load_config(config)
     print(mg.generate('{}/_dynamic_files.jinja2'.format(templatedir)))
-
+    
 @cli.command()
 @click.option('-C', '--config', type=click.File('r'))
 @click.option('-o', '--output', required=True)
@@ -553,7 +553,7 @@ def export_project(config, output):
     mg.load_config(config)
     project = mg.context.project
     save_project_yaml(project, output)
-
+    
 @cli.command()
 def dump_schema():
     """
@@ -676,9 +676,9 @@ def runcmd(cmd):
         logging.error(err)
     if p.returncode != 0:
         raise Exception('Failed: {}'.format(cmd))
+    
 
-
-
-
+            
+                
 if __name__ == "__main__":
     cli()
