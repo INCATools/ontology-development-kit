@@ -1,0 +1,26 @@
+id: fbbt
+title: "Drosophila Anatomy Ontology"
+github_org: FlyBase
+repo: drosophila-anatomy-ontology
+report_fail_on: none
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
+namespaces: 
+  - http://purl.obolibrary.org/obo/FBbt_
+  - http://purl.obolibrary.org/obo/fbbt_
+release_artefacts: 
+  - base
+  - simple
+  - non-classified
+  - full
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: go
+    - id: ro
+    - id: pato
+edit_format: obo
