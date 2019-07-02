@@ -34,7 +34,7 @@ OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
 SPARQL_VALIDATION_CHECKS =  equivalent-classes trailing-whitespace owldef-self-reference xref-syntax nolabels
 SPARQL_EXPORTS =            basic-report class-count-by-prefix edges xrefs obsoletes synonyms
 
-TODAY   := $(shell date +%Y-%m-%d)
+TODAY   ?= $(shell date +%Y-%m-%d)
 
 {%- if project.use_dosdps %}
 DOSDP_SCHEMA=                http:// # change to PURL when ready.
@@ -47,7 +47,7 @@ PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
 FORMATS_INCL_TSV = $(sort $(FORMAT) tsv)
 RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %} {{ release }}{% endfor %} base full)
- 
+
 # ----------------------------------------
 # Top-level targets
 # ----------------------------------------
@@ -74,14 +74,14 @@ all_main: $(MAIN_FILES)
 {% if project.import_group is defined %}
 IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %}
 {% else %}
-IMPORTS = 
+IMPORTS =
 {% endif %}
 IMPORT_ROOTS = $(patsubst %, imports/%_import, $(IMPORTS))
 IMPORT_FILES = $(foreach n,$(IMPORT_ROOTS), $(foreach f,$(FORMATS), $(n).$(f)))
 IMPORT_OWL_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl)
 
 all_imports: $(IMPORT_FILES)
-{% for format in project.export_formats %} 
+{% for format in project.export_formats %}
 all_imports_{{ format }}: $(foreach n,$(IMPORT_ROOTS), $(n).{{ format }})
 {% endfor %}
 
@@ -93,7 +93,7 @@ all_imports_{{ format }}: $(foreach n,$(IMPORT_ROOTS), $(n).{{ format }})
 {% if project.subset_group is defined %}
 SUBSETS = {% for x in project.subset_group.products %} {{ x.id }}{% endfor %}
 {% else %}
-SUBSETS = 
+SUBSETS =
 {% endif %}
 SUBSET_ROOTS = $(patsubst %, subsets/%, $(SUBSETS))
 SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(foreach f,$(FORMATS_INCL_TSV), $(n).$(f)))
@@ -106,7 +106,7 @@ all_subsets: $(SUBSET_FILES)
 {% if project.pattern_group is defined %}
 PATTERNS = {% for x in project.pattern_group.products %} {{ x.id }}{% endfor %}
 {% else %}
-PATTERNS = 
+PATTERNS =
 {% endif %}
 PATTERN_ROOTS = $(patsubst %, $(PATTERNDIR)/%, $(PATTERNS))
 PATTERN_FILES = $(foreach n,$(PATTERN_ROOTS), $(n).owl)
@@ -162,7 +162,7 @@ prepare_initial_release: prepare_release
 # ----------------------------------------
 
 
-{% for release in project.release_artefacts -%} 
+{% for release in project.release_artefacts -%}
 {% if 'obo' in project.export_formats -%}
 $(ONT)-{{ release }}.obo: $(ONT)-{{ release }}.owl
 	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
@@ -237,7 +237,7 @@ $(ONT).json: $(ONT)-{{ project.primary_release }}.owl
 # Initiating Step: Reason over source
 # ----------------------------------------
 
-ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/`date +%Y-%m-%d`/$@.owl
+ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/$(TODAY)/$@.owl
 
 # by default we use {{ project.reasoner }} to perform a reason-relax-reduce chain
 # after that we annotate the ontology with the release versionInfo
@@ -248,7 +248,7 @@ OTHER_SRC = $(PATTERNDIR)/definitions.owl
 $(ONTOLOGYTERMS): $(SRC) all_imports
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
 
-{% for format in project.export_formats %} 
+{% for format in project.export_formats %}
 {% if project.gzip_main -%}
 $(ONT).{{ format }}.gz: $(ONT).{{ format }}
 	gzip -c $< > $@.tmp && mv $@.tmp $@
@@ -298,10 +298,10 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
-{% if 'simple-non-classified' in project.release_artefacts or project.primary_release == 'simple-non-classified' -%}   
+{% if 'simple-non-classified' in project.release_artefacts or project.primary_release == 'simple-non-classified' -%}
 # foo-simple-non-classified (edit->relax,reduce,drop imports, drop every axiom which contains an entity outside the "namespaces of interest") <- aka the HPO use case, no reason.
-# Should this be the non-classified ontology with the drop foreign axiom filter? 
-# Consider adding remove --term "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace" 
+# Should this be the non-classified ontology with the drop foreign axiom filter?
+# Consider adding remove --term "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace"
 
 $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 	$(ROBOT) remove --input $< --select imports --trim true \
@@ -516,7 +516,7 @@ $(PATTERNDIR)/data/{{ pipeline.id }}/%.ofn: $(PATTERNDIR)/data/{{ pipeline.id }}
 # Generating the seed file from all the TSVs
 $(PATTERNDIR)/all_pattern_terms.txt: $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %} $(PATTERNDIR)/pattern_owl_seed.txt
 	cat $^ | sort | uniq > $@
-	
+
 $(PATTERNDIR)/pattern_owl_seed.txt: $(PATTERNDIR)/pattern.owl
 	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
 
@@ -524,7 +524,7 @@ $(PATTERNDIR)/data/default/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERND
 	dosdp-tools terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@
 
 .PHONY: prepare_patterns
-prepare_patterns:	
+prepare_patterns:
 	touch $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %} &&\
   touch $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}
 
@@ -538,9 +538,3 @@ $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml 
 {% endif %}
 
 include {{ project.id }}.Makefile
-
-
-
-
-
-

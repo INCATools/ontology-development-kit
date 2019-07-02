@@ -313,6 +313,9 @@ class OntologyProject(JsonSchemaMixin):
     
     robot_java_args: Optional[str] = ""
     """Java args to pass to ROBOT at runtime, such as -Xmx6G"""
+
+    use_external_date: bool = False
+    """Flag to set if you want odk to use the host `date` rather than the docker internal `date`"""
     
     reasoner : str = 'ELK'
     """Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values"""
@@ -679,5 +682,3 @@ def runcmd(cmd):
                 
 if __name__ == "__main__":
     cli()
-
-
