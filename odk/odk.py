@@ -568,14 +568,25 @@ def dump_schema():
 
 
 @cli.command()
-@click.option('-C', '--config',       type=click.File('r'))
+@click.option('-C', '--config',       type=click.File('r'),
+              help="""
+              path to a YAML configuration.
+              See examples folder for examples.
+              This is optional, configuration can also be passed
+              by command line, but an explicit config file is preferred.
+              """)
+
 @click.option('-c', '--clean/--no-clean', default=False)
 @click.option('-T', '--templatedir',  default='/tools/templates/')
 @click.option('-D', '--outdir',       default=None)
 @click.option('-d', '--dependencies', multiple=True)
 @click.option('-t', '--title',        type=str)
 @click.option('-u', '--user',         type=str)
-@click.option('-s', '--source',       type=str)
+@click.option('-s', '--source',       type=str,
+              help="""
+              path to existing source for ontology edit file. 
+              Optional. If not passed, a stub ontology will be created.
+              """)
 @click.option('-v', '--verbose',      count=True)
 @click.argument('repo', nargs=-1)
 def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo):
