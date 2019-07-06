@@ -305,7 +305,7 @@ $(ONT)-simple.owl: $(SRC) simple_seed.txt $(OTHER_SRC)
 		relax \
 		remove --axioms equivalent \
 		relax \
-		filter --term-file simple_seed.txt --trim true --select "annotations ontology anonymous parents object-properties self" --preserve-structure false \
+		filter --term-file simple_seed.txt --select "annotations ontology anonymous object-properties self" --trim true --signature true \
 		reduce -r {{ project.reasoner }} \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 
