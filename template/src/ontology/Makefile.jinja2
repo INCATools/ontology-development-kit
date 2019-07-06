@@ -291,7 +291,7 @@ $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 {% if 'simple' in project.release_artefacts or project.primary_release == 'simple' -%}
 # foo-simple: (edit->reason,relax,reduce,drop imports, drop every axiom which contains an entity outside the "namespaces of interest")
 # drop every axiom: filter --term-file keep_terms.txt --trim true
-#		remove --select imports --trim false \
+#	remove --select imports --trim false \
 
 simple_seed.txt: $(SRC) $(ONTOLOGYTERMS)
 	$(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/simple-seed.sparql $@.tmp &&\
@@ -299,8 +299,8 @@ simple_seed.txt: $(SRC) $(ONTOLOGYTERMS)
 	echo "http://www.geneontology.org/formats/oboInOwl#SubsetProperty" >> $@ &&\
 	echo "http://www.geneontology.org/formats/oboInOwl#SynonymTypeProperty" >> $@
 
-$(ONT)-simple.owl: $(SRC) simple_seed.txt $(OTHER_SRC) $(ONTOLOGYTERMS)
-	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) --collapse-import-closure true \
+$(ONT)-simple.owl: $(SRC) simple_seed.txt $(OTHER_SRC)
+	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
 		reason --reasoner {{ project.reasoner }} \
 		relax \
 		remove --axioms equivalent \
