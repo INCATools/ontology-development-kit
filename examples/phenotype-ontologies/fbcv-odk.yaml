@@ -21,3 +21,4 @@ import_group:
     - id: ro
     - id: chebi
 edit_format: obo
+robot_java_args: '-Xmx8G'

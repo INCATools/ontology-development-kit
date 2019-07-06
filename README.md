@@ -37,7 +37,7 @@ You can either pass in a `project.yaml` file that specifies your ontology projec
 
 Passing arguments on the command line:
 
-    ./seed-via-docker.sh   -d po ro pato -u cmungall -t "Triffid Behavior ontology" triffo
+    ./seed-via-docker.sh -d po -d ro -d pato -u cmungall -t "Triffid Behavior ontology" triffo
 
 Using a the predefined [examples/triffo/project.yaml](examples/triffo/project.yaml) file:
 

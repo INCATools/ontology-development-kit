@@ -24,3 +24,4 @@ import_group:
     - id: ro
     - id: pato
 edit_format: obo
+robot_java_args: '-Xmx8G'

@@ -1,0 +1,27 @@
+id: fbdv
+title: FlyBase Developmental Ontology
+dosdp_tools_options: --obo-prefixes=true --restrict-axioms-to=logical
+edit_format: owl
+export_formats:
+- owl
+- obo
+- json
+import_group:
+  products:
+  - id: go
+  - id: ro
+namespaces:
+- http://purl.obolibrary.org/obo/FBdv_
+- http://purl.obolibrary.org/obo/fbdv_
+primary_release: full
+reasoner: ELK
+release_artefacts:
+- base
+- simple
+- non-classified
+- full
+github_org: FlyBase
+repo: flybase-developmental-ontology
+report_fail_on: none
+robot_java_args: '-Xmx8G'
+
