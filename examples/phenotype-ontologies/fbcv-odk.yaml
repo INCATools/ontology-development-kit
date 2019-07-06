@@ -1,0 +1,24 @@
+id: fbcv
+title: "FlyBase Controlled Vocabulary"
+github_org: FlyBase
+repo: flybase-controlled-vocabulary
+report_fail_on: none
+namespaces: 
+  - http://purl.obolibrary.org/obo/FBcv_
+  - http://purl.obolibrary.org/obo/fbcv_
+release_artefacts: 
+  - base
+  - simple
+  - non-classified
+  - full
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: ro
+    - id: chebi
+edit_format: obo
+robot_java_args: '-Xmx8G'

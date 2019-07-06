@@ -1,0 +1,34 @@
+id: dpo
+title: "Drosophila Phenotype Ontology"
+github_org: FlyBase
+repo: drosophila-phenotype-ontology
+report_fail_on: none
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
+namespaces: 
+  - http://purl.obolibrary.org/obo/FBcv_
+  - http://purl.obolibrary.org/obo/fbcv_
+release_artefacts: 
+  - base
+  - simple
+  - non-classified
+  - full
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: fbdv
+      mirror_from: https://raw.githubusercontent.com/FlyBase/drosophila-developmental-ontology/master/fbdv.owl
+    - id: fbbt
+    - id: cl
+    - id: pco
+    - id: caro
+    - id: bfo
+    - id: go
+    - id: ro
+    - id: chebi
+    - id: pato
+robot_java_args: '-Xmx8G'
