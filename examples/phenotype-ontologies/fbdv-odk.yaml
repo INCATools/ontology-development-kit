@@ -1,7 +1,7 @@
 id: fbdv
 title: FlyBase Developmental Ontology
 dosdp_tools_options: --obo-prefixes=true --restrict-axioms-to=logical
-edit_format: owl
+edit_format: obo
 export_formats:
 - owl
 - obo
