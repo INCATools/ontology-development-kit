@@ -9,6 +9,16 @@ export_formats:
   - owl
   - obo
   - json
+namespaces: 
+  - http://purl.obolibrary.org/obo/CP_
+  - http://purl.obolibrary.org/obo/CL_
+  - http://purl.obolibrary.org/obo/cl_
+release_artefacts: 
+  - base
+  - full
+  - simple
+  - basic
+  - non-classified
 import_group:
   products:
     - id: pr
