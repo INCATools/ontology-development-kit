@@ -331,15 +331,15 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 # removes any axioms that contains one of the ops that not in the whitelist file
 
 $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
-		$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
-			reason --reasoner {{ project.reasoner }} \
-			relax \
-			remove --axioms equivalent \
-			remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
-			relax \
-			filter --term-file simple_seed.txt --select "annotations ontology anonymous object-properties self" --trim true --signature true \
-			reduce -r {{ project.reasoner }} \
-			annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
+		reason --reasoner {{ project.reasoner }} \
+		relax \
+		remove --axioms equivalent \
+		remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
+		relax \
+		filter --term-file simple_seed.txt --select "annotations ontology anonymous object-properties self" --trim true --signature true \
+		reduce -r {{ project.reasoner }} \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 # ----------------------------------------
@@ -349,7 +349,7 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
 # These live in the imports/ folder
 
 tmp/%_logical.owl: mirror/%.owl
-	@if [ $(IMP) = true ]; then $(ROBOT) remove -i $< --term rdfs:label --select complement --select annotation-properties -o $@ --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+	@if [ $(IMP) = true ]; then $(ROBOT) remove -i $< --term rdfs:label --select complement --select annotation-properties --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 .PRECIOUS: tmp/%_logical.owl
 
 tmp/logical_dependencies_merged.owl: $(MIRROR_LOGICAL)
