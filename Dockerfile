@@ -40,8 +40,18 @@ RUN apk --no-cache add openssl wget
 # by composing existing Dockerfiles, or by obtaining directly from maven
 RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/owltools && \
     wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O /tools/ontology-release-runner && \
-    wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar
-    
+    wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar 
+
+# Installing Konclude
+RUN wget http://derivo.de/fileadmin/externe_websites/ext.derivo/KoncludeReleases/v0.6.2-544/Konclude-v0.6.2-544-Linux-x64-GCC4.3.2-Static-Qt4.8.5.zip -O /tools/konclude.zip && \
+    unzip /tools/konclude.zip && \ 
+    mv /tools/Konclude-v0.6.2-544-Linux-x64-GCC4.3.2-Static-Qt4.8.5 /tools/konclude_reasoner && \ 
+    rm /tools/konclude.zip && \
+    chmod +x /tools/konclude_reasoner/Binaries && \
+    echo "#!/bin/bash" > /tools/Konclude && \
+    echo "sh /tools/konclude_reasoner/Binaries/Konclude $*" >> /tools/Konclude && \
+    chmod +x /tools/Konclude
+
 RUN wget https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
