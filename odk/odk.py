@@ -577,8 +577,9 @@ def dump_schema():
 @click.option('-u', '--user',         type=str)
 @click.option('-s', '--source',       type=str)
 @click.option('-v', '--verbose',      count=True)
+@click.option('-g', '--skipgit',      default=False)
 @click.argument('repo', nargs=-1)
-def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo):
+def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo, skipgit):
     """
     Seeds an ontology project
     """
@@ -644,27 +645,29 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     logging.info("Created files:")
     for tgt in tgts:
         logging.info("  File: {}".format(tgt))
-    runcmd("cd {dir} && git init && git add {files}".
-           format(dir=outdir,
-                  files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
-    runcmd("cd {}/src/ontology && make && git commit -m 'initial commit' -a && make prepare_initial_release && git commit -m 'first release'".format(outdir))
-    print("\n\n####\nNEXT STEPS:")
-    print(" 0. Examine {} and check it meets your expectations. If not blow it away and start again".format(outdir))
-    print(" 1. Go to: https://github.com/new")
-    print(" 2. The owner MUST be {org}. The Repository name MUST be {repo}".format(org=project.github_org, repo=project.repo))
-    print(" 3. Do not initialize with a README (you already have one)")
-    print(" 4. Click Create")
-    print(" 5. See the section under '…or push an existing repository from the command line'")
-    print("    E.g.:")
-    print("cd {}".format(outdir))
-    print("git remote add origin git\@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
-    print("git push -u origin master\n")
-    print("BE BOLD: you can always delete your repo and start again\n")
-    print("")
-    print("FINAL STEPS:")
-    print("Folow your customized instructions here:\n")
-    print("    https://github.com/{org}/{repo}/blob/master/src/ontology/README-editors.md".format(org=project.github_org, repo=project.repo))
-    print("")
+    if not skipgit:
+        runcmd("cd {dir} && git init && git add {files}".
+               format(dir=outdir,
+                      files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
+        runcmd("cd {}/src/ontology && make && git commit -m 'initial commit' -a && make prepare_initial_release && git commit -m 'first release'".format(outdir))
+        print("\n\n####\nNEXT STEPS:")
+        print(" 0. Examine {} and check it meets your expectations. If not blow it away and start again".format(outdir))
+        print(" 1. Go to: https://github.com/new")
+        print(" 2. The owner MUST be {org}. The Repository name MUST be {repo}".format(org=project.github_org, repo=project.repo))
+        print(" 3. Do not initialize with a README (you already have one)")
+        print(" 4. Click Create")
+        print(" 5. See the section under '…or push an existing repository from the command line'")
+        print("    E.g.:")
+        print("cd {}".format(outdir))
+        print("git remote add origin git\@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
+        print("git push -u origin master\n")
+        print("BE BOLD: you can always delete your repo and start again\n")
+        print("")
+        print("FINAL STEPS:")
+        print("Folow your customized instructions here:\n")
+        print("    https://github.com/{org}/{repo}/blob/master/src/ontology/README-editors.md".format(org=project.github_org, repo=project.repo))
+    else:
+        print("Repository files have been successfully copied, but no git commands have been run.")
 
 
 def runcmd(cmd):
