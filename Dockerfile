@@ -32,7 +32,7 @@ RUN apk update \
 
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
-ENV ROBOT v1.4.0
+ENV ROBOT v1.4.1
 
 RUN apk --no-cache add openssl wget
 
