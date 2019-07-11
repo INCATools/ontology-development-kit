@@ -9,5 +9,5 @@ REPOPATH=$3
 ./seed-via-docker.sh -c -g False -C $CONFIG
 
 cp target/$OID/src/ontology/Makefile $REPOPATH/src/ontology/
-cp target/$OID/src/ontology/run.sh $REPOPATH/src/src/ontology/
+cp target/$OID/src/ontology/run.sh $REPOPATH/src/ontology/
 cp target/$OID/src/sparql/* $REPOPATH/src/sparql/
