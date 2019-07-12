@@ -43,9 +43,9 @@ RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/ow
     wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar 
 
 # Installing Konclude
-RUN wget http://derivo.de/fileadmin/externe_websites/ext.derivo/KoncludeReleases/v0.6.2-544/Konclude-v0.6.2-544-Linux-x64-GCC4.3.2-Static-Qt4.8.5.zip -O /tools/konclude.zip && \
-    unzip /tools/konclude.zip && \ 
-    mv /tools/Konclude-v0.6.2-544-Linux-x64-GCC4.3.2-Static-Qt4.8.5 /tools/konclude_reasoner && \ 
+RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Konclude-v0.6.2-845-LinuxAlpine-x64-GCC8.3.0-Static-Qt-5.13.zip -O /tools/konclude.zip && \
+    unzip /tools/konclude.zip && \
+    mv /tools/Konclude-v0.6.2-845-LinuxAlpine-x64-GCC8.3.0-Static-Qt-5.13 /tools/konclude_reasoner && \ 
     rm /tools/konclude.zip && \
     chmod +x /tools/konclude_reasoner/Binaries && \
     echo "#!/bin/bash" > /tools/Konclude && \
