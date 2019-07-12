@@ -49,7 +49,7 @@ RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Koncl
     rm /tools/konclude.zip && \
     chmod +x /tools/konclude_reasoner/Binaries && \
     echo "#!/bin/bash" > /tools/Konclude && \
-    echo "sh /tools/konclude_reasoner/Binaries/Konclude $*" >> /tools/Konclude && \
+    echo "/tools/konclude_reasoner/Binaries/Konclude $*" >> /tools/Konclude && \
     chmod +x /tools/Konclude
 
 RUN wget https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar -O /tools/robot.jar && \
