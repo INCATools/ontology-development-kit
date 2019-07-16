@@ -359,6 +359,9 @@ class OntologyProject(JsonSchemaMixin):
     obo_format_options : str = ""
     """Additional args to pass to robot when saving to obo. TODO consider changing to a boolean for checks"""
     
+   catalog_file : str = "catalog-v001.xml"
+    """Name of the catalog file to be used by the build."""
+
     uribase : str = 'http://purl.obolibrary.org/obo'
     """Base URI for PURLs. DO NOT MODIFY AT THIS TIME, code is still hardwired for OBO """
     
