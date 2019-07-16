@@ -33,6 +33,8 @@ RUN apk update \
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
 ENV ROBOT v1.4.1
+ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
+ENV ROBOT_JAR ${ROBOT_JAR}
 
 RUN apk --no-cache add openssl wget
 
@@ -42,7 +44,7 @@ RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/ow
     wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O /tools/ontology-release-runner && \
     wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar
     
-RUN wget https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar -O /tools/robot.jar && \
+RUN wget $ROBOT_JAR -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
     
