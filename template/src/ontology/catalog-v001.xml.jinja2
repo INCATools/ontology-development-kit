@@ -7,6 +7,11 @@
   <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/imports/{{imp.id}}_import.obo" uri="imports/{{imp.id}}_import.obo"/>
   {% endfor %}
 {% endif %}
+{% if project.components is defined %}
+  {% for component in project.components.products %}
+  <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/components/{{component.filename}}" uri="components/{{component.filename}}"/>
+  {% endfor %}
+{% endif %}
 {%- if project.use_dosdps %} 
   <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/patterns/definitions.owl" uri="../patterns/definitions.owl"/>
 {%- if project.import_pattern_ontology %} 
