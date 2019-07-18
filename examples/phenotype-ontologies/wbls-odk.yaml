@@ -10,6 +10,7 @@ description: "Ontology about the development and life stages of the C. elegans"
 release_artefacts: 
   - base
   - full
+  - simple
 primary_release: full
 export_formats:
   - owl
