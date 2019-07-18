@@ -339,14 +339,37 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
 
 # seed.txt contains all referenced entities
 
+tmp/%_logical.owl: mirror/%.owl
+	@if [ $(IMP) = true ]; then $(ROBOT) remove -i $< --term rdfs:label --select complement --preserve-structure false --select annotation-properties --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+.PRECIOUS: tmp/%_logical.owl
+
+tmp/logical_dependencies_merged.owl: $(MIRROR_LOGICAL)
+	$(ROBOT) merge $(addprefix -i , $(MIRROR_LOGICAL)) \
+	annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+
+tmp/log_mod_seed.txt: tmp/src_seed.txt $(TERM_LIST_FILES)
+	cat $^ | sort | uniq >  $@
+
+tmp/logical_dependencies_merged_module.owl: tmp/logical_dependencies_merged.owl tmp/log_mod_seed.txt
+	@if [ $(IMP) = true ]; then $(ROBOT) extract -i $< -T tmp/log_mod_seed.txt --force true --method BOT \
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+
+tmp/log_seed.txt: tmp/logical_dependencies_merged_module.owl
+	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
+	cat $@.tmp | sort | uniq >  $@; fi
+
+# The seed of the source file. 
 {% if project.use_dosdps %}
-seed.txt: $(SRC) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
+tmp/src_seed.txt: $(SRC) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt
+	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
 	cat $@.tmp $(PATTERNDIR)/all_pattern_terms.txt | sort | uniq >  $@; fi
 {% else %}
-seed.txt: $(SRC)
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
+tmp/src_seed.txt: $(SRC)
+	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/terms.sparql $@; fi
 {% endif %}
+
+seed.txt: tmp/src_seed.txt tmp/log_seed.txt
+	cat $^ | sort | uniq >  $@
 
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
 # Should be able to drop this if robot can just take a big messy list of terms as input.
