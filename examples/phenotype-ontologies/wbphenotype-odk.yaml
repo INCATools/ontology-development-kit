@@ -28,4 +28,7 @@ import_group:
     - id: cl
     - id: iao
     - id: bfo
-
+components:
+  products:
+    - filename: wbphenotype-equivalent-axioms-subq.owl
+robot_java_args: '-Xmx8G'

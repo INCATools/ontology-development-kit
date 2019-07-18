@@ -33,6 +33,5 @@ pattern_pipelines_group:
   products:
     - id: clustering
       dosdp_tools_options: "--obo-prefixes=true"
+robot_java_args: '-Xmx8G'
 
-
-  

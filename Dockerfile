@@ -33,6 +33,8 @@ RUN apk update \
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
 ENV ROBOT v1.4.1
+ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
+ENV ROBOT_JAR ${ROBOT_JAR}
 
 RUN apk --no-cache add openssl wget
 
@@ -52,7 +54,7 @@ RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Koncl
     echo "/tools/konclude_reasoner/Binaries/Konclude $*" >> /tools/Konclude && \
     chmod +x /tools/Konclude
 
-RUN wget https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar -O /tools/robot.jar && \
+RUN wget $ROBOT_JAR -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
     

@@ -80,6 +80,18 @@ class SubsetProduct(Product):
 
 @dataclass_json
 @dataclass
+class ComponentProduct():
+    """
+    Represents an individual component
+    Examples: a file external to the edit file that contains axioms that belong to this ontology
+    Components are usually maintained manually.
+    """
+    
+    filename: Optional[str] = None
+    """The filename of this component"""
+
+@dataclass_json
+@dataclass
 class ImportProduct(Product):
     """
     Represents an individual import
@@ -222,6 +234,26 @@ class ImportGroup(ProductGroup):
 
 @dataclass_json
 @dataclass
+class ComponentGroup(ComponentProduct):
+    """
+    A configuration section that consists of a list of `ComponentProduct` descriptions
+
+    Controls extraction of import modules via robot extract into the "components/" directory
+    """
+    
+    products : Optional[List[ComponentProduct]] = None
+    """all component products"""
+
+    directory : Directory = "components/"
+    """directory where components are maintained"""
+
+    def _add_stub(self, filename : str):
+        if self.products is None:
+            self.products = []
+        self.products.append(ComponentProduct(filename=filename))
+
+@dataclass_json
+@dataclass
 class PatternPipelineGroup(ProductGroup):
     """
     A configuration section that consists of a list of `PatternPipelineProduct` descriptions
@@ -358,7 +390,10 @@ class OntologyProject(JsonSchemaMixin):
     
     obo_format_options : str = ""
     """Additional args to pass to robot when saving to obo. TODO consider changing to a boolean for checks"""
-    
+
+    catalog_file : str = "catalog-v001.xml"
+    """Name of the catalog file to be used by the build."""
+
     uribase : str = 'http://purl.obolibrary.org/obo'
     """Base URI for PURLs. DO NOT MODIFY AT THIS TIME, code is still hardwired for OBO """
     
@@ -374,6 +409,9 @@ class OntologyProject(JsonSchemaMixin):
     # product groups
     import_group : Optional[ImportGroup] = None
     """Block that includes information on all ontology imports to be generated"""
+
+    components : Optional[ComponentGroup] = None
+    """Block that includes information on all ontology components to be generated"""
 
     subset_group : Optional[SubsetGroup] = None
     """Block that includes information on all subsets (aka slims) to be generated"""

@@ -24,7 +24,8 @@ ONT=                        {{ project.id }}
 ONTBASE=                    $(URIBASE)/$(ONT)
 EDIT_FORMAT=                {{ project.edit_format|default('owl') }}
 SRC =                       $(ONT)-edit.$(EDIT_FORMAT)
-ROBOT=                      robot
+CATALOG=                    {{ project.catalog_file }}
+ROBOT=                      robot --catalog $(CATALOG)
 RELEASEDIR=                 ../..
 PATTERNDIR=                 ../patterns
 REPORTDIR=                 reports
@@ -116,7 +117,7 @@ all_patterns: $(PATTERN_FILES)
 ## -- dosdp pattern targets --
 ##
 
-OBO_REPORT = $(ONT)-edit-obo-report
+OBO_REPORT = $(SRC)-obo-report
 REPORTS = $(OBO_REPORT)
 REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
 
@@ -241,9 +242,9 @@ ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/$(TODAY)/$@.owl
 
 # by default we use {{ project.reasoner }} to perform a reason-relax-reduce chain
 # after that we annotate the ontology with the release versionInfo
-{% if project.use_dosdps %}
-OTHER_SRC = $(PATTERNDIR)/definitions.owl
-{% endif %}
+
+OTHER_SRC = {% if project.use_dosdps -%} $(PATTERNDIR)/definitions.owl{% endif -%}{% if project.components is defined %} {% for component in project.components.products %} components/{{ component.filename }}{% endfor %}{% endif %}
+
 
 $(ONTOLOGYTERMS): $(SRC) all_imports
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
@@ -442,7 +443,7 @@ sparql_test: $(SRC)
 # ----------------------------------------
 # ROBOT report
 # ----------------------------------------
-reports/%-obo-report.tsv: %.owl
+reports/%-obo-report.tsv: %
 	$(ROBOT) report -i $< --fail-on $(REPORT_FAIL_ON) -o $@
 
 # ----------------------------------------
