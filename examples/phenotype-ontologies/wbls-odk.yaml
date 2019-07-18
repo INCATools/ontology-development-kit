@@ -19,4 +19,4 @@ export_formats:
 import_group:
   products:
     - id: ro
-robot_jassva_args: '-Xmx8G'
+robot_java_args: '-Xmx8G'
