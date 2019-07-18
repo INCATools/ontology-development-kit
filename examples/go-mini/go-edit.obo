@@ -1,0 +1,544 @@
+format-version: 1.2
+!!! **************************************** !!!
+!!! **************************************** !!!
+!!! **************************************** !!!
+!!! *** THIS IS A TEST FILE FOR ODK      *** !!!
+!!! **************************************** !!!
+!!! **************************************** !!!
+!!! **************************************** !!!
+subsetdef: goantislim_grouping "Grouping classes that can be excluded"
+subsetdef: gocheck_do_not_annotate "Term not to be used for direct annotation"
+subsetdef: gocheck_do_not_manually_annotate "Term not to be used for direct manual annotation"
+subsetdef: goslim_agr "AGR slim"
+subsetdef: goslim_aspergillus "Aspergillus GO slim"
+subsetdef: goslim_candida "Candida GO slim"
+subsetdef: goslim_chembl "ChEMBL protein targets summary"
+subsetdef: goslim_generic "Generic GO slim"
+subsetdef: goslim_goa "GOA and proteome slim"
+subsetdef: goslim_metagenomics "Metagenomics GO slim"
+subsetdef: goslim_mouse "Mouse GO slim"
+subsetdef: goslim_pir "PIR GO slim"
+subsetdef: goslim_plant "Plant GO slim"
+subsetdef: goslim_pombe "Fission yeast GO slim"
+subsetdef: goslim_synapse "synapse GO slim"
+subsetdef: goslim_virus "Viral GO slim"
+subsetdef: goslim_yeast "Yeast GO slim"
+subsetdef: gosubset_prok "Prokaryotic GO subset"
+subsetdef: mf_needs_review "Catalytic activity terms in need of attention"
+subsetdef: termgenie_unvetted "Terms created by TermGenie that do not follow a template and require additional vetting by editors"
+subsetdef: virus_checked "Viral overhaul terms"
+synonymtypedef: syngo_official_label "label approved by the SynGO project"
+synonymtypedef: systematic_synonym "Systematic synonym" EXACT
+ontology: go
+
+[Term]
+id: GO:0016032
+name: viral process
+namespace: biological_process
+def: "A multi-organism process in which a virus is a participant. The other participant is the host. Includes infection of a host cell, replication of the viral genome, and assembly of progeny virus particles. In some cases the viral genetic material may integrate into the host genome and only subsequently, under particular circumstances, 'complete' its life cycle." [GOC:bf, GOC:jl, GOC:mah]
+comment: See also the biological process terms 'viral infectious cycle ; GO:0019058' and 'lysogeny ; GO:0030069'.
+subset: goslim_metagenomics
+subset: goslim_pir
+subset: goslim_virus
+synonym: "viral infection" RELATED []
+synonym: "virulence" RELATED []
+synonym: "virus process" EXACT [GOC:bf, GOC:jl]
+xref: Reactome:REACT_6145 "Influenza Life Cycle, Homo sapiens"
+xref: Reactome:REACT_6185 "HIV Infection, Homo sapiens"
+xref: Reactome:REACT_6256 "HIV Life Cycle, Homo sapiens"
+xref: Wikipedia:Viral_life_cycle
+
+[Term]
+id: GO:0019048
+name: modulation by virus of host morphology or physiology
+namespace: biological_process
+def: "The process in which a virus effects a change in the structure or processes of its host organism." [GOC:bf, GOC:jl, ISBN:0781718325, UniProtKB-KW:KW-0945]
+subset: goslim_virus
+subset: virus_checked
+synonym: "host-virus interaction" EXACT [GOC:bf, GOC:jl]
+synonym: "modulation by virus of host anatomical structure or process" EXACT [GOC:bf, GOC:jl]
+synonym: "modulation by virus of host anatomy or process" EXACT [GOC:bf, GOC:jl]
+synonym: "viral interaction with host" EXACT []
+synonym: "viral-host process" EXACT [GOC:bf, GOC:jl]
+synonym: "virus-host interaction" BROAD [GOC:bf, GOC:jl]
+synonym: "virus-host process" EXACT [GOC:bf, GOC:jl]
+xref: Reactome:REACT_6323 "Host Interactions with Influenza Factors, Homo sapiens"
+xref: VZ:886 "Vertebrate host-virus interactions"
+is_a: GO:0016032 ! viral process
+
+[Term]
+id: GO:0019056
+name: modulation by virus of host transcription
+namespace: biological_process
+def: "Any process in which a virus modulates the frequency, rate or extent of its host's transcription." [ISBN:0781718325]
+subset: goslim_virus
+synonym: "modification by virus of host transcription" EXACT []
+synonym: "viral perturbation of host cell transcription" EXACT []
+is_a: GO:0039656 ! modulation by virus of host gene expression
+
+[Term]
+id: GO:0019057
+name: modulation by virus of host translation
+namespace: biological_process
+def: "Any process in which a virus modulates the frequency, rate or extent of translation of host mRNA." [ISBN:0781718325]
+subset: goslim_virus
+synonym: "host cell protein synthesis shutoff" BROAD []
+synonym: "host cell shutoff" BROAD []
+synonym: "modification by virus of host cell mRNA translation" EXACT []
+synonym: "modulation of host translation by virus" EXACT [GOC:bf]
+synonym: "regulation of host mRNA translation by virus" EXACT []
+synonym: "regulation of host translation by virus" EXACT []
+synonym: "regulation of translation in host by virus" EXACT []
+synonym: "viral host shutoff protein" RELATED []
+synonym: "viral perturbation of host cell mRNA translation" EXACT []
+is_a: GO:0039656 ! modulation by virus of host gene expression
+
+[Term]
+id: GO:0019062
+name: virion attachment to host cell
+namespace: biological_process
+def: "The process by which a virion protein binds to molecules on the host cellular surface or host cell surface projection." [GOC:bf, GOC:jl, UniProtKB-KW:KW-1161, VZ:956]
+subset: goslim_virus
+subset: virus_checked
+synonym: "viral absorption" EXACT []
+synonym: "viral attachment to host cell" RELATED [GOC:bf, GOC:jl]
+synonym: "virion attachment to host cell surface receptor" NARROW []
+xref: VZ:956 "Viral attachment to host cell"
+relationship: part_of GO:0016032 ! viral process
+
+[Term]
+id: GO:0019068
+name: virion assembly
+namespace: biological_process
+def: "A late phase of the viral life cycle during which all the components necessary for the formation of a mature virion collect at a particular site in the cell and the basic structure of the virus particle is formed." [ISBN:0121585336]
+subset: goslim_virus
+subset: virus_checked
+synonym: "bacteriophage assembly" NARROW [GOC:bm]
+synonym: "phage assembly" NARROW [GOC:bm]
+synonym: "viral assembly" EXACT []
+synonym: "viral particle assembly" EXACT []
+synonym: "virion assembly and maintenance" EXACT [GOC:bf, GOC:jl]
+synonym: "virion organization" EXACT [GOC:bf, GOC:jl]
+synonym: "virus assembly" EXACT [GOC:dph, GOC:tb]
+synonym: "virus particle assembly" EXACT []
+xref: Reactome:REACT_6137 "Accumulation of M1 at the inner leaflet of the lipid bilayer, Homo sapiens"
+xref: Reactome:REACT_6146 "Association of HA into rafts, Homo sapiens"
+xref: Reactome:REACT_6212 "Budding, Homo sapiens"
+xref: Reactome:REACT_6271 "Association of NP into rafts, Homo sapiens"
+xref: Reactome:REACT_6277 "Assembly of Viral Components at the Budding Site, Homo sapiens"
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0016032 ! viral process
+
+[Term]
+id: GO:0019069
+name: viral capsid assembly
+namespace: biological_process
+def: "The assembly of a virus capsid from its protein subunits." [ISBN:0781702534, UniProtKB-KW:KW-0118]
+subset: goslim_virus
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0019068 ! virion assembly
+
+[Term]
+id: GO:0019072
+name: viral genome packaging
+namespace: biological_process
+def: "The encapsulation of the viral genome within the capsid." [ISBN:0121585336]
+subset: goslim_virus
+subset: virus_checked
+xref: Reactome:REACT_6235 "Packaging of Eight RNA Segments, Homo sapiens"
+xref: Reactome:REACT_6336 "RNP association, Homo sapiens"
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0019068 ! virion assembly
+
+[Term]
+id: GO:0019076
+name: viral release from host cell
+namespace: biological_process
+def: "The dissemination of mature viral particles from the host cell, e.g. by cell lysis or the budding of virus particles from the cell membrane." [GOC:jl]
+subset: goslim_virus
+subset: virus_checked
+synonym: "release of virus from host" EXACT []
+synonym: "viral exit" EXACT []
+synonym: "viral release" EXACT []
+synonym: "viral shedding" EXACT []
+synonym: "virus exit from host cell" EXACT [GOC:bf, GOC:jl]
+xref: Reactome:REACT_6326 "Release, Homo sapiens"
+xref: Reactome:REACT_6348 "Neuraminidase enzymatic release from sialic acid, Homo sapiens"
+xref: VZ:1076 "Virus exit from host cell"
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0016032 ! viral process
+
+[Term]
+id: GO:0019079
+name: viral genome replication
+namespace: biological_process
+def: "Any process involved directly in viral genome replication, including viral nucleotide metabolism." [ISBN:0781702534]
+subset: goslim_virus
+synonym: "sigma virus replication" NARROW []
+synonym: "viral replication" BROAD []
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0016032 ! viral process
+
+[Term]
+id: GO:0019081
+name: viral translation
+namespace: biological_process
+def: "A process by which viral mRNA is translated into viral protein, using the host cellular machinery." [GOC:bf, GOC:jl, ISBN:0781702534]
+subset: goslim_virus
+subset: virus_checked
+synonym: "viral protein anabolism" EXACT []
+synonym: "viral protein biosynthesis" EXACT []
+synonym: "viral protein biosynthetic process" EXACT [ISBN:0781702534]
+synonym: "viral protein formation" EXACT []
+synonym: "viral protein synthesis" EXACT []
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0016032 ! viral process
+
+[Term]
+id: GO:0019083
+name: viral transcription
+namespace: biological_process
+def: "The process by which a viral genome, or part of a viral genome, is transcribed within the host cell." [GOC:jl, ISBN:0781702534]
+subset: goslim_virus
+xref: Reactome:REACT_6142 "Assembly of an Active Transcription Complex, Homo sapiens"
+xref: Reactome:REACT_6152 "Influenza Viral RNA Transcription and Replication, Homo sapiens"
+xref: Reactome:REACT_6210 "Elongation of viral mRNA, Homo sapiens"
+xref: Reactome:REACT_6233 "Transcription of the HIV genome, Homo sapiens"
+xref: Reactome:REACT_6239 "Priming and Initiation of Transcription, Homo sapiens"
+xref: Reactome:REACT_6264 "Polyadenylation and Termination, Homo sapiens"
+xref: Reactome:REACT_6354 "Viral Messenger RNA Synthesis, Homo sapiens"
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0016032 ! viral process
+
+[Term]
+id: GO:0030683
+name: evasion or tolerance by virus of host immune response
+namespace: biological_process
+def: "Any process, either active or passive, by which a virus avoids the effects of the host organism's immune response. The host is defined as the larger of the organisms involved in a symbiotic interaction." [GOC:mah, GOC:pk]
+subset: goslim_virus
+synonym: "evasion by virus of host immune response" NARROW [GOC:bf, GOC:bm, GOC:jl]
+synonym: "inhibition of extracellular antiviral response" EXACT []
+synonym: "negative regulation by virus of extracellular antiviral response" EXACT []
+synonym: "negative regulation by virus of intracellular antiviral response" EXACT []
+synonym: "negative regulation of host extracellular antiviral response by virus" EXACT []
+synonym: "negative regulation of host intracellular antiviral response by virus" EXACT []
+synonym: "suppression by virus of host extracellular antiviral response" EXACT []
+synonym: "suppression by virus of host immune response" NARROW [GOC:bf]
+synonym: "suppression by virus of host intracellular antiviral response" EXACT []
+synonym: "suppression of host extracellular antiviral response by virus" EXACT []
+synonym: "suppression of host intracellular antiviral response by virus" EXACT []
+synonym: "viral inhibition of intracellular antiviral response" EXACT []
+xref: Reactome:REACT_6186 "Binding of NS1 to PKR, Homo sapiens"
+xref: Reactome:REACT_6301 "Inhibition of Interferon Synthesis, Homo sapiens"
+xref: Reactome:REACT_6320 "Inhibition of IFN-beta, Homo sapiens"
+xref: Reactome:REACT_6339 "Binding of NS1 to dsRNA, Homo sapiens"
+xref: Reactome:REACT_6350 "Inhibition of PKR, Homo sapiens"
+is_a: GO:0019048 ! modulation by virus of host morphology or physiology
+
+[Term]
+id: GO:0039516
+name: modulation by virus of host catalytic activity
+namespace: biological_process
+def: "The process in which a virus effects a change in host enzyme activity." [GOC:bf, GOC:sp]
+subset: goslim_virus
+subset: virus_checked
+synonym: "modulation of catalytic activity of host by virus" EXACT [GOC:bf]
+synonym: "regulation by virus of host catalytic activity" EXACT [GOC:bf]
+synonym: "regulation of host catalytic activity by virus" EXACT [GOC:bf]
+is_a: GO:0019048 ! modulation by virus of host morphology or physiology
+created_by: rfoulger
+creation_date: 2011-06-16T02:59:35Z
+
+[Term]
+id: GO:0039519
+name: modulation by virus of host autophagy
+namespace: biological_process
+def: "Any process in which a virus effect a change in the frequency, rate or extent of autophagy in the host." [GOC:bf, GOC:sp]
+subset: goslim_virus
+subset: virus_checked
+synonym: "regulation by virus of host autophagy" EXACT [GOC:bf]
+is_a: GO:0019048 ! modulation by virus of host morphology or physiology
+created_by: rfoulger
+creation_date: 2011-06-22T04:19:19Z
+
+[Term]
+id: GO:0039526
+name: modulation by virus of host apoptotic process
+namespace: biological_process
+def: "Any process in which a virus modulates the frequency, rate or extent of apoptosis of infected host cells." [GOC:bf, GOC:mtg_apoptosis, GOC:sp, UniProtKB-KW:KW-1119]
+subset: goslim_virus
+subset: virus_checked
+synonym: "modulation by virus of host apoptosis" EXACT []
+synonym: "modulation of host cell apoptosis by virus" EXACT [UniProtKB-KW:KW-1119]
+synonym: "regulation by virus of host apoptosis" EXACT [GOC:bf]
+xref: VZ:1581 "Apoptosis modulation"
+is_a: GO:0019048 ! modulation by virus of host morphology or physiology
+created_by: rfoulger
+creation_date: 2011-06-22T05:22:53Z
+
+[Term]
+id: GO:0039633
+name: killing by virus of host cell
+namespace: biological_process
+def: "Any process mediated by a virus that results in the death of a cell in the host organism." [GOC:bf, GOC:bm, GOC:jl]
+subset: goslim_virus
+synonym: "killing by phage of host cells" NARROW [GOC:bm]
+synonym: "killing by virus of host cells" EXACT []
+is_a: GO:0019048 ! modulation by virus of host morphology or physiology
+created_by: rfoulger
+creation_date: 2012-08-10T14:44:40Z
+
+[Term]
+id: GO:0039656
+name: modulation by virus of host gene expression
+namespace: biological_process
+def: "The process in which a virus effects a change in gene expression in its host organism. Gene expression is the process in which a gene's coding sequence is converted into a mature gene product or products (proteins or RNA). This includes the production of an RNA transcript as well as any processing to produce a mature RNA product or an mRNA (for protein-coding genes) and the translation of that mRNA into protein. Some protein processing events may be included when they are required to form an active form of a product from an inactive precursor form." [GOC:bf]
+subset: goslim_virus
+subset: virus_checked
+synonym: "regulation by virus of host gene expression" RELATED [GOC:bf]
+is_a: GO:0019048 ! modulation by virus of host morphology or physiology
+created_by: rfoulger
+creation_date: 2013-06-20T15:28:26Z
+
+[Term]
+id: GO:0039674
+name: exit of virus from host cell nucleus
+namespace: biological_process
+def: "The directed movement of the viral genome or a viral particle out of the host cell nucleus." [VZ:2177]
+subset: goslim_virus
+subset: virus_checked
+xref: VZ:2177 "Nuclear exit of viral genome"
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0016032 ! viral process
+created_by: rfoulger
+creation_date: 2013-09-25T13:59:41Z
+
+[Term]
+id: GO:0039707
+name: pore formation by virus in membrane of host cell
+namespace: biological_process
+def: "The aggregation, arrangement and bonding together of a set of components by a virus to form a pore complex in a membrane of a host organism." [GOC:bf, GOC:jl, PMID:12972148, UniProtKB-KW:KW-1182]
+subset: goslim_virus
+synonym: "pore formation in membrane of host cell by virus" EXACT [GOC:bf]
+synonym: "viroporin" RELATED [PMID:12972148, UniProtKB-KW:KW-1182]
+is_a: GO:0016032 ! viral process
+created_by: rfoulger
+creation_date: 2013-11-25T15:33:33Z
+
+[Term]
+id: GO:0046718
+name: viral entry into host cell
+namespace: biological_process
+def: "The process that occurs after viral attachment by which a virus, or viral nucleic acid, breaches the plasma membrane or cell envelope and enters the host cell. The process ends when the viral nucleic acid is released into the host cell cytoplasm." [GOC:jl]
+comment: Viral attachment to the host cell is not part of viral entry in GO because virus attachment does not always lead to viral entry: attachment can also result in the virion being carried by the host cell to another location.
+subset: goslim_metagenomics
+subset: goslim_virus
+subset: virus_checked
+synonym: "entry of virus into host cell" EXACT []
+synonym: "phage translocation" EXACT []
+synonym: "viral penetration" EXACT []
+synonym: "virion penetration" EXACT []
+synonym: "virion penetration into host cell" EXACT []
+synonym: "virus entry into host cell" EXACT [GOC:bf]
+xref: Reactome:REACT_6232 "Binding of the influenza virion to the host cell, Homo sapiens"
+xref: Reactome:REACT_6282 "Fusion and Uncoating of the Influenza Virion, Homo sapiens"
+xref: VZ:936
+relationship: part_of GO:0016032 ! viral process
+
+[Term]
+id: GO:0046740
+name: transport of virus in host, cell to cell
+namespace: biological_process
+def: "The transport of a virus between adjacent cells in a multicellular organism." [GOC:bf, GOC:jl, ISBN:0781718325]
+subset: goslim_virus
+subset: virus_checked
+synonym: "cell to cell spread of virus within host" EXACT []
+synonym: "intercellular virus transport" EXACT [GOC:bf, GOC:jl]
+synonym: "spread of virus in host, cell to cell" RELATED [GOC:bf, GOC:jl]
+synonym: "spread of virus within host, cell to cell" EXACT []
+synonym: "viral spread within host, cell to cell" EXACT []
+xref: VZ:1018
+is_a: GO:0016032 ! viral process
+
+[Term]
+id: GO:0046755
+name: viral budding
+namespace: biological_process
+def: "A viral process by which enveloped viruses acquire a host-derived membrane enriched in viral proteins to form their external envelope. The process starts when nucleocapsids, assembled or in the process of being built, induce formation of a membrane curvature in the host plasma or organelle membrane and wrap up in the forming bud. The process ends when the bud is eventually pinched off by membrane scission to release the enveloped particle into the lumenal or extracellular space." [ISBN:0781718325, VZ:1947]
+subset: goslim_virus
+subset: virus_checked
+synonym: "viral capsid envelopment" RELATED []
+synonym: "virion budding" NARROW []
+synonym: "virus budding" RELATED []
+xref: VZ:1947 "Viral budding"
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0019068 ! virion assembly
+
+[Term]
+id: GO:0060153
+name: modulation by virus of host cell cycle
+namespace: biological_process
+def: "Any viral process that modulates the rate or extent of progression through the cell cycle." [GOC:dph, UniProtKB-KW:KW-1121, VZ:1636]
+subset: goslim_virus
+synonym: "modulation of host cell cycle by virus" EXACT [UniProtKB-KW:KW-1121]
+synonym: "regulation by virus of host cell cycle" EXACT []
+synonym: "regulation of host cell cycle by virus" EXACT []
+synonym: "viral process regulating host cell cycle" EXACT []
+xref: VZ:1636 "Modulation of host cell cycle by virus"
+is_a: GO:0019048 ! modulation by virus of host morphology or physiology
+
+[Term]
+id: GO:0075509
+name: endocytosis involved in viral entry into host cell
+namespace: biological_process
+def: "Any endocytosis that is involved in the uptake of a virus into a host cell." [GOC:bf, GOC:jl, VZ:977]
+subset: goslim_virus
+subset: virus_checked
+synonym: "viral entry into host cell via endocytosis" RELATED [GOC:bf, GOC:jl]
+synonym: "viral penetration via endocytosis followed by endosome disruption" EXACT []
+synonym: "virus endocytosis by host" EXACT [UniProtKB-KW:KW-1164]
+xref: VZ:977 "Virus endocytosis by host"
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0046718 ! viral entry into host cell
+created_by: janelomax
+creation_date: 2011-07-27T11:06:34Z
+
+[Term]
+id: GO:0075528
+name: modulation by virus of host immune response
+namespace: biological_process
+def: "The process in which a virus effects a change in the host immune response." [GOC:bf, GOC:jl]
+subset: goslim_virus
+subset: virus_checked
+synonym: "regulation by virus of host immune system process" EXACT [GOC:jl]
+is_a: GO:0019048 ! modulation by virus of host morphology or physiology
+created_by: janelomax
+creation_date: 2011-08-04T02:47:57Z
+
+[Term]
+id: GO:0075606
+name: transport of viral material towards nucleus
+namespace: biological_process
+def: "The directed movement of a virus, or part of a virus, towards the host cell nucleus. The process begins after viral entry, and ends when the viral material is at the nuclear membrane." [GOC:bf, GOC:jl, VZ:990]
+comment: This process does not include the viral material crossing the nuclear membrane. For transport of viral material into the nucleus, consider instead: 'viral penetration into host nucleus ; GO:0075732'.
+subset: goslim_virus
+subset: virus_checked
+synonym: "cytoplasmic inwards viral transport" EXACT [UniProtKB-KW:KW-1176, VZ:990]
+synonym: "transport of viral material to nucleus" EXACT [GOC:jl]
+synonym: "viral genome transport to host cell nucleus" EXACT []
+xref: VZ:990 "Cytoplasmic inwards viral transport"
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0016032 ! viral process
+created_by: jane
+creation_date: 2009-11-05T03:33:36Z
+
+[Term]
+id: GO:0075713
+name: establishment of integrated proviral latency
+namespace: biological_process
+def: "A process by which the virus integrates into the host genome and establishes as a stable provirus or prophage." [GOC:jl]
+subset: goslim_virus
+synonym: "prophage integration" EXACT []
+synonym: "provirus integration" EXACT []
+xref: PHI:0000055
+xref: Reactome:REACT_6918 "Integration of provirus, Homo sapiens"
+xref: Reactome:REACT_8990 "Integration of viral DNA into host genomic DNA, Human immunodeficiency virus 1"
+xref: VZ:980 "Viral genome integration"
+is_a: GO:0016032 ! viral process
+relationship: has_part GO:0016032 ! viral process
+relationship: part_of GO:0016032 ! viral process
+created_by: jane
+creation_date: 2009-05-07T02:28:41Z
+
+[Term]
+id: GO:0075732
+name: viral penetration into host nucleus
+namespace: biological_process
+def: "The crossing by the virus of the host nuclear membrane, either as naked viral genome or for small viruses as an intact capsid." [PMID:22929056, VZ:989]
+subset: goslim_virus
+subset: virus_checked
+synonym: "viral entry into host nucleus" EXACT []
+synonym: "viral import into host nucleus" EXACT []
+xref: VZ:989 "Viral penetration into host nucleus"
+is_a: GO:0016032 ! viral process
+relationship: part_of GO:0016032 ! viral process
+created_by: jane
+creation_date: 2009-05-01T02:43:16Z
+
+[Typedef]
+id: ends_during
+name: ends_during
+namespace: external
+xref: RO:0002093
+
+[Typedef]
+id: happens_during
+name: happens_during
+namespace: external
+xref: RO:0002092
+is_transitive: true
+is_a: ends_during ! ends_during
+
+[Typedef]
+id: has_part
+name: has_part
+namespace: external
+xref: BFO:0000051
+is_transitive: true
+
+[Typedef]
+id: negatively_regulates
+name: negatively regulates
+namespace: external
+xref: RO:0002212
+is_a: regulates ! regulates
+transitive_over: part_of ! part of
+
+[Typedef]
+id: never_in_taxon
+name: never_in_taxon
+namespace: external
+xref: RO:0002161
+expand_assertion_to: "Class: ?X DisjointWith: RO_0002162 some ?Y" []
+is_metadata_tag: true
+is_class_level: true
+
+[Typedef]
+id: occurs_in
+name: occurs in
+namespace: external
+xref: BFO:0000066
+holds_over_chain: part_of occurs_in
+transitive_over: part_of ! part of
+
+[Typedef]
+id: part_of
+name: part of
+namespace: external
+xref: BFO:0000050
+is_transitive: true
+inverse_of: has_part ! has_part
+
+[Typedef]
+id: positively_regulates
+name: positively regulates
+namespace: external
+xref: RO:0002213
+holds_over_chain: negatively_regulates negatively_regulates
+is_a: regulates ! regulates
+transitive_over: part_of ! part of
+
+[Typedef]
+id: regulates
+name: regulates
+namespace: external
+xref: RO:0002211
+is_transitive: true
+transitive_over: part_of ! part of
+
+[Typedef]
+id: starts_during
+name: starts_during
+namespace: external
+xref: RO:0002091
+

@@ -1,0 +1,37 @@
+id: cl
+title: "Cell Ontology"
+github_org: obophenotype
+repo: cell-ontology
+#report_fail_on: ERROR
+report_fail_on: None
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+  - json
+namespaces: 
+  - http://purl.obolibrary.org/obo/CP_
+  - http://purl.obolibrary.org/obo/CL_
+  - http://purl.obolibrary.org/obo/cl_
+release_artefacts: 
+  - base
+  - full
+  - simple
+  - basic
+  - non-classified
+import_group:
+  products:
+    - id: pr
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: clo
+    - id: pato
+    - id: ncbitaxon
+pattern_pipelines_group:
+  products:
+    - id: clustering
+      dosdp_tools_options: "--obo-prefixes=true"
+robot_java_args: '-Xmx8G'
+

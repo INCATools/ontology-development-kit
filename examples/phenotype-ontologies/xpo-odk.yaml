@@ -1,0 +1,33 @@
+id: xpo
+title: "Xenopus Phenotype Ontology"
+github_org: obophenotype
+repo: xenopus-phenotype-ontology
+report_fail_on: ERROR
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true"
+namespaces: 
+  - http://purl.obolibrary.org/obo/XPO_
+release_artefacts: 
+  - base
+  - full
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: iao
+    - id: go
+    - id: ro
+    - id: chebi
+    - id: pato
+    - id: bfo
+    - id: xao
+pattern_pipelines_group:
+  products:
+    - id: manual
+      dosdp_tools_options: "--obo-prefixes=true"
+    - id: anatomy
+      dosdp_tools_options: "--obo-prefixes=true"
+robot_java_args: '-Xmx8G'

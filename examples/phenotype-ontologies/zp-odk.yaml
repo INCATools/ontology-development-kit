@@ -1,0 +1,31 @@
+id: zp
+title: "Zebrafish Phenotype Ontology"
+github_org: obophenotype
+repo: zebrafish-phenotype-ontology
+report_fail_on: none
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+import_group:
+  products:
+    - id: zfa
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: bspo
+    - id: pato
+    - id: mpath
+    - id: bfo
+pattern_pipelines_group:
+  products:
+    - id: manual
+      dosdp_tools_options: "--obo-prefixes=true"
+    - id: anatomy
+      dosdp_tools_options: "--obo-prefixes=true"
+    - id: zfin
+      dosdp_tools_options: "--obo-prefixes=true"
+    - id: process
+      dosdp_tools_options: "--obo-prefixes=true"
+robot_java_args: '-Xmx8G'   

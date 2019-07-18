@@ -1,0 +1,219 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "ImportGroup": {
+            "description": "\n    A configuration section that consists of a list of `ImportProduct` descriptions\n\n    Controls extraction of import modules via robot extract into the \"imports/\" directory\n    ",
+            "properties": {
+                "directory": {
+                    "type": "string"
+                },
+                "disabled": {
+                    "type": "boolean"
+                },
+                "ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "products": {
+                    "items": {
+                        "$ref": "#/definitions/ImportProduct"
+                    },
+                    "type": "array"
+                },
+                "rebuild_if_source_changes": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "disabled",
+                "rebuild_if_source_changes",
+                "directory"
+            ],
+            "type": "object"
+        },
+        "PatternGroup": {
+            "description": "\n    A configuration section that consists of a list of `PatternProduct` descriptions\n\n    ",
+            "properties": {
+                "directory": {
+                    "type": "string"
+                },
+                "disabled": {
+                    "type": "boolean"
+                },
+                "ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "products": {
+                    "items": {
+                        "$ref": "#/definitions/PatternProduct"
+                    },
+                    "type": "array"
+                },
+                "rebuild_if_source_changes": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "disabled",
+                "rebuild_if_source_changes",
+                "directory"
+            ],
+            "type": "object"
+        },
+        "SubsetGroup": {
+            "description": "\n    A configuration section that consists of a list of `SubsetProduct` descriptions\n\n    Controls export of subsets/slims into the \"subsets/\" directory\n    ",
+            "properties": {
+                "directory": {
+                    "type": "string"
+                },
+                "disabled": {
+                    "type": "boolean"
+                },
+                "ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "products": {
+                    "items": {
+                        "$ref": "#/definitions/SubsetProduct"
+                    },
+                    "type": "array"
+                },
+                "rebuild_if_source_changes": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "disabled",
+                "rebuild_if_source_changes",
+                "directory"
+            ],
+            "type": "object"
+        }
+    },
+    "description": "\n    A configuration for an ontology project/repository\n\n    This is divided into project-wide settings, plus\n    groups of products. Products are grouped into 4\n    categories (more may be added)\n    ",
+    "properties": {
+        "contact": {
+            "type": "string"
+        },
+        "contributors": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "creators": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "edit_format": {
+            "type": "string"
+        },
+        "github_org": {
+            "type": "string"
+        },
+        "id": {
+            "type": "string"
+        },
+        "import_group": {
+            "$ref": "#/definitions/ImportGroup"
+        },
+        "obo_format_options": {
+            "type": "string"
+        },
+        "pattern_group": {
+            "$ref": "#/definitions/PatternGroup"
+        },
+        "reasoner": {
+            "type": "string"
+        },
+        "repo": {
+            "type": "string"
+        },
+        "report_fail_on": {
+            "type": "string"
+        },
+        "robot_version": {
+            "type": "string"
+        },
+        "robotemplate_group": {
+            "type": "object"
+        },
+        "subset_group": {
+            "$ref": "#/definitions/SubsetGroup"
+        },
+        "title": {
+            "type": "string"
+        },
+        "travis_emails": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "uribase": {
+            "type": "string"
+        },
+        "use_dosdps": {
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "id",
+        "title",
+        "repo",
+        "github_org",
+        "edit_format",
+        "reasoner",
+        "use_dosdps",
+        "obo_format_options",
+        "uribase"
+    ],
+    "type": "object"
+}
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "CommandSettings": {
+            "description": "\n    Settings to be provided to a tool like ROBOT\n    ",
+            "properties": {
+                "memory_gb": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "description": "\n    Represents an individual import\n    Examples: 'uberon' (in go)\n    Imports are typically built from an upstream source, but this can be configured\n    ",
+    "properties": {
+        "description": {
+            "type": "string"
+        },
+        "id": {
+            "type": "string"
+        },
+        "mirror_from": {
+            "type": "string"
+        },
+        "rebuild_if_source_changes": {
+            "type": "boolean"
+        },
+        "robot_settings": {
+            "$ref": "#/definitions/CommandSettings"
+        }
+    },
+    "required": [
+        "id",
+        "rebuild_if_source_changes"
+    ],
+    "type": "object"
+}

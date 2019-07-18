@@ -1,0 +1,37 @@
+id: go
+title: Gene Ontology
+github_org: geneontology
+repo: envo
+report_fail_on: ERROR
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: go-bridge
+      subdir: extensions
+      native: True
+    - id: go-gcis
+      subdir: extensions
+      native: True
+    - id: x-disjoint
+      native: True
+    - id: go-taxon-groupings
+      native: True
+    - id: caro
+    - id: chebi
+    - id: cl
+    - id: fao
+    - id: oba
+    - id: pato
+    - id: pr
+    - id: ro
+    - id: so
+    - id: uberon
+subset_group:
+  ids:
+    - goslim_agr
+
+
+  

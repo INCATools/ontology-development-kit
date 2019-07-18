@@ -1,0 +1,22 @@
+id: wbbt
+title: "C. elegans Gross Anatomy Ontology"
+github_org: obophenotype
+repo: c-elegans-gross-anatomy-ontology
+report_fail_on: none
+namespaces: 
+  - http://purl.obolibrary.org/obo/WBbt_
+license: CC-BY
+description: "Ontology about the gross anatomy of the C. elegans"
+release_artefacts: 
+  - base
+  - full
+  - simple
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: ro
+robot_java_args: '-Xmx8G'

@@ -1,0 +1,21 @@
+id: rta
+title: "Release Test A Ontology"
+github_org: obophenotype
+repo: rta
+report_fail_on: none
+namespaces: 
+  - http://purl.obolibrary.org/obo/PTT_
+  - http://purl.obolibrary.org/obo/PATO_
+release_artefacts: 
+  - simple
+  - non-classified
+  - simple-non-classified
+  - basic
+  - base
+  - full
+primary_release: simple
+import_group:
+  products:
+    - id: ro
+    - id: pato
+    - id: mpath

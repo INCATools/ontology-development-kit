@@ -1,0 +1,19 @@
+id: nbo
+title: "Neuro Behavior Ontology"
+github_org: obo-behavior
+repo: behavior-ontology
+report_fail_on: none
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: pato
+
+
+  

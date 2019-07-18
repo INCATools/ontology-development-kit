@@ -1,0 +1,34 @@
+id: hp
+title: "Human Phenotype Ontology"
+github_org: obophenotype
+repo: human-phenotype-ontology
+report_fail_on: none
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
+namespaces: 
+  - http://purl.obolibrary.org/obo/HP_
+  - http://purl.obolibrary.org/obo/hp
+release_artefacts: 
+  - base
+  - simple-non-classified
+  - full
+primary_release: simple-non-classified
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: nbo
+      mirror_from: http://purl.obolibrary.org/obo/nbo/nbo-base.owl
+    - id: pr
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: hsapdv
+    - id: pato
+    - id: cl
+      mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl
+    - id: mpath
+robot_java_args: '-Xmx8G'

@@ -1,0 +1,27 @@
+id: ecocore
+title: "Ontology of Core Ecological Concepts"
+github_org: EcologicalSemantics
+repo: ecocore
+report_fail_on: none
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: nbo
+    - id: bfo
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: envo
+    - id: pato
+    - id: iao
+    - id: ido
+    - id: pco
+    - id: po
+
+
+  

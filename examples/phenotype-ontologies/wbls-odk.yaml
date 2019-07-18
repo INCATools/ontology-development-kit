@@ -1,0 +1,22 @@
+id: wbls
+title: "C. elegans Development Ontology"
+github_org: obophenotype
+repo: c-elegans-development-ontology
+report_fail_on: none
+namespaces: 
+  - http://purl.obolibrary.org/obo/WBls_
+license: CC-BY
+description: "Ontology about the development and life stages of the C. elegans"
+release_artefacts: 
+  - base
+  - full
+  - simple
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: ro
+robot_java_args: '-Xmx8G'
