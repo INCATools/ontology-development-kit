@@ -44,6 +44,7 @@ schema/project-schema.json:
 # Building docker image
 VERSION = "v1.2.14" 
 IM=obolibrary/odkfull
+DEV=obolibrary/odkdev
 
 docker-build:
 	@docker build --no-cache -t $(IM):$(VERSION) . \
@@ -52,6 +53,10 @@ docker-build:
 docker-build-use-cache:
 	@docker build -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
+	
+docker-build-use-cache-dev:
+	@docker build -t $(DEV):$(VERSION) . \
+	&& docker tag $(DEV):$(VERSION) $(DEV):latest
 
 docker-run:
 	docker run --rm -ti --name odkfull $(IM)
