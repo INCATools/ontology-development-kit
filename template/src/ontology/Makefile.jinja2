@@ -78,6 +78,8 @@ IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %
 IMPORTS =
 {% endif %}
 IMPORT_ROOTS = $(patsubst %, imports/%_import, $(IMPORTS))
+MIRROR_LOGICAL = $(patsubst %, tmp/%_logical.owl, $(IMPORTS))
+TERM_LIST_FILES = $(patsubst %, imports/%_terms.txt, $(IMPORTS))
 IMPORT_FILES = $(foreach n,$(IMPORT_ROOTS), $(foreach f,$(FORMATS), $(n).$(f)))
 IMPORT_OWL_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl)
 
