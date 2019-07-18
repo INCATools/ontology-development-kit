@@ -78,8 +78,6 @@ IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %
 IMPORTS =
 {% endif %}
 IMPORT_ROOTS = $(patsubst %, imports/%_import, $(IMPORTS))
-MIRROR_LOGICAL = $(patsubst %, tmp/%_logical.owl, $(IMPORTS))
-TERM_LIST_FILES = $(patsubst %, imports/%_terms.txt, $(IMPORTS))
 IMPORT_FILES = $(foreach n,$(IMPORT_ROOTS), $(foreach f,$(FORMATS), $(n).$(f)))
 IMPORT_OWL_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl)
 
@@ -348,37 +346,16 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
 # Most ontologies are modularly constructed using portions of other ontologies
 # These live in the imports/ folder
 
-tmp/%_logical.owl: mirror/%.owl
-	@if [ $(IMP) = true ]; then $(ROBOT) remove -i $< --term rdfs:label --select complement --preserve-structure false --select annotation-properties --output $@.tmp.owl && mv $@.tmp.owl $@; fi
-.PRECIOUS: tmp/%_logical.owl
+# seed.txt contains all referenced entities
 
-tmp/logical_dependencies_merged.owl: $(MIRROR_LOGICAL)
-	$(ROBOT) merge $(addprefix -i , $(MIRROR_LOGICAL)) \
-	annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
-
-tmp/log_mod_seed.txt: tmp/src_seed.txt $(TERM_LIST_FILES)
-	cat $^ | sort | uniq >  $@
-
-tmp/logical_dependencies_merged_module.owl: tmp/logical_dependencies_merged.owl tmp/log_mod_seed.txt
-	@if [ $(IMP) = true ]; then $(ROBOT) extract -i $< -T tmp/log_mod_seed.txt --force true --method BOT \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@; fi
-
-tmp/log_seed.txt: tmp/logical_dependencies_merged_module.owl
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
-	cat $@.tmp | sort | uniq >  $@; fi
-
-# The seed of the source file. 
 {% if project.use_dosdps %}
-tmp/src_seed.txt: $(SRC) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
+seed.txt: $(SRC) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt
+	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
 	cat $@.tmp $(PATTERNDIR)/all_pattern_terms.txt | sort | uniq >  $@; fi
 {% else %}
-tmp/src_seed.txt: $(SRC)
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/terms.sparql $@; fi
+seed.txt: $(SRC)
+	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
 {% endif %}
-
-seed.txt: tmp/src_seed.txt tmp/log_seed.txt
-	cat $^ | sort | uniq >  $@
 
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
 # Should be able to drop this if robot can just take a big messy list of terms as input.
