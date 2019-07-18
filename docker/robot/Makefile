@@ -1,6 +1,6 @@
 
 # Building docker image
-VERSION = "v1.2.0-alpha" 
+VERSION = "v1.4.1" 
 IM=obolibrary/robot
 
 build:
@@ -17,7 +17,3 @@ clean:
 publish: build
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
-
-test: build
-	docker images | grep oskfull &&\
-	cd ../.. && make test CMD=./seed-via-docker.sh
