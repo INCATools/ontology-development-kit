@@ -246,7 +246,7 @@ ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/$(TODAY)/$@.owl
 OTHER_SRC = {% if project.use_dosdps -%} $(PATTERNDIR)/definitions.owl{% endif -%}{% if project.components is defined %} {% for component in project.components.products %} components/{{ component.filename }}{% endfor %}{% endif %}
 
 
-$(ONTOLOGYTERMS): $(SRC) all_imports
+$(ONTOLOGYTERMS): $(SRC) $(OTHER_SRC)
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
 
 {% for format in project.export_formats %}
