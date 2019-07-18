@@ -11,3 +11,5 @@ REPOPATH=$3
 cp target/$OID/src/ontology/Makefile $REPOPATH/src/ontology/
 cp target/$OID/src/ontology/run.sh $REPOPATH/src/ontology/
 cp target/$OID/src/sparql/* $REPOPATH/src/sparql/
+mkdir $REPOPATH/src/ontology/oort
+mkdir $REPOPATH/src/ontology/tmp
