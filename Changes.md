@@ -1,3 +1,22 @@
+# v1.15
+** Major revisions of Makefile **
+
+Use ont.Makefile file to extend your default ODK make pipeline (which continues to be in src/ontology/Makefile). See [here](https://github.com/obophenotype/human-phenotype-ontology/blob/master/src/ontology/hp.Makefile) for an example;
+
+- Use `allow_equivalents: assert-only` or `allow_equivalents: none` in your project configuration file ([Example](https://github.com/INCATools/ontology-development-kit/blob/master/examples/phenotype-ontologies/mp-odk.yaml)).
+- Integrate components in your projects. A component is a part of your ontology that is managed somewhere outside of the edit file, for [example](https://github.com/INCATools/ontology-development-kit/blob/master/examples/phenotype-ontologies/wbphenotype-odk.yaml) and external file with logical definitions, or a set of xrefs imported from an external file.
+  ```
+  components:
+    products:
+      - filename: wbphenotype-equivalent-axioms-subq.owl
+  ```
+- you can now supply a different catalog.xml then the default by adding a line to your config file: `catalog_file: catalog-v001.xml`
+- You can now run the [Konclude](http://derivo.de/en/products/konclude/) reasoner. See [here](https://github.com/FlyBase/drosophila-phenotype-ontology/blob/master/src/ontology/dpo.Makefile) for an integrated example.
+- new release artefacts, which are documented [here](https://github.com/INCATools/ontology-development-kit/blob/master/docs/ReleaseArtefacts.md). Note that the simple and basic releases are currently highly experimental; we are working on maturing them.
+- it is now possible to skip git related operations during the seeding process: `./seed-via-docker.sh -c --skipgit True -C odkconfig.yaml`. This is useful if the goal is to quickly regenerate the Makefile for example in the context of upgrading a repository.
+- it is now possible to set [dates from the outside of the docker](https://github.com/INCATools/ontology-development-kit/issues/232) container as a parameter.
+- it is now possible to run a OBO validor (see [here](https://github.com/INCATools/ontology-development-kit/pull/215))
+
 # v1.2
 
 **MAJOR OVERHAUL OF FRAMEWORK**

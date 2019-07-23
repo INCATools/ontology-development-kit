@@ -144,6 +144,7 @@ show_assets:
 
 KEEPRELATIONS=keeprelations.txt
 ONTOLOGYTERMS=ontologyterms.txt
+SIMPLESEED=simple_seed.txt
 
 # This should be executed by the release manager whenever time comes to make a release.
 # It will ensure that all assets/files are fresh, and will copy to release folder
@@ -289,13 +290,22 @@ $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 {% if 'simple' in project.release_artefacts or project.primary_release == 'simple' -%}
 # foo-simple: (edit->reason,relax,reduce,drop imports, drop every axiom which contains an entity outside the "namespaces of interest")
 # drop every axiom: filter --term-file keep_terms.txt --trim true
-$(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
-	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
-		remove --select imports --trim false \
-		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
-		{% endif %}relax \
+#	remove --select imports --trim false \
+
+$(SIMPLESEED): $(SRC) $(ONTOLOGYTERMS)
+	$(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/simple-seed.sparql $@.tmp &&\
+	cat $@.tmp $(ONTOLOGYTERMS) | sort | uniq >  $@ &&\
+	echo "http://www.geneontology.org/formats/oboInOwl#SubsetProperty" >> $@ &&\
+	echo "http://www.geneontology.org/formats/oboInOwl#SynonymTypeProperty" >> $@
+
+$(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED)
+	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
+		relax \
+		remove --axioms equivalent \
+		relax \
+		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \
 		reduce -r {{ project.reasoner }} \
-		filter --select ontology --term-file $(ONTOLOGYTERMS) --trim false --preserve-structure false \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
@@ -306,9 +316,8 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 
 $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 	$(ROBOT) remove --input $< --select imports --trim true \
-		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
+		merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		remove --axioms equivalent \
-		{% endif %}relax \
 		reduce -r {{ project.reasoner }} \
 		filter --select ontology --term-file $(ONTOLOGYTERMS) --trim false \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
@@ -318,14 +327,16 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 # foo-basic: A version of -simple containing only relationships using relations on a configurable whitelist (default = BFO:0000050 (?)). See above (David comment) for explanation.
 # removes any axioms that contains one of the ops that not in the whitelist file
 
-$(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
-	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
-		remove --select imports --trim false \
-		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
-		{% endif %}remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
+$(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
+	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		relax \
+		remove --axioms equivalent \
+		remove --axioms disjoint \
+		remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
+		relax \
+		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \
 		reduce -r {{ project.reasoner }} \
-		filter --term-file $(ONTOLOGYTERMS) --trim true --preserve-structure false \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
