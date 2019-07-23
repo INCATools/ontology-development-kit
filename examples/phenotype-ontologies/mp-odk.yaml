@@ -5,6 +5,7 @@ repo: mammalian-phenotype-ontology
 report_fail_on: none
 use_dosdps: TRUE
 dosdp_tools_options: "--obo-prefixes=true"
+allow_equivalents: assert-only
 namespaces: 
   - http://purl.obolibrary.org/obo/MP_
   - http://purl.obolibrary.org/obo/mp[#]
