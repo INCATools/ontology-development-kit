@@ -56,7 +56,7 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %} {{ rel
 .PHONY: .FORCE
 all: all_imports {% if project.use_dosdps %}patterns {% endif %}all_main all_subsets sparql_test all_reports all_assets
 test: sparql_test all_reports
-	$(ROBOT) reason --input $(SRC) --reasoner ELK --output test.owl && rm test.owl && echo "Success"
+	$(ROBOT) reason --input $(SRC) --reasoner {{ project.reasoner }}  --equivalent-classes-allowed {{ project.allow_equivalents }} --output test.owl && rm test.owl && echo "Success"
 
 ## -- main targets --
 ##
@@ -274,7 +274,7 @@ $(ONT)-base.owl: $(SRC) $(OTHER_SRC)
 # Full: The full artefacts with imports merged, reasoned
 $(ONT)-full.owl: $(SRC) $(OTHER_SRC)
 	$(ROBOT) merge --input $< \
-		reason --reasoner {{ project.reasoner }} \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		relax \
 		reduce -r {{ project.reasoner }} \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
@@ -290,7 +290,7 @@ $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 # foo-simple: (edit->reason,relax,reduce,drop imports, drop every axiom which contains an entity outside the "namespaces of interest")
 # drop every axiom: filter --term-file keep_terms.txt --trim true
 $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
-	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
+	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		remove --select imports --trim false \
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		{% endif %}relax \
@@ -319,7 +319,7 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 # removes any axioms that contains one of the ops that not in the whitelist file
 
 $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
-	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} \
+	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		remove --select imports --trim false \
 		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		{% endif %}remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \

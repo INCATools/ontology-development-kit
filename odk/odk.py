@@ -364,6 +364,9 @@ class OntologyProject(JsonSchemaMixin):
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
     
+    allow_equivalents : str = 'all'
+    """can be all, none or assert-only (see ROBOT documentation: http://robot.obolibrary.org/reason)"""
+    
     import_pattern_ontology : bool = False
     """if true import pattern.owl"""
     
