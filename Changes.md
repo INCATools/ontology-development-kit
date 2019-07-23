@@ -1,8 +1,7 @@
-# v1.15
-** Major revisions of Makefile **
+# v1.16
+*Major revisions of Makefile*
 
-Use ont.Makefile file to extend your default ODK make pipeline (which continues to be in src/ontology/Makefile). See [here](https://github.com/obophenotype/human-phenotype-ontology/blob/master/src/ontology/hp.Makefile) for an example;
-
+- Use ont.Makefile file to extend your default ODK make pipeline (which continues to be in src/ontology/Makefile). See [here](https://github.com/obophenotype/human-phenotype-ontology/blob/master/src/ontology/hp.Makefile) for an example;
 - Use `allow_equivalents: assert-only` or `allow_equivalents: none` in your project configuration file ([Example](https://github.com/INCATools/ontology-development-kit/blob/master/examples/phenotype-ontologies/mp-odk.yaml)).
 - Integrate components in your projects. A component is a part of your ontology that is managed somewhere outside of the edit file, for [example](https://github.com/INCATools/ontology-development-kit/blob/master/examples/phenotype-ontologies/wbphenotype-odk.yaml) and external file with logical definitions, or a set of xrefs imported from an external file.
   ```
