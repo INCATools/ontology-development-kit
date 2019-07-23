@@ -56,7 +56,7 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %} {{ rel
 .PHONY: .FORCE
 all: all_imports {% if project.use_dosdps %}patterns {% endif %}all_main all_subsets sparql_test all_reports all_assets
 test: sparql_test all_reports
-	$(ROBOT) reason --input $(SRC) --reasoner ELK --output test.owl && rm test.owl && echo "Success"
+	$(ROBOT) reason --input $(SRC) --reasoner {{ project.reasoner }}  --equivalent-classes-allowed {{ project.allow_equivalents }} --output test.owl && rm test.owl && echo "Success"
 
 ## -- main targets --
 ##
@@ -274,7 +274,7 @@ $(ONT)-base.owl: $(SRC) $(OTHER_SRC)
 # Full: The full artefacts with imports merged, reasoned
 $(ONT)-full.owl: $(SRC) $(OTHER_SRC)
 	$(ROBOT) merge --input $< \
-		reason --reasoner {{ project.reasoner }} \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		relax \
 		reduce -r {{ project.reasoner }} \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
@@ -299,7 +299,7 @@ simple_seed.txt: $(SRC) $(ONTOLOGYTERMS)
 
 $(ONT)-simple.owl: $(SRC) simple_seed.txt $(OTHER_SRC)
 	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
-		reason --reasoner {{ project.reasoner }} \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		relax \
 		remove --axioms equivalent \
 		relax \
@@ -330,7 +330,7 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 
 $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
 	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
-		reason --reasoner {{ project.reasoner }} \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		relax \
 		remove --axioms equivalent \
 		remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
