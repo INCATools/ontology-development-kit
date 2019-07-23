@@ -1,4 +1,4 @@
-# v1.16
+# v1.2.16
 *Major revisions of Makefile*
 
 - Use ont.Makefile file to extend your default ODK make pipeline (which continues to be in src/ontology/Makefile). See [here](https://github.com/obophenotype/human-phenotype-ontology/blob/master/src/ontology/hp.Makefile) for an example;
