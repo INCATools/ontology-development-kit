@@ -144,6 +144,7 @@ show_assets:
 
 KEEPRELATIONS=keeprelations.txt
 ONTOLOGYTERMS=ontologyterms.txt
+SIMPLESEED=simple_seed.txt
 
 # This should be executed by the release manager whenever time comes to make a release.
 # It will ensure that all assets/files are fresh, and will copy to release folder
@@ -291,22 +292,21 @@ $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 # drop every axiom: filter --term-file keep_terms.txt --trim true
 #	remove --select imports --trim false \
 
-simple_seed.txt: $(SRC) $(ONTOLOGYTERMS)
+$(SIMPLESEED): $(SRC) $(ONTOLOGYTERMS)
 	$(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/simple-seed.sparql $@.tmp &&\
 	cat $@.tmp $(ONTOLOGYTERMS) | sort | uniq >  $@ &&\
 	echo "http://www.geneontology.org/formats/oboInOwl#SubsetProperty" >> $@ &&\
 	echo "http://www.geneontology.org/formats/oboInOwl#SynonymTypeProperty" >> $@
 
-$(ONT)-simple.owl: $(SRC) simple_seed.txt $(OTHER_SRC)
+$(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED)
 	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		relax \
 		remove --axioms equivalent \
 		relax \
-		filter --term-file simple_seed.txt --select "annotations ontology anonymous object-properties self" --trim true --signature true \
+		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \
 		reduce -r {{ project.reasoner }} \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
-
 {% endif -%}
 
 {% if 'simple-non-classified' in project.release_artefacts or project.primary_release == 'simple-non-classified' -%}
@@ -316,9 +316,8 @@ $(ONT)-simple.owl: $(SRC) simple_seed.txt $(OTHER_SRC)
 
 $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 	$(ROBOT) remove --input $< --select imports --trim true \
-		{% if project.use_dosdps %}merge  $(patsubst %, -i %, $(OTHER_SRC))  \
+		merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		remove --axioms equivalent \
-		{% endif %}relax \
 		reduce -r {{ project.reasoner }} \
 		filter --select ontology --term-file $(ONTOLOGYTERMS) --trim false \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
@@ -328,14 +327,15 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 # foo-basic: A version of -simple containing only relationships using relations on a configurable whitelist (default = BFO:0000050 (?)). See above (David comment) for explanation.
 # removes any axioms that contains one of the ops that not in the whitelist file
 
-$(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(KEEPRELATIONS)
+$(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
 	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		relax \
 		remove --axioms equivalent \
+		remove --axioms disjoint \
 		remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
 		relax \
-		filter --term-file simple_seed.txt --select "annotations ontology anonymous object-properties self" --trim true --signature true \
+		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \
 		reduce -r {{ project.reasoner }} \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
