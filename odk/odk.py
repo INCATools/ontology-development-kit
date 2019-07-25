@@ -364,6 +364,9 @@ class OntologyProject(JsonSchemaMixin):
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
     
+    release_date : bool = False
+    """if true, releases will be tagged with a release date (oboInOwl:date)"""
+    
     allow_equivalents : str = 'all'
     """can be all, none or assert-only (see ROBOT documentation: http://robot.obolibrary.org/reason)"""
     
