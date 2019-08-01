@@ -3,10 +3,13 @@ title: "Monarch Ontology"
 github_org: monarch-initiative
 repo: monarch-ontology
 report_fail_on: none
-use_dosdps: TRUE
 namespaces: 
   - http://purl.obolibrary.org/obo/HP_
-  - http://purl.obolibrary.org/obo/hp
+  - http://purl.obolibrary.org/obo/MONDO_
+  - http://purl.obolibrary.org/obo/UPHENO_
+  - http://purl.obolibrary.org/obo/MP_
+  - http://purl.obolibrary.org/obo/WBPhenotype_
+  - http://purl.obolibrary.org/obo/ZP_
 release_artefacts: 
   - base
   - simple-non-classified
@@ -21,7 +24,6 @@ import_group:
   products:
     - id: nbo
       mirror_from: http://purl.obolibrary.org/obo/nbo/nbo-base.owl
-    - id: pr
     - id: go
     - id: uberon 
     - id: ro
