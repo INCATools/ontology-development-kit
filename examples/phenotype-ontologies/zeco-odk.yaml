@@ -1,0 +1,13 @@
+id: zeco
+title: "Zebrafish Experimental Conditions Ontology"
+github_org: ybradford
+repo: zebrafish-experimental-conditions-ontology
+report_fail_on: error
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: ro
+robot_java_args: '-Xmx8G'   

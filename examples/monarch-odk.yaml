@@ -1,0 +1,62 @@
+id: mo
+title: "Monarch Ontology"
+github_org: monarch-initiative
+repo: monarch-ontology
+report_fail_on: none
+use_dosdps: TRUE
+namespaces: 
+  - http://purl.obolibrary.org/obo/HP_
+  - http://purl.obolibrary.org/obo/hp
+release_artefacts: 
+  - base
+  - simple-non-classified
+  - full
+  - simple
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: nbo
+      mirror_from: http://purl.obolibrary.org/obo/nbo/nbo-base.owl
+    - id: pr
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: hsapdv
+    - id: cl
+      mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl
+    - id: mpath
+    - id: ncbitaxon-taxslim.owl
+      mirror_from: http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl
+    - id: go-plus
+      mirror_from: http://purl.obolibrary.org/obo/go/extensions/go-plus.owl
+    - id: so
+    - id: eco
+    - id: uberon-ext
+      mirror_from: http://purl.obolibrary.org/obo/uberon/ext.owl
+    - id: uberon-bridge-to-zfa.owl
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-zfa.owl
+    - id: uberon/bridge/uberon-bridge-to-ma.owl
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-ma.owl
+    - id: uberon/bridge/uberon-bridge-to-fma.owl
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-fma.owl
+    - id: uberon/bridge/cl-bridge-to-zfa.owl
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-zfa.owl
+    - id: uberon/bridge/cl-bridge-to-ma.owl
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-ma.owl
+    - id: uberon/bridge/cl-bridge-to-fma.owl
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-fma.owl
+    - id: uberon/bridge/uberon-bridge-to-nifstd.owl
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-nifstd.owl
+    - id: pato
+components:
+  products:
+    - filename: upheno.owl
+    - filename: mondo.owl
+    - filename: eco.owl
+    - filename: so.owl
+robot_java_args: '-Xmx8G'
