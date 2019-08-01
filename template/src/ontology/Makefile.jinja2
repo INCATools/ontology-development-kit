@@ -35,7 +35,8 @@ OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
 SPARQL_VALIDATION_CHECKS =  equivalent-classes trailing-whitespace owldef-self-reference xref-syntax nolabels
 SPARQL_EXPORTS =            basic-report class-count-by-prefix edges xrefs obsoletes synonyms
 
-TODAY   ?= $(shell date +%Y-%m-%d)
+TODAY ?= $(shell date +%Y-%m-%d)
+OBODATE ?= $(shell date +'%d:%m:%Y %H:%M')
 
 {%- if project.use_dosdps %}
 DOSDP_SCHEMA=                http:// # change to PURL when ready.
@@ -269,8 +270,8 @@ $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
 # base: OTHER sources of interest, such as definitions owl
 $(ONT)-base.owl: $(SRC) $(OTHER_SRC)
 	$(ROBOT) remove --input $< --select imports --trim false \
-		{% if project.use_dosdps %}merge $(patsubst %, -i %, $(OTHER_SRC)) \
-		{% endif %}annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+		{% if project.use_dosdps or project.components is defined %}merge $(patsubst %, -i %, $(OTHER_SRC)) \
+		{% endif %}annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 
 # Full: The full artefacts with imports merged, reasoned
 $(ONT)-full.owl: $(SRC) $(OTHER_SRC)
@@ -278,13 +279,13 @@ $(ONT)-full.owl: $(SRC) $(OTHER_SRC)
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		relax \
 		reduce -r {{ project.reasoner }} \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 
 {% if 'non-classified' in project.release_artefacts or project.primary_release == 'non-classified' -%}
 # foo-non-classified: (edit->imports-merged)
 $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 	$(ROBOT) merge --input $< \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 {% if 'simple' in project.release_artefacts or project.primary_release == 'simple' -%}
@@ -292,7 +293,13 @@ $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 # drop every axiom: filter --term-file keep_terms.txt --trim true
 #	remove --select imports --trim false \
 
-$(SIMPLESEED): $(SRC) $(ONTOLOGYTERMS)
+SRCMERGED=merged-$(SRC)
+
+$(SRCMERGED): $(SRC)
+	$(ROBOT) remove --input $< --select imports --trim true \
+		merge  $(patsubst %, -i %, $(OTHER_SRC)) -o $@
+
+$(SIMPLESEED): $(SRCMERGED) $(ONTOLOGYTERMS)
 	$(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/simple-seed.sparql $@.tmp &&\
 	cat $@.tmp $(ONTOLOGYTERMS) | sort | uniq >  $@ &&\
 	echo "http://www.geneontology.org/formats/oboInOwl#SubsetProperty" >> $@ &&\
@@ -306,7 +313,7 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED)
 		relax \
 		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \
 		reduce -r {{ project.reasoner }} \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 {% if 'simple-non-classified' in project.release_artefacts or project.primary_release == 'simple-non-classified' -%}
@@ -320,7 +327,7 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 		remove --axioms equivalent \
 		reduce -r {{ project.reasoner }} \
 		filter --select ontology --term-file $(ONTOLOGYTERMS) --trim false \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 {% if 'basic' in project.release_artefacts or project.primary_release == 'basic' -%}
@@ -337,7 +344,7 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
 		relax \
 		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \
 		reduce -r {{ project.reasoner }} \
-		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@
+		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 # ----------------------------------------
@@ -455,7 +462,7 @@ sparql_test: $(SRC)
 # ROBOT report
 # ----------------------------------------
 reports/%-obo-report.tsv: %
-	$(ROBOT) report -i $< --fail-on $(REPORT_FAIL_ON) -o $@
+	$(ROBOT) report -i $< --fail-on $(REPORT_FAIL_ON) --print 5 -o $@
 
 # ----------------------------------------
 # Sparql queries: Exports

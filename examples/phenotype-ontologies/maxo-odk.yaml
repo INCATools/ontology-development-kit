@@ -21,7 +21,9 @@ import_group:
     - id: go
     - id: ro
     - id: uberon
+    - id: foodon
 pattern_pipelines_group:
   products:
     - id: manual
       dosdp_tools_options: "--obo-prefixes=true"
+robot_java_args: '-Xmx8G'
