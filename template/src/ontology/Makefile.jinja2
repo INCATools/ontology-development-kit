@@ -249,7 +249,7 @@ OTHER_SRC = {% if project.use_dosdps -%} $(PATTERNDIR)/definitions.owl{% endif -
 
 
 $(ONTOLOGYTERMS): $(SRC) $(OTHER_SRC)
-	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.ru $@
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
 
 {% for format in project.export_formats %}
 {% if project.gzip_main -%}
@@ -375,7 +375,7 @@ imports/%_terms_combined.txt: seed.txt imports/%_terms.txt
 # This pattern uses ROBOT to generate an import module
 imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	@if [ $(IMP) = true ]; then $(ROBOT) extract -i $< -T imports/$*_terms_combined.txt --force true --method BOT \
-		query --update ../sparql/inject-subset-declaration.sparql \
+		query --update ../sparql/inject-subset-declaration.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 .PRECIOUS: imports/%_import.owl
 
