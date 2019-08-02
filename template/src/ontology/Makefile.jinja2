@@ -249,7 +249,7 @@ OTHER_SRC = {% if project.use_dosdps -%} $(PATTERNDIR)/definitions.owl{% endif -
 
 
 $(ONTOLOGYTERMS): $(SRC) $(OTHER_SRC)
-	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
+	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.ru $@
 
 {% for format in project.export_formats %}
 {% if project.gzip_main -%}
