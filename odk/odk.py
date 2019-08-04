@@ -720,6 +720,7 @@ def runcmd(cmd):
     (out, err) = p.communicate()
     logging.info('OUT: {}')
     if err:
+        logging.error(out)
         logging.error(err)
     if p.returncode != 0:
         raise Exception('Failed: {}'.format(cmd))
