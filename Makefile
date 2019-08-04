@@ -10,7 +10,7 @@ CMD = ./odk/odk.py seed
 EMAIL_ARGS=
 
 test: test1 test2 test3 test4 test-go-mini test-patterns test-release1 test-release2 test-release3
-	
+
 test1:
 	$(CMD) $(EMAIL_ARGS) -c -d pato -t my-ontology1 myont
 
