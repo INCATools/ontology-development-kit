@@ -727,7 +727,7 @@ def runcmd(cmd):
     logging.info("RUNNING: {}".format(cmd))
     p = subprocess.Popen([cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (out, err) = p.communicate()
-    logging.info('OUT: {}')
+    logging.info('OUT: {}'.format(out))
     if err:
         logging.error(err)
     if p.returncode != 0:
