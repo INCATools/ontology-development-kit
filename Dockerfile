@@ -37,6 +37,7 @@ ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.ja
 ENV ROBOT_JAR ${ROBOT_JAR}
 
 RUN apk --no-cache add openssl wget
+RUN apk add --no-cache jq
 
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
