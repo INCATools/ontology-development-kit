@@ -328,8 +328,8 @@ class OntologyProject(JsonSchemaMixin):
     title : str = ""
     """Concise descriptive text about this ontology"""
 
-    github_user : str = ""
-    """GITHUB user name (necessary for generating releases)"""
+    git_user : str = ""
+    """GIT user name (necessary for generating releases)"""
 
     repo : str = ""
     """Name of repo (do not include org). E.g. cell-ontology"""
@@ -367,11 +367,11 @@ class OntologyProject(JsonSchemaMixin):
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
 
-    github_release : bool = False
-    """if true add functions to run automated github releases (experimental)"""
+    public_release : str = 'none'
+    """if true add functions to run automated releases (experimental). Current options are: github_curl, github_python."""
 
     github_release_assets : Optional[List[str]] = None
-    """A list of files that gets added to a github release (as assets)."""
+    """A list of files that gets added to a github release (as assets). If this option is not set (None), the standard ODK assets will be deployed."""
     
     release_date : bool = False
     """if true, releases will be tagged with a release date (oboInOwl:date)"""

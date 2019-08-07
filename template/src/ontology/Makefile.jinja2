@@ -557,16 +557,19 @@ $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml 
 
 {% endif %}
 
-{% if project.github_release %}
+{% if project.public_release != 'none'  %}
 # ----------------------------------------
 # GitHub release (HIGHLY experimental)
 # ----------------------------------------
 
-RELEASEFILES={% for gha in project.github_release_assets %} {{ gha }}{% endfor %}
-GITHUB_REPO={{ project.github_org }}/{{ project.repo }}
+RELEASEFILES={% if project.github_release_assets is defined -%}{% for gha in project.github_release_assets %} {{ gha }}{% endfor -%}{% else -%}$(ASSETS){% endif %}
 TAGNAME=v$(TODAY)
-USER={{ project.github_user }}
+{% endif %}
+
+{% if project.public_release == 'github_curl'  %}
+USER={{ project.git_user }}
 GH_ASSETS = $(patsubst %, tmp/gh_release_asset_%.txt, $(RELEASEFILES))
+GITHUB_REPO={{ project.github_org }}/{{ project.repo }}
 
 tmp/release_get.txt:
 	curl -s https://api.github.com/repos/${GITHUB_REPO}/releases/tags/${TAGNAME} > $@
@@ -597,7 +600,15 @@ tmp/gh_release_asset_%.txt: tmp/gh_release_id.txt %
 		-H 'Connection: keep-alive' \
 		-H 'Content-Type: application/octet-stream' > $@
 
-gh_release: tmp/gh_release_id.txt $(GH_ASSETS)
+public_release: tmp/gh_release_id.txt $(GH_ASSETS)
+{% endif %}
+
+{% if project.public_release == 'github_python'  %}
+GITHUB_RELEASE_PYTHON=make-release-assets.py
+
+public_release:
+	ls -alt $(ASSETS)
+	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {% endif %}
 
 include {{ project.id }}.Makefile
