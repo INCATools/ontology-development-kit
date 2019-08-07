@@ -15,6 +15,7 @@ release_artefacts:
   - simple-non-classified
   - full
   - simple
+  - non-classified
 primary_release: full
 export_formats:
   - owl
