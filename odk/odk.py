@@ -472,7 +472,7 @@ class Generator(object):
         """
         with open(input) as file_:
             template = Template(file_.read())
-            return template.render( project = self.context.project)
+            return template.render( project = self.context.project, env = {"ODK_VERSION": os.getenv("ODK_VERSION")})
 
     def load_config(self,
                     config_file : Optional[str] = None,

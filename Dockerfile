@@ -2,6 +2,9 @@
 ### 1. Get Linux
 FROM openjdk:8-jre-alpine3.9
 
+ARG ODK_VERSION=0.0.0
+ENV ODK_VERSION ${ODK_VERSION}
+
 ### 2. Get Python, PIP
 
 RUN apk add --no-cache python3 \
