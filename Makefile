@@ -50,15 +50,15 @@ IM=obolibrary/odkfull
 DEV=obolibrary/odkdev
 
 docker-build:
-	@docker build --no-cache -t $(IM):$(VERSION) . \
+	@docker build  --build-arg ODK_VERSION=$(VERSION) --no-cache -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 	
 docker-build-use-cache:
-	@docker build -t $(IM):$(VERSION) . \
+	@docker build --build-arg ODK_VERSION=$(VERSION) -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 	
 docker-build-use-cache-dev:
-	@docker build -t $(DEV):$(VERSION) . \
+	@docker build --build-arg ODK_VERSION=$(VERSION) -t $(DEV):$(VERSION) . \
 	&& docker tag $(DEV):$(VERSION) $(DEV):latest
 
 docker-run:
