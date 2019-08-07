@@ -1,0 +1,21 @@
+id: rtgh
+title: "Release Test Ontology With GH release"
+github_org: obophenotype
+repo: rta
+report_fail_on: none
+namespaces: 
+  - http://purl.obolibrary.org/obo/RTGH_
+release_artefacts: 
+  - simple
+  - base
+  - full
+primary_release: simple
+import_group:
+  products:
+    - id: ro
+    - id: pato
+    - id: mpath
+github_release: True
+github_release_assets:
+  - rtgh.owl
+github_user: matentzn

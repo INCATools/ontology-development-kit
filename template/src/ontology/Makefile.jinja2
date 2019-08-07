@@ -563,4 +563,58 @@ $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml 
 
 {% endif %}
 
+{% if project.public_release != 'none'  %}
+# ----------------------------------------
+# GitHub release (HIGHLY experimental)
+# ----------------------------------------
+
+RELEASEFILES={% if project.github_release_assets is defined -%}{% for gha in project.github_release_assets %} {{ gha }}{% endfor -%}{% else -%}$(ASSETS){% endif %}
+TAGNAME=v$(TODAY)
+{% endif %}
+
+{% if project.public_release == 'github_curl'  %}
+USER={{ project.git_user }}
+GH_ASSETS = $(patsubst %, tmp/gh_release_asset_%.txt, $(RELEASEFILES))
+GITHUB_REPO={{ project.github_org }}/{{ project.repo }}
+
+tmp/release_get.txt:
+	curl -s https://api.github.com/repos/${GITHUB_REPO}/releases/tags/${TAGNAME} > $@
+
+tmp/release_op.txt: tmp/release_get.txt
+	$(eval RELEASEID=$(shell cat tmp/release_get.txt | jq '.id'))
+	if ! [ "$(RELEASEID)" -eq "$(RELEASEID)" ] ; then \
+		curl -s -X POST \
+			https://api.github.com/repos/${GITHUB_REPO}/releases \
+			-H 'Accept: */*' \
+			-H 'Content-Type: application/json' \
+			-u ${USER} \
+			-d '{ "tag_name": "${TAGNAME}", "target_commitish": "master", "name": "${TAGNAME}", "body": "Ontology release ${TODAY}", "draft": false, "prerelease": false }' > $@; \
+	else \
+		cp $< $@; \
+	fi;
+
+tmp/gh_release_id.txt: tmp/release_op.txt
+	echo $(shell cat tmp/release_op.txt | jq '.id') > $@;
+
+tmp/gh_release_asset_%.txt: tmp/gh_release_id.txt %
+	curl -X POST \
+		"https://uploads.github.com/repos/${GITHUB_REPO}/releases/$(shell cat tmp/gh_release_id.txt)/assets?name=$*&label=$*" \
+		--data-binary @$* \
+		-u ${USER} \
+		-H 'Accept: */*' \
+		-H 'Cache-Control: no-cache' \
+		-H 'Connection: keep-alive' \
+		-H 'Content-Type: application/octet-stream' > $@
+
+public_release: tmp/gh_release_id.txt $(GH_ASSETS)
+{% endif %}
+
+{% if project.public_release == 'github_python'  %}
+GITHUB_RELEASE_PYTHON=make-release-assets.py
+
+public_release:
+	ls -alt $(ASSETS)
+	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
+{% endif %}
+
 include {{ project.id }}.Makefile
