@@ -568,12 +568,12 @@ $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml 
 # GitHub release (HIGHLY experimental)
 # ----------------------------------------
 
-RELEASEFILES={% if project.github_release_assets is defined -%}{% for gha in project.github_release_assets %} {{ gha }}{% endfor -%}{% else -%}$(ASSETS){% endif %}
+RELEASEFILES={% if project.public_release_assets is not none -%}{% for gha in project.public_release_assets %} {{ gha }}{% endfor -%}{% else -%}$(ASSETS){% endif %}
 TAGNAME=v$(TODAY)
 {% endif %}
 
 {% if project.public_release == 'github_curl'  %}
-USER={{ project.git_user }}
+USER=unknown
 GH_ASSETS = $(patsubst %, tmp/gh_release_asset_%.txt, $(RELEASEFILES))
 GITHUB_REPO={{ project.github_org }}/{{ project.repo }}
 

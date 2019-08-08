@@ -370,8 +370,8 @@ class OntologyProject(JsonSchemaMixin):
     public_release : str = 'none'
     """if true add functions to run automated releases (experimental). Current options are: github_curl, github_python."""
 
-    github_release_assets : Optional[List[str]] = None
-    """A list of files that gets added to a github release (as assets). If this option is not set (None), the standard ODK assets will be deployed."""
+    public_release_assets : Optional[List[str]] = None
+    """A list of files that gets added to a github/gitlab/etc release (as assets). If this option is not set (None), the standard ODK assets will be deployed."""
     
     release_date : bool = False
     """if true, releases will be tagged with a release date (oboInOwl:date)"""
@@ -481,7 +481,10 @@ class Generator(object):
         """
         with open(input) as file_:
             template = Template(file_.read())
-            return template.render( project = self.context.project, env = {"ODK_VERSION": os.getenv("ODK_VERSION")})
+            if "ODK_VERSION" in os.environ:
+                return template.render( project = self.context.project, env = {"ODK_VERSION": os.getenv("ODK_VERSION")})
+            else:
+                return template.render( project = self.context.project)
 
     def load_config(self,
                     config_file : Optional[str] = None,
