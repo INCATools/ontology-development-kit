@@ -34,3 +34,4 @@ import_group:
 robot_java_args: '-Xmx8G'
 allow_equivalents: all
 release_date: TRUE
+public_release: "github_curl"
