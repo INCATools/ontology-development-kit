@@ -20,7 +20,6 @@ import_group:
   products:
     - id: ro
 robot_java_args: '-Xmx8G'
-github_release: True
+public_release: "github_curl"
 github_release_assets:
   - zeco.owl
-github_user: matentzn

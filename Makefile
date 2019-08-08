@@ -79,6 +79,10 @@ docker-publish: docker-build
 docker-test: docker-build-use-cache
 	docker images | grep odkfull &&\
 	make test CMD=./seed-via-docker.sh
+	
+docker-test-no-build:
+	docker images | grep odkfull &&\
+	make test CMD=./seed-via-docker.sh
 
 docker-publish-all: docker-publish
 	(cd docker/osklite && make publish VERSION=$(VERSION))

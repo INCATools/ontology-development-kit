@@ -27,3 +27,4 @@ release_date: TRUE
 components:
   products:
     - filename: dpo-simple.owl
+public_release: "github_curl"
