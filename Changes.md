@@ -1,3 +1,11 @@
+# v1.2.17
+- Bug fix Konclude reasoner invocation
+- Updated some of the documentation to be more generic towards GitHub vs GitLab and others 
+- Highly experimental features (not for production) that allows the use of GitHub api for making a GitHub [release programmatically](https://github.com/INCATools/ontology-development-kit/pull/268/files). For an example config see [here](https://github.com/INCATools/ontology-development-kit/blob/master/examples/tests/test-github-release.yaml). This feature is likely to change significantly over time. 
+- The ODK version is now written into the Makefile, and is printed by default during runs of the ODK
+- A bug that caused OBO file releases to have broken subset declarations has been fixed.
+
+
 # v1.2.16
 *Major revisions of Makefile*
 
