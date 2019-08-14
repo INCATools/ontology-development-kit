@@ -15,7 +15,7 @@ import_group:
     - id: ro
     - id: pato
     - id: mpath
-github_release: True
-github_release_assets:
+public_release: True
+public_release_assets:
   - rtgh.owl
-github_user: matentzn
+git_user: matentzn
