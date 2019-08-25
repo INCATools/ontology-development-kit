@@ -3,63 +3,86 @@ title: "Monarch Ontology"
 github_org: monarch-initiative
 repo: monarch-ontology
 report_fail_on: none
-namespaces: 
-  - http://purl.obolibrary.org/obo/HP_
-  - http://purl.obolibrary.org/obo/MONDO_
-  - http://purl.obolibrary.org/obo/UPHENO_
-  - http://purl.obolibrary.org/obo/MP_
-  - http://purl.obolibrary.org/obo/WBPhenotype_
-  - http://purl.obolibrary.org/obo/ZP_
 release_artefacts: 
   - base
-  - simple-non-classified
   - full
-  - simple
   - non-classified
 primary_release: full
 export_formats:
   - owl
   - obo
-  - json
 import_group:
   products:
     - id: nbo
       mirror_from: http://purl.obolibrary.org/obo/nbo/nbo-base.owl
     - id: go
-    - id: uberon 
-    - id: ro
+      mirror_from: http://current.geneontology.org/ontology/go-base.owl
+    - id: fao
+    - id: oba
+    - id: po
+    - id: vt
+    - id: stato
+    - id: bfo
     - id: chebi
     - id: hsapdv
     - id: cl
       mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl
     - id: mpath
-    - id: ncbitaxon-taxslim.owl
+    - id: ncbitaxon-taxslim
       mirror_from: http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl
     - id: go-plus
       mirror_from: http://purl.obolibrary.org/obo/go/extensions/go-plus.owl
-    - id: so
-    - id: eco
+    - id: cl
+    - id: caro
+    - id: pato
     - id: uberon-ext
       mirror_from: http://purl.obolibrary.org/obo/uberon/ext.owl
-    - id: uberon-bridge-to-zfa.owl
+    - id: uberon-bridge-to-zfa
       mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-zfa.owl
-    - id: uberon/bridge/uberon-bridge-to-ma.owl
+    - id: uberon-bridge-to-ma
       mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-ma.owl
-    - id: uberon/bridge/uberon-bridge-to-fma.owl
+    - id: uberon-bridge-to-wbbt
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-wbbt.owl
+    - id: uberon-bridge-to-fbbt
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-fbbt.owl
+    - id: uberon-bridge-to-fma
       mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-fma.owl
-    - id: uberon/bridge/cl-bridge-to-zfa.owl
-      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-zfa.owl
-    - id: uberon/bridge/cl-bridge-to-ma.owl
-      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-ma.owl
-    - id: uberon/bridge/cl-bridge-to-fma.owl
-      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-fma.owl
-    - id: uberon/bridge/uberon-bridge-to-nifstd.owl
+    - id: uberon-bridge-to-nifstd
       mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/uberon-bridge-to-nifstd.owl
-    - id: pato
+    - id: cl-bridge-to-ma
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-ma.owl
+    - id: cl-bridge-to-fma
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-fma.owl
+    - id: cl-bridge-to-wbbt
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-wbbt.owl
+    - id: cl-bridge-to-fbbt
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-fbbt.owl
+    - id: cl-bridge-to-zfa
+      mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-zfa.owl
 components:
   products:
     - filename: upheno.owl
+      source: https://raw.githubusercontent.com/obophenotype/upheno/master/metazoa.owl
     - filename: mondo.owl
+      source: http://purl.obolibrary.org/obo/mondo/mondo-base.owl
     - filename: eco.owl
+      source: http://purl.obolibrary.org/obo/eco/eco-base.owl
     - filename: so.owl
+    - filename: geno.owl
+    - filename: sepio.owl
+    - filename: ro.owl
+    - filename: clo.owl
+    - filename: uberon.owl
+      source: http://purl.obolibrary.org/obo/uberon/uberon-base.owl
+    - filename: ncit.owl
+    - filename: fbbt.owl
+      source: http://purl.obolibrary.org/obo/fbbt/fbbt-base.owl
+    - filename: wbbt.owl
+      source: http://purl.obolibrary.org/obo/wbbt/wbbt-base.owl
+    - filename: ecto.owl
+      source: http://purl.obolibrary.org/obo/ecto/ecto-base.owl
+    - filename: zfa.owl
+      source: http://purl.obolibrary.org/obo/zfa/zfa-base.owl
+    - filename: maxo.owl
+      source: http://purl.obolibrary.org/obo/maxo/maxo-base.owl
 robot_java_args: '-Xmx8G'
