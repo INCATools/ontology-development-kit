@@ -251,7 +251,7 @@ ANNOTATE_VERSION_IRI = annotate -V $(ONTBASE)/releases/$(TODAY)/$@.owl
 # by default we use {{ project.reasoner }} to perform a reason-relax-reduce chain
 # after that we annotate the ontology with the release versionInfo
 
-OTHER_SRC = {% if project.use_dosdps -%} $(PATTERNDIR)/definitions.owl{% endif -%}{% if project.components is defined %} {% for component in project.components.products %} components/{{ component.filename }}{% endfor %}{% endif %}
+OTHER_SRC = {% if project.use_dosdps -%} $(PATTERNDIR)/definitions.owl{% endif -%}{% if project.components is defined %} {% for component in project.components.products %} {{ project.components.directory }}/{{ component.filename }}{% endfor %}{% endif %}
 
 
 $(ONTOLOGYTERMS): $(SRC) $(OTHER_SRC)
@@ -400,6 +400,30 @@ imports/%_import.ttl: imports/%_import.owl
 imports/%_import.json: imports/%_import.owl
 	@if [ $(IMP) = true ]; then $(ROBOT) convert --check false -i $< -f json -o $@.tmp.json && mv $@.tmp.json $@; fi
 {% endif -%}
+
+
+{% if project.components is defined %}
+# ----------------------------------------
+# Components
+# ----------------------------------------
+# Some ontologies contain external and internal components. A component is included in the ontology in its entirety.
+
+{{ project.components.directory }}/%: .FORCE
+	@if [ $(IMP) = true ]; then $(ROBOT) merge -I $(URIBASE)/$* \
+	annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ -o $@; fi
+.PRECIOUS: {{ project.components.directory }}/%
+
+
+{% for component in project.components.products %}
+{% if component.source is not none %}
+{{ project.components.directory }}/{{ component.filename }}: .FORCE
+	@if [ $(IMP) = true ]; then $(ROBOT) merge -I {{ component.source }} \
+	annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ -o $@; fi
+.PRECIOUS: {{ project.components.directory }}/{{ component.filename }}
+{% endif %}
+{% endfor %}
+
+{% endif %}
 
 # ----------------------------------------
 # Mirroring upstream ontologies
