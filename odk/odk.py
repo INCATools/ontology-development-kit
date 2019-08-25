@@ -89,6 +89,9 @@ class ComponentProduct():
     
     filename: Optional[str] = None
     """The filename of this component"""
+    
+    source: Optional[str] = None
+    """The source for which the component should be obtained."""
 
 @dataclass_json
 @dataclass
@@ -244,7 +247,7 @@ class ComponentGroup(ComponentProduct):
     products : Optional[List[ComponentProduct]] = None
     """all component products"""
 
-    directory : Directory = "components/"
+    directory : Directory = "components"
     """directory where components are maintained"""
 
     def _add_stub(self, filename : str):
