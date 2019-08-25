@@ -24,4 +24,6 @@ github_org: FlyBase
 repo: flybase-developmental-ontology
 report_fail_on: none
 robot_java_args: '-Xmx8G'
-
+allow_equivalents: asserted-only
+release_date: TRUE
+public_release: "github_curl"

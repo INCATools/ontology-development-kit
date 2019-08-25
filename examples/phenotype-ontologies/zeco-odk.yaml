@@ -1,0 +1,25 @@
+id: zeco
+title: "Zebrafish Experimental Conditions Ontology"
+github_org: ybradford
+repo: zebrafish-experimental-conditions-ontology
+report_fail_on: error
+namespaces: 
+  - http://www.semanticweb.org/yvonne/ontologies/2016/4/untitled-ontology-163/ZECO_
+  - http://purl.obolibrary.org/obo/ZECO_
+  - http://purl.obolibrary.org/obo/zeco.owl
+export_formats:
+  - owl
+  - obo
+  - json
+release_artefacts: 
+  - base
+  - simple
+  - full
+primary_release: simple
+import_group:
+  products:
+    - id: ro
+robot_java_args: '-Xmx8G'
+public_release: "github_curl"
+github_release_assets:
+  - zeco.owl

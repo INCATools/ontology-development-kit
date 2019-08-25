@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/INCATools/ontology-development-kit.svg?branch=master)](https://travis-ci.org/INCATools/ontology-development-kit)
 
-Initialize a GitHub repo for managing your ontology the OBO Library way!
+Initialize a Git repo for managing your ontology the OBO Library way!
 
 For more details, see
 
@@ -47,21 +47,31 @@ You can add a -c (lowercase) just before the -C (capital c) in the command to fi
 
 This will create your starter files in
 `target/triffid-behavior-ontology`. It will also prepare an initial
-release and initialize a local repository (not yet pushed to GitHub).
+release and initialize a local repository (not yet pushed to your Git host site such as GitHub or GitLab).
 
-You can customize at this stage, or (recommended) after making an initial push to github
+You can customize at this stage, or (recommended) after making an initial push to your git host.
 
-## 4. Push to GitHub
+## 4. Push to Git hosting website
 
 The development kit will automatically initialize a git project, add all files and commit.
 
-You will need to create a project on GitHub.
+You will need to create a project on you Git hosting site.
+
+*For GitHub:*
 
  1. Go to: https://github.com/new
  2. The owner MUST be the org you selected with the `-u` option. The name MUST be the one you set with `-t`.
  3. Do not initialize with a README (you already have one)
  4. Click Create
  5. See the section under "…or push an existing repository from the command line"
+
+*For GitLab:*
+
+ 1. Go to: https://gitlab.com/projects/new
+ 2. The owner MUST be the org you selected with the `-u` option. The name MUST be the one you set with `-t`.
+ 3. Do not initialize with a README (you already have one)
+ 4. Click 'Create project'
+ 5. See the section under "Push an existing Git repository"
 
 Follow the instructions there. E.g.
 
@@ -71,7 +81,8 @@ git remote add origin git@github.com:cmungall/triffid-behavior-ontology.git
 git push -u origin master
 ```
 
-Note: you can now mv `target/triffid-behavior-ontology` to anywhere you like in your home directory. Or you can do a fresh checkout from github
+Note: you can now mv `target/triffid-behavior-ontology` to anywhere you like in your home directory. Or you can do a fresh checkout from github.
+
 
 ## Next Steps: Edit and release cycle
 
@@ -137,13 +148,13 @@ You can recreate the Makefile by running `odk.py create_makefile -C project.yaml
 
 ## Adapting an existing ontology repo
 
-The ODK is designed for creating a new repo for a new ontology. It can still be used to help figure out how to migrate an existing github repository to the ODK structure. There are different ways to do this.
+The ODK is designed for creating a new repo for a new ontology. It can still be used to help figure out how to migrate an existing git repository to the ODK structure. There are different ways to do this.
 
  * Manually compare your ontology against the [template](https://github.com/INCATools/ontology-development-kit/tree/master/template) folder and make necessary adjustments
  * Run the seed script as if creating a new repo. Manually compare this with your existing repo and use `git mv` to rearrange, and adding any missing files by copying them across and doing a `git add`
- * Create a new repo de novo and abandon your existing one, using github issue mover to move tickets across.
+ * Create a new repo de novo and abandon your existing one, using, for example, github issue mover to move tickets across.
  
-Obviously the second method is not ideal as you lose your github history. Note even with `git mv` history tracking becomes harder
+Obviously the second method is not ideal as you lose your git history. Note even with `git mv` history tracking becomes harder
 
 If you have built your ontology using a previous version of ODK,
 migration of your setup is unfortunately a manual process. In general

@@ -74,7 +74,7 @@ The basic data model is:
     * Other product groups for reports and templates
 
 Many ontology projects need only specify a very minimal configuration:
-id of ontology, github location, and list of ontology ids for
+id of ontology, github/gitlab location, and list of ontology ids for
 imports. However, for projects that need to customize there are
 multiple options. E.g. for an import product you can optionally
 specific a particular URL that overrides the default PURL.

@@ -5,3 +5,4 @@ dacite >= 0.0
 dataclasses >= 0.0
 dataclasses-json >= 0.0
 dataclasses-jsonschema >= 0.0
+PyGithub >= 0.0

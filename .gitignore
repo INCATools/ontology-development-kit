@@ -7,3 +7,5 @@ venv/
 template/src/patterns/catalog-v001.xml
 .idea
 upgrade_repos.sh
+examples/phenotype-ontologies/zeco-odk-nico-curl.yaml
+examples/phenotype-ontologies/zeco-odk-nico.yaml

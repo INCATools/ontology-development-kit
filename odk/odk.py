@@ -89,6 +89,9 @@ class ComponentProduct():
     
     filename: Optional[str] = None
     """The filename of this component"""
+    
+    source: Optional[str] = None
+    """The source for which the component should be obtained."""
 
 @dataclass_json
 @dataclass
@@ -244,7 +247,7 @@ class ComponentGroup(ComponentProduct):
     products : Optional[List[ComponentProduct]] = None
     """all component products"""
 
-    directory : Directory = "components/"
+    directory : Directory = "components"
     """directory where components are maintained"""
 
     def _add_stub(self, filename : str):
@@ -328,6 +331,9 @@ class OntologyProject(JsonSchemaMixin):
     title : str = ""
     """Concise descriptive text about this ontology"""
 
+    git_user : str = ""
+    """GIT user name (necessary for generating releases)"""
+
     repo : str = ""
     """Name of repo (do not include org). E.g. cell-ontology"""
     
@@ -363,6 +369,18 @@ class OntologyProject(JsonSchemaMixin):
     
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
+
+    public_release : str = 'none'
+    """if true add functions to run automated releases (experimental). Current options are: github_curl, github_python."""
+
+    public_release_assets : Optional[List[str]] = None
+    """A list of files that gets added to a github/gitlab/etc release (as assets). If this option is not set (None), the standard ODK assets will be deployed."""
+    
+    release_date : bool = False
+    """if true, releases will be tagged with a release date (oboInOwl:date)"""
+    
+    allow_equivalents : str = 'all'
+    """can be all, none or assert-only (see ROBOT documentation: http://robot.obolibrary.org/reason)"""
     
     import_pattern_ontology : bool = False
     """if true import pattern.owl"""
@@ -466,7 +484,10 @@ class Generator(object):
         """
         with open(input) as file_:
             template = Template(file_.read())
-            return template.render( project = self.context.project)
+            if "ODK_VERSION" in os.environ:
+                return template.render( project = self.context.project, env = {"ODK_VERSION": os.getenv("ODK_VERSION")})
+            else:
+                return template.render( project = self.context.project)
 
     def load_config(self,
                     config_file : Optional[str] = None,
@@ -712,7 +733,7 @@ def runcmd(cmd):
     logging.info("RUNNING: {}".format(cmd))
     p = subprocess.Popen([cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (out, err) = p.communicate()
-    logging.info('OUT: {}')
+    logging.info('OUT: {}'.format(out))
     if err:
         logging.error(err)
     if p.returncode != 0:

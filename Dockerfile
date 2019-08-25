@@ -2,6 +2,9 @@
 ### 1. Get Linux
 FROM openjdk:8-jre-alpine3.9
 
+ARG ODK_VERSION=0.0.0
+ENV ODK_VERSION ${ODK_VERSION}
+
 ### 2. Get Python, PIP
 
 RUN apk add --no-cache python3 \
@@ -37,6 +40,7 @@ ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.ja
 ENV ROBOT_JAR ${ROBOT_JAR}
 
 RUN apk --no-cache add openssl wget
+RUN apk add --no-cache jq
 
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
@@ -51,7 +55,7 @@ RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Koncl
     rm /tools/konclude.zip && \
     chmod +x /tools/konclude_reasoner/Binaries && \
     echo "#!/bin/bash" > /tools/Konclude && \
-    echo "/tools/konclude_reasoner/Binaries/Konclude $*" >> /tools/Konclude && \
+    echo '/tools/konclude_reasoner/Binaries/Konclude $*' >> /tools/Konclude && \
     chmod +x /tools/Konclude
 
 RUN wget $ROBOT_JAR -O /tools/robot.jar && \
