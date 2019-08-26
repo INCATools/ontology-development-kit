@@ -10,7 +10,6 @@ release_artefacts:
 primary_release: full
 export_formats:
   - owl
-  - obo
 import_group:
   products:
     - id: nbo
