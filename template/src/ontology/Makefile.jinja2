@@ -402,7 +402,7 @@ imports/%_import.json: imports/%_import.owl
 {% endif -%}
 
 
-{% if project.components is defined %}
+{% if project.components is not none %}
 # ----------------------------------------
 # Components
 # ----------------------------------------
