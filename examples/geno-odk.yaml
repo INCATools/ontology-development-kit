@@ -1,0 +1,18 @@
+id: geno
+title: "GENO ontology"
+github_org: monarch-initiative
+repo: GENO-ontology
+report_fail_on: None
+export_formats:
+  - owl
+  - obo
+  - json
+release_artefacts: 
+  - base
+  - full
+primary_release: full
+import_group:
+  products:
+    - id: ro
+    - id: iao
+robot_java_args: '-Xmx8G'
