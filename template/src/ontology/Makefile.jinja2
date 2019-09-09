@@ -224,7 +224,7 @@ $(ONT)-full.json: $(ONT)-full.owl
 
 # Main release artefacts
 $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY) \
+	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
 		convert -o $@.tmp.owl && mv $@.tmp.owl $@
 
 {% if 'obo' in project.export_formats -%}
