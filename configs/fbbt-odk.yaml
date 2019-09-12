@@ -1,11 +1,13 @@
-id: fbcv
-title: "FlyBase Controlled Vocabulary"
+id: fbbt
+title: "Drosophila Anatomy Ontology"
 github_org: FlyBase
-repo: flybase-controlled-vocabulary
+repo: drosophila-anatomy-ontology
 report_fail_on: none
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
 namespaces: 
-  - http://purl.obolibrary.org/obo/FBcv_
-  - http://purl.obolibrary.org/obo/fbcv_
+  - http://purl.obolibrary.org/obo/FBbt_
+  - http://purl.obolibrary.org/obo/fbbt_
 release_artefacts: 
   - base
   - simple
@@ -18,13 +20,10 @@ export_formats:
   - json
 import_group:
   products:
+    - id: go
     - id: ro
-    - id: chebi
+    - id: pato
 edit_format: obo
 robot_java_args: '-Xmx8G'
 allow_equivalents: asserted-only
 release_date: TRUE
-components:
-  products:
-    - filename: dpo-simple.owl
-public_release: "github_curl"

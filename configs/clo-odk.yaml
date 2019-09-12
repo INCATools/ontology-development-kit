@@ -23,3 +23,4 @@ import_group:
     - id: ncbitaxon
       mirror_from: https://raw.githubusercontent.com/matentzn/large-ontology-dependencies/master/ncbitaxon.owl.gz
     - id: obi
+robot_java_args: '-Xmx8G'
