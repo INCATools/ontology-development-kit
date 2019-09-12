@@ -6,7 +6,6 @@ report_fail_on: none
 export_formats:
   - owl
   - obo
-  - json
 release_artefacts: 
   - base
   - full

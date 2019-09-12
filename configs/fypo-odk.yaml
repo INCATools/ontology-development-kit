@@ -4,6 +4,7 @@ github_org: pombase
 repo: fypo
 #report_fail_on: ERROR
 report_fail_on: none
+edit_format: obo
 export_formats:
   - owl
   - obo
