@@ -23,8 +23,8 @@ ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 ./upgrade-via-docker.sh mp $CONFIGDIR/mp-odk.yaml $ROOTDIR/mammalian-phenotype-ontology
 
 # ZFIN
-#./upgrade-via-docker.sh hp $CONFIGDIR/zeco-odk.yaml $ROOTDIR/zebrafish-experimental-conditions-ontology
-./upgrade-via-docker.sh hp $CONFIGDIR/zp-odk.yaml $ROOTDIR_ALT/zebrafish-experimental-conditions-ontology
+./upgrade-via-docker.sh zeco $CONFIGDIR/zeco-odk.yaml $ROOTDIR/zebrafish-experimental-conditions-ontology
+./upgrade-via-docker.sh zp $CONFIGDIR/zp-odk.yaml $ROOTDIR_ALT/zebrafish-phenotype-ontology
 
 
 # Monarch
