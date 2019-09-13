@@ -31,7 +31,6 @@ import_group:
       mirror_from: http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl
     - id: go-plus
       mirror_from: http://purl.obolibrary.org/obo/go/extensions/go-plus.owl
-    - id: cl
     - id: caro
     - id: pato
     - id: uberon-ext
