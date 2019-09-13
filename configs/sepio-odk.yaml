@@ -1,0 +1,18 @@
+id: sepio
+title: "Ontology for scientific evidence and provenance information"
+github_org: monarch-initiative
+repo: SEPIO-ontology
+report_fail_on: none
+export_formats:
+  - owl
+  - obo
+release_artefacts: 
+  - base
+  - full
+primary_release: full
+import_group:
+  products:
+    - id: ro
+    - id: iao
+    - id: bfo
+robot_java_args: '-Xmx8G'

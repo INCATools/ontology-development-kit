@@ -38,3 +38,4 @@ pattern_pipelines_group:
       dosdp_tools_options: "--obo-prefixes=true"
     - id: entity_attribute_location
       dosdp_tools_options: "--obo-prefixes=true"
+robot_java_args: '-Xmx8G'

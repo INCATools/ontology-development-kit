@@ -34,3 +34,5 @@ import_group:
     - id: cl
       mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl
     - id: mpath
+robot_java_args: '-Xmx8G'
+allow_equivalents: asserted-only

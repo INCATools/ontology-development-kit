@@ -22,6 +22,4 @@ import_group:
     - id: ido
     - id: pco
     - id: po
-
-
-  
+robot_java_args: '-Xmx8G'
