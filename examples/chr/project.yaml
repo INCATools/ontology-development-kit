@@ -1,0 +1,11 @@
+id: chr
+title: monochrom
+github_org: monarch-initiative
+repo: monochrom
+contact: mbrush
+edit_format: ttl
+import_group:
+  ids:
+    - ro
+    - so
+  
