@@ -1,3 +1,7 @@
+# v1.2.18 (13 September 2019)
+- Upgrade ROBOT to version 1.4.3
+- Minor bug fix in handling temporary file directories
+
 # v1.2.17 (10 September 2019)
 - Bug fix Konclude reasoner invocation
 - Bug fix simple seed generation
