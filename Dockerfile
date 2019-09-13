@@ -62,7 +62,16 @@ RUN wget $ROBOT_JAR -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
     
+RUN (echo "#!/usr/bin/env sh" && curl -L https://github.com/lihaoyi/Ammonite/releases/download/1.4.4/2.12-1.4.4) >/tools/amm && \
+    chmod +x /tools/amm
+
+# Avoid repeated downloads of script dependencies by mounting the local coursier cache: docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
+ENV COURSIER_CACHE "/tools/.coursier-cache"
+
 ENV PATH "/tools/:$PATH"
+
+# Force precompile of ammonite files
+RUN amm /dev/null
 
 # Setup fastobo-validator
 RUN wget https://dl.bintray.com/fastobo/fastobo-validator/stable/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools
