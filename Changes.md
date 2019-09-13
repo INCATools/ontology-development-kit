@@ -1,9 +1,17 @@
-# v1.2.17
+# v1.2.18 (13 September 2019)
+- Upgrade ROBOT to version 1.4.3
+- Minor bug fix in handling temporary file directories
+
+# v1.2.17 (10 September 2019)
 - Bug fix Konclude reasoner invocation
+- Bug fix simple seed generation
+- Bug fix: main owl release file (ont.owl) now has the correct version IRI
+- More debugging output during seeding process
 - Updated some of the documentation to be more generic towards GitHub vs GitLab and others 
 - Highly experimental features (not for production) that allows the use of GitHub api for making a GitHub [release programmatically](https://github.com/INCATools/ontology-development-kit/pull/268/files). For an example config see [here](https://github.com/INCATools/ontology-development-kit/blob/master/examples/tests/test-github-release.yaml). This feature is likely to change significantly over time. 
 - The ODK version is now written into the Makefile, and is printed by default during runs of the ODK
-- A bug that caused OBO file releases to have broken subset declarations has been fixed.
+- Bug fix that caused OBO file releases to have broken subset declarations (injection of subset annotation property by default in imports).
+- It is now possible to tag releases with the date of release. Use: `release_date: True` in the configuration file 
 
 
 # v1.2.16

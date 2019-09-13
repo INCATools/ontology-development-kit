@@ -2,6 +2,8 @@
 
 echo "This is an experimental update script. It will overwrite your repositories Makefile, update sparql queries and the docker wrapper."
 
+set -e
+
 OID=$1
 CONFIG=$2
 REPOPATH=$3
@@ -11,5 +13,3 @@ REPOPATH=$3
 cp target/$OID/src/ontology/Makefile $REPOPATH/src/ontology/
 cp target/$OID/src/ontology/run.sh $REPOPATH/src/ontology/
 cp target/$OID/src/sparql/* $REPOPATH/src/sparql/
-mkdir $REPOPATH/src/ontology/oort
-mkdir $REPOPATH/src/ontology/tmp

@@ -29,7 +29,8 @@ CATALOG=                    {{ project.catalog_file }}
 ROBOT=                      robot --catalog $(CATALOG)
 RELEASEDIR=                 ../..
 PATTERNDIR=                 ../patterns
-REPORTDIR=                 reports
+REPORTDIR=                  reports
+TMPDIR=                     tmp
 SPARQLDIR =                 ../sparql
 REPORT_FAIL_ON =            {{ project.report_fail_on|default('ERROR') }}
 OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
@@ -64,6 +65,9 @@ test: odkversion sparql_test all_reports
 odkversion:
 	echo "ODK Makefile version: $(ODK_VERSION) (this is the version of the ODK with which this Makefile was generated, not the version of the ODK you are running)" &&\
 	echo "ROBOT version (ODK): " && $(ROBOT) --version
+
+$TMPDIR:
+	mkdir -p $@
 
 ## -- main targets --
 ##
@@ -226,7 +230,7 @@ $(ONT)-full.json: $(ONT)-full.owl
 
 # Main release artefacts
 $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY) \
+	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ \
 		convert -o $@.tmp.owl && mv $@.tmp.owl $@
 
 {% if 'obo' in project.export_formats -%}
@@ -599,14 +603,14 @@ TAGNAME=v$(TODAY)
 
 {% if project.public_release == 'github_curl'  %}
 USER=unknown
-GH_ASSETS = $(patsubst %, tmp/gh_release_asset_%.txt, $(RELEASEFILES))
+GH_ASSETS = $(patsubst %, $TMPDIR/gh_release_asset_%.txt, $(RELEASEFILES))
 GITHUB_REPO={{ project.github_org }}/{{ project.repo }}
 
-tmp/release_get.txt:
+$TMPDIR/release_get.txt: $TMPDIR
 	curl -s https://api.github.com/repos/${GITHUB_REPO}/releases/tags/${TAGNAME} > $@
 
-tmp/release_op.txt: tmp/release_get.txt
-	$(eval RELEASEID=$(shell cat tmp/release_get.txt | jq '.id'))
+$TMPDIR/release_op.txt: $TMPDIR $TMPDIR/release_get.txt
+	$(eval RELEASEID=$(shell cat $TMPDIR/release_get.txt | jq '.id'))
 	if ! [ "$(RELEASEID)" -eq "$(RELEASEID)" ] ; then \
 		curl -s -X POST \
 			https://api.github.com/repos/${GITHUB_REPO}/releases \
@@ -618,12 +622,12 @@ tmp/release_op.txt: tmp/release_get.txt
 		cp $< $@; \
 	fi;
 
-tmp/gh_release_id.txt: tmp/release_op.txt
-	echo $(shell cat tmp/release_op.txt | jq '.id') > $@;
+$TMPDIR/gh_release_id.txt: $TMPDIR $TMPDIR/release_op.txt
+	echo $(shell cat $TMPDIR/release_op.txt | jq '.id') > $@;
 
-tmp/gh_release_asset_%.txt: tmp/gh_release_id.txt %
+$TMPDIR/gh_release_asset_%.txt: $TMPDIR $TMPDIR/gh_release_id.txt %
 	curl -X POST \
-		"https://uploads.github.com/repos/${GITHUB_REPO}/releases/$(shell cat tmp/gh_release_id.txt)/assets?name=$*&label=$*" \
+		"https://uploads.github.com/repos/${GITHUB_REPO}/releases/$(shell cat $TMPDIR/gh_release_id.txt)/assets?name=$*&label=$*" \
 		--data-binary @$* \
 		-u ${USER} \
 		-H 'Accept: */*' \
@@ -631,7 +635,7 @@ tmp/gh_release_asset_%.txt: tmp/gh_release_id.txt %
 		-H 'Connection: keep-alive' \
 		-H 'Content-Type: application/octet-stream' > $@
 
-public_release: tmp/gh_release_id.txt $(GH_ASSETS)
+public_release: $TMPDIR $TMPDIR/gh_release_id.txt $(GH_ASSETS)
 {% endif %}
 
 {% if project.public_release == 'github_python'  %}

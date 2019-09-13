@@ -1,0 +1,27 @@
+id: fypo
+title: "Fission Yeast Phenotype Ontology"
+github_org: pombase
+repo: fypo
+#report_fail_on: ERROR
+report_fail_on: none
+edit_format: obo
+export_formats:
+  - owl
+  - obo
+  - json
+release_artefacts: 
+  - base
+  - simple
+  - non-classified
+  - full
+primary_release: full
+import_group:
+  products:
+    - id: ro
+    - id: iao
+    - id: chebi
+    - id: go
+    - id: cl
+    - id: pato
+    - id: so
+robot_java_args: '-Xmx8G'
