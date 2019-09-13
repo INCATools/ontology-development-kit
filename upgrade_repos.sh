@@ -6,7 +6,7 @@
 
 set -e
 
-#make docker-build-use-cache
+make docker-build-use-cache
 #docker pull obolibrary/odkfull
 
 CONFIGDIR=configs
@@ -33,7 +33,7 @@ ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 ./upgrade-via-docker.sh mo $CONFIGDIR/mo-odk.yaml $ROOTDIR/monarch-ontology
 ./upgrade-via-docker.sh geno $CONFIGDIR/geno-odk.yaml $ROOTDIR/GENO-ontology
 ./upgrade-via-docker.sh sepio $CONFIGDIR/sepio-odk.yaml $ROOTDIR/SEPIO-ontology
-#./upgrade-via-docker.sh ecto $CONFIGDIR/ecto-odk.yaml $ROOTDIR/environmental-exposure-ontology
+./upgrade-via-docker.sh ecto $CONFIGDIR/ecto-odk.yaml $ROOTDIR/environmental-exposure-ontology
 
 # OBO Foundry
 ./upgrade-via-docker.sh cl $CONFIGDIR/cl-odk.yaml $ROOTDIR_ALT/cell-ontology
@@ -44,7 +44,7 @@ ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 ./upgrade-via-docker.sh ddpheno $CONFIGDIR/ddpheno-odk.yaml $ROOTDIR_ALT/dicty-phenotype-ontology
 ./upgrade-via-docker.sh xpo $CONFIGDIR/xpo-odk.yaml $ROOTDIR/xenopus-phenotype-ontology
 ./upgrade-via-docker.sh mgpo $CONFIGDIR/mgpo-odk.yaml $ROOTDIR_ALT/glyco-phenotype-ontology
-./upgrade-via-docker.sh fypo $CONFIGDIR/fypo-odk.yaml $ROOTDIR_ALT/fypo
+./upgrade-via-docker.sh fypo $CONFIGDIR/fypo-odk.yaml $ROOTDIR/fypo
 
 # WormBase
 ./upgrade-via-docker.sh wbbt $CONFIGDIR/wbbt-odk.yaml $ROOTDIR_ALT/c-elegans-gross-anatomy-ontology

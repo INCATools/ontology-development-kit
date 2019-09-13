@@ -20,7 +20,6 @@ import_group:
     - id: ro
     - id: iao
     - id: chebi
-    - id: bto
     - id: go
     - id: cl
     - id: pato

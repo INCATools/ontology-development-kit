@@ -1,0 +1,29 @@
+id: ecto
+title: "Environmental conditions, treatments and exposures ontology"
+github_org: EnvironmentOntology
+repo: environmental-exposure-ontology
+report_fail_on: none
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: nbo
+    - id: go
+    - id: uberon 
+    - id: ro
+    - id: chebi
+    - id: envo
+    - id: pato
+    - id: iao
+    - id: npo
+    - id: exo
+    - id: xco
+    - id: activity
+    - id: ncbitaxon
+robot_java_args: '-Xmx8G'
+components:
+  products:
+    - filename: ecto-xrefs.owl

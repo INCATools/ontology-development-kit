@@ -3,6 +3,7 @@ title: "Phenotype And Trait Ontology"
 github_org: pato-ontology
 repo: pato
 report_fail_on: none
+edit_format: obo
 export_formats:
   - owl
   - obo
