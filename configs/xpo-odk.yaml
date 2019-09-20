@@ -10,6 +10,7 @@ namespaces:
 release_artefacts: 
   - base
   - full
+  - simple
 primary_release: full
 export_formats:
   - owl
@@ -31,3 +32,4 @@ pattern_pipelines_group:
     - id: anatomy
       dosdp_tools_options: "--obo-prefixes=true"
 robot_java_args: '-Xmx8G'
+allow_equivalents: none

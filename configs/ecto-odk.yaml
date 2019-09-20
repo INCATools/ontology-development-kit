@@ -10,20 +10,25 @@ export_formats:
   - json
 import_group:
   products:
-    - id: nbo
-    - id: go
-    - id: uberon 
-    - id: ro
     - id: chebi
     - id: envo
-    - id: pato
-    - id: iao
-    - id: npo
     - id: exo
-    - id: xco
-    - id: activity
+    - id: go
+    - id: iao
+    - id: maxo
+      mirror_from: https://raw.githubusercontent.com/monarch-initiative/MAxO/master/maxo.owl
+    - id: nbo
+    - id: ncit
     - id: ncbitaxon
+    - id: npo
+      mirror_from: https://raw.githubusercontent.com/monarch-initiative/MAxO/master/maxo.owl
+    - id: pato
+    - id: ro
+    - id: uberon 
+    - id: xco
 robot_java_args: '-Xmx8G'
 components:
   products:
     - filename: ecto-xrefs.owl
+    - filename: bridge.owl
+allow_equivalents: none
