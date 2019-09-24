@@ -532,7 +532,7 @@ pattern_clean:
 	echo "Not implemented"
 
 pattern_schema_checks: $(PATTERNDIR)/dosdp-patterns
-	@if [ $(PAT) = true ]; then $(PATTERN_TESTER) $(PATTERNDIR)/dosdp-patterns/ # 2>&1 | tee $@; fi
+	@if [ $(PAT) = true ]; then $(PATTERN_TESTER) $(PATTERNDIR)/dosdp-patterns/; fi
 
 #This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now). It downloads all patterns specified in external.txt
 $(PATTERNDIR)/dosdp-patterns: .FORCE
