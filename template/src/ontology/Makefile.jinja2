@@ -413,8 +413,7 @@ imports/%_import.json: imports/%_import.owl
 # Some ontologies contain external and internal components. A component is included in the ontology in its entirety.
 
 {{ project.components.directory }}/%: .FORCE
-	@if [ $(IMP) = true ]; then $(ROBOT) merge -I $(URIBASE)/$* \
-	annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ -o $@; fi
+	touch $@
 .PRECIOUS: {{ project.components.directory }}/%
 
 
