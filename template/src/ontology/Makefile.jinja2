@@ -60,7 +60,7 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %} {{ rel
 .PHONY: .FORCE
 all: odkversion all_imports {% if project.use_dosdps %}patterns {% endif %}all_main all_subsets sparql_test all_reports all_assets
 test: odkversion sparql_test all_reports
-	$(ROBOT) reason --input $(SRC) --reasoner {{ project.reasoner }}  --equivalent-classes-allowed {{ project.allow_equivalents }} --output test.owl && rm test.owl && echo "Success"
+	$(ROBOT) reason --input $(SRC) --reasoner {{ project.reasoner }}  --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --output test.owl && rm test.owl && echo "Success"
 
 odkversion:
 	echo "ODK Makefile version: $(ODK_VERSION) (this is the version of the ODK with which this Makefile was generated, not the version of the ODK you are running)" &&\
@@ -286,7 +286,7 @@ $(ONT)-base.owl: $(SRC) $(OTHER_SRC)
 # Full: The full artefacts with imports merged, reasoned
 $(ONT)-full.owl: $(SRC) $(OTHER_SRC)
 	$(ROBOT) merge --input $< \
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
 		relax \
 		reduce -r {{ project.reasoner }} \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
@@ -317,7 +317,7 @@ $(SIMPLESEED): $(SRCMERGED) $(ONTOLOGYTERMS)
 
 $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED)
 	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
 		relax \
 		remove --axioms equivalent \
 		relax \
@@ -346,7 +346,7 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 
 $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
 	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
 		relax \
 		remove --axioms equivalent \
 		remove --axioms disjoint \
