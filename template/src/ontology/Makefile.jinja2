@@ -436,6 +436,7 @@ imports/%_import.json: imports/%_import.owl
 
 IMP=true # Global parameter to bypass import generation
 MIR=true # Global parameter to bypass mirror generation
+{% if project.use_dosdps %}PAT=true # Global parameter to bypass pattern generation{% endif -%}
 
 {% if project.import_group is defined -%}
 {% for ont in project.import_group.products %}
@@ -532,7 +533,7 @@ pattern_clean:
 	echo "Not implemented"
 
 pattern_schema_checks: $(PATTERNDIR)/dosdp-patterns
-	simple_pattern_tester.py $(PATTERNDIR)/dosdp-patterns/ # 2>&1 | tee $@
+	@if [ $(PAT) = true ]; then $(PATTERN_TESTER) $(PATTERNDIR)/dosdp-patterns/ # 2>&1 | tee $@; fi
 
 #This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now). It downloads all patterns specified in external.txt
 $(PATTERNDIR)/dosdp-patterns: .FORCE
@@ -540,7 +541,7 @@ $(PATTERNDIR)/dosdp-patterns: .FORCE
 	cat $(PATTERNDIR)/dosdp-patterns/external.txt | sed 's! !!g' | xargs -I{} wget -q {} -P $(PATTERNDIR)/dosdp-patterns
 
 $(PATTERNDIR)/pattern.owl: pattern_schema_checks $(PATTERNDIR)/dosdp-patterns
-	$(DOSDPT) prototype --obo-prefixes --template=$(PATTERNDIR)/dosdp-patterns --outfile=$@
+	@if [ $(PAT) = true ]; then $(DOSDPT) prototype --obo-prefixes --template=$(PATTERNDIR)/dosdp-patterns --outfile=$@; fi
 
 individual_patterns_default := $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv)))
 pattern_term_lists_default := $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.txt, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv)))
@@ -554,28 +555,27 @@ pattern_term_lists_{{ pipeline.id }} := $(patsubst %.tsv, $(PATTERNDIR)/data/{{ 
 
 # Generating the individual pattern modules and merging them into definitions.owl
 $(PATTERNDIR)/definitions.owl: prepare_patterns $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}
-	$(ROBOT) merge $(addprefix -i , $(individual_patterns_default)) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(addprefix -i , $(individual_patterns_{{ pipeline.id }})){% endfor %}{% endif %} annotate --ontology-iri $(ONTBASE)/patterns/definitions.owl  --version-iri $(ONTBASE)/releases/$(TODAY)/patterns/definitions.owl -o definitions.ofn &&\
-	mv definitions.ofn $@
+	@if [ $(PAT) = true ]; then $(ROBOT) merge $(addprefix -i , $(individual_patterns_default)) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(addprefix -i , $(individual_patterns_{{ pipeline.id }})){% endfor %}{% endif %} annotate --ontology-iri $(ONTBASE)/patterns/definitions.owl  --version-iri $(ONTBASE)/releases/$(TODAY)/patterns/definitions.owl -o definitions.ofn && mv definitions.ofn $@; fi
 
 $(PATTERNDIR)/data/default/%.ofn: $(PATTERNDIR)/data/default/%.tsv $(PATTERNDIR)/dosdp-patterns/%.yaml $(SRC) all_imports .FORCE
-	dosdp-tools generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^) {{ project.dosdp_tools_options }} --outfile=$@
+	@if [ $(PAT) = true ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^) {{ project.dosdp_tools_options }} --outfile=$@; fi
 
 {% if project.pattern_pipelines_group is defined %}
 {% for pipeline in project.pattern_pipelines_group.products %}
 $(PATTERNDIR)/data/{{ pipeline.id }}/%.ofn: $(PATTERNDIR)/data/{{ pipeline.id }}/%.tsv $(PATTERNDIR)/dosdp-patterns/%.yaml $(SRC) all_imports .FORCE
-	dosdp-tools generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^) {{ pipeline.dosdp_tools_options }} --outfile=$@
+	@if [ $(PAT) = true ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^) {{ pipeline.dosdp_tools_options }} --outfile=$@; fi
 {% endfor %}
 {% endif %}
 
-# Generating the seed file from all the TSVs
+# Generating the seed file from all the TSVs. If Pattern generation is deactivated, we still extract a seed from definitions.owl
 $(PATTERNDIR)/all_pattern_terms.txt: $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %} $(PATTERNDIR)/pattern_owl_seed.txt
-	cat $^ | sort | uniq > $@
+	@if [ $(PAT) = true ]; then cat $^ | sort | uniq > $@; else $(ROBOT) query --use-graphs true -f csv -i ../patterns/definitions.owl --query ../sparql/terms.sparql $@; fi
 
 $(PATTERNDIR)/pattern_owl_seed.txt: $(PATTERNDIR)/pattern.owl
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
+	@if [ $(PAT) = true ]; then @if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
 
 $(PATTERNDIR)/data/default/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERNDIR)/data/default/%.tsv .FORCE
-	dosdp-tools terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@
+	@if [ $(PAT) = true ]; then $(DOSDPT) terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@; fi
 
 .PHONY: prepare_patterns
 prepare_patterns:
@@ -585,7 +585,7 @@ prepare_patterns:
 {% if project.pattern_pipelines_group is defined -%}
 {% for pipeline in project.pattern_pipelines_group.products %}
 $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERNDIR)/data/{{ pipeline.id }}/%.tsv .FORCE
-	dosdp-tools terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@
+	@if [ $(PAT) = true ]; then $(DOSDPT) terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@; fi
 {% endfor %}
 {% endif -%}
 
