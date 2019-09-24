@@ -20,6 +20,7 @@ import_group:
     - id: ro
     - id: iao
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: go
     - id: cl
     - id: pato

@@ -17,6 +17,7 @@ import_group:
   products:
     - id: ro
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: go
     - id: pco
     - id: uberon

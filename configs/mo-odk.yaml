@@ -23,6 +23,7 @@ import_group:
     - id: stato
     - id: bfo
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: hsapdv
     - id: cl
       mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl

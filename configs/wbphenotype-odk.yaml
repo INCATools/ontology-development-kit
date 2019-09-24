@@ -24,6 +24,7 @@ import_group:
     - id: wbls 
     - id: ro
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: pato
     - id: cl
     - id: iao

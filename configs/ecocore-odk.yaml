@@ -16,6 +16,7 @@ import_group:
     - id: uberon 
     - id: ro
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: envo
     - id: pato
     - id: iao

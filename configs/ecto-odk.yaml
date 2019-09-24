@@ -11,6 +11,7 @@ export_formats:
 import_group:
   products:
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: envo
     - id: exo
     - id: go
@@ -31,4 +32,4 @@ components:
   products:
     - filename: ecto-xrefs.owl
     - filename: bridge.owl
-allow_equivalents: none
+allow_equivalents: all

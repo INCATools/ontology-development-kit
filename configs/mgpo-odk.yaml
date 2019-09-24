@@ -23,6 +23,7 @@ import_group:
     - id: uberon
     - id: pato
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: pr
 pattern_pipelines_group:
   products:
