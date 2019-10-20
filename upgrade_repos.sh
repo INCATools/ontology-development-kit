@@ -10,7 +10,7 @@ make docker-build-use-cache
 #docker pull obolibrary/odkfull
 
 CONFIGDIR=configs
-ROOTDIR=/ws
+ROOTDIR=~/ws
 ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 
 # FlyBase
