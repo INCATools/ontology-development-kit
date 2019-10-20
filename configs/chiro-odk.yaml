@@ -1,0 +1,27 @@
+id: chiro
+title: "CHEBI Integrated Role Ontology"
+github_org: obophenotype
+repo: chiro
+report_fail_on: error
+namespaces:
+ - http://purl.obolibrary.org/obo/CHIRO_
+ - http://purl.obolibrary.org/obo/chiro_
+export_formats:
+  - owl
+  - obo
+  - json
+release_artefacts: 
+  - base
+  - simple
+  - full
+primary_release: full
+import_group:
+  products:
+    - id: chebi
+    - id: mp
+    - id: hp
+    - id: go
+    - id: pr
+    - id: uberon
+    - id: ncbitaxon
+robot_java_args: '-Xmx8G'
