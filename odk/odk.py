@@ -712,6 +712,8 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     tgts.append(tgt_project_file)
     if source is not None:
         copyfile(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
+    if config is not None:
+        copyfile(config, "{}/src/ontology/{}-odk.yaml".format(outdir, project.id))
     logging.info("Created files:")
     for tgt in tgts:
         logging.info("  File: {}".format(tgt))
