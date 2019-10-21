@@ -531,17 +531,17 @@ patterns: all_imports $(PATTERNDIR)/pattern.owl $(PATTERNDIR)/definitions.owl
 pattern_clean:
 	echo "Not implemented"
 
-pattern_schema_checks: $(PATTERNDIR)/dosdp-patterns
+pattern_schema_checks: update_patterns
 	@if [ $(PAT) = true ]; then $(PATTERN_TESTER) $(PATTERNDIR)/dosdp-patterns/; fi
 
 #This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now). It downloads all patterns specified in external.txt
 update_patterns: .FORCE
-rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1
-wget -i $(PATTERNDIR)/dosdp-patterns/external.txt --backups=1 -P $(PATTERNDIR)/dosdp-patterns
-rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1
+	rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1
+	wget -i $(PATTERNDIR)/dosdp-patterns/external.txt --backups=1 -P $(PATTERNDIR)/dosdp-patterns
+	rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1
 
 
-$(PATTERNDIR)/pattern.owl: pattern_schema_checks update_patternsß
+$(PATTERNDIR)/pattern.owl: pattern_schema_checks update_patterns
 	@if [ $(PAT) = true ]; then $(DOSDPT) prototype --obo-prefixes --template=$(PATTERNDIR)/dosdp-patterns --outfile=$@; fi
 
 individual_patterns_default := $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv)))
