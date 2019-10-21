@@ -14,7 +14,7 @@ mkdir target
 ls -l target/$OID/src
 ls -l $SRCDIR
 rsync -r -u --ignore-existing target/$OID/src/ $SRCDIR
-cp target/$OID/src/scripts/update_repo.sh $SRCDIR/ontology/
+cp target/$OID/src/scripts/update_repo.sh $SRCDIR/scripts/
 cp target/$OID/src/ontology/Makefile $SRCDIR/ontology/
 cp target/$OID/src/ontology/run.sh $SRCDIR/ontology/
 cp -r target/$OID/src/sparql/* $SRCDIR/sparql/

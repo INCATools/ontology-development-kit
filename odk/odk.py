@@ -504,7 +504,11 @@ class Generator(object):
         if config_file is None:
             project = OntologyProject()
         else:
-            obj = yaml.load(config_file)
+            with open(config_file, 'r') as stream:
+                try:
+                    obj = yaml.load(stream)
+                except yaml.YAMLError as exc:
+                    print(exc)
             project = from_dict(data_class=OntologyProject, data=obj)
         if title:
             project.title = title
@@ -576,7 +580,7 @@ def cli():
     pass
 
 @cli.command()
-@click.option('-C', '--config', type=click.File('r'))
+@click.option('-C', '--config', type=click.Path(exists=True))
 @click.option('-T', '--templatedir',  default='/tools/templates/')
 @click.option('-i', '--input',  type=click.Path(exists=True))
 @click.option('-o', '--output')
@@ -589,7 +593,7 @@ def create_makefile(config, templatedir, input, output):
     print(mg.generate('{}/src/ontology/Makefile.jinja2'.format(templatedir)))
 
 @cli.command()
-@click.option('-C', '--config', type=click.File('r'))
+@click.option('-C', '--config', type=click.Path(exists=True))
 @click.option('-T', '--templatedir',  default='/tools/templates/')
 @click.option('-i', '--input',  type=click.Path(exists=True))
 @click.option('-o', '--output')
@@ -602,7 +606,7 @@ def create_dynfile(config, templatedir, input, output):
     print(mg.generate('{}/_dynamic_files.jinja2'.format(templatedir)))
     
 @cli.command()
-@click.option('-C', '--config', type=click.File('r'))
+@click.option('-C', '--config', type=click.Path(exists=True))
 @click.option('-o', '--output', required=True)
 def export_project(config, output):
     """
@@ -627,7 +631,7 @@ def dump_schema():
 
 
 @cli.command()
-@click.option('-C', '--config',       type=click.File('r'),
+@click.option('-C', '--config',       type=click.Path(exists=True),
               help="""
               path to a YAML configuration.
               See examples folder for examples.
