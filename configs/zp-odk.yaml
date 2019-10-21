@@ -29,4 +29,5 @@ pattern_pipelines_group:
       dosdp_tools_options: "--obo-prefixes=true"
     - id: process
       dosdp_tools_options: "--obo-prefixes=true"
-robot_java_args: '-Xmx8G'   
+robot_java_args: '-Xmx8G'
+allow_equivalents: asserted-only   
