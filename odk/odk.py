@@ -358,6 +358,9 @@ class OntologyProject(JsonSchemaMixin):
     reasoner : str = 'ELK'
     """Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values"""
     
+    exclude_tautologies : str = 'structural'
+    """Remove tautologies such as A SubClassOf: owl:Thing or owl:Nothing SubclassOf: A. For more information see http://robot.obolibrary.org/reason#excluding-tautologies"""
+    
     primary_release : str = 'full'
     """Which release file should be published as the primary release artefact, i.e. foo.owl"""
     
