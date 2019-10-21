@@ -1,3 +1,11 @@
+# v1.2.19 (21 October 2019)
+- added functionality to update the repository after changing the yaml config. **This feature is still experimental.** To make use of this, you need to update your Makefile and copy the file under src/scripts/update_repo.sh in the respective folder of your repository. You should then be able  to run `sh run.sh make update_repo` to get your whole repo to the latest state. Be careful though: some files like the Makefile, run.sh and the sparql queries are considered native to ODK; this update routine will overwrite those files. Therefore, check your git diff before committing anything you might not want. 
+- similar to `sh run.sh make IMP=false prepare_release`, it is now possible to skip pattern generation when creating a release `sh run.sh make PAT=false prepare_release`
+- Bug fix to component pipeline
+- Bug fix to report print out
+- You can now exclude tautologies from your releases, such as Nothing SubClassOf Nothing or similar. For more information about this brand new ROBOT feature see http://robot.obolibrary.org/reason#excluding-tautologies. You can change the default behaviour by adding `exclude_tautologies: false` or `exclude_tautologies: all` to your yaml config.
+- Bug fix to how external.txt is handled (pattern pipeline)
+
 # v1.2.18 (13 September 2019)
 - Upgrade ROBOT to version 1.4.3
 - Minor bug fix in handling temporary file directories
