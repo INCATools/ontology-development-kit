@@ -7,9 +7,11 @@ set -e
 OID=$1
 CONFIG=$2
 REPOPATH=$3
+SRCDIR=$REPOPATH/src/
 
 ./seed-via-docker.sh -c -g False -C $CONFIG
-
-cp target/$OID/src/ontology/Makefile $REPOPATH/src/ontology/
-cp target/$OID/src/ontology/run.sh $REPOPATH/src/ontology/
-cp target/$OID/src/sparql/* $REPOPATH/src/sparql/
+rsync -r -u --ignore-existing target/$OID/src/ $SRCDIR
+cp target/$OID/src/scripts/update_repo.sh $SRCDIR/scripts/
+cp target/$OID/src/ontology/Makefile $SRCDIR/ontology/
+cp target/$OID/src/ontology/run.sh $SRCDIR/ontology/
+cp -r target/$OID/src/sparql/* $SRCDIR/sparql/

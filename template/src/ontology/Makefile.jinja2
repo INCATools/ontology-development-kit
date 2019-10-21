@@ -647,4 +647,7 @@ public_release:
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {% endif %}
 
+update_repo:
+	sh ../scripts/update_repo.sh
+
 include {{ project.id }}.Makefile
