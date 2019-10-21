@@ -4,7 +4,7 @@ github_org: obophenotype
 repo: mammalian-phenotype-ontology
 report_fail_on: none
 use_dosdps: TRUE
-dosdp_tools_options: "--obo-prefixes=true"
+dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
 allow_equivalents: assert-only
 namespaces: 
   - http://purl.obolibrary.org/obo/MP_
@@ -26,6 +26,7 @@ import_group:
     - id: nbo
       mirror_from: http://purl.obolibrary.org/obo/nbo/nbo-base.owl
     - id: pr
+      mirror_from: http://purl.obolibrary.org/obo/pr.owl.gz
     - id: go
     - id: uberon 
     - id: ro

@@ -15,4 +15,17 @@ import_group:
   products:
     - id: ro
     - id: iao
+    - id: faldo
+    - id: go
+    - id: hp
+    - id: hsapdv
+    - id: mp
+    - id: ncbitaxon
+    - id: oban
+    - id: obi
+    - id: pato
+    - id: pco
+    - id: ro
+    - id: so
+    - id: uberon
 robot_java_args: '-Xmx8G'
