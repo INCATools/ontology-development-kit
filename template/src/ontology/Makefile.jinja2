@@ -323,6 +323,7 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED)
 		relax \
 		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \
 		reduce -r {{ project.reasoner }} \
+		query --update ../sparql/inject-subset-declaration.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ --version-iri $(ONTBASE)/releases/$(TODAY)/$@ {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
