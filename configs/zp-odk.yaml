@@ -22,12 +22,12 @@ import_group:
 pattern_pipelines_group:
   products:
     - id: manual
-      dosdp_tools_options: "--obo-prefixes=true"
+      dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
     - id: anatomy
-      dosdp_tools_options: "--obo-prefixes=true"
+      dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
     - id: zfin
-      dosdp_tools_options: "--obo-prefixes=true"
-    - id: process
+      dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
+    - id: labels
       dosdp_tools_options: "--obo-prefixes=true"
 robot_java_args: '-Xmx8G'
 allow_equivalents: asserted-only   

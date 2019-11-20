@@ -1,0 +1,23 @@
+id: bto
+title: "Brenda Tissue Ontology"
+github_org: BRENDA-Enzymes
+repo: BTO
+report_fail_on: none
+namespaces: 
+  - http://purl.obolibrary.org/obo/BTO_
+license: CC-BY 4.0
+description: "A structured controlled vocabulary for the source of an enzyme. It comprises terms for tissues, cell lines, cell types and cell cultures from uni- and multicellular organisms."
+release_artefacts: 
+  - base
+  - full
+  - simple
+primary_release: full
+edit_format: obo
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: iao
+robot_java_args: '-Xmx8G'

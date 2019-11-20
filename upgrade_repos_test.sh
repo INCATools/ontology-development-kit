@@ -14,4 +14,7 @@ ROOTDIR=~/ws
 ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 
 #./upgrade-via-docker.sh hp $CONFIGDIR/hp-odk.yaml $ROOTDIR/human-phenotype-ontology
-./upgrade-via-docker.sh mo $CONFIGDIR/mo-odk.yaml $ROOTDIR/monarch-ontology
+#./upgrade-via-docker.sh mo $CONFIGDIR/mo-odk.yaml $ROOTDIR/monarch-ontology
+#./upgrade-via-docker.sh fypo $CONFIGDIR/fypo-odk.yaml $ROOTDIR/fypo
+#./upgrade-via-docker.sh ddpheno $CONFIGDIR/ddpheno-odk.yaml $ROOTDIR/dicty-phenotype-ontology
+./upgrade-via-docker.sh bto $CONFIGDIR/bto-odk.yaml $ROOTDIR/BTO
