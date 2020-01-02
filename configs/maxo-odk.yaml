@@ -22,6 +22,8 @@ import_group:
     - id: ro
     - id: uberon
     - id: foodon
+    - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
 pattern_pipelines_group:
   products:
     - id: manual
