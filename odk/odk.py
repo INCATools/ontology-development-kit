@@ -404,6 +404,7 @@ class OntologyProject(JsonSchemaMixin):
     """default parameters for dosdp-tools"""
     
     report_fail_on : Optional[str] = None
+#    report_fail_on : Optional[str] = "error" # this doesn't seem to have effect
     """see robot report docs for details. """
     
     travis_emails : Optional[List[Email]] = None ## ['obo-ci-reports-all@groups.io']
