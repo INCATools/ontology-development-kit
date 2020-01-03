@@ -1,3 +1,11 @@
+# v1.2.20 (2 January 2020)
+- updated ROBOT to version 1.5.0
+- base modules now get a special "base module" ontology annotation
+- some bug fixes of the makefile process:
+  - pattern file download
+  - simple seed now takes into account annotation properties 
+  - subset annotation handling improved
+
 # v1.2.19 (21 October 2019)
 - added functionality to update the repository after changing the yaml config. **This feature is still experimental.** To make use of this, you need to update your Makefile and copy the file under src/scripts/update_repo.sh in the respective folder of your repository. You should then be able  to run `sh run.sh make update_repo` to get your whole repo to the latest state. Be careful though: some files like the Makefile, run.sh and the sparql queries are considered native to ODK; this update routine will overwrite those files. Therefore, check your git diff before committing anything you might not want. 
 - similar to `sh run.sh make IMP=false prepare_release`, it is now possible to skip pattern generation when creating a release `sh run.sh make PAT=false prepare_release`
