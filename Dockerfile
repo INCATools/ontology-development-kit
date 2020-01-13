@@ -62,7 +62,7 @@ RUN wget $ROBOT_JAR -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
     
-RUN (echo "#!/usr/bin/env sh" && curl -L https://github.com/lihaoyi/Ammonite/releases/download/1.4.4/2.12-1.4.4) >/tools/amm && \
+RUN (echo "#!/usr/bin/env sh" && curl -L https://github.com/lihaoyi/Ammonite/releases/download/2.0.3/2.13-2.0.3) >/tools/amm && \
     chmod +x /tools/amm
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache: docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
