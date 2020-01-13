@@ -10,31 +10,23 @@ release_artefacts:
 primary_release: full
 export_formats:
   - owl
-  - obo
 import_group:
   products:
     - id: nbo
       mirror_from: http://purl.obolibrary.org/obo/nbo/nbo-base.owl
-    - id: go
-      mirror_from: http://current.geneontology.org/ontology/go-base.owl
     - id: fao
     - id: oba
     - id: po
     - id: vt
     - id: stato
     - id: bfo
-    - id: chebi
     - id: hsapdv
     - id: cl
       mirror_from: http://purl.obolibrary.org/obo/cl/cl-base.owl
     - id: mpath
     - id: ncbitaxon-taxslim
       mirror_from: http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl
-    - id: go-plus
-      mirror_from: http://purl.obolibrary.org/obo/go/extensions/go-plus.owl
-    - id: cl
     - id: caro
-    - id: pato
     - id: uberon-ext
       mirror_from: http://purl.obolibrary.org/obo/uberon/ext.owl
     - id: uberon-bridge-to-zfa
@@ -61,6 +53,12 @@ import_group:
       mirror_from: http://purl.obolibrary.org/obo/uberon/bridge/cl-bridge-to-zfa.owl
 components:
   products:
+    - filename: pato
+      source: http://purl.obolibrary.org/obo/pato/pato-base.owl
+    - filename: go.owl
+      source: http://current.geneontology.org/ontology/go-base.owl
+    - filename: go-plus.owl
+      source: http://purl.obolibrary.org/obo/go/extensions/go-plus.owl
     - filename: upheno.owl
       source: https://raw.githubusercontent.com/obophenotype/upheno/master/metazoa.owl
     - filename: mondo.owl
@@ -68,10 +66,15 @@ components:
     - filename: eco.owl
       source: http://purl.obolibrary.org/obo/eco/eco-base.owl
     - filename: so.owl
+      source: http://purl.obolibrary.org/obo/so.owl
     - filename: geno.owl
+      source: http://purl.obolibrary.org/obo/geno.owl
     - filename: sepio.owl
+      source: http://purl.obolibrary.org/obo/sepio.owl
     - filename: ro.owl
+      source: http://purl.obolibrary.org/obo/ro.owl
     - filename: clo.owl
+      source: http://purl.obolibrary.org/obo/clo.owl
     - filename: uberon.owl
       source: http://purl.obolibrary.org/obo/uberon/uberon-base.owl
     - filename: ncit.owl
@@ -85,4 +88,6 @@ components:
       source: http://purl.obolibrary.org/obo/zfa/zfa-base.owl
     - filename: maxo.owl
       source: http://purl.obolibrary.org/obo/maxo/maxo-base.owl
+    - filename: chebi.owl
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
 robot_java_args: '-Xmx8G'

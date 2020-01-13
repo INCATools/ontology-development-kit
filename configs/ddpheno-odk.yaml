@@ -13,6 +13,7 @@ release_artefacts:
   - base
   - full
 primary_release: full
+edit_format: obo
 export_formats:
   - owl
   - obo

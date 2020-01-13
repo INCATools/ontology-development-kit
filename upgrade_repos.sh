@@ -10,7 +10,7 @@ make docker-build-use-cache
 #docker pull obolibrary/odkfull
 
 CONFIGDIR=configs
-ROOTDIR=/ws
+ROOTDIR=~/ws
 ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 
 # FlyBase
@@ -23,8 +23,8 @@ ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 ./upgrade-via-docker.sh mp $CONFIGDIR/mp-odk.yaml $ROOTDIR/mammalian-phenotype-ontology
 
 # ZFIN
-./upgrade-via-docker.sh zeco $CONFIGDIR/zeco-odk.yaml $ROOTDIR/zebrafish-experimental-conditions-ontology
-./upgrade-via-docker.sh zp $CONFIGDIR/zp-odk.yaml $ROOTDIR_ALT/zebrafish-phenotype-ontology
+#./upgrade-via-docker.sh zeco $CONFIGDIR/zeco-odk.yaml $ROOTDIR/zebrafish-experimental-conditions-ontology
+./upgrade-via-docker.sh zp $CONFIGDIR/zp-odk.yaml $ROOTDIR/zebrafish-phenotype-ontology
 
 
 # Monarch
@@ -45,6 +45,8 @@ ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 ./upgrade-via-docker.sh xpo $CONFIGDIR/xpo-odk.yaml $ROOTDIR/xenopus-phenotype-ontology
 ./upgrade-via-docker.sh mgpo $CONFIGDIR/mgpo-odk.yaml $ROOTDIR_ALT/glyco-phenotype-ontology
 ./upgrade-via-docker.sh fypo $CONFIGDIR/fypo-odk.yaml $ROOTDIR/fypo
+#./upgrade-via-docker.sh planp $CONFIGDIR/planp-odk.yaml $ROOTDIR/planarian-phenotype-ontology
+#./upgrade-via-docker.sh plana $CONFIGDIR/plana-odk.yaml $ROOTDIR/planarian-anatomy-ontology
 
 # WormBase
 ./upgrade-via-docker.sh wbbt $CONFIGDIR/wbbt-odk.yaml $ROOTDIR_ALT/c-elegans-gross-anatomy-ontology

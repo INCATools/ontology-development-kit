@@ -13,5 +13,6 @@ import_group:
     - id: uberon 
     - id: ro
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: pato
 robot_java_args: '-Xmx8G'

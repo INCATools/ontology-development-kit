@@ -358,6 +358,9 @@ class OntologyProject(JsonSchemaMixin):
     reasoner : str = 'ELK'
     """Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values"""
     
+    exclude_tautologies : str = 'structural'
+    """Remove tautologies such as A SubClassOf: owl:Thing or owl:Nothing SubclassOf: A. For more information see http://robot.obolibrary.org/reason#excluding-tautologies"""
+    
     primary_release : str = 'full'
     """Which release file should be published as the primary release artefact, i.e. foo.owl"""
     
@@ -401,6 +404,7 @@ class OntologyProject(JsonSchemaMixin):
     """default parameters for dosdp-tools"""
     
     report_fail_on : Optional[str] = None
+#    report_fail_on : Optional[str] = "error" # this doesn't seem to have effect
     """see robot report docs for details. """
     
     travis_emails : Optional[List[Email]] = None ## ['obo-ci-reports-all@groups.io']
@@ -504,7 +508,11 @@ class Generator(object):
         if config_file is None:
             project = OntologyProject()
         else:
-            obj = yaml.load(config_file)
+            with open(config_file, 'r') as stream:
+                try:
+                    obj = yaml.load(stream)
+                except yaml.YAMLError as exc:
+                    print(exc)
             project = from_dict(data_class=OntologyProject, data=obj)
         if title:
             project.title = title
@@ -576,7 +584,7 @@ def cli():
     pass
 
 @cli.command()
-@click.option('-C', '--config', type=click.File('r'))
+@click.option('-C', '--config', type=click.Path(exists=True))
 @click.option('-T', '--templatedir',  default='/tools/templates/')
 @click.option('-i', '--input',  type=click.Path(exists=True))
 @click.option('-o', '--output')
@@ -589,7 +597,7 @@ def create_makefile(config, templatedir, input, output):
     print(mg.generate('{}/src/ontology/Makefile.jinja2'.format(templatedir)))
 
 @cli.command()
-@click.option('-C', '--config', type=click.File('r'))
+@click.option('-C', '--config', type=click.Path(exists=True))
 @click.option('-T', '--templatedir',  default='/tools/templates/')
 @click.option('-i', '--input',  type=click.Path(exists=True))
 @click.option('-o', '--output')
@@ -602,7 +610,7 @@ def create_dynfile(config, templatedir, input, output):
     print(mg.generate('{}/_dynamic_files.jinja2'.format(templatedir)))
     
 @cli.command()
-@click.option('-C', '--config', type=click.File('r'))
+@click.option('-C', '--config', type=click.Path(exists=True))
 @click.option('-o', '--output', required=True)
 def export_project(config, output):
     """
@@ -627,14 +635,25 @@ def dump_schema():
 
 
 @cli.command()
-@click.option('-C', '--config',       type=click.File('r'))
+@click.option('-C', '--config',       type=click.Path(exists=True),
+              help="""
+              path to a YAML configuration.
+              See examples folder for examples.
+              This is optional, configuration can also be passed
+              by command line, but an explicit config file is preferred.
+              """)
+
 @click.option('-c', '--clean/--no-clean', default=False)
 @click.option('-T', '--templatedir',  default='/tools/templates/')
 @click.option('-D', '--outdir',       default=None)
 @click.option('-d', '--dependencies', multiple=True)
 @click.option('-t', '--title',        type=str)
 @click.option('-u', '--user',         type=str)
-@click.option('-s', '--source',       type=str)
+@click.option('-s', '--source',       type=str,
+              help="""
+              path to existing source for ontology edit file. 
+              Optional. If not passed, a stub ontology will be created.
+              """)
 @click.option('-v', '--verbose',      count=True)
 @click.option('-g', '--skipgit',      default=False)
 @click.argument('repo', nargs=-1)
@@ -701,6 +720,8 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     tgts.append(tgt_project_file)
     if source is not None:
         copyfile(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
+    if config is not None:
+        copyfile(config, "{}/src/ontology/{}-odk.yaml".format(outdir, project.id))
     logging.info("Created files:")
     for tgt in tgts:
         logging.info("  File: {}".format(tgt))

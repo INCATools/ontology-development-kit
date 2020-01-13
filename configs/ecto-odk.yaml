@@ -1,0 +1,35 @@
+id: ecto
+title: "Environmental conditions, treatments and exposures ontology"
+github_org: EnvironmentOntology
+repo: environmental-exposure-ontology
+report_fail_on: none
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
+    - id: envo
+    - id: exo
+    - id: go
+    - id: iao
+    - id: maxo
+      mirror_from: https://raw.githubusercontent.com/monarch-initiative/MAxO/master/maxo.owl
+    - id: nbo
+    - id: ncit
+    - id: ncbitaxon
+    - id: npo
+      mirror_from: https://raw.githubusercontent.com/monarch-initiative/MAxO/master/maxo.owl
+    - id: pato
+    - id: ro
+    - id: uberon 
+    - id: xco
+robot_java_args: '-Xmx8G'
+components:
+  products:
+    - filename: ecto-xrefs.owl
+    - filename: bridge.owl
+allow_equivalents: all

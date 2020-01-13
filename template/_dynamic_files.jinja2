@@ -327,8 +327,8 @@ WHERE {
   { ?term ?p2 ?o2 . }
   FILTER(isIRI(?term) && (regex(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || regex(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
-{% if project.components is defined %}
-{% for component in project.components.products %}
+{%- if project.components is defined %}
+{%- for component in project.components.products %}
 ^^^ src/ontology/components/{{ component.filename }}
 <?xml version="1.0"?>
 <rdf:RDF 

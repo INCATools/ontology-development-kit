@@ -12,11 +12,12 @@ release_artefacts:
   - base
   - simple
   - full
-primary_release: simple
+primary_release: full
 import_group:
   products:
     - id: ro
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: go
     - id: pco
     - id: uberon
