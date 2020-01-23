@@ -1,35 +1,41 @@
 ### From https://stackoverflow.com/questions/51121875/how-to-run-docker-with-python-and-java
 ### 1. Get Linux
-FROM openjdk:8-jre-alpine3.9
+FROM ubuntu:18.04
 
 ARG ODK_VERSION=0.0.0
 ENV ODK_VERSION ${ODK_VERSION}
 
 ### 2. Get Python, PIP
 
-RUN apk add --no-cache python3 \
-&& python3 -m ensurepip \
-&& pip3 install --upgrade pip setuptools \
-&& rm -r /usr/lib/python*/ensurepip && \
-if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
-if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
-rm -r /root/.cache
+RUN apt-get update && apt-get upgrade -y \
+ && apt-get install -y software-properties-common \
+  build-essential git \
+  openjdk-8-jre openjdk-8-jdk
+
+RUN apt-get update \
+  && apt-get install -y python3-pip python3-dev subversion make automake gcc g++ unzip rsync curl wget jq openssl git \
+  && cd /usr/local/bin \
+  && ln -s /usr/bin/python3 python \
+  && pip3 install --upgrade pip setuptools \
+	&& if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi \
+	&& if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
+	&& rm -r /root/.cache
 
 WORKDIR /tools
 COPY requirements.txt /tools/
 
 # The following row are required to build and install numpy, which is a prerequisite for pandas
-RUN apk add --no-cache make automake gcc g++ subversion python3-dev
-RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy
-RUN pip3 install pandas
+#RUN apk add --no-cache make automake gcc g++ subversion
+
+RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy pandas
 
 ### 2. Get Java via the package manager
 
-RUN apk update \
-&& apk add --no-cache bash \
-&& apk add --no-cache --virtual=build-dependencies unzip \
-&& apk add --no-cache curl \
-&& apk add --no-cache rsync
+#RUN apk update \
+#&& apk add --no-cache bash \
+#&& apk add --no-cache --virtual=build-dependencies unzip \
+#&& apk add --no-cache curl \
+#&& apk add --no-cache rsync
 
 #&& apk upgrade \
 
@@ -39,8 +45,8 @@ ENV ROBOT v1.5.0
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
 ENV ROBOT_JAR ${ROBOT_JAR}
 
-RUN apk --no-cache add openssl wget
-RUN apk add --no-cache jq
+#RUN apk --no-cache add openssl wget
+#RUN apk add --no-cache jq
 
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
@@ -75,7 +81,6 @@ ENV PATH "/tools/dosdp-tools/bin:$PATH"
 # dosdp python
 RUN wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py && chmod +x /tools/*
 
-RUN apk add --no-cache git
 
 COPY template/ /tools/templates/
 COPY odk/ /tools/

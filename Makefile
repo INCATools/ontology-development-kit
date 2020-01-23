@@ -72,6 +72,10 @@ docker-publish-no-build:
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
 	
+docker-publish-dev-no-build:
+	@docker push $(DEV):$(VERSION) \
+	&& docker push $(DEV):latest
+	
 docker-publish: docker-build
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
@@ -82,6 +86,10 @@ docker-test: docker-build-use-cache
 	
 docker-test-no-build:
 	docker images | grep odkfull &&\
+	make test CMD=./seed-via-docker.sh
+	
+docker-test-dev-no-build:
+	docker images | grep odkdev &&\
 	make test CMD=./seed-via-docker.sh
 
 docker-publish-all: docker-publish
