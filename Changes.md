@@ -1,3 +1,7 @@
+# v1.2.21 (2 January 2020)
+- switched the Docker base image to ubuntu:18.04
+- Added ammonite to the container
+
 # v1.2.20 (2 January 2020)
 - updated ROBOT to version 1.5.0
 - base modules now get a special "base module" ontology annotation
