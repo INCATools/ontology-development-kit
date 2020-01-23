@@ -71,6 +71,7 @@ RUN wget https://dl.bintray.com/fastobo/fastobo-validator/stable/fastobo_validat
 RUN (echo "#!/usr/bin/env sh" \
 && curl -L https://github.com/lihaoyi/Ammonite/releases/download/2.0.3/2.13-2.0.3) >/tools/amm \
 && chmod +x /tools/amm
+# Force precompile of ammonite files
 RUN amm /dev/null
 
 ###### DOSDPTOOLS ######
