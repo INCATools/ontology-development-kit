@@ -59,13 +59,23 @@ RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Koncl
 RUN wget $ROBOT_JAR -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
+
+# Avoid repeated downloads of script dependencies by mounting the local coursier cache: 
+# docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
+ENV COURSIER_CACHE "/tools/.coursier-cache"
     
 ###### FASTOBO ######
 RUN wget https://dl.bintray.com/fastobo/fastobo-validator/stable/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools
 
+##### Ammonite #####
+RUN (echo "#!/usr/bin/env sh" \
+&& curl -L https://github.com/lihaoyi/Ammonite/releases/download/2.0.3/2.13-2.0.3) >/tools/amm \
+&& chmod +x /tools/amm
+RUN amm /dev/null
+
 ###### DOSDPTOOLS ######
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
-RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$V/dosdp-tools-$DOSDPVERSION.tgz \
+RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPVERSION/dosdp-tools-$DOSDPVERSION.tgz \
 && tar -zxvf dosdp-tools-$DOSDPVERSION.tgz \
 && mv dosdp-tools-$DOSDPVERSION /tools/dosdp-tools \
 && wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py \
@@ -75,5 +85,7 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$V/dosd
 
 COPY template/ /tools/templates/
 COPY odk/ /tools/
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 CMD python /tools/odk.py
