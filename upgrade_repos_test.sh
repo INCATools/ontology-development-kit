@@ -7,7 +7,7 @@
 set -e
 
 #make docker-build-use-cache
-#docker pull obolibrary/odkfull
+docker pull obolibrary/odkfull
 
 CONFIGDIR=configs
 ROOTDIR=~/ws
@@ -18,4 +18,8 @@ ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 #./upgrade-via-docker.sh fypo $CONFIGDIR/fypo-odk.yaml $ROOTDIR/fypo
 #./upgrade-via-docker.sh ddpheno $CONFIGDIR/ddpheno-odk.yaml $ROOTDIR/dicty-phenotype-ontology
 #./upgrade-via-docker.sh bto $CONFIGDIR/bto-odk.yaml $ROOTDIR/BTO
-./upgrade-via-docker.sh maxo $CONFIGDIR/maxo-odk.yaml $ROOTDIR/MAxO
+#./upgrade-via-docker.sh maxo $CONFIGDIR/maxo-odk.yaml $ROOTDIR/MAxO
+#cp $ROOTDIR/upheno-dev/src/curation/upheno-config.yaml $CONFIGDIR/upheno-odk.yaml
+#./upgrade-via-docker.sh upheno $CONFIGDIR/upheno-odk.yaml $ROOTDIR/upheno-dev
+#./upgrade-via-docker.sh xpo $CONFIGDIR/xpo-odk.yaml $ROOTDIR/xenopus-phenotype-ontology
+./upgrade-via-docker.sh planp $CONFIGDIR/planp-odk.yaml $ROOTDIR/planarian-phenotype-ontology

@@ -25,6 +25,7 @@ import_group:
     - id: pato
     - id: bfo
     - id: xao
+    - id: nbo
 pattern_pipelines_group:
   products:
     - id: manual
