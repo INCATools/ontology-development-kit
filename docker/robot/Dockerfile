@@ -5,7 +5,7 @@ RUN apk add --no-cache make bash
 
 WORKDIR /tools
 
-ENV ROBOT v1.4.1
+ENV ROBOT v1.5.0
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
 ENV ROBOT_JAR ${ROBOT_JAR}
 
