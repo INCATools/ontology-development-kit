@@ -1,0 +1,27 @@
+id: phipo
+title: "Pathogen-Host Interactions Phenotype Ontology"
+github_org: PHI-base
+repo: phipo
+report_fail_on: none
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
+namespaces: 
+  - http://purl.obolibrary.org/obo/PHIPO_
+release_artefacts: 
+  - base
+  - simple
+  - simple-non-classified
+  - full
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products: 
+    - id: ido
+    - id: go
+    - id: ro
+    - id: chebi
+    - id: pato
+    - id: so
