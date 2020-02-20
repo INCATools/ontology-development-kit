@@ -91,12 +91,12 @@ In your repo you will see a README-editors.md file that has been customized for 
 Generally the cycle is to:
 
  - branch
- - the edit the edit.owl file
+ - edit the edit.owl file
  - make test
  - git commit
  - git push
 
-To make a release
+To make a release:
 
 `make prepare_release`
 
@@ -170,7 +170,7 @@ releases to assist in upgrading.
 
 You will find additional documentation in the src/ontology/README-editors.md file in your repo
 
-## Alterantive to Docker
+## Alternative to Docker
 
 You can run the seed script without docker, you will need Python3.6 or
 higher and Java. See requirements.txt for python requirements.
