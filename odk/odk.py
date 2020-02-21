@@ -684,6 +684,9 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
             shutil.rmtree(outdir)
     if not os.path.exists(outdir):
         os.makedirs(outdir, exist_ok=True)
+    if not os.path.exists(templatedir) and templatedir == "/tools/templates/":
+        logging.info("No templates folder in /tools/; assume not in docker context")
+        templatedir = "./template"
     for root, subdirs, files in os.walk(templatedir):
         tdir = root.replace(templatedir,outdir+"/")
         os.makedirs(tdir, exist_ok=True)
