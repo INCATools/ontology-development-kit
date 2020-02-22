@@ -1,5 +1,12 @@
 .DS_Store
+semantic.cache
+bin/
+
 *.tmp
+*.tmp.obo
+*.tmp.owl
+*.tmp.json
+
 src/ontology/mirror
 src/ontology/mirror/*
 src/ontology/{{ project.id }}.owl
@@ -10,14 +17,22 @@ src/ontology/{{ project.id }}-basic.*
 src/ontology/{{ project.id }}-full.*
 src/ontology/{{ project.id }}-simple.*
 src/ontology/{{ project.id }}-simple-non-classified.*
-semantic.cache
-bin/
+
 src/ontology/seed.txt
-src/ontology/target/
 src/ontology/dosdp-tools.log
-src/patterns/imports/seed_sorted.txt
-src/patterns/imports/pattern_owl_seed.txt
 src/ontology/ed_definitions_merged.owl
-src/ontology/patterns 
-*.tmp.obo
-*.tmp.owl
+src/ontology/ontologyterms.txt
+src/ontology/simple_seed.txt
+src/ontology/patterns
+src/ontology/merged-{{ project.id }}-edit.owl
+
+src/ontology/target/
+src/ontology/tmp/*
+!src/ontology/tmp/README.md
+
+src/ontology/imports/*_terms_combined.txt
+
+src/patterns/data/**/*.ofn
+src/patterns/data/**/*.txt
+src/patterns/pattern_owl_seed.txt
+src/patterns/all_pattern_terms.txt
