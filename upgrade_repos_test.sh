@@ -6,7 +6,7 @@
 
 set -e
 
-#make docker-build-use-cache
+make docker-build-use-cache
 #docker pull obolibrary/odkfull
 
 CONFIGDIR=configs
