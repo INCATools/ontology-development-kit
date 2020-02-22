@@ -3,16 +3,9 @@
 FROM ubuntu:18.04
 LABEL maintainer="obo-tools@googlegroups.com" 
 
-ARG ODK_VERSION=0.0.0
-ENV ODK_VERSION ${ODK_VERSION}
+### 2. Get Java, Python and all required system libraries (version control etc)
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
-ENV ROBOT v1.5.0
-ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
-ENV ROBOT_JAR ${ROBOT_JAR}
-ENV DOSDPVERSION=0.13.1
-
-### 2. Get Java, Python and all required system libraries (version control etc)
 
 RUN apt-get update && apt-get upgrade -y \
  && apt-get install -y software-properties-common \
@@ -56,6 +49,9 @@ RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Koncl
     chmod +x /tools/Konclude
 
 ###### ROBOT ######
+ENV ROBOT v1.5.0
+ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
+ENV ROBOT_JAR ${ROBOT_JAR}
 RUN wget $ROBOT_JAR -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
     chmod +x /tools/*
@@ -75,6 +71,7 @@ RUN (echo "#!/usr/bin/env sh" \
 RUN amm /dev/null
 
 ###### DOSDPTOOLS ######
+ENV DOSDPVERSION=0.14
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPVERSION/dosdp-tools-$DOSDPVERSION.tgz \
 && tar -zxvf dosdp-tools-$DOSDPVERSION.tgz \
@@ -83,6 +80,9 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPV
 && chmod +x /tools/*
 
 ### 5. Install ODK
+
+ARG ODK_VERSION=0.0.0
+ENV ODK_VERSION ${ODK_VERSION}
 
 COPY template/ /tools/templates/
 COPY odk/ /tools/
