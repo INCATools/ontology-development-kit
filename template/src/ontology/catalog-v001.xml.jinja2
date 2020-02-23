@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-
+<group id="Folder Repository, directory=, recursive=false, Auto-Update=false, version=2" prefer="public" xml:base="">
 {% if project.import_group is defined %}
   {% for imp in project.import_group.products %}
-  <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/imports/{{imp.id}}_import.owl" uri="imports/{{imp.id}}_import.owl"/>
-  <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/imports/{{imp.id}}_import.obo" uri="imports/{{imp.id}}_import.obo"/>
+  <uri name="{{project.uribase}}/{{project.id}}/imports/{{imp.id}}_import.owl" uri="imports/{{imp.id}}_import.owl"/>
+  <uri name="{{project.uribase}}/{{project.id}}/imports/{{imp.id}}_import.obo" uri="imports/{{imp.id}}_import.obo"/>
   {% endfor %}
 {% endif %}
 {% if project.components is defined %}
   {% for component in project.components.products %}
-  <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/components/{{component.filename}}" uri="components/{{component.filename}}"/>
+  <uri name="{{project.uribase}}/{{project.id}}/components/{{component.filename}}" uri="components/{{component.filename}}"/>
   {% endfor %}
 {% endif %}
 {%- if project.use_dosdps %} 
-  <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/patterns/definitions.owl" uri="../patterns/definitions.owl"/>
+  <uri name="{{project.uribase}}/{{project.id}}/patterns/definitions.owl" uri="../patterns/definitions.owl"/>
 {%- if project.import_pattern_ontology %} 
-  <uri id="User Entered Import Resolution" name="{{project.uribase}}/{{project.id}}/patterns/pattern.owl" uri="../patterns/pattern.owl"/>
+  <uri name="{{project.uribase}}/{{project.id}}/patterns/pattern.owl" uri="../patterns/pattern.owl"/>
 {% endif -%}
 {% endif %}
-  <group id="Folder Repository, directory=, recursive=false, Auto-Update=false, version=2" prefer="public" xml:base=""/>
+</group>
 </catalog>
