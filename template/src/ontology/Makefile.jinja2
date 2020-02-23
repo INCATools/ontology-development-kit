@@ -98,9 +98,6 @@ IMPORT_FILES = $(IMPORT_OWL_FILES)
 {% endif %}
 
 all_imports: $(IMPORT_FILES)
-{% for format in project.export_formats %}
-all_imports_{{ format }}: $(foreach n,$(IMPORT_ROOTS), $(n).{{ format }})
-{% endfor %}
 
 ## -- subset targets --
 ##
@@ -514,8 +511,7 @@ IM=build-$(ONT)
 build-docker:
 	docker build -t $(ONT) .
 
-{% if project.use_dosdps %}
-
+{%- if project.use_dosdps %}
 # ----------------------------------------
 # Patterns (experimental)
 # ----------------------------------------
@@ -590,10 +586,8 @@ $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml 
 	@if [ $(PAT) = true ]; then $(DOSDPT) terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@; fi
 {% endfor %}
 {% endif -%}
-
 {% endif %}
-
-{% if project.public_release != 'none'  %}
+{%- if project.public_release != 'none'  %}
 # ----------------------------------------
 # GitHub release (HIGHLY experimental)
 # ----------------------------------------
@@ -638,14 +632,13 @@ $TMPDIR/gh_release_asset_%.txt: $TMPDIR $TMPDIR/gh_release_id.txt %
 
 public_release: $TMPDIR $TMPDIR/gh_release_id.txt $(GH_ASSETS)
 {% endif %}
-
-{% if project.public_release == 'github_python'  %}
+{%- if project.public_release == 'github_python'  %}
 GITHUB_RELEASE_PYTHON=make-release-assets.py
 
 public_release:
 	ls -alt $(ASSETS)
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
-{% endif %}
+{%- endif %}
 
 update_repo:
 	sh ../scripts/update_repo.sh
