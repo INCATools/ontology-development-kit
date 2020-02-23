@@ -33,6 +33,9 @@ import: http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl
 {% endif -%}
 {% endif %}
 ontology: {{project.id}}
+property_value: http://purl.org/dc/elements/1.1/description "{{ project.description }}" xsd:string
+property_value: http://purl.org/dc/elements/1.1/title "{{ project.title }}" xsd:string
+property_value: http://purl.org/dc/terms/license {{ project.license }}
 
 [Term]
 id: {{ project.id | upper }}:00000000
@@ -64,7 +67,7 @@ Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl>)
 {% endif %}
 
 Annotation(dce:title "{{ project.title }}")
-Annotation(dcterms:license "{{ project.license }}")
+Annotation(dcterms:license {{ project.license }})
 Annotation(dce:description "{{ project.description }}")
 
 Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>))
