@@ -24,7 +24,7 @@ test_go_mini:
 	$(CMD) -c -C examples/go-mini/project.yaml -s examples/go-mini/go-edit.obo -D target/go-mini
 
 TESTS = $(notdir $(wildcard tests/*.yaml))
-tests: custom_tests $(TESTS)
+test: custom_tests $(TESTS)
 
 tests/*.yaml:
 	$(CMD) -c -C $@
