@@ -1,4 +1,28 @@
-# v1.2.21 (2 January 2020)
+# v1.2.22 (23 February 2020)
+- Bugfixes: 
+  - Small fixes to [update_repo method](https://github.com/INCATools/ontology-development-kit/issues/305)
+  - the sparql query for [extracting labeled subsets](https://github.com/INCATools/ontology-development-kit/issues/146) is now fixed
+  - Some unneeded files (ontologyterms.txt) are removed from the default template.
+  - a few more files are added to the [.gitignore file](https://github.com/INCATools/ontology-development-kit/issues/317)
+  - The [catalog file is restructured](https://github.com/INCATools/ontology-development-kit/issues/105) to preclude Protege from changing it in unwanted ways.
+  - the license in the ontology metadata is now required to be an IRI rather than a string.
+  - The odk.py should now be executable in a [non-docker context](https://github.com/INCATools/ontology-development-kit/issues/312)
+  - JSON versions of imports are not anymore generated. OBO versions are only generated if OBO is used as the edit file serialisation.
+  - PAT=false now skips pattern download
+- Fixes to DOSDP pipeline
+  - DOSDP tools is updated to version 0.14. This version comes with some great changes, including:
+    - a mode in which multiple patterns can be compiled at once (batch mode)
+    - we finally have have optional columns and column values!
+  - external.txt can now be empty
+  - instead of abnormalAnatomicalEntity, an example.yaml is added to the default pattern directory
+- Infrastructure (only relevant to ODK developers):
+  - The test framework for ODK is now more dynamic: 
+    1. Travis now correctly builds the ODK from scratch and runs the tests against the new build version
+    1. Instead of adding new tests to the Makefile, you can simply now drop a new YAML file into the tests/ directory.
+  - ODK Dockerfile has been optimised a bit for size (avoiding superfluous chmod calls)
+  - the yaml loader in the ODK is now replaced by a safe loader
+
+# v1.2.21 (23 January 2020)
 - switched the Docker base image to ubuntu:18.04
 - Added ammonite to the container
 
