@@ -358,13 +358,19 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
 
 # seed.txt contains all referenced entities
 
+$(PRESEED): $(SRCMERGED)
+	$(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
+	cat $@.tmp | sort | uniq >  $@ &&\
+	echo "http://www.geneontology.org/formats/oboInOwl#SubsetProperty" >> $@ &&\
+	echo "http://www.geneontology.org/formats/oboInOwl#SynonymTypeProperty" >> $@
+
 {% if project.use_dosdps %}
-seed.txt: $(SRC) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt {% if project.components is not none -%}{{ project.components.directory }}/all_components_signature.txt{% endif %}
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
-	cat $@.tmp $(PATTERNDIR)/all_pattern_terms.txt | sort | uniq >  $@; fi
+# Ugly hack which should be replaced by the dynamic import revision pipeline
+seed.txt: $(PRESEED) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt 
+	@if [ $(IMP) = true ]; then cat $(PRESEED) $(PATTERNDIR)/all_pattern_terms.txt | sort | uniq > $@; fi
 {% else %}
 seed.txt: $(SRC)
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
+	@if [ $(IMP) = true ]; then cat $(PRESEED) | sort | uniq > $@; fi
 {% endif %}
 
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
@@ -418,14 +424,6 @@ imports/%_import.json: imports/%_import.owl
 .PRECIOUS: {{ project.components.directory }}/{{ component.filename }}
 {% endif %}
 {% endfor %}
-
-{% for component in project.components.products %}
-{{ project.components.directory }}/{{ component.filename }}_signature.txt: {{ project.components.directory }}/{{ component.filename }}
-	@if [ $(IMP) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
-{% endfor %}
-
-{{ project.components.directory }}/all_components_signature.txt: {% for component in project.components.products %}{{ project.components.directory }}/{{ component.filename }}_signature.txt{% endfor %}
-	cat $^ | sort | uniq >  $@; fi
 {% endif %}
 
 # ----------------------------------------
