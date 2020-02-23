@@ -364,7 +364,7 @@ class OntologyProject(JsonSchemaMixin):
     primary_release : str = 'full'
     """Which release file should be published as the primary release artefact, i.e. foo.owl"""
     
-    license : str = 'https://creativecommons.org/licenses/unspecified'
+    license : str = 'Unspecified'
     """Which license is ontology supplied under; ideally CC-BY."""
     
     description : str = 'None'
