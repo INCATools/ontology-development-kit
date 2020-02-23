@@ -67,7 +67,7 @@ Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl>)
 {% endif %}
 
 Annotation(dce:title "{{ project.title }}")
-Annotation(dcterms:license {{ project.license }})
+Annotation(dcterms:license <{{ project.license }}>)
 Annotation(dce:description "{{ project.description }}")
 
 Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>))
