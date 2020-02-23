@@ -23,7 +23,7 @@
 {% if project.edit_format == "obo" %}
 {% if project.import_group is defined -%}
 {% for imp in project.import_group.products %}
-import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.obo
+import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl
 {% endfor %}
 {% endif %}
 {%- if project.use_dosdps %}
