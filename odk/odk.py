@@ -510,7 +510,7 @@ class Generator(object):
         else:
             with open(config_file, 'r') as stream:
                 try:
-                    obj = yaml.load(stream)
+                    obj = yaml.load(stream, Loader=yaml.FullLoader)
                 except yaml.YAMLError as exc:
                     print(exc)
             project = from_dict(data_class=OntologyProject, data=obj)
