@@ -25,8 +25,7 @@ test_go_mini:
 
 TESTS = $(notdir $(wildcard tests/*.yaml))
 TEST_FILES = $(foreach n,$(TESTS), tests/$(n))
-test: custom_test $(TESTS)
-	echo $(TEST_FILES)
+test: custom_tests $(TESTS)
 
 tests/*.yaml:
 	$(CMD) -c -C $@
