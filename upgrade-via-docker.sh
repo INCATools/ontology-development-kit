@@ -10,7 +10,7 @@ REPOPATH=$3
 SRCDIR=$REPOPATH/src/
 
 ./seed-via-docker.sh -c -g False -C $CONFIG
-rsync -r -u --ignore-existing target/$OID/src/ $SRCDIR
+rsync -r -u --exclude 'patterns/data/default/example.tsv' --exclude 'patterns/dosdp-patterns/example.yaml' --ignore-existing target/$OID/src/ $SRCDIR
 cp target/$OID/src/scripts/update_repo.sh $SRCDIR/scripts/
 cp target/$OID/src/ontology/Makefile $SRCDIR/ontology/
 cp target/$OID/src/ontology/run.sh $SRCDIR/ontology/
