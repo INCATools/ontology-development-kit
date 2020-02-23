@@ -243,6 +243,7 @@ OTHER_SRC = {% if project.use_dosdps -%} $(PATTERNDIR)/definitions.owl{% endif -
 
 
 $(ONTOLOGYTERMS): $(SRC) $(OTHER_SRC)
+	touch $(ONTOLOGYTERMS) && \
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/{{ project.id }}_terms.sparql $@
 
 {% for format in project.export_formats %}
@@ -546,13 +547,13 @@ $(PATTERNDIR)/definitions.owl: prepare_patterns update_patterns dosdp_patterns_d
 
 individual_patterns_names_default := $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv))))
 dosdp_patterns_default: $(SRC) all_imports .FORCE
-	@if [ $(PAT) = true ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/default/ --template=$(PATTERNDIR)/dosdp-patterns --batch-patterns="$(individual_patterns_names_default)" --ontology=$< --obo-prefixes=true --restrict-axioms-to=logical --outfile=$(PATTERNDIR)/data/default; fi
+	@if [ $(PAT) = true ] && [ "${individual_patterns_names_default}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/default/ --template=$(PATTERNDIR)/dosdp-patterns --batch-patterns="$(individual_patterns_names_default)" --ontology=$< --obo-prefixes=true --restrict-axioms-to=logical --outfile=$(PATTERNDIR)/data/default; fi
 
 {% if project.pattern_pipelines_group is defined %}
 {% for pipeline in project.pattern_pipelines_group.products %}
 individual_patterns_names_{{ pipeline.id }} := $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv))))
 dosdp_patterns_{{ pipeline.id }}: $(SRC) all_imports .FORCE
-	@if [ $(PAT) = true ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/{{ pipeline.id }} --template=$(PATTERNDIR)/dosdp-patterns/ --batch-patterns="$(individual_patterns_names_{{ pipeline.id }})" --ontology=$< {{ pipeline.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/{{ pipeline.id }}; fi
+	@if [ $(PAT) = true ] && [ "${individual_patterns_names_{{ pipeline.id }}}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/{{ pipeline.id }} --template=$(PATTERNDIR)/dosdp-patterns/ --batch-patterns="$(individual_patterns_names_{{ pipeline.id }})" --ontology=$< {{ pipeline.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/{{ pipeline.id }}; fi
 {% endfor %}
 {% endif %}
 
@@ -568,8 +569,9 @@ $(PATTERNDIR)/data/default/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERND
 
 .PHONY: prepare_patterns
 prepare_patterns:
-	@if [ $(PAT) = true ]; then touch $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %}; fi
-	@if [ $(PAT) = true ]; then touch $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}; fi
+	@if [ $(PAT) = true ]; then touch $(PATTERNDIR)/data $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %}; fi
+	@if [ $(PAT) = true ]; then touch $(PATTERNDIR)/data $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}; fi
+
 
 {% if project.pattern_pipelines_group is defined -%}
 {% for pipeline in project.pattern_pipelines_group.products %}
