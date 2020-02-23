@@ -141,7 +141,6 @@ show_assets:
 
 KEEPRELATIONS=keeprelations.txt
 ONTOLOGYTERMS=ontologyterms.txt
-SIMPLESEED=simple_seed.txt
 
 # This should be executed by the release manager whenever time comes to make a release.
 # It will ensure that all assets/files are fresh, and will copy to release folder
@@ -292,18 +291,6 @@ $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 # drop every axiom: filter --term-file keep_terms.txt --trim true
 #	remove --select imports --trim false \
 
-SRCMERGED=merged-$(SRC)
-
-$(SRCMERGED): $(SRC)
-	$(ROBOT) remove --input $< --select imports --trim true \
-		merge  $(patsubst %, -i %, $(OTHER_SRC)) -o $@
-
-$(SIMPLESEED): $(SRCMERGED) $(ONTOLOGYTERMS)
-	$(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/simple-seed.sparql $@.tmp &&\
-	cat $@.tmp $(ONTOLOGYTERMS) | sort | uniq >  $@ &&\
-	echo "http://www.geneontology.org/formats/oboInOwl#SubsetProperty" >> $@ &&\
-	echo "http://www.geneontology.org/formats/oboInOwl#SynonymTypeProperty" >> $@
-
 $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED)
 	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
@@ -354,6 +341,13 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
 # These live in the imports/ folder
 
 # seed.txt contains all referenced entities
+IMPORTSEED=seed.txt
+SRCMERGED=merged-$(SRC)
+SIMPLESEED=simple_seed.txt
+
+$(SRCMERGED): $(SRC)
+	$(ROBOT) remove --input $< --select imports --trim true \
+		merge  $(patsubst %, -i %, $(OTHER_SRC)) -o $@
 
 $(PRESEED): $(SRCMERGED)
 	$(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
@@ -361,19 +355,25 @@ $(PRESEED): $(SRCMERGED)
 	echo "http://www.geneontology.org/formats/oboInOwl#SubsetProperty" >> $@ &&\
 	echo "http://www.geneontology.org/formats/oboInOwl#SynonymTypeProperty" >> $@
 
+$(SIMPLESEED): $(SRCMERGED) $(ONTOLOGYTERMS)
+	$(ROBOT) query --use-graphs false -f csv -i $< --query ../sparql/simple-seed.sparql $@.tmp &&\
+	cat $@.tmp $(ONTOLOGYTERMS) | sort | uniq >  $@ &&\
+	echo "http://www.geneontology.org/formats/oboInOwl#SubsetProperty" >> $@ &&\
+	echo "http://www.geneontology.org/formats/oboInOwl#SynonymTypeProperty" >> $@
+
 {% if project.use_dosdps %}
 # Ugly hack which should be replaced by the dynamic import revision pipeline
-seed.txt: $(PRESEED) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt 
+$(IMPORTSEED): $(PRESEED) prepare_patterns $(PATTERNDIR)/all_pattern_terms.txt 
 	@if [ $(IMP) = true ]; then cat $(PRESEED) $(PATTERNDIR)/all_pattern_terms.txt | sort | uniq > $@; fi
 {% else %}
-seed.txt: $(SRC)
+$(IMPORTSEED): $(PRESEED)
 	@if [ $(IMP) = true ]; then cat $(PRESEED) | sort | uniq > $@; fi
 {% endif %}
 
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
 # Should be able to drop this if robot can just take a big messy list of terms as input.
 
-imports/%_terms_combined.txt: seed.txt imports/%_terms.txt
+imports/%_terms_combined.txt: $(IMPORTSEED) imports/%_terms.txt
 	@if [ $(IMP) = true ]; then cat $^ | grep -v ^# | sort | uniq >  $@; fi
 
 # -- Generate Import Modules --
