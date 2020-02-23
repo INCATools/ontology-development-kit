@@ -1,0 +1,30 @@
+id: components
+title: "Test Components Ontology"
+github_org: obophenotype
+repo: components
+report_fail_on: ERROR
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
+namespaces: 
+  - http://purl.obolibrary.org/obo/ODK_
+release_artefacts: 
+  - base
+  - simple-non-classified
+  - full
+  - simple
+primary_release: full
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products: 
+    - id: go
+    - id: ro
+    - id: iao
+    - id: bfo
+components:
+  products:
+    - filename: wbphenotype-equivalent-axioms-subq.owl
+robot_java_args: '-Xmx8G'
+allow_equivalents: asserted-only
