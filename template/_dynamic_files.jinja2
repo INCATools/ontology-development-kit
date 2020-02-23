@@ -307,12 +307,12 @@ entries:
     Example pattern implementation TSV
 #}
 {%- if project.use_dosdps %}
-^^^ src/patterns/data/default/abnormalAnatomicalEntity.tsv
-defined_class	defined_class_label	anatomical_entity	anatomical_entity_label
+^^^ src/patterns/data/default/README.md
+Documentation of the Default DOSDP Pipeline
 {%- if project.pattern_pipelines_group is defined %}
 {%- for pipeline in project.pattern_pipelines_group.products %}
-^^^ src/patterns/data/{{ pipeline.id }}/abnormalAnatomicalEntity.tsv
-defined_class	defined_class_label	anatomical_entity	anatomical_entity_label
+^^^ src/patterns/data/{{ pipeline.id }}/README.md
+# Documentation of the {{ pipeline.id }} DOSDP Pipeline
 {%- endfor %}
 {%- endif %}
 {%- endif %}
