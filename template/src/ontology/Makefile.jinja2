@@ -47,7 +47,11 @@ PATTERN_TESTER=              simple_pattern_tester.py
 DOSDPT=                      dosdp-tools
 PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
 {% endif %}
-
+# seed.txt contains all referenced entities
+IMPORTSEED=seed.txt
+SRCMERGED=tmp/merged-$(SRC)
+SIMPLESEED=simple_seed.txt
+PRESEED=tmp/pre_seed.txt
 
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
 FORMATS_INCL_TSV = $(sort $(FORMAT) tsv)
@@ -339,12 +343,6 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
 # ----------------------------------------
 # Most ontologies are modularly constructed using portions of other ontologies
 # These live in the imports/ folder
-
-# seed.txt contains all referenced entities
-IMPORTSEED=seed.txt
-SRCMERGED=tmp/merged-$(SRC)
-SIMPLESEED=simple_seed.txt
-PRESEED=tmp/pre_seed.txt
 
 $(SRCMERGED): $(SRC)
 	$(ROBOT) remove --input $< --select imports --trim true \
