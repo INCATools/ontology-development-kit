@@ -90,7 +90,7 @@ IMPORTS =
 {% endif %}
 IMPORT_ROOTS = $(patsubst %, imports/%_import, $(IMPORTS))
 IMPORT_OWL_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl)
-{%- if project.edit_format = 'obo' %}
+{%- if 'obo' == project.edit_format %}
 IMPORT_OBO_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).obo)
 IMPORT_FILES = $(IMPORT_OWL_FILES) $(IMPORT_OBO_FILES)
 {% else %}
