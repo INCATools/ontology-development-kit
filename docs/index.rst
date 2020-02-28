@@ -1,13 +1,13 @@
-**The current version of the documentation has been moved to http://wiki.geneontology.org/index.php/Ontology_Editing_Guide**
-
-GO Ontology Editors Guide
+Ontology Development Kit Guide
 ============
 
-This is a guide for editors of the Gene Ontology.
-This guide is subject to revision.
+This guide is intended for editors of all OBO ontologies.
 
-.. image:: https://travis-ci.org/geneontology/go-ontology.svg?branch=master
+**NOTE** this guide is adapted from the GO editors guide. Some
+instructions may be too GO-specific.
 
+The guide weaves together day to day editing with Protege as well as
+use of ROBOT and other parts of the ODK
 
 .. toctree::
    :maxdepth: 2

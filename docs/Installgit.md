@@ -1,4 +1,4 @@
-**The current version of the documentation has been moved to http://wiki.geneontology.org/index.php/Installing_and_Using_git**
+**NOTE** This documentation is incomplete, for now you may be better consulting the [http://wiki.geneontology.org/index.php/Installing_and_Using_git](GO Editor Docs]
 
 # Installing and Using git
 
@@ -34,7 +34,7 @@
 
 It can be very helpful to know what branch you are working in on your terminal window. You can set this up to display by adding the following information to your .profile file (found by typing ls -a):
 
-       export GO_REPO=~/repos/go-ontology
+       export GO_REPO=~/repos/MY-ONTOLOGY
        . $GO_REPO/src/util/git-completion.bash
        parse_git_branch() {
            git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'

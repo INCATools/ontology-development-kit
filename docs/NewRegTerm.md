@@ -1,8 +1,8 @@
-**The current version of the documentation has been moved to http://wiki.geneontology.org/index.php/Ontology_Editing_Guide**
+**NOTE** This documentation is incomplete, for now you may be better consulting the [http://wiki.geneontology.org/index.php/Ontology_Editing_Guide](GO Editor Docs]
 
 ## Creating Regulation Terms
 
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions. 
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions. 
 
 To create a 'positive regulation of x' or 'negative regulation of x' term, the parent 'regulation of x' term must first be created. To create a parent regulation term: 
 
@@ -32,5 +32,5 @@ To create a 'positive regulation of x' or 'negative regulation of x' term, the p
 
 9. Save changes.
 
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions. 
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions. 
 
