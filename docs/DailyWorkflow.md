@@ -98,7 +98,7 @@ This step is optional because it is not necessary to work on the current version
 
 	     Committer: Kimberly Van Auken <vanauken@kimberlukensmbp.dhcp.lbnl.us>
             Your name and email address were configured automatically based on your username and hostname. Please check that they are accurate.
-   - See [Configuration instructions](http://go-ontology.readthedocs.io/en/latest/index.html#configuration) to specify your name and email address. 
+   - See [Configuration instructions](http://ontology-development-kit.readthedocs.io/en/latest/index.html#configuration) to specify your name and email address. 
 
 3. **Push**: To incorporate the changes into the remote repository, type: ```git push origin mynewbranch```. 
 

@@ -2,7 +2,7 @@
 
 ### Adding a term to a GO Subset (Slim)
 
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions. 
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions. 
 
 1. In Protege, navigate to the term you wish to add to a GO subset.
 
@@ -21,4 +21,4 @@ See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#dail
 8.	Click on OK to save your edits.
 
  
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions. 
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions. 

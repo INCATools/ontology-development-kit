@@ -2,7 +2,7 @@
 
 ### Adding a new GO Subset (Slim)
 
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions. 
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions. 
 
 1.	In the main Protege window, click on the Annotation Properties tab.
 
@@ -22,4 +22,4 @@ See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#dail
 
 9.	Click OK to save the changes. You should now see the comment field in the annotations tab.
 
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions. 
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions. 

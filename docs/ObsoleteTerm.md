@@ -1,8 +1,9 @@
-**The current version of the documentation has been moved to http://wiki.geneontology.org/index.php/Ontology_Editing_Guide**
+
+See also [GO Editors Guide on Obsoletion])http://wiki.geneontology.org/index.php/Obsoleting_an_Existing_Ontology_Term)
 
 # Obsoleting an Existing Ontology Term
 
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions.
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions.
 
 1. Check if the term (or any of its children) is being used for annotation: 
    - Go to AmiGO, search for the term, either by label or ID
@@ -74,4 +75,4 @@ Consult the wiki documentation for suggestions on standard comments:
 
 9. Save changes. 
     
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions. 
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions. 
