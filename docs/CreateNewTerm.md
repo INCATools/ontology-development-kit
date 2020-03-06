@@ -1,8 +1,8 @@
-**The current version of the documentation has been moved to http://wiki.geneontology.org/index.php/Ontology_Editing_Guide**
+**NOTE** This documentation is incomplete, for now you may be better consulting the [http://wiki.geneontology.org/index.php/Ontology_Editing_Guide](GO Editor Docs]
 
 # Creating a New Ontology Term
 
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions.
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions.
 
 1. To create a new term, the 'Asserted view' must be active (not the 'Inferred view'). 
 
@@ -54,7 +54,7 @@ See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#dail
 10. To see how the branch was modified, type: ```git diff```. In this case, go-edit.obo was modified. The text below is not the entire diff for this edit, but is an example. If the diff is very large, you will need to hit a space to continue to see it and then hit ‘q’ to get back to the prompt at the end of the diff file. 
  
      ```
-     ~/repos/go-ontology/src/ontology(issue-13390) $ git diff
+     ~/repos/MY-ONTOLOGY/src/ontology(issue-13390) $ git diff
      diff --git a/src/ontology/go-edit.obo b/src/ontology/go-edit.obo
      index 72ae7e9..8d47fa1 100644
      --- a/src/ontology/go-edit.obo
@@ -76,7 +76,7 @@ See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#dail
       id: GO:0065001
       name: specification of axis polarity
       namespace: biological_process
-     ~/repos/go-ontology/src/ontology(issue-13390) $
+     ~/repos/MY-ONTOLOGY/src/ontology(issue-13390) $
      ``` 
  
-See [Daily Workflow](http://go-ontology.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions.
+See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) section for commit, push and merge instructions.

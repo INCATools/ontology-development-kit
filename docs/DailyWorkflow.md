@@ -1,10 +1,10 @@
-**The current version of the documentation has been moved to http://wiki.geneontology.org/index.php/Ontology_Editing_Guide**
+**NOTE** This documentation is incomplete, for now you may be better consulting the [http://wiki.geneontology.org/index.php/Ontology_Editing_Guide](GO Editor Docs]
 
 # Daily Workflow
 
 ## Updating the local copy of the ontology with 'git pull'
 
-1. Navigate to the ontology directory of go-ontology:  ```cd repos/go-ontology/src/ontology```.
+1. Navigate to the ontology directory of go-ontology:  ```cd repos/MY-ONTOLOGY/src/ontology```.
 
 2. If the terminal window is not configured to display the branch name, type: ```git status```. You will see: 
     
@@ -16,7 +16,7 @@
 4. From the master branch, type: ```git pull```. This will update your master branch, and all working branches, with the files that are most current on GitHub, bringing in and merging any changes that were made since you last pulled the repository using the command ```git pull```. You will see something like this:
 
 ```
-~/repos/go-ontology(master) $ git pull
+~/repos/MY-ONTOLOGY(master) $ git pull
 remote: Counting objects: 26, done.
 remote: Compressing objects: 100% (26/26), done.
 remote: Total 26 (delta 12), reused 0 (delta 0), pack-reused 0
@@ -28,7 +28,7 @@ Updating 580c01d..7225e89
 Fast-forward
  src/ontology/go-edit.obo | 39 ++++++++++++++++++++++++---------------
  1 file changed, 24 insertions(+), 15 deletions(-)
-~/repos/go-ontology(master) $
+~/repos/MY-ONTOLOGY(master) $
 ```
 
 ## Creating a New Working Branch with 'git checkout'
@@ -40,9 +40,9 @@ Fast-forward
 3. To create a new branch, type:  ```git checkout -b issue-NNNNN``` in the terminal window. For **naming branches**, we recommend using the string 'issue-' followed by the issue number. For instance, for this issue in the tracker: https://github.com/geneontology/go-ontology/issues/13390, you would create this branch: ```git checkout -b issue-13390```. Typing this command will automatically put you in the new branch. You will see this message in your terminal window: 
 
       ```
-      ~/repos/go-ontology/src/ontology(master) $ git checkout -b issue-13390
+      ~/repos/MY-ONTOLOGY/src/ontology(master) $ git checkout -b issue-13390
       Switched to a new branch 'issue-13390'
-      ~/repos/go-ontology/src/ontology(issue-13390) $
+      ~/repos/MY-ONTOLOGY/src/ontology(issue-13390) $
       ```
 
 
@@ -56,7 +56,7 @@ This step is optional because it is not necessary to work on the current version
 
 1. Before launching Protégé, make sure you are in the correct branch. To check the active branch, type ```git status```.  
 
-2. Click on the 'File' pulldown. Open the file: go-edit.obo. The first time, you will have to navigate to ```repos/go-ontology/src/ontology```. Once you have worked on the file, it will show up in the menu under 'Open'/'Recent'.
+2. Click on the 'File' pulldown. Open the file: go-edit.obo. The first time, you will have to navigate to ```repos/MY-ONTOLOGY/src/ontology```. Once you have worked on the file, it will show up in the menu under 'Open'/'Recent'.
 
 3. Click on the 'Classes' tab.
 
@@ -85,10 +85,10 @@ This step is optional because it is not necessary to work on the current version
 	
 	This will save the changes to the go-edit.obo file. The terminal window will show something like: 
 
-        ~/repos/go-ontology/src/ontology(issue-13390) $ git commit -m 'Added hepatic stellate cell migration and contraction and regulation terms. Fixes #13390' go-edit.obo
+        ~/repos/MY-ONTOLOGY/src/ontology(issue-13390) $ git commit -m 'Added hepatic stellate cell migration and contraction and regulation terms. Fixes #13390' go-edit.obo
         [issue-13390 dec9df0] Added hepatic stellate cell migration and contraction and regulation terms. Fixes #13390
         1 file changed, 79 insertions(+)
-        ~/repos/go-ontology/src/ontology(issue-13390) $
+        ~/repos/MY-ONTOLOGY/src/ontology(issue-13390) $
 
    - **NOTE**: The word 'fixes' is a magic word in GitHub; when used in combination with the ticket number, it will automatically close the ticket. In the above example, when the file is merged in GitHub, it will close issue number 13390. Learn more on this [GitHub Help Documentation page about 'Closing issues via commit messages'](https://help.github.com/articles/closing-issues-via-commit-messages/).
    - 'Fixes' is case-insensitive. 
@@ -98,7 +98,7 @@ This step is optional because it is not necessary to work on the current version
 
 	     Committer: Kimberly Van Auken <vanauken@kimberlukensmbp.dhcp.lbnl.us>
             Your name and email address were configured automatically based on your username and hostname. Please check that they are accurate.
-   - See [Configuration instructions](http://go-ontology.readthedocs.io/en/latest/index.html#configuration) to specify your name and email address. 
+   - See [Configuration instructions](http://ontology-development-kit.readthedocs.io/en/latest/index.html#configuration) to specify your name and email address. 
 
 3. **Push**: To incorporate the changes into the remote repository, type: ```git push origin mynewbranch```. 
 
