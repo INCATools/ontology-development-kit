@@ -52,7 +52,7 @@ RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Koncl
     chmod +x /tools/Konclude
 
 ###### ROBOT ######
-ENV ROBOT v1.5.0
+ENV ROBOT v1.6.0
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
 ENV ROBOT_JAR ${ROBOT_JAR}
 RUN wget $ROBOT_JAR -O /tools/robot.jar && \
