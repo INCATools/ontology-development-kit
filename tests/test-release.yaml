@@ -2,7 +2,7 @@ id: rta
 title: "Release Test A Ontology"
 github_org: obophenotype
 repo: rta
-report_fail_on: none
+report_fail_on: ERROR
 namespaces: 
   - http://purl.obolibrary.org/obo/PTT_
   - http://purl.obolibrary.org/obo/PATO_

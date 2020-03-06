@@ -3,16 +3,9 @@
 FROM ubuntu:18.04
 LABEL maintainer="obo-tools@googlegroups.com" 
 
-ARG ODK_VERSION=0.0.0
-ENV ODK_VERSION ${ODK_VERSION}
+### 2. Get Java, Python and all required system libraries (version control etc)
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
-ENV ROBOT v1.5.0
-ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
-ENV ROBOT_JAR ${ROBOT_JAR}
-ENV DOSDPVERSION=0.14
-
-### 2. Get Java, Python and all required system libraries (version control etc)
 
 RUN apt-get update && apt-get upgrade -y \
  && apt-get install -y software-properties-common \
@@ -43,7 +36,10 @@ RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requ
 # by composing existing Dockerfiles, or by obtaining directly from maven
 RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/owltools && \
     wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O /tools/ontology-release-runner && \
-    wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar 
+    wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar && \
+    chmod +x /tools/owltools && \
+    chmod +x /tools/ontology-release-runner && \
+    chmod +x /tools/owltools-oort-all.jar
 
 ###### Konclude, the DL reasoner ######
 RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Konclude-v0.6.2-845-LinuxAlpine-x64-GCC8.3.0-Static-Qt-5.13.zip -O /tools/konclude.zip && \
@@ -56,16 +52,22 @@ RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Koncl
     chmod +x /tools/Konclude
 
 ###### ROBOT ######
+ENV ROBOT v1.6.0
+ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
+ENV ROBOT_JAR ${ROBOT_JAR}
+RUN pwd
 RUN wget $ROBOT_JAR -O /tools/robot.jar && \
     wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
-    chmod +x /tools/*
+    chmod +x /tools/robot && \
+    chmod +x /tools/robot.jar
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache: 
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
 ENV COURSIER_CACHE "/tools/.coursier-cache"
     
 ###### FASTOBO ######
-RUN wget https://dl.bintray.com/fastobo/fastobo-validator/stable/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools
+RUN wget https://dl.bintray.com/fastobo/fastobo-validator/stable/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools && \
+chmod +x /tools/fastobo-validator
 
 ##### Ammonite #####
 RUN (echo "#!/usr/bin/env sh" \
@@ -75,17 +77,23 @@ RUN (echo "#!/usr/bin/env sh" \
 RUN amm /dev/null
 
 ###### DOSDPTOOLS ######
+ENV DOSDPVERSION=0.14
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPVERSION/dosdp-tools-$DOSDPVERSION.tgz \
 && tar -zxvf dosdp-tools-$DOSDPVERSION.tgz \
 && mv dosdp-tools-$DOSDPVERSION /tools/dosdp-tools \
 && wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py \
-&& chmod +x /tools/*
+&& chmod +x /tools/dosdp-tools \
+&& chmod +x /tools/simple_pattern_tester.py
 
 ### 5. Install ODK
 
+ARG ODK_VERSION=0.0.0
+ENV ODK_VERSION ${ODK_VERSION}
+
 COPY template/ /tools/templates/
-COPY odk/ /tools/
+COPY odk/ /tools/ 
+RUN chmod +x /tools/*.py
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 

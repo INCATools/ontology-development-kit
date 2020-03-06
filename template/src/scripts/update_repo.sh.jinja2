@@ -13,8 +13,10 @@ mkdir target
 /tools/odk.py seed -c -g False -C $CONFIG
 ls -l target/$OID/src
 ls -l $SRCDIR
-rsync -r -u --ignore-existing target/$OID/src/ $SRCDIR
+rsync -r -u --ignore-existing --exclude 'patterns/data/default/example.tsv' --exclude 'patterns/dosdp-patterns/example.yaml' target/$OID/src/ $SRCDIR
 cp target/$OID/src/scripts/update_repo.sh $SRCDIR/scripts/
 cp target/$OID/src/ontology/Makefile $SRCDIR/ontology/
 cp target/$OID/src/ontology/run.sh $SRCDIR/ontology/
 cp -r target/$OID/src/sparql/* $SRCDIR/sparql/
+echo "WARNING: These files should be manually migrated: .gitignore, src/ontology/catalog.xml (if you added a new import or component)"
+echo "Update successfully completed."

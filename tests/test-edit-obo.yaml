@@ -1,0 +1,9 @@
+id: eto
+title: "Test Ontology For using OBO format base"
+github_org: obophenotype
+repo: eto
+report_fail_on: ERROR
+edit_format: obo
+import_group:
+  products:
+    - id: ro

@@ -2,7 +2,7 @@ id: rtc
 title: "Release Test C Ontology"
 github_org: obophenotype
 repo: rtc
-report_fail_on: none
+report_fail_on: ERROR
 use_dosdps: TRUE
 namespaces: 
   - http://purl.obolibrary.org/obo/PTT_

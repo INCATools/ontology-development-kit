@@ -1,1 +1,0 @@
-http://purl.obolibrary.org/obo/upheno/patterns/abnormalAnatomicalEntity.yaml

@@ -23,7 +23,7 @@
 {% if project.edit_format == "obo" %}
 {% if project.import_group is defined -%}
 {% for imp in project.import_group.products %}
-import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.obo
+import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl
 {% endfor %}
 {% endif %}
 {%- if project.use_dosdps %}
@@ -33,6 +33,9 @@ import: http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl
 {% endif -%}
 {% endif %}
 ontology: {{project.id}}
+property_value: http://purl.org/dc/elements/1.1/description "{{ project.description }}" xsd:string
+property_value: http://purl.org/dc/elements/1.1/title "{{ project.title }}" xsd:string
+property_value: http://purl.org/dc/terms/license {{ project.license }}
 
 [Term]
 id: {{ project.id | upper }}:00000000
@@ -64,7 +67,7 @@ Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl>)
 {% endif %}
 
 Annotation(dce:title "{{ project.title }}")
-Annotation(dcterms:license "{{ project.license }}")
+Annotation(dcterms:license <{{ project.license }}>)
 Annotation(dce:description "{{ project.description }}")
 
 Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>))
@@ -307,12 +310,12 @@ entries:
     Example pattern implementation TSV
 #}
 {%- if project.use_dosdps %}
-^^^ src/patterns/data/default/abnormalAnatomicalEntity.tsv
-defined_class	defined_class_label	anatomical_entity	anatomical_entity_label
+^^^ src/patterns/data/default/README.md
+Documentation of the Default DOSDP Pipeline
 {%- if project.pattern_pipelines_group is defined %}
 {%- for pipeline in project.pattern_pipelines_group.products %}
-^^^ src/patterns/data/{{ pipeline.id }}/abnormalAnatomicalEntity.tsv
-defined_class	defined_class_label	anatomical_entity	anatomical_entity_label
+^^^ src/patterns/data/{{ pipeline.id }}/README.md
+# Documentation of the {{ pipeline.id }} DOSDP Pipeline
 {%- endfor %}
 {%- endif %}
 {%- endif %}

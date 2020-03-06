@@ -364,8 +364,8 @@ class OntologyProject(JsonSchemaMixin):
     primary_release : str = 'full'
     """Which release file should be published as the primary release artefact, i.e. foo.owl"""
     
-    license : str = 'Unspecified'
-    """Which license is ontology supplied under; ideally CC-BY."""
+    license : str = 'https://creativecommons.org/licenses/unspecified'
+    """Which license is ontology supplied under - must be an IRI."""
     
     description : str = 'None'
     """Provide a short description of the ontology"""
@@ -510,7 +510,7 @@ class Generator(object):
         else:
             with open(config_file, 'r') as stream:
                 try:
-                    obj = yaml.load(stream)
+                    obj = yaml.load(stream, Loader=yaml.FullLoader)
                 except yaml.YAMLError as exc:
                     print(exc)
             project = from_dict(data_class=OntologyProject, data=obj)

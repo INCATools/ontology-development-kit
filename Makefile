@@ -9,6 +9,8 @@ CMD = ./odk/odk.py seed
 
 EMAIL_ARGS=
 
+.PHONY: .FORCE
+
 custom_tests: test_no_yaml_dependencies_none test_no_yaml_dependencies_ro_pato test_no_yaml_dependencies_ro_pato_cl test_go_mini
 
 test_no_yaml_dependencies_none:
@@ -24,16 +26,18 @@ test_go_mini:
 	$(CMD) -c -C examples/go-mini/project.yaml -s examples/go-mini/go-edit.obo -D target/go-mini
 
 TESTS = $(notdir $(wildcard tests/*.yaml))
-tests: custom_tests $(TESTS)
-
-tests/*.yaml:
+TEST_FILES = $(foreach n,$(TESTS), tests/$(n))
+test: custom_tests $(TEST_FILES)
+	echo "All tests passed successfully!"
+	
+tests/*.yaml: .FORCE
 	$(CMD) -c -C $@
 
 schema/project-schema.json:
 	./odk/odk.py dump-schema > $@
 
 # Building docker image
-VERSION = "v1.2.21" 
+VERSION = "v1.2.22" 
 IM=obolibrary/odkfull
 DEV=obolibrary/odkdev
 
@@ -71,7 +75,7 @@ docker-publish: docker-build
 docker-test: docker-build-use-cache
 	docker images | grep odkfull &&\
 	make test CMD=./seed-via-docker.sh
-	
+
 docker-test-no-build:
 	docker images | grep odkfull &&\
 	make test CMD=./seed-via-docker.sh
@@ -83,3 +87,5 @@ docker-test-dev-no-build:
 docker-publish-all: docker-publish
 	(cd docker/osklite && make publish VERSION=$(VERSION))
 
+clean-tests:
+	rm -rf target/*

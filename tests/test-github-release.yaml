@@ -2,7 +2,7 @@ id: rtgh
 title: "Release Test Ontology With GH release"
 github_org: obophenotype
 repo: rta
-report_fail_on: none
+report_fail_on: ERROR
 namespaces: 
   - http://purl.obolibrary.org/obo/RTGH_
 release_artefacts: 

@@ -1,0 +1,22 @@
+pattern_name: example
+pattern_iri: http://purl.obolibrary.org/obo/odk/example.yaml
+description: "This is a minimal example pattern."
+
+classes:
+  example: owl:Thing
+
+relations:
+  part_of: BFO:0000050
+
+vars:
+  example: "'example'"
+
+name:
+  text: "Part of %s"
+  vars:
+   - example
+
+equivalentTo:
+  text: "'part_of' some %s"
+  vars:
+    - example
