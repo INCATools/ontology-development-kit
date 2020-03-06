@@ -3,14 +3,11 @@ sudo: required
 services:
   - docker
 
-before_install:
-  - docker pull obolibrary/odkfull
-
 # command to run tests
 # https://github.com/INCATools/ontology-starter-kit/issues/25
 # EMAIL_ARGS='-e obo-ci-reports-all@groups.io'
 script:
-  - docker run -v $PWD/:/work -w /work --rm -ti obolibrary/odkfull /bin/bash -c "python3 --version; git config --global user.email "you@owlsemtest.com"; git config --global user.name \"Unknown Name\" && make test"
+  - make docker-test
 
 #after_success:
 #  coveralls
