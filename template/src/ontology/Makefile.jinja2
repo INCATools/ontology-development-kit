@@ -89,8 +89,13 @@ IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %
 IMPORTS =
 {% endif %}
 IMPORT_ROOTS = $(patsubst %, imports/%_import, $(IMPORTS))
-IMPORT_FILES = $(foreach n,$(IMPORT_ROOTS), $(foreach f,$(FORMATS), $(n).$(f)))
 IMPORT_OWL_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl)
+{%- if project.edit_format = 'obo' %}
+IMPORT_OBO_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).obo)
+IMPORT_FILES = $(IMPORT_OWL_FILES) $(IMPORT_OBO_FILES)
+{% else %}
+IMPORT_FILES = $(IMPORT_OWL_FILES)
+{% endif %}
 
 all_imports: $(IMPORT_FILES)
 {% for format in project.export_formats %}
