@@ -11,7 +11,7 @@
 # ----------------------------------------
 # Makefile for {{ project.id }}
 # Generated using ontology-starter-kit
-# ODK Version: {{ env['ODK_VERSION'] or "Unknown" }}
+# ODK Version: {% if env is defined %}{{env['ODK_VERSION'] or "Unknown" }}{% else %}"Unknown"{% endif %}
 # ----------------------------------------
 # <do not edit above this line>
 
@@ -28,7 +28,6 @@ SRC =                       $(ONT)-edit.$(EDIT_FORMAT)
 CATALOG=                    {{ project.catalog_file }}
 ROBOT=                      robot --catalog $(CATALOG)
 RELEASEDIR=                 ../..
-PATTERNDIR=                 ../patterns
 REPORTDIR=                  reports
 TMPDIR=                     tmp
 SPARQLDIR =                 ../sparql
@@ -36,12 +35,13 @@ REPORT_FAIL_ON =            {{ project.report_fail_on|default('ERROR') }}
 OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
 SPARQL_VALIDATION_CHECKS =  equivalent-classes trailing-whitespace owldef-self-reference xref-syntax nolabels
 SPARQL_EXPORTS =            basic-report class-count-by-prefix edges xrefs obsoletes synonyms
-ODK_VERSION =               {{ env['ODK_VERSION'] or "Unknown" }}
+ODK_VERSION =               {% if env is defined %}{{env['ODK_VERSION'] or "Unknown" }}{% else %}"Unknown"{% endif %}
 
 TODAY ?= $(shell date +%Y-%m-%d)
 OBODATE ?= $(shell date +'%d:%m:%Y %H:%M')
 
 {%- if project.use_dosdps %}
+PATTERNDIR=                 ../patterns
 DOSDP_SCHEMA=                http:// # change to PURL when ready.
 PATTERN_TESTER=              simple_pattern_tester.py
 DOSDPT=                      dosdp-tools
@@ -111,22 +111,6 @@ SUBSET_ROOTS = $(patsubst %, subsets/%, $(SUBSETS))
 SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(foreach f,$(FORMATS_INCL_TSV), $(n).$(f)))
 
 all_subsets: $(SUBSET_FILES)
-
-## -- dosdp pattern targets --
-##
-
-{% if project.pattern_group is defined %}
-PATTERNS = {% for x in project.pattern_group.products %} {{ x.id }}{% endfor %}
-{% else %}
-PATTERNS =
-{% endif %}
-PATTERN_ROOTS = $(patsubst %, $(PATTERNDIR)/%, $(PATTERNS))
-PATTERN_FILES = $(foreach n,$(PATTERN_ROOTS), $(n).owl)
-
-all_patterns: $(PATTERN_FILES)
-
-## -- dosdp pattern targets --
-##
 
 OBO_REPORT = $(SRC)-obo-report
 REPORTS = $(OBO_REPORT)
@@ -538,9 +522,9 @@ pattern_schema_checks: update_patterns
 
 #This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now). It downloads all patterns specified in external.txt
 update_patterns: .FORCE
-	rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1 || true
-	wget -i $(PATTERNDIR)/dosdp-patterns/external.txt --backups=1 -P $(PATTERNDIR)/dosdp-patterns
-	rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1 || true
+	@if [ $(PAT) = true ]; then rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1 || true; fi
+	@if [ $(PAT) = true ]; then wget -i $(PATTERNDIR)/dosdp-patterns/external.txt --backups=1 -P $(PATTERNDIR)/dosdp-patterns; fi
+	@if [ $(PAT) = true ]; then rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1 || true; fi
 
 
 $(PATTERNDIR)/pattern.owl: pattern_schema_checks update_patterns
@@ -557,16 +541,18 @@ pattern_term_lists_{{ pipeline.id }} := $(patsubst %.tsv, $(PATTERNDIR)/data/{{ 
 {% endif %}
 
 # Generating the individual pattern modules and merging them into definitions.owl
-$(PATTERNDIR)/definitions.owl: prepare_patterns update_patterns $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}
+$(PATTERNDIR)/definitions.owl: prepare_patterns update_patterns dosdp_patterns_default {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} dosdp_patterns_{{ pipeline.id }}{% endfor %}{% endif %}
 	@if [ $(PAT) = true ]; then $(ROBOT) merge $(addprefix -i , $(individual_patterns_default)) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(addprefix -i , $(individual_patterns_{{ pipeline.id }})){% endfor %}{% endif %} annotate --ontology-iri $(ONTBASE)/patterns/definitions.owl  --version-iri $(ONTBASE)/releases/$(TODAY)/patterns/definitions.owl -o definitions.ofn && mv definitions.ofn $@; fi
 
-$(PATTERNDIR)/data/default/%.ofn: $(PATTERNDIR)/data/default/%.tsv $(PATTERNDIR)/dosdp-patterns/%.yaml $(SRC) all_imports .FORCE
-	@if [ $(PAT) = true ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^) {{ project.dosdp_tools_options }} --outfile=$@; fi
+individual_patterns_names_default := $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv))))
+dosdp_patterns_default: $(SRC) all_imports .FORCE
+	@if [ $(PAT) = true ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/default/ --template=$(PATTERNDIR)/dosdp-patterns --batch-patterns="$(individual_patterns_names_default)" --ontology=$< --obo-prefixes=true --restrict-axioms-to=logical --outfile=$(PATTERNDIR)/data/default; fi
 
 {% if project.pattern_pipelines_group is defined %}
 {% for pipeline in project.pattern_pipelines_group.products %}
-$(PATTERNDIR)/data/{{ pipeline.id }}/%.ofn: $(PATTERNDIR)/data/{{ pipeline.id }}/%.tsv $(PATTERNDIR)/dosdp-patterns/%.yaml $(SRC) all_imports .FORCE
-	@if [ $(PAT) = true ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$< --template=$(word 2, $^) --ontology=$(word 3, $^) {{ pipeline.dosdp_tools_options }} --outfile=$@; fi
+individual_patterns_names_{{ pipeline.id }} := $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv))))
+dosdp_patterns_{{ pipeline.id }}: $(SRC) all_imports .FORCE
+	@if [ $(PAT) = true ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/{{ pipeline.id }} --template=$(PATTERNDIR)/dosdp-patterns/ --batch-patterns="$(individual_patterns_names_{{ pipeline.id }})" --ontology=$< {{ pipeline.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/{{ pipeline.id }}; fi
 {% endfor %}
 {% endif %}
 
@@ -582,8 +568,8 @@ $(PATTERNDIR)/data/default/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERND
 
 .PHONY: prepare_patterns
 prepare_patterns:
-	touch $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %} &&\
-  touch $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}
+	@if [ $(PAT) = true ]; then touch $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %}; fi
+	@if [ $(PAT) = true ]; then touch $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}; fi
 
 {% if project.pattern_pipelines_group is defined -%}
 {% for pipeline in project.pattern_pipelines_group.products %}

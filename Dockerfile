@@ -10,7 +10,7 @@ ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
 ENV ROBOT v1.5.0
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
 ENV ROBOT_JAR ${ROBOT_JAR}
-ENV DOSDPVERSION=0.13.1
+ENV DOSDPVERSION=0.14
 
 ### 2. Get Java, Python and all required system libraries (version control etc)
 
