@@ -1,4 +1,5 @@
 # v1.2.22 (23 February 2020)
+- New ROBOT (v. 1.6.0)
 - Bugfixes: 
   - Small fixes to [update_repo method](https://github.com/INCATools/ontology-development-kit/issues/305)
   - the sparql query for [extracting labeled subsets](https://github.com/INCATools/ontology-development-kit/issues/146) is now fixed
