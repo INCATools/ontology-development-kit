@@ -40,7 +40,7 @@ Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
 Ontology(<http://purl.obolibrary.org/obo/license.owl>
 Annotation(<http://purl.org/dc/elements/1.1/description> "An integrated and fictional ontology for the description of abnormal tomato phenotypes."^^xsd:string)
 Annotation(<http://purl.org/dc/elements/1.1/title> "Tomato Phenotype Ontology (TPO)"^^xsd:string)
-Annotation(terms:license <https://creativecommons.org/licenses/by/3.0/>)
+Annotation(<http://purl.org/dc/terms/license> <https://creativecommons.org/licenses/by/3.0/>)
 
 )
 ```
