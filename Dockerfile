@@ -34,9 +34,10 @@ RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requ
 ###### owltools & OORT ######
 # For now we get these from jenkins builds, but these should be obtained
 # by composing existing Dockerfiles, or by obtaining directly from maven
-RUN wget http://build.berkeleybop.org/userContent/owltools/owltools -O /tools/owltools && \
-    wget http://build.berkeleybop.org/userContent/owltools/ontology-release-runner -O /tools/ontology-release-runner && \
-    wget http://build.berkeleybop.org/userContent/owltools/owltools-oort-all.jar -O /tools/owltools-oort-all.jar && \
+ENV OWLTOOLS 2020-04-06
+RUN wget https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS/owltools -O /tools/owltools && \
+    wget https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS/ontology-release-runner -O /tools/ontology-release-runner && \
+    wget https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS/owltools-oort-all.jar -O /tools/owltools-oort-all.jar && \
     chmod +x /tools/owltools && \
     chmod +x /tools/ontology-release-runner && \
     chmod +x /tools/owltools-oort-all.jar
