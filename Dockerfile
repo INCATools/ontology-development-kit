@@ -86,6 +86,14 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPV
 && chmod +x /tools/dosdp-tools \
 && chmod +x /tools/simple_pattern_tester.py
 
+####### NCIT TOOLS #######
+reasoner-based relational graph script
+ENV NCITUTILSVERSION=0.5.2
+RUN wget -nv https://github.com/NCI-Thesaurus/ncit-utils/releases/download/v$NCITUTILSVERSION/ncit-utils-$NCITUTILSVERSION.tgz \
+&& tar -zxvf ncit-utils-$NCITUTILSVERSION.tgz \
+&& mv ncit-utils-$NCITUTILSVERSION /tools/ncit-utils \
+&& chmod +x /tools/ncit-utils/bin/ncit-utils
+
 ### 5. Install ODK
 
 ARG ODK_VERSION=0.0.0
