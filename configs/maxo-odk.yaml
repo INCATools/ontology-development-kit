@@ -22,6 +22,8 @@ import_group:
     - id: ro
     - id: uberon
     - id: foodon
+    - id: nbo
+    - id: hp
     - id: chebi
       mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
 pattern_pipelines_group:
@@ -29,3 +31,10 @@ pattern_pipelines_group:
     - id: manual
       dosdp_tools_options: "--obo-prefixes=true"
 robot_java_args: '-Xmx8G'
+components:
+  directory: ../templates
+  products:
+    - filename: obsolete.owl
+    - filename: replaced.owl
+    - filename: xrefs.owl 
+allow_equivalents: all
