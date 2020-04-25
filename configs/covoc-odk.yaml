@@ -1,0 +1,16 @@
+id: covoc
+title: "Coronavirus Vocabulary"
+github_org: EBISPOT
+repo: covoc
+report_fail_on: none
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: efo
+      mirror_from: http://www.ebi.ac.uk/efo/efo.owl
+robot_java_args: '-Xmx8G'
+allow_equivalents: asserted-only
