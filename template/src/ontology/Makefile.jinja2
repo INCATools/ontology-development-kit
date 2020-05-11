@@ -54,7 +54,7 @@ SIMPLESEED=simple_seed.txt
 PRESEED=tmp/pre_seed.txt
 
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
-FORMATS_INCL_TSV = $(sort $(FORMAT) tsv)
+FORMATS_INCL_TSV = $(sort $(FORMATS) tsv)
 RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %} {{ release }}{% endfor %} base full)
 
 # ----------------------------------------
