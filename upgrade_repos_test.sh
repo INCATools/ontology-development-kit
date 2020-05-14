@@ -6,7 +6,7 @@
 
 set -e
 
-make docker-build-use-cache
+make docker-build
 #docker pull obolibrary/odkfull
 
 CONFIGDIR=configs
@@ -25,8 +25,8 @@ ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 #./upgrade-via-docker.sh planp $CONFIGDIR/planp-odk.yaml $ROOTDIR/planarian-phenotype-ontology
 #./upgrade-via-docker.sh phipo $CONFIGDIR/phipo-odk.yaml $ROOTDIR/phipo
 #./upgrade-via-docker.sh ecto $CONFIGDIR/ecto-odk.yaml $ROOTDIR/environmental-exposure-ontology
-#./upgrade-via-docker.sh wbphenotype $CONFIGDIR/wbphenotype-odk.yaml $ROOTDIR/c-elegans-phenotype-ontology
+./upgrade-via-docker.sh wbphenotype $CONFIGDIR/wbphenotype-odk.yaml $ROOTDIR/c-elegans-phenotype-ontology
 #./seed-via-docker.sh -c -g False -C $CONFIGDIR/wbphenotype-odk.yaml
 #./upgrade-via-docker.sh dpo $CONFIGDIR/dpo-odk.yaml $ROOTDIR/drosophila-phenotype-ontology
 #./upgrade-via-docker.sh geno $CONFIGDIR/geno-odk.yaml $ROOTDIR/GENO-ontology
-./upgrade-via-docker.sh covoc $CONFIGDIR/covoc-odk.yaml $ROOTDIR/covoc
+#./upgrade-via-docker.sh covoc $CONFIGDIR/covoc-odk.yaml $ROOTDIR/covoc
