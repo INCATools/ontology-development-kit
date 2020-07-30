@@ -72,7 +72,7 @@ docker-publish: docker-build
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
 
-docker-test: docker-build-use-cache
+docker-test: docker-build
 	docker images | grep odkfull &&\
 	make test CMD=./seed-via-docker.sh
 
