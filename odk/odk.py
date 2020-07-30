@@ -747,7 +747,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         print("BE BOLD: you can always delete your repo and start again\n")
         print("")
         print("FINAL STEPS:")
-        print("Folow your customized instructions here:\n")
+        print("Follow your customized instructions here:\n")
         print("    https://github.com/{org}/{repo}/blob/master/src/ontology/README-editors.md".format(org=project.github_org, repo=project.repo))
     else:
         print("Repository files have been successfully copied, but no git commands have been run.")
