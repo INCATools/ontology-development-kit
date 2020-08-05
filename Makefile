@@ -41,11 +41,11 @@ VERSION = "v1.2.22"
 IM=obolibrary/odkfull
 DEV=obolibrary/odkdev
 
-docker-build:
+docker-build-no-cache:
 	@docker build  --build-arg ODK_VERSION=$(VERSION) --no-cache -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 	
-docker-build-use-cache:
+docker-build:
 	@docker build --build-arg ODK_VERSION=$(VERSION) -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 	
@@ -72,7 +72,7 @@ docker-publish: docker-build
 	@docker push $(IM):$(VERSION) \
 	&& docker push $(IM):latest
 
-docker-test: docker-build-use-cache
+docker-test: docker-build
 	docker images | grep odkfull &&\
 	make test CMD=./seed-via-docker.sh
 

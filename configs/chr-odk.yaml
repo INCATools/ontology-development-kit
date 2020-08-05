@@ -1,0 +1,23 @@
+dosdp_tools_options: --obo-prefixes=true
+edit_format: owl
+export_formats:
+- owl
+- obo
+- json
+github_org: monarch-initiative
+id: chr
+import_group:
+  products:
+  - id: ro
+  - id: so
+primary_release: full
+reasoner: ELK
+release_artefacts:
+- full
+- base
+repo: monochrom
+title: monochrom
+use_dosdps: false
+components:
+  products:
+    - filename: monochrom-dipper.ttl
