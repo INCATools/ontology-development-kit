@@ -21,4 +21,7 @@ import_group:
     - id: go
     - id: pco
     - id: uberon
+components:
+  products:
+    - filename: pato_ext.owl
 robot_java_args: '-Xmx8G'
