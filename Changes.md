@@ -1,3 +1,13 @@
+# v1.2.23 (6 August 2020)
+- New ROBOT (v 1.7.0)
+- New owltools (v. 2020-04-06)
+- Added [SWI Prolog](https://www.swi-prolog.org/) and C. Mungall's [sparqlprog](https://github.com/cmungall/sparqlprog) tools
+- Release artefacts are now annotated with `owl:versionInfo`
+- run.sh now got the `JAVA_OPTS` parameter which is necessary to set the maximum memory allowed for owltools 
+- Bugs:
+  - base-modules are now correctly annotated with resource references rather than strings ([issue](https://github.com/INCATools/ontology-development-kit/pull/333))
+  - The ODK_VERSION variable in the Makefile was misnamed, which causes a circularity with updating it correctly when the Makefile is updated with a new ODK. This is fixed, but for the fix to kick in, you have to run `sh run.sh make update_repo` twice this time!
+  
 # v1.2.22 (23 February 2020)
 - New ROBOT (v. 1.6.0)
 - Bugfixes: 
