@@ -7,10 +7,11 @@ LABEL maintainer="obo-tools@googlegroups.com"
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk"
 #ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
-RUN apt-get update && apt-get upgrade -y \
+RUN apt-get update && apt-get install -y software-properties-common && add-apt-repository ppa:swi-prolog/stable && apt-get upgrade -y \
  && apt-get install -y software-properties-common \
   build-essential git \
-  openjdk-8-jre openjdk-8-jdk
+  openjdk-8-jre openjdk-8-jdk swi-prolog
+
 
 ### 3. Python and all required system libraries (version control etc)
 
@@ -87,10 +88,20 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPV
 && chmod +x /tools/dosdp-tools \
 && chmod +x /tools/simple_pattern_tester.py
 
-### 5. Install ODK
+###### SPARQLProg ######
+# See https://github.com/cmungall/sparqlprog/blob/master/INSTALL.md
+RUN swipl -g "Opts=[interactive(false)],pack_install(dcgutils,Opts),pack_install(obo_metadata,Opts),pack_install(index_util,Opts),pack_install(regex,Opts),pack_install(typedef,Opts),halt"
+RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt
+#RUN swipl -p library=prolog -l tests/tests.pl -g run_tests,halt
+ENV PATH "/root/.local/share/swi-prolog/pack/sparqlprog/bin:$PATH"
+RUN ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
 
+
+
+### 5. Install ODK
 ARG ODK_VERSION=0.0.0
-ENV ODK_VERSION ${ODK_VERSION}
+ENV ODK_VERSION=${ODK_VERSION}
+
 
 COPY template/ /tools/templates/
 COPY odk/ /tools/ 
