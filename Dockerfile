@@ -63,13 +63,14 @@ RUN wget $ROBOT_JAR -O /tools/robot.jar && \
     chmod +x /tools/robot && \
     chmod +x /tools/robot.jar
 
-# Avoid repeated downloads of script dependencies by mounting the local coursier cache: 
+# Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
 ENV COURSIER_CACHE "/tools/.coursier-cache"
-    
+
 ###### FASTOBO ######
-RUN wget https://dl.bintray.com/fastobo/fastobo-validator/stable/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools && \
-chmod +x /tools/fastobo-validator
+ENV FASTOBO_VALIDATOR v0.3.0
+RUN wget https://dl.bintray.com/fastobo/fastobo-validator/$FASTOBO_VALIDATOR/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
+&& chmod +x /tools/fastobo-validator
 
 ##### Ammonite #####
 RUN (echo "#!/usr/bin/env sh" \
