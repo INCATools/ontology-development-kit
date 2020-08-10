@@ -30,7 +30,8 @@ ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 #./upgrade-via-docker.sh wbbt $CONFIGDIR/wbbt-odk.yaml $ROOTDIR/c-elegans-gross-anatomy-ontology
 #./upgrade-via-docker.sh cl $CONFIGDIR/cl-odk.yaml ~/knocean/cell-ontology
 #./upgrade-via-docker.sh zp $CONFIGDIR/zp-odk.yaml ~/ws/zebrafish-phenotype-ontology
-./upgrade-via-docker.sh pato $CONFIGDIR/pato-odk.yaml ~/ws/pato
+./upgrade-via-docker.sh pato $CONFIGDIR/pato-odk.yaml $ROOTDIR/pato
+./upgrade-via-docker.sh zeco $CONFIGDIR/zeco-odk.yaml $ROOTDIR/zebrafish-experimental-conditions-ontology
 #./seed-via-docker.sh -c -g False -C $CONFIGDIR/wbphenotype-odk.yaml
 #./upgrade-via-docker.sh dpo $CONFIGDIR/dpo-odk.yaml $ROOTDIR/drosophila-phenotype-ontology
 #./upgrade-via-docker.sh geno $CONFIGDIR/geno-odk.yaml $ROOTDIR/GENO-ontology

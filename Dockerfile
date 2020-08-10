@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y software-properties-common && add-apt-r
 ### 3. Python and all required system libraries (version control etc)
 
 RUN apt-get update \
-  && apt-get install -y python3-pip python3-dev subversion make automake gcc g++ unzip rsync curl wget jq openssl git \
+  && apt-get install -y python3-pip python3-dev subversion make automake gcc g++ unzip rsync curl wget jq openssl git xlsx2csv \
   && cd /usr/local/bin \
   && ln -s /usr/bin/python3 python \
   && pip3 install --upgrade pip setuptools \
@@ -30,7 +30,7 @@ RUN apt-get update \
 WORKDIR /tools
 ENV PATH "/tools/:$PATH"
 COPY requirements.txt /tools/
-RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy pandas
+RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy pandas rdflib
 
 ###### owltools & OORT ######
 # For now we get these from jenkins builds, but these should be obtained

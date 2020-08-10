@@ -1,3 +1,8 @@
+# updated v1.2.23 (6 August 2020)
+- Added new version of fastobo (v0.3.0)
+- Added rdflib to Python environment
+- Added xlsx2csv command line tool
+
 # v1.2.23 (6 August 2020)
 - New ROBOT (v 1.7.0)
 - New owltools (v. 2020-04-06)
