@@ -18,7 +18,6 @@ use of ROBOT and other parts of the ODK
    Installgit
    DailyWorkflow
    CreateNewTerm
-   NewRegTerm
    DeletingAssertedSubClasses
    ObsoleteTerm
    MergeTerms
