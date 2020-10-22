@@ -26,7 +26,7 @@ The primary definition accurately describes the synonym, but the definition of t
 
 For example, Cyst of eyelid has the broad synonym Lesion of the eyelid.
 
-**Note** - when adding a narrow synonym, please first consider whether a new superclass should be added instead of a broad synonym. If there is any uncertainty, start a discussion on the GitHub issue tracker.
+**Note** - when adding a broad synonym, please first consider whether a new superclass should be added instead of a broad synonym. If there is any uncertainty, start a discussion on the GitHub issue tracker.
 
 #### Related 
 
