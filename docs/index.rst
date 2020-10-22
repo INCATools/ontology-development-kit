@@ -1,18 +1,22 @@
 Ontology Development Kit Guide
 ============
 
-This guide is intended for editors of all OBO ontologies.
+This guide is intended for maintainers and editors of OBO ontologies.
+
+The first part of the guide is how to set up a new ontology
+project. This requires some technical steps.
+
+The second part of the guide is for day to day editing.
 
 **NOTE** this guide is adapted from the GO editors guide. Some
-instructions may be too GO-specific.
+instructions may still be too GO-specific.
 
-The guide weaves together day to day editing with Protege as well as
-use of ROBOT and other parts of the ODK
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   NewRepo
    InitialSetup
    Configs
    Installgit
