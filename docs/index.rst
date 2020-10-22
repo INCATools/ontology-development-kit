@@ -22,6 +22,7 @@ instructions may still be too GO-specific.
    Installgit
    DailyWorkflow
    CreateNewTerm
+   Synonyms
    DeletingAssertedSubClasses
    ObsoleteTerm
    MergeTerms
