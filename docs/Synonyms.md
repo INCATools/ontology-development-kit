@@ -18,11 +18,15 @@ The definition of the synonym is the same as the primary definition, but has add
 
 For example, pod is a narrow synonym of fruit. 
 
+**Note** - when adding a narrow synonym, please first consider whether a new subclass should be added instead of a narrow synonym. If there is any uncertainty, start a discussion on the GitHub issue tracker.
+
 #### Broad
 
 The primary definition accurately describes the synonym, but the definition of the synonym may encompass other structures as well. In some cases where a broad synonym is given, it will be a broad synonym for more than one ontology term.
 
 For example, Cyst of eyelid has the broad synonym Lesion of the eyelid.
+
+**Note** - when adding a narrow synonym, please first consider whether a new superclass should be added instead of a broad synonym. If there is any uncertainty, start a discussion on the GitHub issue tracker.
 
 #### Related 
 
@@ -33,7 +37,7 @@ For example, Autistic behavior has the related synonym Autism spectrum disorder.
 ### Synonym types
 
 Synonyms can also be classified by types. The default is no type. The synonym types vary in each ontology, but some commonly used synonym types include:
-- abbreviation - to indicate the synonym is an abbreviation
+- abbreviation - to indicate the synonym is an abbreviation. **Note** the scope for an acronym should be determined on a case-by-case basis. Not all acronyms are necessarily exact.
 - ambiguous - to indicate the synonym is open to more than one interpretation; may have a double meaning
 - dubious synonym - to indicate the synonym may be suspect
 - layperson term - to indicate the synonym is common language (used by the Human Phenotype Ontology)
