@@ -1,5 +1,5 @@
 
-# Initial Setup
+# Initial Setup for Ontology Developers
 
 ## Installing Protege
 
