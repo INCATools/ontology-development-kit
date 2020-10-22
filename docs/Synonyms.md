@@ -8,7 +8,7 @@ A synonym indicates an alternative name for a term. Terms can have multiple syno
 
 The definition of the synonym is exactly the same as primary term definition. This is used when the same class can have more than one name. 
 
-For example, hereditary Wilms' tumor and familial Wilms' tumor.
+For example, hereditary Wilms' tumor has the exact synonoym familial Wilms' tumor.
 
 Additionally, translations into other languages are listed as exact synonyms. For example, the Plant Ontology list both Spanish and Japanese translations as exact synonyms; e.g. anther wall has exact synonym ‘pared de la antera’ (Spanish) and ‘葯壁 ‘(Japanese).
 
