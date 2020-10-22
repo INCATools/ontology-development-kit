@@ -1,10 +1,10 @@
 **NOTE** This documentation is incomplete, for now you may be better consulting the [http://wiki.geneontology.org/index.php/Ontology_Editing_Guide](GO Editor Docs]
 
-### Adding a term to a GO Subset (Slim)
+### Adding a term to a Subset (Slim)
 
 See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions. 
 
-1. In Protege, navigate to the term you wish to add to a GO subset.
+1. In Protege, navigate to the term you wish to add to a subset (slim).
 
 2.	With the term selected, click on the Entities tab.
 

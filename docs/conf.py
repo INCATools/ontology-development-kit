@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# GO Ontology documentation build configuration file, modeled after file created by
+# OBO Ontology documentation build configuration file, modeled after file created by
 # sphinx-quickstart. Wednesday 2017-08-04.
 #
 # by MMT
@@ -58,9 +58,9 @@ source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # General information about the project.
-project = u'GO Ontology'
-copyright = u'2017, Gene Ontology Consortium'
-author = u'The GOC Ontology Team'
+project = u'Ontology Development Kit'
+copyright = u'2012, OBO Foundry'
+author = u'OBO Foundry team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
