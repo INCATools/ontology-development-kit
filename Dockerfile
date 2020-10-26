@@ -54,7 +54,7 @@ RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Koncl
     chmod +x /tools/Konclude
 
 ###### ROBOT ######
-ENV ROBOT v1.7.0
+ENV ROBOT v1.7.1
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
 ENV ROBOT_JAR ${ROBOT_JAR}
 RUN pwd
