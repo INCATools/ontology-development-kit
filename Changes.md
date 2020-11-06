@@ -1,3 +1,26 @@
+# updated v1.2.24 (6 November 2020)
+- Updated ROBOT to new version 1.7.1
+- Added the (highly experimental) ability to ODK to run OBO dashboard (see [instructions and examples](https://github.com/INCATools/ontology-development-kit#running-obo-dashboard-with-odk)).
+- Added more python packages to ODK, see [requirements.txt](requirements.txt).
+- Added a new set of configurations for ROBOT report. WARNING:
+`report_fail_on` option is now deprecated in favour of a new block of options:
+
+```
+robot_report:
+  use_labels: TRUE
+  fail_on: None
+  custom_profile: TRUE
+  report_on:
+    - .owl
+    - .obo
+    - edit
+```
+
+- `use_labels`: allows switching labels on and off in the ROBOT report, see [here](http://robot.obolibrary.org/report#labels)
+- `fail_on`: is the old `report_fail_on` option, see [here](http://robot.obolibrary.org/report#failing).
+- `custom_profile`: allows switching on custom profiles, see [here](http://robot.obolibrary.org/report#profiles)
+- `report_on` allows specifying which files to run the report over (for example hp.owl, hp.obo, hp-edit.owl).
+
 # updated v1.2.23 (6 August 2020)
 - Added new version of fastobo (v0.3.0)
 - Added rdflib to Python environment
