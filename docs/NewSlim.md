@@ -1,6 +1,6 @@
-**NOTE** This documentation is incomplete, for now you may be better consulting the [http://wiki.geneontology.org/index.php/Ontology_Editing_Guide](GO Editor Docs]
+**NOTE** This documentation is incomplete, for now you may be better consulting the [GO Editor Docs](http://wiki.geneontology.org/index.php/Ontology_Editing_Guide)
 
-### Adding a new GO Subset (Slim)
+### Adding a new Subset (Slim)
 
 See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/index.html#daily-workflow) for creating branches and basic Protégé instructions. 
 
@@ -10,9 +10,9 @@ See [Daily Workflow](http://ontology-development-kit.readthedocs.io/en/latest/in
 
 3.	Click on the top left-hand button of the window to add a new subset property.
 
-4.	In the pop-up window add the name of the new slim. The identifier will fill in according to your preferences and will be the next GO identifier in your set. Click on Refactor in the menu. Select rename entities.
+4.	In the pop-up window add the name of the new slim. The identifier will fill in according to your preferences and will be the next identifier in your set. Click on Refactor in the menu. Select rename entities.
 
-5.	Replace the ```GO_ identifier``` with the name of your new slim. It is standard to use the same string as when you created the term.
+5.	Replace the ```IDSPACE_ identifier``` with the name of your new slim. It is standard to use the same string as when you created the term.
 
 6.	In the annotations tab, click on the ```+```. 
 
