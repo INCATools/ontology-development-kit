@@ -30,7 +30,7 @@ RUN apt-get update \
 WORKDIR /tools
 ENV PATH "/tools/:$PATH"
 COPY requirements.txt /tools/
-RUN pip3 install -r requirements.txt && pip3 install jsonschema ruamel.yaml requests jsonpath_rw numpy pandas rdflib
+RUN pip3 install -r requirements.txt
 
 ###### owltools & OORT ######
 # For now we get these from jenkins builds, but these should be obtained
@@ -54,7 +54,7 @@ RUN wget https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Koncl
     chmod +x /tools/Konclude
 
 ###### ROBOT ######
-ENV ROBOT v1.7.0
+ENV ROBOT v1.7.1
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
 ENV ROBOT_JAR ${ROBOT_JAR}
 RUN pwd
@@ -97,7 +97,12 @@ RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt
 ENV PATH "/root/.local/share/swi-prolog/pack/sparqlprog/bin:$PATH"
 RUN ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
 
-
+COPY scripts/obo-dash.sh /tools/obodash
+RUN cd /tools/ && chmod +x /tools/obodash && git clone https://github.com/OBOFoundry/OBO-Dashboard.git && \
+    cd OBO-Dashboard && git checkout docker-dash && echo "DOCKER DASH BRANCH CHECKED OUT" &&\
+    python3 -m pip install -r requirements.txt && echo " " >> Makefile &&\
+    echo "build/robot.jar:" >> Makefile &&\
+    echo "	echo 'skipped ROBOT jar download' && touch \$@" >> Makefile && echo "" >> Makefile
 
 ### 5. Install ODK
 ARG ODK_VERSION=0.0.0
