@@ -1,0 +1,21 @@
+id: omrse
+title: "The Ontology of Medically Related Social Entities"
+github_org: matentzn
+repo: omrse-odk-test
+#report_fail_on: ERROR
+report_fail_on: None
+export_formats:
+  - owl
+  - obo
+  - json
+release_artefacts: 
+  - base
+  - full
+  - simple
+import_group:
+  products:
+    - id: ro
+    - id: bfo
+    - id: obi
+robot_java_args: '-Xmx8G'
+

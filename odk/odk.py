@@ -237,6 +237,26 @@ class ImportGroup(ProductGroup):
 
 @dataclass_json
 @dataclass
+class ReportConfig(JsonSchemaMixin):
+    """
+    A configuration section for ROBOT report
+    """
+    
+    fail_on : Optional[str] = None
+    """see http://robot.obolibrary.org/report#failing for details. """
+    
+    use_labels : bool = True
+    """see http://robot.obolibrary.org/report#labels for details. """
+    
+    custom_profile : bool = False
+    """This will replace the call to the standard OBO report to a custom profile instead."""
+    
+    report_on : List[str] = field(default_factory=lambda: ['edit', '.owl'])
+    """Chose which files to run the report on."""
+
+
+@dataclass_json
+@dataclass
 class ComponentGroup(ComponentProduct):
     """
     A configuration section that consists of a list of `ComponentProduct` descriptions
@@ -403,10 +423,6 @@ class OntologyProject(JsonSchemaMixin):
     dosdp_tools_options: str = "--obo-prefixes=true"
     """default parameters for dosdp-tools"""
     
-    report_fail_on : Optional[str] = None
-#    report_fail_on : Optional[str] = "error" # this doesn't seem to have effect
-    """see robot report docs for details. """
-    
     travis_emails : Optional[List[Email]] = None ## ['obo-ci-reports-all@groups.io']
     """Emails to use in travis configurations. """
     
@@ -428,6 +444,10 @@ class OntologyProject(JsonSchemaMixin):
     contributors : Optional[List[Person]] = None
     """List of ontology contributors (currently setting this has no effect)"""
 
+    # product groups
+    robot_report : Optional[ReportConfig] = ReportConfig()
+    """Block that includes information on all ontology imports to be generated"""
+    
     # product groups
     import_group : Optional[ImportGroup] = None
     """Block that includes information on all ontology imports to be generated"""

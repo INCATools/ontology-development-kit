@@ -349,3 +349,31 @@ WHERE {
 </rdf:RDF>
 {%- endfor %}
 {%- endif %}
+{%- if project.robot_report.custom_profile %}
+^^^ src/ontology/profile.txt
+WARN	annotation_whitespace
+ERROR	deprecated_boolean_datatype
+ERROR	deprecated_class_reference
+ERROR	deprecated_property_reference
+ERROR	duplicate_definition
+WARN	duplicate_exact_synonym
+WARN	duplicate_label_synonym
+ERROR	duplicate_label
+WARN	duplicate_scoped_synonym
+WARN	equivalent_pair
+WARN	invalid_xref
+ERROR	label_formatting
+ERROR	label_whitespace
+INFO	lowercase_definition
+WARN	missing_definition
+ERROR	missing_label
+WARN	missing_obsolete_label
+ERROR	missing_ontology_description
+ERROR	missing_ontology_license
+ERROR	missing_ontology_title
+INFO	missing_superclass
+ERROR	misused_obsolete_label
+ERROR	multiple_definitions
+ERROR	multiple_equivalent_classes
+ERROR	multiple_labels
+{%- endif %}
