@@ -35,6 +35,8 @@ See below for an alternative protocol where you install the software yourself ra
 
 You can either pass in a `project.yaml` file that specifies your ontology project setup, or you can pass arguments on the command line.
 
+**NOTE** As per 17th November 2020, the OBO foundry strongly discourages the use of two or three letter OBO ids, and does not permit OBO ids with the letter "O" in it.
+
 Passing arguments on the command line:
 
     ./seed-via-docker.sh -d po -d ro -d pato -u cmungall -t "Triffid Behavior ontology" triffo
