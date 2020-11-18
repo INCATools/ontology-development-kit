@@ -1,8 +1,8 @@
-# updated v1.2.25 (18 November 2020)
+# v1.2.25 (18 November 2020)
 - Updated ROBOT to new version 1.7.2, which includes some hotfixes for ROBOT report and update to whelk 1.0.4
 - Fixed a bug (https://github.com/INCATools/ontology-development-kit/issues/376) that prevented certain things (like imports and pattern generation processes) to be printed when running the Makefile.
 
-# updated v1.2.24 (6 November 2020)
+# v1.2.24 (6 November 2020)
 - Updated ROBOT to new version 1.7.1
 - Added the (highly experimental) ability to ODK to run OBO dashboard (see [instructions and examples](https://github.com/INCATools/ontology-development-kit#running-obo-dashboard-with-odk)).
 - Added more python packages to ODK, see [requirements.txt](requirements.txt).
