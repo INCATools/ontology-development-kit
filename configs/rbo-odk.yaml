@@ -1,0 +1,90 @@
+allow_equivalents: all
+catalog_file: catalog-v001.xml
+components: null
+contact: null
+contributors: null
+creators: null
+description: None
+dosdp_tools_options: --obo-prefixes=true
+edit_format: owl
+exclude_tautologies: structural
+export_formats:
+- owl
+- obo
+git_user: ''
+github_org: DanBerrios
+gzip_main: false
+id: rbo
+import_group:
+  directory: imports/
+  disabled: false
+  ids: null
+  products:
+  - description: null
+    id: ro
+    mirror_from: null
+    rebuild_if_source_changes: true
+    robot_settings: null
+  - description: null
+    id: bfo
+    mirror_from: null
+    rebuild_if_source_changes: true
+    robot_settings: null
+  - description: null
+    id: pato
+    mirror_from: null
+    rebuild_if_source_changes: true
+    robot_settings: null
+  - description: null
+    id: chmo
+    mirror_from: null
+    rebuild_if_source_changes: true
+    robot_settings: null
+  - description: null
+    id: envo
+    mirror_from: null
+    rebuild_if_source_changes: true
+    robot_settings: null
+  - description: null
+    id: obi
+    mirror_from: null
+    rebuild_if_source_changes: true
+    robot_settings: null
+  - description: null
+    id: uo
+    mirror_from: null
+    rebuild_if_source_changes: true
+    robot_settings: null
+  rebuild_if_source_changes: true
+import_pattern_ontology: false
+license: https://creativecommons.org/licenses/unspecified
+namespaces: null
+obo_format_options: ''
+pattern_group: null
+pattern_pipelines_group: null
+primary_release: full
+public_release: none
+public_release_assets: null
+reasoner: ELK
+release_artefacts:
+- full
+- base
+release_date: false
+repo: RBO
+robot_java_args: ''
+robot_report:
+  custom_profile: false
+  fail_on: null
+  report_on:
+  - edit
+  - .owl
+  use_labels: true
+robot_settings: null
+robot_version: null
+robotemplate_group: null
+subset_group: null
+title: Radiation Biology Ontology
+travis_emails: null
+uribase: http://purl.obolibrary.org/obo
+use_dosdps: false
+use_external_date: false

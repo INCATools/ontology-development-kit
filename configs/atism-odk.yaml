@@ -1,0 +1,19 @@
+id: atism
+title: "Special AISM Based Ontology"
+github_org: obophenotype
+repo: atism
+report_fail_on: error
+export_formats:
+  - owl
+  - obo
+  - json
+release_artefacts: 
+  - base
+  - simple
+  - full
+primary_release: full
+import_group:
+  products:
+    - id: aism
+      mirror_from: "https://raw.githubusercontent.com/insect-morphology/aism/master/aism.owl"
+robot_java_args: '-Xmx8G'
