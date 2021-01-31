@@ -40,13 +40,16 @@ schema/project-schema.json:
 VERSION = "v1.2.25"
 IM=obolibrary/odkfull
 DEV=obolibrary/odkdev
+ROBOT_JAR="https://build.obolibrary.io/job/ontodev/job/robot/job/cmd-metrics/6/artifact/bin/robot.jar"
+ROBOT_JAR_ARGS=
+#--build-arg ROBOT_JAR=$(ROBOT_JAR)
 
 docker-build-no-cache:
-	@docker build  --build-arg ODK_VERSION=$(VERSION) --no-cache -t $(IM):$(VERSION) . \
+	@docker build  --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) --no-cache -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 	
 docker-build:
-	@docker build --build-arg ODK_VERSION=$(VERSION) -t $(IM):$(VERSION) . \
+	@docker build --build-arg ODK_VERSION=$(VERSION)  $(ROBOT_JAR_ARGS)  -t $(IM):$(VERSION) . \
 	&& docker tag $(IM):$(VERSION) $(IM):latest
 	
 docker-build-use-cache-dev:
