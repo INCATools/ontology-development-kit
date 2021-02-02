@@ -15,6 +15,7 @@ release_artefacts:
   - full
 primary_release: simple
 import_group:
+  release_imports: TRUE
   products:
     - id: ro
     - id: pato

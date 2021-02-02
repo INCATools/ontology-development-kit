@@ -1,0 +1,32 @@
+id: rrc
+title: "Test ROBOT report"
+github_org: INCATools
+repo: ontology-development-kit
+edit_format: obo
+export_formats:
+  - owl
+  - obo
+  - json
+release_artefacts: 
+  - base
+  - simple
+  - full
+primary_release: full
+import_group:
+  products:
+    - id: ro
+    - id: iao
+    - id: pco
+components:
+  products:
+    - filename: pato_ext.owl
+robot_java_args: '-Xmx8G'
+robot_report:
+  fail_on : ERROR
+  use_labels : False
+  custom_profile : True
+  report_on :
+    - edit
+  custom_sparql_checks : []
+  custom_sparql_exports : 
+    - basic-report

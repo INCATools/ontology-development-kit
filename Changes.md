@@ -1,5 +1,31 @@
-# unreleased
-- bumped fastobo validator to new version ([pull](https://github.com/INCATools/ontology-development-kit/pull/379)
+
+# v1.2.26 (2 February 2021)
+- New versions:
+  - fastobo validator to new version ([pull](https://github.com/INCATools/ontology-development-kit/pull/379)
+  - ROBOT 1.8.1 (lots of new changes, see: [Changelog](https://github.com/ontodev/robot/blob/master/CHANGELOG.md))
+  - DOSDPTOOLS 0.16 (lots of speed-up for bulk pattern generation)
+- New features:
+  - new python dependencies ([cogs](https://github.com/ontodev/cogs), a tool to directly manage tsv files in your repo on Google sheets)
+  - stable serialisation order for JSON files using jq's walk function. -> this decreases the size of the diff for git!
+  - Some improvements to logging when seeding a new repo, to make it easier to find errors
+  - A new method to validate the id-ranges file can be invoked using `sh run.sh make validate_idranges` (after update to latest ODK repo)
+  - modules are now annotated with a dc:source annotation to their original ontology (version) - FIX THIS 
+- New configuration options:
+  - module_type ([example slme](tests/test-module-star.yaml), [example minimal](tests/test-module-minimal.yaml), [example mireot](tests/test-module-star.yaml)). Direct support for MIREOT and a new module type, minimal.
+  - To encourage stable versions and releases, ODK, by default, merges imports into the release files. Previously, we continued to release the imports as well - which we do not recommend anymore. If you still wish to release your imports as usual, you can set a flag `release_imports` in the `import_group` section of your makefile (see [example](tests/test-release.yaml)).
+  - the same as the above applies for reports (see [example](tests/test-robot-report.yaml))
+  - The custom sparql checks, and the custom sparql exports, are now directly configurable
+    - `custom_sparql_checks` : Chose which additional sparql checks you want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory (see [example](tests/test-robot-report.yaml))
+    - `custom_sparql_exports` : Chose which additional sparql checks you want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory (see [example](tests/test-robot-report.yaml))
+    - `custom_sparql_exports` : Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory (see [example](tests/test-robot-report.yaml))
+  - `git_main_branch` : The `main` branch for your repo, default `main`, or (now discouraged, previously) `master`.
+  - `ci`: continuous integration defaults; currently available: `travis`, `github_actions`
+  - `create_obo_metadata`: This is mainly for new OBO ontologies. If true, OBO Markdown and PURL configs are created.
+  - `export_project_yaml`: Default `False`. If set to `True`, project.yaml is created in the top level of the repo.
+- Removed a few files from the standard config. This is all part of an effort to slimming down the ODK to the least number of necessary files checked into version control: `src/ontology/Dockerfile`,`src/ontology/patterns.sh`, `src/ontology/release.sh`, `src/ontology/test.sh`, and some temporary files. The `patterns` directory and all its contents only appear now when `use_dosdps`=TRUE.
+- Technical:
+  - Refactored ODK Dockerfile (merged some layers)
+  - added jq 1.6 which is not available via apt-get (yet).
 
 # v1.2.25 (18 November 2020)
 - Updated ROBOT to new version 1.7.2, which includes some hotfixes for ROBOT report and update to whelk 1.0.4

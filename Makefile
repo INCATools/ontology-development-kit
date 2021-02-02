@@ -27,9 +27,10 @@ test_go_mini:
 
 TESTS = $(notdir $(wildcard tests/*.yaml))
 TEST_FILES = $(foreach n,$(TESTS), tests/$(n))
-test: custom_tests $(TEST_FILES)
+#TEST_FILES = tests/test-release.yaml
+test: $(TEST_FILES) custom_tests
 	echo "All tests passed successfully!"
-	
+
 tests/*.yaml: .FORCE
 	$(CMD) -c -C $@
 
@@ -37,7 +38,7 @@ schema/project-schema.json:
 	./odk/odk.py dump-schema > $@
 
 # Building docker image
-VERSION = "v1.2.25"
+VERSION = "v1.2.26"
 IM=obolibrary/odkfull
 DEV=obolibrary/odkdev
 ROBOT_JAR="https://build.obolibrary.io/job/ontodev/job/robot/job/cmd-metrics/6/artifact/bin/robot.jar"
