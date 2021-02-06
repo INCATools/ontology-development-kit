@@ -1,187 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "definitions": {
-        "ImportGroup": {
-            "description": "\n    A configuration section that consists of a list of `ImportProduct` descriptions\n\n    Controls extraction of import modules via robot extract into the \"imports/\" directory\n    ",
-            "properties": {
-                "directory": {
-                    "type": "string"
-                },
-                "disabled": {
-                    "type": "boolean"
-                },
-                "ids": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "products": {
-                    "items": {
-                        "$ref": "#/definitions/ImportProduct"
-                    },
-                    "type": "array"
-                },
-                "rebuild_if_source_changes": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "disabled",
-                "rebuild_if_source_changes",
-                "directory"
-            ],
-            "type": "object"
-        },
-        "PatternGroup": {
-            "description": "\n    A configuration section that consists of a list of `PatternProduct` descriptions\n\n    ",
-            "properties": {
-                "directory": {
-                    "type": "string"
-                },
-                "disabled": {
-                    "type": "boolean"
-                },
-                "ids": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "products": {
-                    "items": {
-                        "$ref": "#/definitions/PatternProduct"
-                    },
-                    "type": "array"
-                },
-                "rebuild_if_source_changes": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "disabled",
-                "rebuild_if_source_changes",
-                "directory"
-            ],
-            "type": "object"
-        },
-        "SubsetGroup": {
-            "description": "\n    A configuration section that consists of a list of `SubsetProduct` descriptions\n\n    Controls export of subsets/slims into the \"subsets/\" directory\n    ",
-            "properties": {
-                "directory": {
-                    "type": "string"
-                },
-                "disabled": {
-                    "type": "boolean"
-                },
-                "ids": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "products": {
-                    "items": {
-                        "$ref": "#/definitions/SubsetProduct"
-                    },
-                    "type": "array"
-                },
-                "rebuild_if_source_changes": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "disabled",
-                "rebuild_if_source_changes",
-                "directory"
-            ],
-            "type": "object"
-        }
-    },
-    "description": "\n    A configuration for an ontology project/repository\n\n    This is divided into project-wide settings, plus\n    groups of products. Products are grouped into 4\n    categories (more may be added)\n    ",
-    "properties": {
-        "contact": {
-            "type": "string"
-        },
-        "contributors": {
-            "items": {
-                "type": "string"
-            },
-            "type": "array"
-        },
-        "creators": {
-            "items": {
-                "type": "string"
-            },
-            "type": "array"
-        },
-        "edit_format": {
-            "type": "string"
-        },
-        "github_org": {
-            "type": "string"
-        },
-        "id": {
-            "type": "string"
-        },
-        "import_group": {
-            "$ref": "#/definitions/ImportGroup"
-        },
-        "obo_format_options": {
-            "type": "string"
-        },
-        "pattern_group": {
-            "$ref": "#/definitions/PatternGroup"
-        },
-        "reasoner": {
-            "type": "string"
-        },
-        "repo": {
-            "type": "string"
-        },
-        "report_fail_on": {
-            "type": "string"
-        },
-        "robot_version": {
-            "type": "string"
-        },
-        "robotemplate_group": {
-            "type": "object"
-        },
-        "subset_group": {
-            "$ref": "#/definitions/SubsetGroup"
-        },
-        "title": {
-            "type": "string"
-        },
-        "travis_emails": {
-            "items": {
-                "type": "string"
-            },
-            "type": "array"
-        },
-        "uribase": {
-            "type": "string"
-        },
-        "use_dosdps": {
-            "type": "boolean"
-        }
-    },
-    "required": [
-        "id",
-        "title",
-        "repo",
-        "github_org",
-        "edit_format",
-        "reasoner",
-        "use_dosdps",
-        "obo_format_options",
-        "uribase"
-    ],
-    "type": "object"
-}
-{
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-06/schema#",
     "definitions": {
         "CommandSettings": {
             "description": "\n    Settings to be provided to a tool like ROBOT\n    ",
@@ -191,29 +9,600 @@
                 }
             },
             "type": "object"
+        },
+        "ComponentGroup": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/ComponentProduct"
+                },
+                {
+                    "properties": {
+                        "directory": {
+                            "default": "components",
+                            "type": "string"
+                        },
+                        "products": {
+                            "items": {
+                                "$ref": "#/definitions/ComponentProduct"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                }
+            ],
+            "description": "\n    A configuration section that consists of a list of `ComponentProduct` descriptions\n\n    Controls extraction of import modules via robot extract into the \"components/\" directory\n    "
+        },
+        "ComponentProduct": {
+            "description": "\n    Represents an individual component\n    Examples: a file external to the edit file that contains axioms that belong to this ontology\n    Components are usually maintained manually.\n    ",
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ImportGroup": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/ProductGroup"
+                },
+                {
+                    "properties": {
+                        "directory": {
+                            "default": "imports/",
+                            "type": "string"
+                        },
+                        "module_type": {
+                            "default": "slme",
+                            "type": "string"
+                        },
+                        "module_type_slme": {
+                            "default": "BOT",
+                            "type": "string"
+                        },
+                        "products": {
+                            "items": {
+                                "$ref": "#/definitions/ImportProduct"
+                            },
+                            "type": "array"
+                        },
+                        "release_imports": {
+                            "default": false,
+                            "type": "boolean"
+                        },
+                        "slme_individuals": {
+                            "default": "include",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            ],
+            "description": "\n    A configuration section that consists of a list of `ImportProduct` descriptions\n\n    Controls extraction of import modules via robot extract into the \"imports/\" directory\n    "
+        },
+        "ImportProduct": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Product"
+                },
+                {
+                    "properties": {
+                        "mirror_from": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            ],
+            "description": "\n    Represents an individual import\n    Examples: 'uberon' (in go)\n    Imports are typically built from an upstream source, but this can be configured\n    "
+        },
+        "PatternGroup": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/ProductGroup"
+                },
+                {
+                    "properties": {
+                        "directory": {
+                            "default": "../patterns/",
+                            "type": "string"
+                        },
+                        "products": {
+                            "items": {
+                                "$ref": "#/definitions/PatternProduct"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                }
+            ],
+            "description": "\n    A configuration section that consists of a list of `PatternProduct` descriptions\n\n    "
+        },
+        "PatternPipelineGroup": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/ProductGroup"
+                },
+                {
+                    "properties": {
+                        "products": {
+                            "items": {
+                                "$ref": "#/definitions/PatternPipelineProduct"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                }
+            ],
+            "description": "\n    A configuration section that consists of a list of `PatternPipelineProduct` descriptions\n\n    Controls the handling of patterns data in the \"src/patterns/data\" directory\n    "
+        },
+        "PatternPipelineProduct": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Product"
+                },
+                {
+                    "properties": {
+                        "dosdp_tools_options": {
+                            "default": "--obo-prefixes=true",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            ],
+            "description": "\n    Represents an individual pattern pipeline\n    Examples: manual curation pipeline, auto curation pipeline\n    Each pipeline gets their own specific directory\n    "
+        },
+        "PatternProduct": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Product"
+                },
+                {
+                    "properties": {},
+                    "type": "object"
+                }
+            ],
+            "description": "Represents a DOSDP template product\n    \n    The products here can be manfested as CSVs (from 'parse'ing OWL)\n    or they may be OWL (from the dosdp 'generate' command)\n    "
+        },
+        "Product": {
+            "description": "\n    abstract base class for all products.\n\n    Here, a product is something that is produced by an ontology workflow.\n    A product can be manifested in different formats.\n    \n    For example, goslim_prok is a subset (aka slim) product from GO,\n    this can be manifest as obo, owl, json\n    ",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "rebuild_if_source_changes": {
+                    "default": true,
+                    "type": "boolean"
+                },
+                "robot_settings": {
+                    "$ref": "#/definitions/CommandSettings"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "type": "object"
+        },
+        "ProductGroup": {
+            "description": "\n    abstract base class for all product groups.\n\n    A product group is a simple holder for a list of\n    groups, with the ability to set configurations that\n    hold by default for all within that group.\n\n    Note: currently the configuration can specify\n    EITHER a list of ontology ids (e.g. uberon, cl)\n    OR a list of product objects\n    OR some mixture\n\n    For example, in specifying upstream imports I can\n    be lazy and just list the ids, but if I need to\n    configure each one individually then I need to specify\n    the full product object.\n\n    This buys some simplicity for the majority of projects\n    that don't do anything fancy, but at the price of overall\n    complexity\n    ",
+            "properties": {
+                "disabled": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "rebuild_if_source_changes": {
+                    "default": true,
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "RobotTemplateGroup": {
+            "description": "\n    A configuration section that consists of a list of `RobotTemplateProduct` descriptions\n    ",
+            "properties": {
+                "directory": {
+                    "default": "../templates/",
+                    "type": "string"
+                },
+                "products": {
+                    "items": {
+                        "$ref": "#/definitions/RobotTemplateProduct"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "RobotTemplateProduct": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Product"
+                },
+                {
+                    "properties": {},
+                    "type": "object"
+                }
+            ],
+            "description": "\n    Represents a ROBOT template\n    "
+        },
+        "SubsetGroup": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/ProductGroup"
+                },
+                {
+                    "properties": {
+                        "directory": {
+                            "default": "subsets/",
+                            "type": "string"
+                        },
+                        "products": {
+                            "items": {
+                                "$ref": "#/definitions/SubsetProduct"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                }
+            ],
+            "description": "\n    A configuration section that consists of a list of `SubsetProduct` descriptions\n\n    Controls export of subsets/slims into the \"subsets/\" directory\n    "
+        },
+        "SubsetProduct": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Product"
+                },
+                {
+                    "properties": {
+                        "creators": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                }
+            ],
+            "description": "\n    Represents an individual subset.\n    Examples: goslim_prok (in go), eco_subset (in ro)\n    "
         }
     },
-    "description": "\n    Represents an individual import\n    Examples: 'uberon' (in go)\n    Imports are typically built from an upstream source, but this can be configured\n    ",
+    "description": "\n    A configuration for an ontology project/repository\n\n    This is divided into project-wide settings, plus\n    groups of products. Products are grouped into 4\n    categories (more may be added)\n    ",
     "properties": {
-        "description": {
+        "allow_equivalents": {
+            "default": "all",
             "type": "string"
+        },
+        "catalog_file": {
+            "default": "catalog-v001.xml",
+            "type": "string"
+        },
+        "ci": {
+            "default": [
+                "travis",
+                "github_actions"
+            ],
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "components": {
+            "$ref": "#/definitions/ComponentGroup"
+        },
+        "contact": {
+            "type": "string"
+        },
+        "contributors": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "create_obo_metadata": {
+            "default": true,
+            "type": "boolean"
+        },
+        "creators": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "description": {
+            "default": "None",
+            "type": "string"
+        },
+        "dosdp_tools_options": {
+            "default": "--obo-prefixes=true",
+            "type": "string"
+        },
+        "edit_format": {
+            "default": "owl",
+            "type": "string"
+        },
+        "exclude_tautologies": {
+            "default": "structural",
+            "type": "string"
+        },
+        "export_formats": {
+            "default": [
+                "owl",
+                "obo"
+            ],
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "export_project_yaml": {
+            "default": false,
+            "type": "boolean"
+        },
+        "git_main_branch": {
+            "default": "main",
+            "type": "string"
+        },
+        "git_user": {
+            "default": "",
+            "type": "string"
+        },
+        "github_org": {
+            "default": "",
+            "type": "string"
+        },
+        "gzip_main": {
+            "default": false,
+            "type": "boolean"
         },
         "id": {
+            "default": "",
             "type": "string"
         },
-        "mirror_from": {
-            "type": "string"
+        "import_group": {
+            "$ref": "#/definitions/ImportGroup"
         },
-        "rebuild_if_source_changes": {
+        "import_pattern_ontology": {
+            "default": false,
             "type": "boolean"
+        },
+        "license": {
+            "default": "https://creativecommons.org/licenses/unspecified",
+            "type": "string"
+        },
+        "namespaces": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "obo_format_options": {
+            "default": "",
+            "type": "string"
+        },
+        "pattern_group": {
+            "$ref": "#/definitions/PatternGroup"
+        },
+        "pattern_pipelines_group": {
+            "$ref": "#/definitions/PatternPipelineGroup"
+        },
+        "primary_release": {
+            "default": "full",
+            "type": "string"
+        },
+        "public_release": {
+            "default": "none",
+            "type": "string"
+        },
+        "public_release_assets": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "reasoner": {
+            "default": "ELK",
+            "type": "string"
+        },
+        "release_artefacts": {
+            "default": [
+                "full",
+                "base"
+            ],
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "release_date": {
+            "default": false,
+            "type": "boolean"
+        },
+        "repo": {
+            "default": "",
+            "type": "string"
+        },
+        "robot_java_args": {
+            "default": "",
+            "type": "string"
+        },
+        "robot_report": {
+            "default": {
+                "custom_profile": false,
+                "custom_sparql_checks": [
+                    "equivalent-classes",
+                    "owldef-self-reference"
+                ],
+                "custom_sparql_exports": [
+                    "basic-report",
+                    "class-count-by-prefix",
+                    "edges",
+                    "xrefs",
+                    "obsoletes",
+                    "synonyms"
+                ],
+                "fail_on": null,
+                "release_reports": false,
+                "report_on": [
+                    "edit",
+                    ".owl"
+                ],
+                "use_labels": true
+            },
+            "type": "object"
         },
         "robot_settings": {
             "$ref": "#/definitions/CommandSettings"
+        },
+        "robot_version": {
+            "type": "string"
+        },
+        "robotemplate_group": {
+            "$ref": "#/definitions/RobotTemplateGroup"
+        },
+        "subset_group": {
+            "$ref": "#/definitions/SubsetGroup"
+        },
+        "title": {
+            "default": "",
+            "type": "string"
+        },
+        "travis_emails": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "uribase": {
+            "default": "http://purl.obolibrary.org/obo",
+            "type": "string"
+        },
+        "use_dosdps": {
+            "default": false,
+            "type": "boolean"
+        },
+        "use_external_date": {
+            "default": false,
+            "type": "boolean"
         }
     },
-    "required": [
-        "id",
-        "rebuild_if_source_changes"
-    ],
     "type": "object"
+}
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "allOf": [
+        {
+            "$ref": "#/definitions/Product"
+        },
+        {
+            "properties": {
+                "mirror_from": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    ],
+    "definitions": {
+        "CommandSettings": {
+            "description": "\n    Settings to be provided to a tool like ROBOT\n    ",
+            "properties": {
+                "memory_gb": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "Product": {
+            "description": "\n    abstract base class for all products.\n\n    Here, a product is something that is produced by an ontology workflow.\n    A product can be manifested in different formats.\n    \n    For example, goslim_prok is a subset (aka slim) product from GO,\n    this can be manifest as obo, owl, json\n    ",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "rebuild_if_source_changes": {
+                    "default": true,
+                    "type": "boolean"
+                },
+                "robot_settings": {
+                    "$ref": "#/definitions/CommandSettings"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "type": "object"
+        }
+    },
+    "description": "\n    Represents an individual import\n    Examples: 'uberon' (in go)\n    Imports are typically built from an upstream source, but this can be configured\n    "
+}
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "allOf": [
+        {
+            "$ref": "#/definitions/Product"
+        },
+        {
+            "properties": {
+                "dosdp_tools_options": {
+                    "default": "--obo-prefixes=true",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    ],
+    "definitions": {
+        "CommandSettings": {
+            "description": "\n    Settings to be provided to a tool like ROBOT\n    ",
+            "properties": {
+                "memory_gb": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "Product": {
+            "description": "\n    abstract base class for all products.\n\n    Here, a product is something that is produced by an ontology workflow.\n    A product can be manifested in different formats.\n    \n    For example, goslim_prok is a subset (aka slim) product from GO,\n    this can be manifest as obo, owl, json\n    ",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "rebuild_if_source_changes": {
+                    "default": true,
+                    "type": "boolean"
+                },
+                "robot_settings": {
+                    "$ref": "#/definitions/CommandSettings"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "type": "object"
+        }
+    },
+    "description": "\n    Represents an individual pattern pipeline\n    Examples: manual curation pipeline, auto curation pipeline\n    Each pipeline gets their own specific directory\n    "
 }

@@ -22,3 +22,4 @@ upsetplot>=0.0
 plotly>=0.0
 networkx==2.5
 ontodev-cogs>=0.0
+sssom>=0.0

@@ -477,7 +477,7 @@ class OntologyProject(JsonSchemaMixin):
     contributors : Optional[List[Person]] = None
     """List of ontology contributors (currently setting this has no effect)"""
 
-    robot_report : ReportConfig = ReportConfig()
+    robot_report : Dict[str, Any] = field(default_factory=lambda: ReportConfig().to_dict())
     """Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated"""
 
     # product groups
