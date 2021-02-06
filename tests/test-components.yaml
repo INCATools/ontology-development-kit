@@ -1,15 +1,12 @@
-id: components
+id: tco
 title: "Test Components Ontology"
 github_org: obophenotype
 repo: components
 report_fail_on: ERROR
 use_dosdps: TRUE
 dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
-namespaces: 
-  - http://purl.obolibrary.org/obo/ODK_
 release_artefacts: 
   - base
-  - simple-non-classified
   - full
   - simple
 primary_release: full
@@ -21,7 +18,6 @@ import_group:
   products: 
     - id: pato
     - id: ro
-    - id: iao
     - id: bfo
 components:
   products:

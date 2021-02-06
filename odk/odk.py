@@ -80,7 +80,7 @@ class SubsetProduct(Product):
 
 @dataclass_json
 @dataclass
-class ComponentProduct():
+class ComponentProduct(JsonSchemaMixin):
     """
     Represents an individual component
     Examples: a file external to the edit file that contains axioms that belong to this ontology
@@ -128,7 +128,7 @@ class PatternProduct(Product):
 
 @dataclass_json
 @dataclass
-class RoboTemplateProduct(Product):
+class RobotTemplateProduct(Product):
     """
     Represents a ROBOT template
     """
@@ -226,7 +226,19 @@ class ImportGroup(ProductGroup):
     
     products : Optional[List[ImportProduct]] = None
     """all import products"""
-
+    
+    module_type : str = "slme"
+    """Module type. Supported: slme, mireot, minimal, custom"""
+    
+    module_type_slme : str = "BOT"
+    """SLME module type. Supported: BOT, TOP, STAR"""
+    
+    slme_individuals : str = "include"
+    """See http://robot.obolibrary.org/extract#syntactic-locality-module-extractor-slme"""
+    
+    release_imports : bool = False
+    """If set to True, imports are copied to the release directory."""
+    
     directory : Directory = "imports/"
     """directory where imports are extracted into to"""
 
@@ -253,6 +265,15 @@ class ReportConfig(JsonSchemaMixin):
     
     report_on : List[str] = field(default_factory=lambda: ['edit', '.owl'])
     """Chose which files to run the report on."""
+    
+    release_reports : bool = False
+    """ If true, release reports are added as assets to the release (top level directory, reports directory)"""
+    
+    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['equivalent-classes', 'owldef-self-reference'])
+    """Chose which additional sparql checks yoy want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory"""
+
+    custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
+    """Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory."""
 
 
 @dataclass_json
@@ -309,14 +330,14 @@ class PatternGroup(ProductGroup):
     
 @dataclass_json
 @dataclass
-class RoboTemplateGroup():
+class RobotTemplateGroup(JsonSchemaMixin):
     """
-    A configuration section that consists of a list of `RoboTemplateProduct` descriptions
+    A configuration section that consists of a list of `RobotTemplateProduct` descriptions
     """
     
     directory : Directory = "../templates/"
     
-    products : Optional[List[RoboTemplateProduct]] = None
+    products : Optional[List[RobotTemplateProduct]] = None
 
 @dataclass_json
 @dataclass
@@ -359,8 +380,11 @@ class OntologyProject(JsonSchemaMixin):
     
     github_org : str = ""
     """Name of github org or username where repo will live. Examples: obophenotype, cmungall"""
+    
+    git_main_branch : str = "main"
+    """The main branch for your repo, such as main, or (now discouraged) master."""
 
-    edit_format : str = 'owl'
+    edit_format : str = "owl"
     """Format in which the edit file is managed, either obo or owl"""
     
     robot_version: Optional[str] = None
@@ -375,25 +399,28 @@ class OntologyProject(JsonSchemaMixin):
     use_external_date: bool = False
     """Flag to set if you want odk to use the host `date` rather than the docker internal `date`"""
     
-    reasoner : str = 'ELK'
+    export_project_yaml: bool = False
+    """Flag to set if you want a full project.yaml to be exported, including all the default options."""
+    
+    reasoner : str = "ELK"
     """Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values"""
     
-    exclude_tautologies : str = 'structural'
+    exclude_tautologies : str = "structural"
     """Remove tautologies such as A SubClassOf: owl:Thing or owl:Nothing SubclassOf: A. For more information see http://robot.obolibrary.org/reason#excluding-tautologies"""
     
-    primary_release : str = 'full'
+    primary_release : str = "full"
     """Which release file should be published as the primary release artefact, i.e. foo.owl"""
     
-    license : str = 'https://creativecommons.org/licenses/unspecified'
+    license : str = "https://creativecommons.org/licenses/unspecified"
     """Which license is ontology supplied under - must be an IRI."""
     
-    description : str = 'None'
+    description : str = "None"
     """Provide a short description of the ontology"""
     
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
 
-    public_release : str = 'none'
+    public_release : str = "none"
     """if true add functions to run automated releases (experimental). Current options are: github_curl, github_python."""
 
     public_release_assets : Optional[List[str]] = None
@@ -402,11 +429,17 @@ class OntologyProject(JsonSchemaMixin):
     release_date : bool = False
     """if true, releases will be tagged with a release date (oboInOwl:date)"""
     
-    allow_equivalents : str = 'all'
+    allow_equivalents : str = "all"
     """can be all, none or assert-only (see ROBOT documentation: http://robot.obolibrary.org/reason)"""
+    
+    ci : Optional[List[str]] = field(default_factory=lambda: ['travis', 'github_actions'])
+    """continuous integration defaults; currently available: travis, github_actions"""
     
     import_pattern_ontology : bool = False
     """if true import pattern.owl"""
+    
+    create_obo_metadata : bool = True
+    """if true OBO Markdown and PURL configs are created."""
     
     gzip_main : bool = False
     """if true add a gzipped version of the main artefact"""
@@ -432,7 +465,7 @@ class OntologyProject(JsonSchemaMixin):
     catalog_file : str = "catalog-v001.xml"
     """Name of the catalog file to be used by the build."""
 
-    uribase : str = 'http://purl.obolibrary.org/obo'
+    uribase : str = "http://purl.obolibrary.org/obo"
     """Base URI for PURLs. DO NOT MODIFY AT THIS TIME, code is still hardwired for OBO """
     
     contact : Optional[Person] = None
@@ -444,10 +477,9 @@ class OntologyProject(JsonSchemaMixin):
     contributors : Optional[List[Person]] = None
     """List of ontology contributors (currently setting this has no effect)"""
 
-    # product groups
-    robot_report : Optional[ReportConfig] = ReportConfig()
-    """Block that includes information on all ontology imports to be generated"""
-    
+    robot_report : Dict[str, Any] = field(default_factory=lambda: ReportConfig().to_dict())
+    """Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated"""
+
     # product groups
     import_group : Optional[ImportGroup] = None
     """Block that includes information on all ontology imports to be generated"""
@@ -464,7 +496,7 @@ class OntologyProject(JsonSchemaMixin):
     pattern_pipelines_group : Optional[PatternPipelineGroup] = None
     """Block that includes information on all ontology imports to be generated"""
 
-    robotemplate_group : Optional[RoboTemplateGroup] = None
+    robotemplate_group : Optional[RobotTemplateGroup] = None
     """Block that includes information on all ROBOT templates used"""
 
     def fill_missing(self):
@@ -739,8 +771,9 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
                         tgts.append(derived_file)
 
     tgt_project_file = "{}/project.yaml".format(outdir)
-    save_project_yaml(project, tgt_project_file)
-    tgts.append(tgt_project_file)
+    if project.export_project_yaml:
+        save_project_yaml(project, tgt_project_file)
+        tgts.append(tgt_project_file)
     if source is not None:
         copyfile(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
     if config is not None:
@@ -775,7 +808,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
 
 def runcmd(cmd):
     logging.info("RUNNING: {}".format(cmd))
-    p = subprocess.Popen([cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    p = subprocess.Popen([cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, universal_newlines=True)
     (out, err) = p.communicate()
     logging.info('OUT: {}'.format(out))
     if err:

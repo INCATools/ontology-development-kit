@@ -1,0 +1,11 @@
+id: tci
+title: "Test CI"
+github_org: INCATools
+repo: ontology-development-kit
+git_main_branch: master
+ci:
+  - github_actions
+robot_report:
+  custom_sparql_checks : []
+  custom_sparql_exports : 
+    - basic-report

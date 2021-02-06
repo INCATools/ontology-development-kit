@@ -1,0 +1,16 @@
+id: omia
+title: "Online Inheritance of Animals Ontology"
+github_org: monarch
+repo: omia-ontology
+report_fail_on: none
+use_dosdps: TRUE
+dosdp_tools_options: "--obo-prefixes=true"
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: ro
+robot_java_args: '-Xmx8G'
+allow_equivalents: asserted-only

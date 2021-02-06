@@ -148,7 +148,12 @@ Datatype: rdf:PlainLiteral
 ## 
 ## If you need to customize your Makefile, make
 ## changes here rather than in the main Makefile
-
+{% if project.import_group is defined -%}
+{%- if 'custom' == project.import_group.module_type %}
+imports/%_import.owl: mirror/%.owl
+	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && touch $@
+{% endif %}
+{%- endif %}
 {#-
 
   Imports files, one per import
@@ -232,6 +237,32 @@ NBO:0000313
   TODO: include a script that makes it easy for maintainers to do this.
 
 #}
+{%- if project.create_obo_metadata %}
+^^^ src/metadata/README.md
+Metadata files for the OBO Library
+
+ * [{{ project.id }}.yml]({{ project.id }}.yml)
+     * Determines how your purl.obolibrary.org/obo/{{ project.id }}/ redirects will be handled
+     * Go here: https://github.com/OBOFoundry/purl.obolibrary.org/tree/master/config
+     * Click [New File](https://github.com/OBOFoundry/purl.obolibrary.org/new/master/config)
+     * Paste in the contents of [{{ project.id }}.yml]({{ project.id }}.yml)
+     * Click "Commit new file"
+     * IMPORTANT: remember to make a pull request
+     * An OBO admin will merge your Pull Request *providing it meets the requirements of the OBO library*
+ * [{{ project.id }}.md]({{ project.id }}.md)
+     * Determines how your metadata is shown on OBO Library, OLS and AberOWL
+     * Go here: https://github.com/OBOFoundry/OBOFoundry.github.io/tree/master/ontology
+     * Click [New File](https://github.com/OBOFoundry/OBOFoundry.github.io/new/master/ontology)
+     * Paste in the contents of [{{ project.id }}.md]({{ project.id }}.md)
+     * Click "Commit new file"
+     * IMPORTANT: remember to make a pull request
+     * An OBO admin will merge your Pull Request *providing it meets the requirements of the OBO library*
+     
+For more background see:
+
+ * http://obofoundry.org/
+ * http://obofoundry.org/faq/how-do-i-edit-metadata.html
+
 ^^^ src/metadata/{{ project.id }}.md
 ---
 layout: ontology_detail
@@ -285,8 +316,8 @@ idspace: {{ project.id|upper }}
 base_url: /obo/{{ project.id }}
 
 products:
-- {{ project.id }}.owl: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/{{ project.id }}.owl
-- {{ project.id }}.obo: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/{{ project.id }}.obo
+- {{ project.id }}.owl: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/{{ project.git_main_branch }}/{{ project.id }}.owl
+- {{ project.id }}.obo: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/{{ project.git_main_branch }}/{{ project.id }}.obo
 
 term_browser: ontobee
 example_terms:
@@ -305,11 +336,65 @@ entries:
 
 ## generic fall-through, serve direct from github by default
 - prefix: /
-  replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/master/
+  replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/{{ project.git_main_branch }}/
+{%- endif %}
 {#-
     Example pattern implementation TSV
 #}
 {%- if project.use_dosdps %}
+^^^ src/patterns/definitions.owl
+Prefix(:=<http://purl.obolibary.org/obo/{{ project.id }}/definitions.owl#>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+
+
+Ontology(<http://purl.obolibary.org/obo/{{ project.id }}/definitions.owl>
+
+)
+^^^ src/patterns/pattern.owl
+Prefix(:=<http://purl.obolibary.org/obo/{{ project.id }}/pattern.owl#>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+
+
+Ontology(<http://purl.obolibary.org/obo/{{ project.id }}/pattern.owl>
+
+)
+^^^ src/patterns/README.md
+# DOSDP patterns - editors docs
+^^^ src/patterns/data/default/example.tsv
+defined_class	example
+
+^^^ src/patterns/dosdp-patterns/example.yaml
+pattern_name: example
+pattern_iri: http://purl.obolibrary.org/obo/{{ project.id }}/example.yaml
+description: "This is a minimal example pattern."
+
+classes:
+  example: owl:Thing
+
+relations:
+  part_of: BFO:0000050
+
+vars:
+  example: "'example'"
+
+name:
+  text: "Part of %s"
+  vars:
+   - example
+
+equivalentTo:
+  text: "'part_of' some %s"
+  vars:
+    - example
+^^^ src/patterns/dosdp-patterns/external.txt
 ^^^ src/patterns/data/default/README.md
 Documentation of the Default DOSDP Pipeline
 {%- if project.pattern_pipelines_group is defined %}
@@ -377,3 +462,72 @@ ERROR	multiple_definitions
 ERROR	multiple_equivalent_classes
 ERROR	multiple_labels
 {%- endif %}
+{%- if 'basic' in project.release_artefacts or project.primary_release == 'basic' %}
+^^^ src/ontology/keeprelations.txt
+BFO:0000050
+{% endif -%}
+{% if project.ci is defined -%}{% if 'travis' in project.ci %}
+^^^ .travis.yml
+## REMEMBER TO SET UP YOUR GIT REPO FOR TRAVIS
+## Go to: https://travis-ci.org/{{ project.github_org }} for details
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker pull obolibrary/odkfull
+
+# command to run tests
+script: cd src/ontology && sh run.sh make test
+
+#after_success:
+#  coveralls
+
+# whitelist
+branches:
+  only:
+    - {{ project.git_main_branch }}
+    - test-travis
+
+### Add your own lists here
+### See https://github.com/INCATools/ontology-development-kit/issues/35
+notifications:
+  email:
+    - obo-ci-reports-all@groups.io
+{% endif -%}{% if 'github_actions' in project.ci %}
+^^^ .github/workflows/qc.yml
+# Basic ODK workflow
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the {{ project.git_main_branch }} branch
+  push:
+    branches: [ {{ project.git_main_branch }} ]
+  pull_request:
+    branches: [ {{ project.git_main_branch }} ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "ontology_qc"
+  ontology_qc:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.25" }}{%- else %}v1.2.25{% endif %}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Run ontology QC checks
+        env:
+          DEFAULT_BRANCH: {{ project.git_main_branch }}
+        run: cd src/ontology && make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false
+{% endif -%}
+{% endif -%}
