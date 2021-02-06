@@ -9,7 +9,7 @@
   - stable serialisation order for JSON files using jq's walk function. -> this decreases the size of the diff for git!
   - Some improvements to logging when seeding a new repo, to make it easier to find errors
   - A new method to validate the id-ranges file can be invoked using `sh run.sh make validate_idranges` (after update to latest ODK repo)
-  - modules are now annotated with a dc:source annotation to their original ontology (version) - FIX THIS 
+  - modules are now annotated with a dc:source annotation to their original ontology (version)
 - New configuration options:
   - module_type ([example slme](tests/test-module-star.yaml), [example minimal](tests/test-module-minimal.yaml), [example mireot](tests/test-module-star.yaml)). Direct support for MIREOT and a new module type, minimal.
   - To encourage stable versions and releases, ODK, by default, merges imports into the release files. Previously, we continued to release the imports as well - which we do not recommend anymore. If you still wish to release your imports as usual, you can set a flag `release_imports` in the `import_group` section of your makefile (see [example](tests/test-release.yaml)).

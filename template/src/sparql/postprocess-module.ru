@@ -5,24 +5,12 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 
 DELETE {
-  ?ontology ?ontology_annotation_property ?ontology_annotation_value ;
-      owl:versionIRI ?version_iri .
-}
-
-INSERT { 
-    ?subset rdfs:subPropertyOf <http://www.geneontology.org/formats/oboInOwl#SubsetProperty> . 
-    ?ontology dc:source ?version_iri .
+  ?ontology ?ontology_annotation_property ?ontology_annotation_value .
 }
 
 WHERE {
-  ?x <http://www.geneontology.org/formats/oboInOwl#inSubset>  ?subset .
-  OPTIONAL {
-    ?ontology rdf:type owl:Ontology ;
-        owl:versionIRI ?version_iri .
-  }
-  OPTIONAL {
-    ?ontology rdf:type owl:Ontology ;
-        ?ontology_annotation_property ?ontology_annotation_value .
-  }
+  ?ontology rdf:type owl:Ontology .
+  ?ontology ?ontology_annotation_property ?ontology_annotation_value .
+  FILTER(?ontology_annotation_property != dc:source && ?ontology_annotation_property != rdf:type)
 
 }

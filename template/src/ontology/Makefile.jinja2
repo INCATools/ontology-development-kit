@@ -138,9 +138,7 @@ ASSETS = \
   $(SUBSET_FILES)
 
 RELEASE_ASSETS = \
-  $(MAIN_FILES) \
-  {% if project.import_group is defined -%}{%- if project.import_group.release_imports %}$(IMPORT_FILES) \{% endif %}{% endif %}
-  {% if project.robot_report.release_reports %}$(REPORT_FILES) \{% endif -%}
+  $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}{% if project.robot_report.release_reports %}$(REPORT_FILES){% endif -%}\
   $(REPORT_FILES) \
   $(SUBSET_FILES)
 
@@ -217,7 +215,6 @@ $(IMPORTSEED): $(PRESEED)
 {% endif %}
 
 {% if project.import_group is defined -%}
-{%- if 'slme' == project.import_group.module_type %}
 # -- Generate Import Modules --
 #
 # This pattern uses ROBOT to generate an import module
@@ -226,28 +223,32 @@ $(IMPORTSEED): $(PRESEED)
 imports/%_terms_combined.txt: $(IMPORTSEED) imports/%_terms.txt
 	if [ $(IMP) = true ]; then cat $^ | grep -v ^# | sort | uniq >  $@; fi
 
+{% if 'slme' == project.import_group.module_type %}
 imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
-	if [ $(IMP) = true ]; then $(ROBOT) extract -i $< -T imports/$*_terms_combined.txt --force true --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
-		query --update ../sparql/postprocess-module.ru \
+	if [ $(IMP) = true ]; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
+		extract -T imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --individuals exclude --method STAR \
+		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
-{%- elif 'minimal' == project.import_group.module_type %}
+{% elif 'minimal' == project.import_group.module_type %}
 imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
-	if [ $(IMP) = true ]; then $(ROBOT) extract -i $< -T imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --method BOT \
+	if [ $(IMP) = true ]; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
+		extract -T imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --method BOT \
 		remove --base-iri $(URIBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
-		query --update ../sparql/postprocess-module.ru \
+		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		remove --term rdfs:label -T imports/$*_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
-{%- elif 'mireot' == project.import_group.module_type %}
+{% elif 'mireot' == project.import_group.module_type %}
 imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
-	if [ $(IMP) = true ]; then $(ROBOT) extract -i $< -L imports/$*_terms_combined.txt -U imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --method MIREOT \
-		query --update ../sparql/postprocess-module.ru \
+	if [ $(IMP) = true ]; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
+		extract -L imports/$*_terms_combined.txt -U imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --method MIREOT \
+		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
-{%- elif 'custom' == project.import_group.module_type %}
+{% elif 'custom' == project.import_group.module_type %}
 imports/%_import.owl: mirror/%.owl
 	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
 {% endif %}
 .PRECIOUS: imports/%_import.owl
-{%- if 'obo' == project.edit_format %}
+{% if 'obo' == project.edit_format %}
 # convert imports to obo.
 # this can be useful for spot-checks and diffs.
 # we set strict mode to false by default. For discussion see https://github.com/owlcs/owlapi/issues/752
