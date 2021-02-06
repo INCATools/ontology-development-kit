@@ -26,6 +26,7 @@
 - Technical:
   - Refactored ODK Dockerfile (merged some layers)
   - added jq 1.6 which is not available via apt-get (yet).
+  - added sssom python package, but its in so alpha-alpha state, it should be used with caution
 
 # v1.2.25 (18 November 2020)
 - Updated ROBOT to new version 1.7.2, which includes some hotfixes for ROBOT report and update to whelk 1.0.4
