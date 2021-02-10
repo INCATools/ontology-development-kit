@@ -326,6 +326,10 @@
             },
             "type": "array"
         },
+        "custom_makefile_header": {
+            "default": "\n# ----------------------------------------\n# More information: https://github.com/INCATools/ontology-development-kit/\n",
+            "type": "string"
+        },
         "description": {
             "default": "None",
             "type": "string"
