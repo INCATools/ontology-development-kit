@@ -419,6 +419,12 @@ class OntologyProject(JsonSchemaMixin):
     
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
+    
+    custom_makefile_header : str = """
+# ----------------------------------------
+# More information: https://github.com/INCATools/ontology-development-kit/
+"""
+    """A multiline string that is added to the Makefile"""
 
     public_release : str = "none"
     """if true add functions to run automated releases (experimental). Current options are: github_curl, github_python."""
