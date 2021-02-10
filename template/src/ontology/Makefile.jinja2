@@ -254,12 +254,6 @@ imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		remove --term rdfs:label -T imports/$*_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
-{% elif 'mireot' == project.import_group.module_type %}
-imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
-	if [ $(IMP) = true ]; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
-		extract -L imports/$*_terms_combined.txt -U imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --method MIREOT \
-		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif 'custom' == project.import_group.module_type %}
 imports/%_import.owl: mirror/%.owl
 	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
@@ -272,7 +266,29 @@ imports/%_import.owl: mirror/%.owl
 imports/%_import.obo: imports/%_import.owl
 	if [ $(IMP) = true ]; then $(ROBOT) convert --check false -i $< -f obo -o $@.tmp.obo && mv $@.tmp.obo $@; fi
 {% endif -%}
-{% endif %}
+
+{%- for ont in project.import_group.products -%}
+{% if ont.is_large  -%}
+## Special treatment for large ontology: {{ ont.id }}
+{% if 'slme' == project.import_group.module_type %}
+imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/{{ ont.id }}_terms_combined.txt
+	if [ $(IMP) = true ]; then $(ROBOT) extract -i $< -T imports/{{ ont.id }}_terms_combined.txt --force true --method {{ project.import_group.module_type_slme }} \
+		query --update ../sparql/inject-subset-declaration.ru \
+		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+{% elif 'minimal' == project.import_group.module_type %}
+imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/{{ ont.id }}_terms_combined.txt
+	if [ $(IMP) = true ]; then $(ROBOT) extract  -i $< -T imports/{{ ont.id }}_terms_combined.txt --force true --method BOT \
+		remove --base-iri $(URIBASE)"/$(shell echo {{ ont.id }} | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
+		query --update ../sparql/inject-subset-declaration.ru \
+		remove --term rdfs:label -T imports/{{ ont.id }}_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
+		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+{% elif 'custom' == project.import_group.module_type %}
+imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl
+	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
+{%- endif %}
+{%- endif %}
+{%- endfor %}
+{%- endif %}
 
 {% if project.components is not none %}
 # ----------------------------------------
@@ -319,13 +335,27 @@ mirror/{{ ont.id }}.trigger: $(SRC)
 mirror/{{ ont.id }}.trigger:
 	touch $@
 {% endif -%}
-{% if ont.mirror_from %}
+
+{%- if ont.mirror_from %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 	if [ $(MIR) = true ] && [ $(IMP) = true ]; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl && mv $@.tmp.owl $@; fi
-{% else %}
+{%- elif ont.use_base %}
+{%- if ont.use_gzipped %}
+mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
+	if [ $(MIR) = true ] && [ $(IMP) = true ]; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz -o $@.tmp.owl && mv $@.tmp.owl $@; fi
+{%- else %}
+mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
+	if [ $(MIR) = true ] && [ $(IMP) = true ]; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
+{%- endif %}
+{%- else %}
+{%- if ont.use_gzipped %}
+mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
+	if [ $(MIR) = true ] && [ $(IMP) = true ]; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl.gz -o $@.tmp.owl && mv $@.tmp.owl $@; fi
+{%- else %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 	if [ $(MIR) = true ] && [ $(IMP) = true ]; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
-{% endif %}
+{%- endif %}
+{%- endif %}
 .PRECIOUS: mirror/%.owl
 {% endfor -%}
 {% endif %}
