@@ -1,3 +1,37 @@
+# v1.2.26 (10 February 2021): HOTFIXES
+- Hotfixes:
+  - The new mireot module technique was buggy and is therefore removed again. Sorry; we will try again next time. You can still use the `custom` option to implement mireot yourself!
+  - A change in the way imports were processed introduced a very high memory footprint for large ontologies and slowed stuff down. If you do not have a lot of memory (and time!) available, you should use the following new flags: `is_large` and `use_gzipped`. `is_large: TRUE` introduces a special handling for the ontology that is faster and consumes less memory when creating an import. Using `use_gzipped` will try to download the ontology from its gzipped location. Make sure its actually there (we know its the case for chebi and pr at least)!
+```
+import_group:
+  products: 
+    - id: pr
+      use_gzipped: TRUE
+      is_large: TRUE
+    - id: chebi
+      use_gzipped: TRUE
+      is_large: TRUE
+```
+  - An irrelevant file (keeprelations.txt) was still generated even if needed when seeding a new repo.
+  - Module type `STAR` was accidentally hard coded default for slme. Now changed to `BOT` as it was.
+  - CI configs where not correctly copied by update routine. Now it does. Note for the changes to be picked up, you need to run `sh run.sh make update_repo` twice (once for updating the update script itself)!
+  - Geeky (but necessary) all phony make goals are now correctly declared as `.PHONY`.
+- Some last minute features:
+  - In new repos, the README.md is now generated with the correct, appropriate banners.
+  - We now have a new feature, `custom_makefile_header`, that allows injecting a custom header into the Makefile. Most mortals wont need this, but this is how it goes:
+```
+custom_makefile_header: |
+  ### Workflow
+  #
+  # Tasks to edit and release OMRSE.
+  #
+  # #### Edit
+  #
+  # 1. [Prepare release](prepare_release)
+  # 2. [Refresh imports](all_imports)
+  # 3. [Update repo to latest ODK](update_repo)
+```
+- all features and fixes here: https://github.com/INCATools/ontology-development-kit/pull/397
 
 # v1.2.26 (2 February 2021)
 - New versions:
