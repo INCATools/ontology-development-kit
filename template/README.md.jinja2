@@ -1,5 +1,8 @@
+{%- if project.ci is defined -%}{% if 'travis' in project.ci %}
 [![Build Status](https://travis-ci.org/{{ project.github_org }}/{{ project.repo }}.svg?branch=master)](https://travis-ci.org/{{ project.github_org }}/{{ project.repo }})
-[![DOI](https://zenodo.org/badge/13996/{{ project.github_org }}/{{ project.repo }}.svg)](https://zenodo.org/badge/latestdoi/13996/{{ project.github_org }}/{{ project.repo }})
+{%- endif -%}{% if 'github_actions' in project.ci %}
+![Build Status](https://github.com/{{ project.github_org }}/{{ project.repo }}/workflows/CI/badge.svg)
+{% endif %}{% endif -%}
 
 # {{ project.title }}
 

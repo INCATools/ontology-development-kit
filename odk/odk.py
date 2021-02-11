@@ -104,6 +104,15 @@ class ImportProduct(Product):
     
     mirror_from: Optional[Url] = None
     """if specified this URL is used rather than the default OBO PURL for the main OWL product"""
+    
+    is_large: bool = False
+    """if large, ODK may take measures to reduce the memory footprint of the import."""
+    
+    use_base: bool = False
+    """if use_base is true, try use the base IRI instead of normal one to mirror from."""
+    
+    use_gzipped: bool = False
+    """if use_gzipped is true, try use the base IRI instead of normal one to mirror from."""
 
 @dataclass_json
 @dataclass
@@ -228,7 +237,7 @@ class ImportGroup(ProductGroup):
     """all import products"""
     
     module_type : str = "slme"
-    """Module type. Supported: slme, mireot, minimal, custom"""
+    """Module type. Supported: slme, minimal, custom"""
     
     module_type_slme : str = "BOT"
     """SLME module type. Supported: BOT, TOP, STAR"""
@@ -419,6 +428,12 @@ class OntologyProject(JsonSchemaMixin):
     
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
+    
+    custom_makefile_header : str = """
+# ----------------------------------------
+# More information: https://github.com/INCATools/ontology-development-kit/
+"""
+    """A multiline string that is added to the Makefile"""
 
     public_release : str = "none"
     """if true add functions to run automated releases (experimental). Current options are: github_curl, github_python."""
