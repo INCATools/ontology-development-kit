@@ -36,6 +36,9 @@ RUN apt-get update &&\
     wget \
     jq \
     openssl \
+    aha \
+    dos2unix \
+    sqlite3 \
     xlsx2csv &&\
     cd /usr/local/bin \
     && ln -s /usr/bin/python3 python \
