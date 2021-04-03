@@ -2,7 +2,6 @@ id: omrse
 title: "The Ontology of Medically Related Social Entities"
 github_org: matentzn
 repo: omrse-odk-test
-#report_fail_on: ERROR
 report_fail_on: None
 export_formats:
   - owl
@@ -11,11 +10,54 @@ export_formats:
 release_artefacts: 
   - base
   - full
-  - simple
 import_group:
+  module_type: filter
+  annotation_properties:
+    - rdfs:label
+    - IAO:0000115
+    - IAO:0000116
+    - IAO:0000111
   products:
     - id: ro
-    - id: bfo
+      module_type: slme
+      slme_individuals: exclude
+    - id: ogms
     - id: obi
+    - id: apollo_sv
+      module_type: filter
+    - id: omiabis
+      module_type: custom
+    - id: go
+    - id: oae
+    - id: pco
+    - id: bfo
+      module_type: slme
+      slme_individuals: exclude
+    - id: oostt
+    - id: omo
+      module_type: mirror
+    - id: pno
+      mirror_from: http://purl.obolibrary.org/obo/iao/pno.owl
+      module_type: mirror
+    - id: d-acts
+      mirror_from: http://purl.obolibrary.org/obo/iao/d-acts/release/2020-10-14/d-acts.owl
+      module_type: mirror
+components:
+  products:
+    #- filename: education/omrse-education.owl
+    #- filename: language/language-individuals.owl
+    #- filename: language/omrse-language.owl
+    #- filename: omrse-core.owl
+    - filename: import_terms.owl
 robot_java_args: '-Xmx8G'
+custom_makefile_header: |
+  ### Workflow
+  #
+  # Tasks to edit and release OMRSE.
+  #
+  # #### Edit
+  #
+  # 1. [Prepare release](prepare_release)
+  # 2. [Refresh imports](all_imports)
+  # 3. [Update repo to latest ODK](update_repo)
 

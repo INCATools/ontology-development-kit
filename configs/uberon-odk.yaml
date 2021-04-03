@@ -1,0 +1,36 @@
+id: uberon
+title: "Uberon multi-species anatomy ontology"
+github_org: obophenotype
+repo: uberon
+#report_fail_on: ERROR
+report_fail_on: None
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+  - json
+namespaces: 
+  - http://purl.obolibrary.org/obo/UBERON_
+  - http://purl.obolibrary.org/obo/uberon#
+release_artefacts: 
+  - base
+  - full
+  - simple
+  - basic
+  - custom-ext
+import_group:
+  products:
+    - id: pr
+      is_large: TRUE
+      use_gzipped: TRUE
+    - id: cl
+    - id: go
+    - id: envo 
+    - id: ro
+    - id: chebi
+      is_large: TRUE
+      use_gzipped: TRUE
+    - id: pato
+    - id: ncbitaxon
+    - id: nbo
+robot_java_args: '-Xmx8G'
