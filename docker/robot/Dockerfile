@@ -1,17 +1,24 @@
-FROM openjdk:8-jre-alpine3.9
-MAINTAINER Chris Mungall <cjmungall@lbl.gov>
-
-RUN apk add --no-cache make bash
+FROM openjdk:8-slim
+LABEL maintainer="obo-tools@googlegroups.com" 
 
 WORKDIR /tools
 
-ENV ROBOT v1.5.0
+ENV ROBOT v1.8.1
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
 ENV ROBOT_JAR ${ROBOT_JAR}
 
-RUN wget $ROBOT_JAR -O /tools/robot.jar && \
-    wget https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -O /tools/robot && \
-    chmod +x /tools/*
+RUN apt-get update &&\
+  apt-get upgrade -y &&\
+  apt-get install -y make \
+    unzip \
+    rsync \
+    curl
+
+RUN curl -L $ROBOT_JAR -o /tools/robot.jar &&\
+    curl -L https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -o /tools/robot && \
+    chmod +x /tools/robot && \
+    chmod +x /tools/robot.jar
   
 ENV PATH "/tools/:$PATH"
+RUN echo "Keep me in sync with obolibrary/odkfull!"
 CMD robot -h
