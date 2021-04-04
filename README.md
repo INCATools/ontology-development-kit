@@ -1,6 +1,8 @@
 # ontology-development-kit
 
 [![Build Status](https://travis-ci.org/INCATools/ontology-development-kit.svg?branch=master)](https://travis-ci.org/INCATools/ontology-development-kit)
+[![DOI](https://zenodo.org/badge/48047921.svg)](https://zenodo.org/badge/latestdoi/48047921)
+
 
 Initialize a Git repo for managing your ontology the OBO Library way!
 
