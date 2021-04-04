@@ -39,6 +39,7 @@ RUN apt-get update &&\
     aha \
     dos2unix \
     sqlite3 \
+    libjson-perl \
     xlsx2csv &&\
     cd /usr/local/bin \
     && ln -s /usr/bin/python3 python \
@@ -94,6 +95,11 @@ ENV FASTOBO_VALIDATOR v0.4.0
 RUN wget https://dl.bintray.com/fastobo/fastobo-validator/$FASTOBO_VALIDATOR/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
 && chmod +x /tools/fastobo-validator
 
+###### JENA ######
+ENV JENA 3.12.0
+RUN wget http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA.tar.gz -O- | tar xzC /tools 
+ENV PATH "/tools/apache-jena-$JENA/bin:$PATH"
+
 ##### Ammonite #####
 # LAYERSIZE ~31MB
 RUN (echo "#!/usr/bin/env sh" \
@@ -139,6 +145,12 @@ RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 --branch docker
 #    ls -l /tools/
 #RUN chmod +x /tools/droid
 
+# ######
+# RUN cd /tools/ && git clone --depth 1 https://github.com/cmungall/blipkit.git && cd blipkit &&\
+# ./configure && make && make install && cd /tools/ && rm -rf blipkit
+# ENV PATH "/usr/local/bin:$PATH"
+
+
 ### 5. Install ODK
 ARG ODK_VERSION=0.0.0
 ENV ODK_VERSION=${ODK_VERSION}
@@ -153,5 +165,6 @@ COPY template/ /tools/templates/
 RUN chmod +x /tools/*.py
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
+RUN echo "PLEASE DONT FORGET TO UPDATE odklite (docker/odklite/Dockerfile) and robot (docker/robot/Dockerfile) images!"
 
 CMD python /tools/odk.py

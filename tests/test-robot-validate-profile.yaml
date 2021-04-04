@@ -1,0 +1,20 @@
+id: rvp
+title: "Test ROBOT validate profile"
+github_org: INCATools
+repo: ontology-development-kit
+edit_format: owl
+export_formats:
+  - owl
+import_group:
+  products:
+    - id: ro
+robot_report:
+  release_reports: True
+  fail_on : ERROR
+  use_labels: False
+  custom_profile: True
+  ensure_owl2dl_profile: True
+  report_on:
+    - edit
+  custom_sparql_checks : []
+  custom_sparql_exports : []

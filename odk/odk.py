@@ -105,8 +105,23 @@ class ImportProduct(Product):
     mirror_from: Optional[Url] = None
     """if specified this URL is used rather than the default OBO PURL for the main OWL product"""
     
+    base_iris: Optional[List[str]] = None
+    """if specified this URL is used rather than the default OBO PURL for the main OWL product"""
+    
     is_large: bool = False
     """if large, ODK may take measures to reduce the memory footprint of the import."""
+    
+    module_type : Optional[str] = None
+    """Module type. Supported: slme, minimal, custom"""
+    
+    module_type_slme : str = "BOT"
+    """SLME module type. Supported: BOT, TOP, STAR"""
+    
+    annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115'])
+    """Define which annotation properties to pull in."""
+    
+    slme_individuals : str = "include"
+    """See http://robot.obolibrary.org/extract#syntactic-locality-module-extractor-slme"""
     
     use_base: bool = False
     """if use_base is true, try use the base IRI instead of normal one to mirror from."""
@@ -248,6 +263,9 @@ class ImportGroup(ProductGroup):
     release_imports : bool = False
     """If set to True, imports are copied to the release directory."""
     
+    annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115'])
+    """Define which annotation properties to pull in."""
+    
     directory : Directory = "imports/"
     """directory where imports are extracted into to"""
 
@@ -272,8 +290,11 @@ class ReportConfig(JsonSchemaMixin):
     custom_profile : bool = False
     """This will replace the call to the standard OBO report to a custom profile instead."""
     
-    report_on : List[str] = field(default_factory=lambda: ['edit', '.owl'])
+    report_on : List[str] = field(default_factory=lambda: ['edit'])
     """Chose which files to run the report on."""
+    
+    ensure_owl2dl_profile : bool = False
+    """This will ensure that the main .owl release file conforms to the owl2 profile during make test."""
     
     release_reports : bool = False
     """ If true, release reports are added as assets to the release (top level directory, reports directory)"""
@@ -284,6 +305,17 @@ class ReportConfig(JsonSchemaMixin):
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
     """Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory."""
 
+@dataclass_json
+@dataclass
+class DocumentationGroup(JsonSchemaMixin):
+    """
+    Setting for the repos documentation system
+    """
+    
+    documentation_system : Optional[str] = 'mkdocs'
+    """Currently, only mkdocs is supported. """
+    
+    
 
 @dataclass_json
 @dataclass
@@ -429,6 +461,9 @@ class OntologyProject(JsonSchemaMixin):
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
     
+    use_custom_import_module : bool = False
+    """if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed."""
+    
     custom_makefile_header : str = """
 # ----------------------------------------
 # More information: https://github.com/INCATools/ontology-development-kit/
@@ -447,7 +482,7 @@ class OntologyProject(JsonSchemaMixin):
     allow_equivalents : str = "all"
     """can be all, none or assert-only (see ROBOT documentation: http://robot.obolibrary.org/reason)"""
     
-    ci : Optional[List[str]] = field(default_factory=lambda: ['travis', 'github_actions'])
+    ci : Optional[List[str]] = field(default_factory=lambda: ['github_actions'])
     """continuous integration defaults; currently available: travis, github_actions"""
     
     import_pattern_ontology : bool = False
@@ -500,6 +535,9 @@ class OntologyProject(JsonSchemaMixin):
     """Block that includes information on all ontology imports to be generated"""
 
     components : Optional[ComponentGroup] = None
+    """Block that includes information on all ontology components to be generated"""
+    
+    documentation : Optional[DocumentationGroup] = None
     """Block that includes information on all ontology components to be generated"""
 
     subset_group : Optional[SubsetGroup] = None

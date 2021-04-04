@@ -187,46 +187,6 @@ imports/%_import.owl: mirror/%.owl
 
 #}
 ^^^ src/ontology/imports/{{ imp.id }}_terms.txt
-{%- if imp.id == 'ro' %}
-BFO:0000050
-RO:0002202
-{%- elif imp.id == 'bfo' %}
-BFO:0000040
-{%- elif imp.id == 'go' %}
-GO:0008150
-{%- elif imp.id == 'uberon' %}
-UBERON:0001062
-{%- elif imp.id == 'cl' %}
-CL:0000000
-{%- elif imp.id == 'pato' %}
-PATO:0000001
-{%- elif imp.id == 'mpath' %}
-MPATH:0
-{%- elif imp.id == 'doid' %}
-DOID:4
-{%- elif imp.id == 'ncbitaxon' %}
-NCBITaxon:1
-{%- elif imp.id == 'chebi' %}
-CHEBI:24431
-{%- elif imp.id == 'bco' %}
-http://purl.obolibrary.org/obo/BCO_0000081
-{%- elif imp.id == 'envo' %}
-ENVO:00001998
-{%- elif imp.id == 'iao' %}
-IAO:0000577
-{%- elif imp.id == 'uo' %}
-UO:0010003
-{%- elif imp.id == 'obi' %}
-OBI:0000011
-{%- elif imp.id == 'hsapdv' %}
-http://purl.obolibrary.org/obo/HsapDv_0000000
-{%- elif imp.id == 'nbo' %}
-NBO:0000313
-{%- else %}
-{{ imp.id|upper }}:0000000
-{{ imp.id|upper }}:0000001
-{{ imp.id|upper }}:0000002
-{%- endif %}
 {% endfor %}
 {#-
 
@@ -530,4 +490,523 @@ jobs:
           DEFAULT_BRANCH: {{ project.git_main_branch }}
         run: cd src/ontology && make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false
 {% endif -%}
+{% endif -%}
+{% if project.use_custom_import_module %}
+^^^ src/templates/external_import.tsv
+ID	Entity Type
+ID	TYPE
+owl:Thing	owl:Class
+{% endif -%}
+{% if project.documentation is not none %}
+^^^ mkdocs.yaml
+site_name: {{ project.title }}
+theme: readthedocs
+nav:
+  - Basics:
+      - Index: index.md
+      - Quickstart: quickstart.md
+      - History: history.md
+  - Editors Guide:
+      - Standard ODK workflows: odk-workflows/index.md
+          - Editors Workflow: odk-workflows/EditorsWorkflow.md
+          - Release Workflow: odk-workflows/ReleaseWorkflow.md
+          - Manage your ODK Repository: odk-workflows/RepoManagement.md
+          - Setting up Docker for ODK: odk-workflows/SettingUpDockerForODK.md
+          - Imports management: odk-workflows/UpdateImports.md
+#  - Design Patterns:
+#    - Design Patterns Overview: design-patterns.md
+#  - Components
+#  - Imports
+#    - Modules Overview: modules.md
+#  - Mappings:
+#  - Semantics:
+#    - RO and BFO: ro-and-bfo.md
+#    - Temporal Semantics: temporal-semantics.md
+#  - Cite:
+#    cite.md
+#  - Contributing:
+#    - Editors guide: editing-ro.md
+^^^ docs/index.md
+# {{ project.id.upper() }} Ontology Documentation
+
+[//]: # "This file is meant to be edited by the ontology maintainer."
+
+Welcome to the {{ project.id.upper() }} documentation!
+
+You can find descriptions of the standard ontology engineering workflows [here](odk-workflows/index.md).
+^^^ docs/history.md
+# A brief history of {{ project.id.upper() }}
+
+The following page gives an overview of the history of {{ project.id.upper() }}.
+^^^ docs/cite.md
+# How to cite {{ project.id.upper() }}
+^^^ docs/contributing.md
+# How to contribute to {{ project.id.upper() }}
+^^^ docs/odk-workflows/EditorsWorkflow.md
+# Editors Workflow
+
+The editors workflow is one of the formal [workflows](Workflow.md) to ensure that the ontology is developed correctly according to ontology engineering principles. There are a few different editors workflows:
+
+1. Local editing workflow: Editing the ontology in your local environment by hand, using tools such as Protégé, ROBOT templates or DOSDP patterns.
+2. Completely automated data pipeline (GitHub Actions)
+3. DROID workflow
+
+This document only covers the first editing workflow, but more will be added in the future
+
+### Local editing workflow
+
+Workflow requirements:
+- git
+- github
+- docker
+- editing tool of choice, e.g. Protégé, your favourite text editor, etc
+
+#### 1. _Create issue_
+Ensure that there is a ticket on your issue tracker that describes the change you are about to make. While this seems optional, this is a very important part of the social contract of building an ontology - no change to the ontology should be performed without a good ticket, describing the motivation and nature of the intended change.
+
+#### 2. _Update main branch_ 
+In your local environment (e.g. your laptop), make sure you are on the `main` (prev. `master`) branch and ensure that you have all the upstream changes, for example:
+
+```
+git checkout master
+git pull
+```
+
+#### 3. _Create feature branch_
+Create a new branch. Per convention, we try to use meaningful branch names such as:
+- issue23removeprocess (where issue 23 is the related issue on GitHub)
+- issue26addcontributor
+- release20210101 (for releases)
+
+On your command line, this looks like this:
+
+```
+git checkout -b issue23removeprocess
+```
+
+#### 4. _Perform edit_
+Using your editor of choice, perform the intended edit. For example:
+
+_Protege_
+1. Open `src/ontology/{{ project.id }}-edit.owl` in Protege
+2. Make the change
+3. Save the file
+
+_TextEdit_
+1. Open `src/ontology/{{ project.id }}-edit.owl` in TextEdit (or Sublime, Atom, Vim, Nano)
+2. Make the change
+3. Save the file
+
+Consider the following when making the edit.
+
+1. According to our development philosophy, the only places that should be manually edited are:
+   - `src/ontology/{{ project.id }}-edit.owl`
+   - Any ROBOT templates you chose to use (the TSV files only)
+   - Any DOSDP data tables you chose to use (the TSV files, and potentially the associated patterns)
+   - components (anything in `src/ontology/components`), see [here](RepositoryFileStructure.md).
+2. Imports should not be edited (any edits will be flushed out with the next update). However, refreshing imports is a potentially breaking change - and is discussed [elsewhere](UpdateImports.md).
+3. Changes should usually be small. Adding or changing 1 term is great. Adding or changing 10 related terms is ok. Adding or changing 100 or more terms at once should be considered very carefully.
+
+#### 4. _Check the Git diff_
+This step is very important. Rather than simply trusting your change had the intended effect, we should always use a git diff as a first pass for sanity checking.
+
+In our experience, having a visual git client like [GitHub Desktop](https://desktop.github.com/) or [sourcetree](https://www.sourcetreeapp.com/) is really helpful for this part. In case you prefer the command line:
+
+```
+git status
+git diff
+```
+#### 5. Quality control
+Now its time to run your quality control checks. This can either happen locally ([5a](#Local-testing)) or through your continuous integration system ([7/5b](#continuous-integration-testing)).
+
+#### 5a. Local testing
+If you chose to run your test locally:
+
+```
+sh run.sh make IMP=false test
+```
+This will run the whole set of configured ODK tests on including your change. If you have a complex DOSDP pattern pipeline you may want to add `PAT=false` to skip the potentially lengthy process of rebuilding the patterns.
+
+```
+sh run.sh make IMP=false PAT=false test
+```
+
+#### 6. Pull request
+
+When you are happy with the changes, you commit your changes to your feature branch, push them upstream (to GitHub) and create a pull request. For example:
+
+```
+git add NAMEOFCHANGEDFILES
+git commit -m "Added biological process term #12"
+git push -u origin issue23removeprocess
+```
+
+Then you go to your project on GitHub, and create a new pull request from the branch, for example: https://github.com/INCATools/ontology-development-kit/pulls
+
+There is a lot of great advise on how to write pull requests, but at the very least you should:
+- mention the tickets affected: `see #23` to link to a related ticket, or `fixes #23` if, by merging this pull request, the ticket is fixed. Tickets in the latter case will be closed automatically by Github when the pull request is merged.
+- summarise the changes in a few sentences. Consider the reviewer: what would they want to know right away.
+- If the diff is large, provide instructions on how to review the pull request best (sometimes, there are many changed files, but only one important change).
+
+#### 7/5b. Continuous Integration Testing
+If you didn't run and local quality control checks (see [5a](#Local-testing)), you should have Continuous Integration (CI) set up, for example:
+- Travis
+- GitHub Actions
+
+More on how to set this up [here](ContinuousIntegration.md). Once the pull request is created, the CI will automatically trigger. If all is fine, it will show up green, otherwise red.
+
+#### 8. Community review
+Once all the automatic tests have passed, it is important to put a second set of eyes on the pull request. Ontologies are inherently social - as in that they represent some kind of community consensus on how a domain is organised conceptually. This seems high brow talk, but it is very important that as an ontology editor, you have your work validated by the community you are trying to serve (e.g. your colleagues, other contributors etc). In our experience, it is hard to get more than one review on a pull request - two is great. You can set up GitHub branch protection to actually require a review before a pull request can be merged! We recommend this.
+
+This step seems daunting to some hopefully under-resourced ontologies, but we recommend to put this high up on your list of priorities - train a colleague, reach out!
+
+#### 9. Merge and cleanup
+When the QC is green and the reviews are in (approvals), it is time to merge the pull request. After the pull request is merged, remember to delete the branch as well (this option will show up as a big button right after you have merged the pull request). If you have not done so, close all the associated tickets fixed by the pull request.
+
+#### 10. Changelog (Optional)
+It is sometimes difficult to keep track of changes made to an ontology. Some ontology teams opt to document changes in a changelog (simply a text file in your repository) so that when release day comes, you know everything you have changed. This is advisable at least for major changes (such as a new release system, a new pattern or template etc).
+^^^ docs/odk-workflows/ReleaseWorkflow.md
+# The release workflow 
+The release workflow recommended by the ODK is based on GitHub releases and works as follows:
+
+1. Run a release with the ODK
+2. Review the release
+3. Merge to main branch
+4. Create a GitHub release
+
+These steps are outlined in detail in the following.
+
+## Run a release with the ODK
+
+Preparation:
+
+1. Ensure that all your pull requests are merged into your main (master) branch
+2. Make sure that all changes to master are committed to Github (`git status` should say that there are no modified files)
+3. Locally make sure you have the latest changes from master (`git pull`)
+4. Checkout a new branch (e.g. `git checkout -b release-2021-01-01`)
+5. You may or may not want to refresh your imports as part of your release strategy (see [here](UpdateImports.md))
+6. Make sure you have the latest ODK installed by running `docker pull obolibrary/odkfull`
+
+To actually run the release, you:
+
+1. Open a command line terminal window and navigate to the src/ontology directory (`cd {{ project.id }}/src/ontology`)
+2. Run release pipeline:`sh run.sh make prepare_release -B`. Note that for some ontologies, this process can take up to 90 minutes - especially if there are large ontologies you depend on, like PRO or CHEBI.
+3. If everything went well, you should see the following output on your machine: `Release files are now in ../.. - now you should commit, push and make a release on your git hosting site such as GitHub or GitLab`.
+
+This will create all the specified release targets (OBO, OWL, JSON, and the variants, ont-full and ont-base) and copy them into your release directory (the top level of your repo).
+
+## Review the release
+1. (Optional) Rough check. This step is frequently skipped, but for the more paranoid among us (like the author of this doc), this is a 3 minute additional effort for some peace of mind. Open the main release (ont.owl) in you favourite development environment (i.e. Protege) and eyeball the hierarchy. We recommend two simple checks: 
+   1. Does the very top level of the hierarchy look ok? This means that all new terms have been imported/updated correctly.
+   2. Does at least one change that you know should be in this release appear? For example, a new class. This means that the release was actually based on the recent edit file. 
+2. Commit your changes to the branch and make a pull request
+3. In your GitHub pull request, review the following three files in detail (based on our experience):
+   1. `{{ project.id }}.obo` - this reflects a useful subset of the whole ontology (everything that can be covered by OBO format). OBO format has that speaking for it: it is very easy to review!
+   2. `{{ project.id }}-base.owl` - this reflects the asserted axioms in your ontology that you have actually edited.
+   3. Ideally also take a look at `{{ project.id }}-full.owl`, which may reveal interesting new inferences you did not know about. Note that the diff of this file is sometimes quite large.
+4. Like with every pull request, we recommend to always employ a second set of eyes when reviewing a PR!
+
+## Merge the main branch
+Once your [CI checks](ContinuousIntegration.md) have passed, and your reviews are completed, you can now merge the branch into your main branch (don't forget to delete the branch afterwards - a big button will appear after the merge is finished).
+
+## Create a GitHub release
+1. Go to your releases page on GitHub by navigating to your repository, and then clicking on releases (usually on the right, for example: https://github.com/{{ project.github_org }}/{{ project.repo }}/releases. Then click "Draft new release"
+1. As the tag version you **need to choose the date on which your ontologies were build.** You can find this, for example, by looking at the `{{ project.id }}.obo` file and check the `data-version:` property. The date needs to be prefixed with a `v`, so, for example `v2020-02-06`.
+1. You can write whatever you want in the release title, but we typically write the date again. The description underneath should contain a concise list of changes or term additions.
+1. Click "Publish release". Done.
+^^^ docs/odk-workflows/RepoManagement.md
+# Managing your ODK repository
+
+## Updating your ODK repository
+
+Your ODK repositories configuration is managed in `src/ontology/{{ project.id }}-odk.yaml`. Once you have made your changes, you can run the following to apply your changes to the repository:
+
+
+```
+sh run.sh make update_repo
+```
+
+There are a large number of options that can be set to configure your ODK, but we will only discuss a few of them here.
+
+## Managing imports
+
+You can use the update repository worflow described on this page to perform the following operations to your imports:
+1. Add a new import
+2. Modify an existing import
+3. Remove an import you no longer want
+4. Customise an import
+
+We will discuss all these workflows in the following.
+
+
+### Add new import
+
+To add a new import, you first edit your odk config as described [above](#Updating-your-ODK-repository), adding an `id` to the `product` list in the `import_group` section (for the sake of this example, we assume you already import RO, and your goal is to also import GO):
+
+```
+import_group:
+  products:
+    - id: ro
+    - id: go
+```
+
+Note: our ODK file should only have one `import_group` which can contain multiple imports (in the `products` section). Next, you run the [update repo workflow](#Updating-your-ODK-repository) to apply these changes. Note that by default, this module is going to be a SLME Bottom module, see [here](http://robot.obolibrary.org/extract). To change that or customise your module, see section "Customise an import". To finalise the addition of your import, perform the following steps:
+
+1. Add an imports statement to your `src/ontology/{{ project.id }}-edit.owl` file. We suggest to do this using a text editor, by simply copying an existing imports declaration and renaming it to the new ontology import, for example as follows:
+
+```
+...
+Ontology(<http://purl.obolibrary.org/obo/{{ project.id }}.owl>
+Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/ro_import.owl>)
+Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl>)
+...
+```
+
+2. Add your imports redirect to your catalog file `src/ontology/catalog-v001.xml`, for example:
+
+```
+<uri name="http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl" uri="imports/go_import.owl"/>
+```
+
+3. Test whether everything is in order:
+   1. [Refresh your import](UpdateImports.md)
+   2. Open in your Ontology Editor of choice (Protege) and ensure that the expected terms are imported.
+
+### Modify an existing import
+
+If you simply wish to refresh your import in light of new terms, see [here](UpdateImports.md). If you wish to change the type of your module see section "Customise an import".
+
+### Remove an existing import
+
+To remove an existing import, perform the following steps:
+1. remove the import declaration from your `src/ontology/{{ project.id }}-edit.owl`.
+2. remove the id from your `src/ontology/{{ project.id }}-odk.yaml`, eg. `- id: go` from the list of `products` in the `import_group`.
+3. run [update repo workflow](#Updating-your-ODK-repository)
+4. delete the associated files manually:
+   - `src/imports/go_import.owl`
+   - `src/imports/go_terms.txt`
+5. Remove the respective entry from the `src/ontology/catalog-v001.xml` file.
+
+### Customise an import
+
+By default, an import module extracted from a source ontology will be a SLME module, see [here](http://robot.obolibrary.org/extract). There are various options to change the default.
+
+The following change to your repo config (`src/ontology/{{ project.id }}-odk.yaml`) will switch the go import from an SLME module to a simple ROBOT filter module:
+
+```
+import_group:
+  products:
+    - id: ro
+    - id: go
+      module_type: filter
+```
+
+A ROBOT filter module is, essentially, importing all external terms declared by the your ontology (see [here](UpdateImports.md)] on how to declare external terms to be imported).
+
+
+If you wish to customise your import entirely, you can specify your own ROBOT command to do so. To do that, add the following to your repo config (`src/ontology/{{ project.id }}-odk.yaml`):
+
+```
+import_group:
+  products:
+    - id: ro
+    - id: go
+      module_type: custom
+```
+
+Now add a new goal in your custom Makefile (`src/ontology/{{ project.id }}.Makefile`, _not_ `src/ontology/Makefile`).
+
+```
+imports/go_import.owl: mirror/ro.owl imports/ro_terms_combined.txt
+	if [ $(IMP) = true ]; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
+		extract -T imports/ro_terms_combined.txt --force true --individuals exclude --method BOT \
+		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
+		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+```
+
+Now feel free to change this goal to do whatever you wish it to do! It probably makes some sense (albeit not being a strict necessity), to leave most of the goal instead and replace only:
+
+```
+extract -T imports/ro_terms_combined.txt --force true --individuals exclude --method BOT \
+```
+
+to another ROBOT pipeline.
+
+_Note_: if your mirror is particularly large and complex, read [this ODK recommendation](https://github.com/INCATools/ontology-development-kit/blob/master/docs/DealWithLargeOntologies.md).
+^^^ docs/odk-workflows/RepositoryFileStructure.md
+# Repository structure
+
+The main kinds of files in the repository:
+1. Release files
+2. Imports
+3. [Components](#Components)
+
+## Release files
+Release file are the file that are considered part of the official ontology release and to be used by the community. A detailed descripts of the release artefacts can be found [here](https://github.com/INCATools/ontology-development-kit/blob/master/docs/ReleaseArtefacts.md).
+
+## Imports
+Imports are subsets of external ontologies that contain terms and axioms you would like to re-use in your ontology. These are considered "external", like dependencies in software development, and are not included in your "base" product, which is the [release artefact](https://github.com/INCATools/ontology-development-kit/blob/master/docs/ReleaseArtefacts.md) which contains only those axioms that you personally maintain.
+
+These are the current imports in {{ project.id.upper() }}
+
+{% if project.import_group is defined -%}
+| Import | URL | Type |
+| ------ | --- | ---- |
+{%- for imp in project.import_group.products %}
+| {{ imp.id }} | {% if imp.mirror_from is not none %}{{ imp.mirror_from }}{% else %}http://purl.obolibrary.org/obo/{{ imp.id }}.owl{% endif %} | {% if imp.module_type is defined %}{{ imp.module_type }}{% else %}{{ project.import_group.module_type }}{% endif %} |
+{%- endfor %}
+{%- endif %}
+
+## Components
+Components, in contrast to imports, are considered full members of the ontology. This means that any axiom in a component is also included in the ontology base - which means it is considered _native_ to the ontology. While this sounds complicated, consider this: conceptually, no component should be part of more than one ontology. If that seems to be the case, we are most likely talking about an import. Components are often not needed for ontologies, but there are some use cases:
+1. There is an automated process that generates and re-generates a part of the ontology
+2. A part of the ontology is managed in ROBOT templates
+3. The expressivity of the component is higher than the format of the edit file. For example, people still choose to manage their ontology in OBO format (they should not) missing out on a lot of owl features. They may chose to manage logic that is beyond OBO in a specific OWL component.
+
+{% if project.components is not none -%}
+These are the components in {{ project.id.upper() }}
+
+| Filename | URL |
+| -------- | --- |
+{%- for component in project.components.products %}
+| {{ component.filename }} | {% if component.source is defined %}{{ component.source }}{% endif %} |
+{%- endfor %}
+{%- endif %}
+^^^ docs/odk-workflows/SettingUpDockerForODK.md
+# Setting up your Docker environment for ODK use
+
+Memory 
+
+etc
+^^^ docs/odk-workflows/UpdateImports.md
+# Update Imports Workflow
+
+This page discusses how to update the contents of your imports, like adding or removing terms. If you are looking to customise imports, like changing the module type, see [here](RepoManagement.md).
+
+## Importing a new term
+
+Importing a new term is split into to sub-phases:
+1. Declaring the terms to be imported
+2. Refreshing imports dynamically
+
+### Declaring terms to be imported
+There are three ways to declare terms that are to be imported from an external ontology. Choose the appropriate one for your particular scenario (all three can be used in parallel if need be):
+
+1. Protege-based declaration
+2. Using term files
+3. Using the custom import template
+
+#### Protege-based declaration
+
+This workflow is to be avoided, but may be appropriate if the editor _does not have access to the ODK docker container_.
+
+1. Open your ontology (edit file) in Protege (5.5+).
+1. Select 'owl:Thing'
+1. Add a new class as usual.
+1. Paste the _full iri_ in the 'Name:' field, for example, http://purl.obolibrary.org/obo/CHEBI_50906.
+1. Click 'OK'
+
+<img src="https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/docs/img/AddingClasses.png" alt="Adding Classes" />
+
+Now you can use this term for example to construct logical definitions. The next time the imports are refreshed (see how to refresh [here](#Refresh-imports)), the metadata (labels, definitions, etc) for this term are imported from the respective external source ontology and becomes visible in your ontology.
+
+
+#### Using term files
+
+Every import has, by default a term file associated with it, which can be found in the imports directory. For example, if you have a GO import in `src/ontology/go_import.owl`, you will also have an associated term file `src/ontology/go_terms.txt`. You can add terms in there simply as a list:
+
+```
+GO:0008150
+GO:0008151
+```
+
+Now you can run the [refresh imports workflow](#Refresh-imports)) and the two terms will be imported.
+
+#### Using the custom import template 
+
+This workflow is appropriate if:
+1. You prefer to manage all your imported terms in a single file (rather than multiple files like in the "Using term files" workflow above).
+2. You wish to augment your imported ontologies with additional information. This requires a cautionary discussion.
+
+To enable this workflow, you add the following to your ODK config file (`src/ontology/{{ project.id }}-odk.yaml`), and [update the repository](RepoManagement.md):
+
+```
+use_custom_import_module: TRUE
+```
+
+Now you can manage your imported terms directly in the custom external terms template, which is located at `src/templates/external_import.owl`. Note that this file is a [ROBOT template](http://robot.obolibrary.org/template), and can, in principle, be extended to include any axioms you like. Before extending the template, however, read the following carefully.
+
+The main purpose of the custom import template is to enable the management off all terms to be imported in a centralised place. To enable that, you do not have to do anything other than maintaining the template. So if you, say current import `APOLLO_SV:00000480`, and you wish to import `APOLLO_SV:00000532`, you simply add a row like this:
+
+```
+ID	Entity Type
+ID	TYPE
+APOLLO_SV:00000480	owl:Class
+APOLLO_SV:00000532	owl:Class
+```
+
+When the imports are refreshed [see imports refresh workflow](#Refresh-imports), the term(s) will simply be imported from the configured ontologies.
+
+Now, if you wish to extent the Makefile (which is beyond these instructions) and add, say, synonyms to the imported terms, you can do that, but you need to (a) preserve the `ID` and `ENTITY` columns and (b) ensure that the ROBOT template is valid otherwise, [see here](http://robot.obolibrary.org/template).
+
+_WARNING_. Note that doing this is a _widespread antipattern_ (see related [issue](https://github.com/OBOFoundry/OBOFoundry.github.io/issues/1443)). You should not change the axioms of terms that do not belong into your ontology unless necessary - such changes should always be pushed into the ontology where they belong. However, since people are doing it, whether the OBO Foundry likes it or not, at least using the _custom imports module_ as described here localises the changes to a single simple template and ensures that none of the annotations added this way are merged into the [base file](https://github.com/INCATools/ontology-development-kit/blob/master/docs/ReleaseArtefacts.md#release-artefact-1-base-required).  
+
+### Refresh imports
+
+If you want to refresh the import yourself (this may be necessary to pass the travis tests), and you have the ODK installed, you can do the following (using go as an example):
+
+First, you navigate in your terminal to the ontology directory (underneath src in your hpo root directory). 
+```
+cd src/ontology
+```
+
+Then, you regenerate the import that will now include any new terms you have added.
+
+```
+sh run.sh make PAT=false imports/go_import.owl -B
+```
+
+Since ODK 1.2.27, it is also possible to simply run the following, which is the same as the above:
+
+```
+sh run.sh make refresh-go
+```
+
+Note that in case you changed the defaults, you need to add `IMP=true` and/or `MIR=true` to the command below:
+
+```
+sh run.sh make IMP=true MIR=true PAT=false imports/go_import.owl -B
+```
+
+If you wish to skip refreshing the mirror, i.e. skip downloading the latest version of the source ontology for your import (e.g. `go.owl` for your go import) you can set `MIR=false` instead, which will do the exact same thing as the above, but is easier to remember:
+
+```
+sh run.sh make IMP=true MIR=false PAT=false imports/go_import.owl -B
+```
+
+^^^ mkdocs.yaml
+site_name: {{ project.title }}
+theme: readthedocs
+nav:
+  - Basics:
+      - Overview: index.md
+      - Cite: cite.md
+      - History: history.md
+  - Editors Guide:
+      - Standard ODK workflows:
+          - Editors Workflow: odk-workflows/EditorsWorkflow.md
+          - Release Workflow: odk-workflows/ReleaseWorkflow.md
+          - Manage your ODK Repository: odk-workflows/RepoManagement.md
+          - Setting up Docker for ODK: odk-workflows/SettingUpDockerForODK.md
+          - Imports management: odk-workflows/UpdateImports.md
+      - Contributing: contributing.md
+{% if project.use_dosdps %}  - Design Patterns:
+    - Design Patterns Overview: design-patterns.md
+{% endif -%}
+#  - Components
+#  - Imports
+#    - Modules Overview: modules.md
+#  - Mappings:
+#  - Contributing:
+#    - Editors guide: editing-ro.md
 {% endif -%}

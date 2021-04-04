@@ -1,3 +1,15 @@
+# v1.2.27 (4 April 2021)
+- revived odklite image with a minimum install (smaller in size than odkfull, with just robot and owltools!)
+- revived robot image with just robot installed
+- Added Jena 3.12.0 to odkfull image
+- Added module configs (see docs)
+- added a complete new documentation system for ontologies using mkdocs (see docs)
+- added OWL2 DL profile checking (see [here](tests/test-robot-validate-profile.yaml) for example)
+- Added sqlite3, dos2unix, and aha to odkfull image
+- Added a `use_custom_import_module` feature (see docs for example)
+- Added ability to add completely customised release artefacts (see Uberon repo for example)
+- Revised update mechanism. Please run the `make update_repo` *multiple times if you encounter problems and to ensure that all changes are picked up*.
+
 # v1.2.26 (10 February 2021): HOTFIXES
 - Hotfixes:
   - The new mireot module technique was buggy and is therefore removed again. Sorry; we will try again next time. You can still use the `custom` option to implement mireot yourself!
