@@ -160,6 +160,21 @@ class RobotTemplateProduct(Product):
 
 @dataclass_json
 @dataclass
+class RelationGraphProduct(JsonSchemaMixin):
+    """
+    A configuration for a relation graph
+    """
+    
+    used: bool = True
+    """true if RG is to be used"""
+    
+
+    relations : Optional[List[str]] = None
+    """A list of relations to be materialized"""
+
+
+@dataclass_json
+@dataclass
 class ExportProduct(Product):
     """
     Represents a export product, such as one produced by a SPARQL query
@@ -511,7 +526,7 @@ class OntologyProject(JsonSchemaMixin):
     
     obo_format_options : str = ""
     """Additional args to pass to robot when saving to obo. TODO consider changing to a boolean for checks"""
-
+    
     catalog_file : str = "catalog-v001.xml"
     """Name of the catalog file to be used by the build."""
 
@@ -530,6 +545,9 @@ class OntologyProject(JsonSchemaMixin):
     robot_report : Dict[str, Any] = field(default_factory=lambda: ReportConfig().to_dict())
     """Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated"""
 
+    relation_graph : Optional[RelationGraphProduct] = None
+    """RelationGraph configuration"""
+    
     # product groups
     import_group : Optional[ImportGroup] = None
     """Block that includes information on all ontology imports to be generated"""
