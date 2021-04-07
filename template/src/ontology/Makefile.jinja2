@@ -453,9 +453,9 @@ subsets/%.owl: $(ONT).owl
 # Relation graph
 # ----------------------------------------
 {% if project.relation_graph is defined %}
-inferences/nonredundant.ttl: $(ONT).owl
-	$(RELATION_GRAPH) relation-graph {% if project.relation_graph.relations is defined %}{% for r in project.relation_graph.relations %}--property r {% endfor %}{% endif %}\
-        --ontology-file $<  --non-redundant-output-file nonredundant.ttl --redundant-output-file redundant.ttl
+$(GRAPHDIR)/$(ONT)-rg.ttl: $(ONT).owl
+	$(RELATION_GRAPH) relation-graph {% if project.relation_graph.relations is defined %}{% for r in project.relation_graph.relations %}--property {{r}} {% endfor %}{% endif %}\
+        --ontology-file $<  --non-redundant-output-file $(GRAPHDIR)/$(ONT)-rg-nr.ttl --redundant-output-file $@
 {% endif %}
 
 # ----------------------------------------
