@@ -40,6 +40,9 @@ RUN apt-get update &&\
     dos2unix \
     sqlite3 \
     libjson-perl \
+    libfreetype6-dev \
+    libpng-dev \
+    pkg-config \
     xlsx2csv &&\
     cd /usr/local/bin \
     && ln -s /usr/bin/python3 python \
