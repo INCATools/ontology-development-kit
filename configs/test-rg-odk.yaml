@@ -1,0 +1,21 @@
+id: testrg
+title: "RG TEST"
+github_org: test
+repo: rgtest
+report_fail_on: none
+release_artefacts: 
+  - base
+  - full
+  - non-classified
+primary_release: full
+export_formats:
+  - owl
+import_group:
+  products:
+    - id: pato
+      filename: pato.owl
+      source: http://purl.obolibrary.org/obo/pato/pato-base.owl
+robot_java_args: '-Xmx8G'
+relation_graph:
+  relations:
+    - BFO:0000050

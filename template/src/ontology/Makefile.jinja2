@@ -449,10 +449,10 @@ subsets/%.owl: $(ONT).owl
 .PRECIOUS: subsets/%.owl
 {% endif %}
 
+{% if project.relation_graph is defined %}
 # ----------------------------------------
 # Relation graph
 # ----------------------------------------
-{% if project.relation_graph is defined %}
 $(GRAPHDIR)/$(ONT)-rg.ttl: $(ONT).owl
 	$(RELATION_GRAPH) relation-graph {% if project.relation_graph.relations is defined %}{% for r in project.relation_graph.relations %}--property {{r}} {% endfor %}{% endif %}\
         --ontology-file $<  --non-redundant-output-file $(GRAPHDIR)/$(ONT)-rg-nr.ttl --redundant-output-file $@
