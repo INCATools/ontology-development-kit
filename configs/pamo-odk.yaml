@@ -1,0 +1,26 @@
+id: pamo
+title: "Plant and Microbial Ontology"
+github_org: environmentontology
+repo: pamo-ontology
+report_fail_on: none
+release_artefacts: 
+  - base
+  - full
+  - non-classified
+primary_release: full
+export_formats:
+  - owl
+import_group:
+  products:
+    - id: ro
+      module_type: slme
+      slme_individuals: exclude
+    - id: po
+      filename: po.owl
+      source: http://purl.obolibrary.org/obo/pato/po.owl
+    - id: envo
+      filename: envo.owl
+      source: http://purl.obolibrary.org/obo/pato/envo.owl
+robot_java_args: '-Xmx12G'
+relation_graph_relations: []
+
