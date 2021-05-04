@@ -141,7 +141,7 @@ ENV COURSIER_CACHE "/tools/.coursier-cache"
 
 ###### FASTOBO ######
 ENV FASTOBO_VALIDATOR v0.4.0
-RUN wget https://dl.bintray.com/fastobo/fastobo-validator/$FASTOBO_VALIDATOR/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
+RUN wget https://github.com/fastobo/fastobo-validator/releases/download/$FASTOBO_VALIDATOR/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
 && chmod +x /tools/fastobo-validator
 
 ###### JENA ######
