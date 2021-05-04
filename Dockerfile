@@ -15,13 +15,11 @@ COPY odk/make-release-assets.py /tools/
 # LAYERSIZE ~1000MB
 RUN apt-get update &&\
   apt-get install -y software-properties-common &&\
-  add-apt-repository ppa:swi-prolog/stable &&\
   apt-get upgrade -y &&\
   apt-get install -y build-essential \
     git \
     openjdk-8-jre \
     openjdk-8-jdk \
-    swi-prolog \
     maven \
     python3-pip \
     python3-dev \
@@ -40,6 +38,9 @@ RUN apt-get update &&\
     dos2unix \
     sqlite3 \
     libjson-perl \
+    libfreetype6-dev \
+    libpng-dev \
+    pkg-config \
     xlsx2csv &&\
     cd /usr/local/bin \
     && ln -s /usr/bin/python3 python \
@@ -48,6 +49,54 @@ RUN apt-get update &&\
   	&& if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi \
   	&& if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
   	&& rm -r /root/.cache
+
+
+### 3. Install SWI-Prolog
+# We normally install it from the binary package provided by upstream,
+# but on arm64, there is no such package and we need to build it from
+# source after installing its compile-time dependencies.
+ARG TARGETARCH
+RUN test "x$TARGETARCH" != xarm64 && ( \
+        add-apt-repository ppa:swi-prolog/stable && \
+        apt-get install -y swi-prolog \
+    ) || ( \
+        apt-get install -y \
+            cmake \
+	    ncurses-dev \
+	    libreadline-dev \
+	    libedit-dev \
+	    libgoogle-perftools-dev \
+	    libunwind-dev \
+	    libgmp-dev \
+	    libssl-dev \
+	    unixodbc-dev \
+	    zlib1g-dev \
+	    libarchive-dev \
+	    libxext-dev \
+	    libice-dev \
+	    libjpeg-dev \
+	    libxinerama-dev \
+	    libxft-dev \
+	    libxpm-dev \
+	    libxt-dev \
+	    libdb-dev \
+	    libpcre3-dev \
+	    libyaml-dev \
+	    junit4 && \
+        wget https://www.swi-prolog.org/download/stable/src/swipl-8.2.4.tar.gz -O /tools/swipl-8.2.4.tar.gz && \
+        cd /tools && \
+        tar xf swipl-8.2.4.tar.gz && \
+        cd swipl-8.2.4 && \
+        mkdir build && \
+        cd build && \
+        cmake -DCMAKE_INSTALL_PREFIX=/usr .. && \
+        make && \
+        make install && \
+        cd /tools && \
+        rm swipl-8.2.4.tar.gz && \
+        rm -rf swipl-8.2.4 \
+    )
+
 
 ### 4. Install custom tools
 #  scripts/droid
