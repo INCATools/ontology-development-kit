@@ -1,4 +1,4 @@
-FROM openjdk:8-slim
+FROM ubuntu:18.04
 LABEL maintainer="obo-tools@googlegroups.com" 
 
 WORKDIR /tools
@@ -10,6 +10,7 @@ ENV ROBOT_JAR ${ROBOT_JAR}
 RUN apt-get update &&\
   apt-get upgrade -y &&\
   apt-get install -y make \
+    openjdk-8-jdk \
     unzip \
     rsync \
     curl
