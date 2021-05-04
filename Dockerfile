@@ -159,7 +159,7 @@ RUN (echo "#!/usr/bin/env sh" \
 RUN amm /dev/null
 
 ###### DOSDPTOOLS ######
-ENV DOSDPVERSION=0.16
+ENV DOSDPVERSION=0.17
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
 # LAYERSIZE ~200MB
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPVERSION/dosdp-tools-$DOSDPVERSION.tgz \
