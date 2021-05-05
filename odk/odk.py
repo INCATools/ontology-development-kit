@@ -849,6 +849,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         print("    E.g.:")
         print("cd {}".format(outdir))
         print("git remote add origin git\@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
+        print("git branch -M main\n")
         print("git push -u origin main\n")
         print("BE BOLD: you can always delete your repo and start again\n")
         print("")
