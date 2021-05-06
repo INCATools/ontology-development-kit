@@ -498,34 +498,6 @@ ID	TYPE
 owl:Thing	owl:Class
 {% endif -%}
 {% if project.documentation is not none %}
-^^^ mkdocs.yaml
-site_name: {{ project.title }}
-theme: readthedocs
-nav:
-  - Basics:
-      - Index: index.md
-      - Quickstart: quickstart.md
-      - History: history.md
-  - Editors Guide:
-      - Standard ODK workflows: odk-workflows/index.md
-          - Editors Workflow: odk-workflows/EditorsWorkflow.md
-          - Release Workflow: odk-workflows/ReleaseWorkflow.md
-          - Manage your ODK Repository: odk-workflows/RepoManagement.md
-          - Setting up Docker for ODK: odk-workflows/SettingUpDockerForODK.md
-          - Imports management: odk-workflows/UpdateImports.md
-#  - Design Patterns:
-#    - Design Patterns Overview: design-patterns.md
-#  - Components
-#  - Imports
-#    - Modules Overview: modules.md
-#  - Mappings:
-#  - Semantics:
-#    - RO and BFO: ro-and-bfo.md
-#    - Temporal Semantics: temporal-semantics.md
-#  - Cite:
-#    cite.md
-#  - Contributing:
-#    - Editors guide: editing-ro.md
 ^^^ docs/index.md
 # {{ project.id.upper() }} Ontology Documentation
 
@@ -542,10 +514,36 @@ The following page gives an overview of the history of {{ project.id.upper() }}.
 # How to cite {{ project.id.upper() }}
 ^^^ docs/contributing.md
 # How to contribute to {{ project.id.upper() }}
+^^^ docs/odk-workflows/index.md
+# Default ODK Workflows
+
+- [Daily Editors Workflow](EditorsWorkflow.md)
+- [Release Workflow](ReleaseWorkflow.md)
+- [Manage your ODK Repository](RepoManagement.md)
+- [Setting up Docker for ODK](SettingUpDockerForODK.md)
+- [Imports management](UpdateImports.md)
+- [Managing the documentation](ManageDocumentation.md)
+
+^^^ docs/odk-workflows/ContinuousIntegration.md
+# Introduction to Continuous Integration Workflows with ODK
+
+Historically, most repos have been using Travis CI for continuous integration testing and building, but due to
+runtime restrictions, we recently switched a lot of our repos to GitHub actions. You can set up your repo with CI by adding 
+this to your configuration file (src/ontology/{{ project.id }}-odk.yaml):
+
+```
+ci:
+  - github_actions
+```
+
+When [updateing your repo](RepoManagement.md), you will notice a new file being added: `.github/workflows/qc.yml`.
+
+This file contains your CI logic, so if you need to change, or add anything, this is the place!
+
 ^^^ docs/odk-workflows/EditorsWorkflow.md
 # Editors Workflow
 
-The editors workflow is one of the formal [workflows](Workflow.md) to ensure that the ontology is developed correctly according to ontology engineering principles. There are a few different editors workflows:
+The editors workflow is one of the formal [workflows](index.md) to ensure that the ontology is developed correctly according to ontology engineering principles. There are a few different editors workflows:
 
 1. Local editing workflow: Editing the ontology in your local environment by hand, using tools such as Protégé, ROBOT templates or DOSDP patterns.
 2. Completely automated data pipeline (GitHub Actions)
@@ -588,11 +586,13 @@ git checkout -b issue23removeprocess
 Using your editor of choice, perform the intended edit. For example:
 
 _Protege_
+
 1. Open `src/ontology/{{ project.id }}-edit.owl` in Protege
 2. Make the change
 3. Save the file
 
 _TextEdit_
+
 1. Open `src/ontology/{{ project.id }}-edit.owl` in TextEdit (or Sublime, Atom, Vim, Nano)
 2. Make the change
 3. Save the file
@@ -600,10 +600,10 @@ _TextEdit_
 Consider the following when making the edit.
 
 1. According to our development philosophy, the only places that should be manually edited are:
-   - `src/ontology/{{ project.id }}-edit.owl`
-   - Any ROBOT templates you chose to use (the TSV files only)
-   - Any DOSDP data tables you chose to use (the TSV files, and potentially the associated patterns)
-   - components (anything in `src/ontology/components`), see [here](RepositoryFileStructure.md).
+    - `src/ontology/{{ project.id }}-edit.owl`
+    - Any ROBOT templates you chose to use (the TSV files only)
+    - Any DOSDP data tables you chose to use (the TSV files, and potentially the associated patterns)
+    - components (anything in `src/ontology/components`), see [here](RepositoryFileStructure.md).
 2. Imports should not be edited (any edits will be flushed out with the next update). However, refreshing imports is a potentially breaking change - and is discussed [elsewhere](UpdateImports.md).
 3. Changes should usually be small. Adding or changing 1 term is great. Adding or changing 10 related terms is ok. Adding or changing 100 or more terms at once should be considered very carefully.
 
@@ -697,24 +697,26 @@ This will create all the specified release targets (OBO, OWL, JSON, and the vari
 
 ## Review the release
 
-1. (Optional) Rough check. This step is frequently skipped, but for the more paranoid among us (like the author of this doc), this is a 3 minute additional effort for some peace of mind. Open the main release ({{ project.id }}  .owl) in you favourite development environment (i.e. Protege) and eyeball the hierarchy. We recommend two simple checks: 
+1. (Optional) Rough check. This step is frequently skipped, but for the more paranoid among us (like the author of this doc), this is a 3 minute additional effort for some peace of mind. Open the main release ({{ project.id }}.owl) in you favourite development environment (i.e. Protege) and eyeball the hierarchy. We recommend two simple checks: 
     1. Does the very top level of the hierarchy look ok? This means that all new terms have been imported/updated correctly.
     2. Does at least one change that you know should be in this release appear? For example, a new class. This means that the release was actually based on the recent edit file. 
 2. Commit your changes to the branch and make a pull request
 3. In your GitHub pull request, review the following three files in detail (based on our experience):
-   1. `{{ project.id }}.obo` - this reflects a useful subset of the whole ontology (everything that can be covered by OBO format). OBO format has that speaking for it: it is very easy to review!
-   2. `{{ project.id }}-base.owl` - this reflects the asserted axioms in your ontology that you have actually edited.
-   3. Ideally also take a look at `{{ project.id }}-full.owl`, which may reveal interesting new inferences you did not know about. Note that the diff of this file is sometimes quite large.
+    1. `{{ project.id }}.obo` - this reflects a useful subset of the whole ontology (everything that can be covered by OBO format). OBO format has that speaking for it: it is very easy to review!
+    2. `{{ project.id }}-base.owl` - this reflects the asserted axioms in your ontology that you have actually edited.
+    3. Ideally also take a look at `{{ project.id }}-full.owl`, which may reveal interesting new inferences you did not know about. Note that the diff of this file is sometimes quite large.
 4. Like with every pull request, we recommend to always employ a second set of eyes when reviewing a PR!
 
 ## Merge the main branch
 Once your [CI checks](ContinuousIntegration.md) have passed, and your reviews are completed, you can now merge the branch into your main branch (don't forget to delete the branch afterwards - a big button will appear after the merge is finished).
 
 ## Create a GitHub release
+
 1. Go to your releases page on GitHub by navigating to your repository, and then clicking on releases (usually on the right, for example: https://github.com/{{ project.github_org }}/{{ project.repo }}/releases. Then click "Draft new release"
 1. As the tag version you **need to choose the date on which your ontologies were build.** You can find this, for example, by looking at the `{{ project.id }}.obo` file and check the `data-version:` property. The date needs to be prefixed with a `v`, so, for example `v2020-02-06`.
 1. You can write whatever you want in the release title, but we typically write the date again. The description underneath should contain a concise list of changes or term additions.
 1. Click "Publish release". Done.
+
 ^^^ docs/odk-workflows/RepoManagement.md
 # Managing your ODK repository
 
@@ -732,6 +734,7 @@ There are a large number of options that can be set to configure your ODK, but w
 ## Managing imports
 
 You can use the update repository worflow described on this page to perform the following operations to your imports:
+
 1. Add a new import
 2. Modify an existing import
 3. Remove an import you no longer want
@@ -770,8 +773,8 @@ Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl>)
 ```
 
 3. Test whether everything is in order:
-   1. [Refresh your import](UpdateImports.md)
-   2. Open in your Ontology Editor of choice (Protege) and ensure that the expected terms are imported.
+    1. [Refresh your import](UpdateImports.md)
+    2. Open in your Ontology Editor of choice (Protege) and ensure that the expected terms are imported.
 
 ### Modify an existing import
 
@@ -780,12 +783,13 @@ If you simply wish to refresh your import in light of new terms, see [here](Upda
 ### Remove an existing import
 
 To remove an existing import, perform the following steps:
+
 1. remove the import declaration from your `src/ontology/{{ project.id }}-edit.owl`.
 2. remove the id from your `src/ontology/{{ project.id }}-odk.yaml`, eg. `- id: go` from the list of `products` in the `import_group`.
 3. run [update repo workflow](#Updating-your-ODK-repository)
 4. delete the associated files manually:
-   - `src/imports/go_import.owl`
-   - `src/imports/go_terms.txt`
+    - `src/imports/go_import.owl`
+    - `src/imports/go_terms.txt`
 5. Remove the respective entry from the `src/ontology/catalog-v001.xml` file.
 
 ### Customise an import
@@ -852,6 +856,7 @@ _Note_: if your mirror is particularly large and complex, read [this ODK recomme
 # Repository structure
 
 The main kinds of files in the repository:
+
 1. Release files
 2. Imports
 3. [Components](#Components)
@@ -874,6 +879,7 @@ These are the current imports in {{ project.id.upper() }}
 
 ## Components
 Components, in contrast to imports, are considered full members of the ontology. This means that any axiom in a component is also included in the ontology base - which means it is considered _native_ to the ontology. While this sounds complicated, consider this: conceptually, no component should be part of more than one ontology. If that seems to be the case, we are most likely talking about an import. Components are often not needed for ontologies, but there are some use cases:
+
 1. There is an automated process that generates and re-generates a part of the ontology
 2. A part of the ontology is managed in ROBOT templates
 3. The expressivity of the component is higher than the format of the edit file. For example, people still choose to manage their ontology in OBO format (they should not) missing out on a lot of owl features. They may chose to manage logic that is beyond OBO in a specific OWL component.
@@ -890,7 +896,15 @@ These are the components in {{ project.id.upper() }}
 ^^^ docs/odk-workflows/SettingUpDockerForODK.md
 # Setting up your Docker environment for ODK use
 
-Memory 
+One of the most frequent problems with running the ODK for the first time is failure because of lack of memory. This can look like a Java OutOfMemory exception, 
+but more often than not it will appear as something like an `Error 137`. There are two places you need to consider to set your memory:
+
+1. Your src/ontology/run.sh (or run.bat) file. You can set the memory in there by adding 
+`robot_java_args: '-Xmx8G'` to your src/ontology/{{ project.id }}-odk.yaml file, see for example [here](https://github.com/INCATools/ontology-development-kit/blob/0e0aef2b26b8db05f5e78b7c38f807d04312d06a/configs/uberon-odk.yaml#L36).
+2. Set your docker memory. By default, it should be about 10-20% more than your `robot_java_args` variable. You can manage your memory settings
+by right-clicking on the docker whale in your system bar-->Preferences-->Resources-->Advanced, see picture below.
+
+<img href="https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/docs/img/docker_memory.png" alt="Docker Memory Config" /> 
 
 etc
 ^^^ docs/odk-workflows/UpdateImports.md
@@ -901,6 +915,7 @@ This page discusses how to update the contents of your imports, like adding or r
 ## Importing a new term
 
 Importing a new term is split into to sub-phases:
+
 1. Declaring the terms to be imported
 2. Refreshing imports dynamically
 
@@ -940,6 +955,7 @@ Now you can run the [refresh imports workflow](#Refresh-imports)) and the two te
 #### Using the custom import template 
 
 This workflow is appropriate if:
+
 1. You prefer to manage all your imported terms in a single file (rather than multiple files like in the "Using term files" workflow above).
 2. You wish to augment your imported ontologies with additional information. This requires a cautionary discussion.
 
@@ -998,30 +1014,72 @@ If you wish to skip refreshing the mirror, i.e. skip downloading the latest vers
 ```
 sh run.sh make IMP=true MIR=false PAT=false imports/go_import.owl -B
 ```
+^^^ docs/odk-workflows/ManageDocumentation.md
+# Updating the Documentation
+
+The documentation for {{ project.id.upper() }} is managed in two places (relative to the repository root):
+
+1. The `docs` directory contains all the files that pertain to the content of the documentation (more below)
+2. the `mkdocs.yaml` file cotains the documentation config, in particular its navigation bar and theme.
+
+The documentation is hosted using github pages, on a special branch of the repository (called `gh-pages`). It is important that this branch is never deleted - it contains all the files GitHub pages needs to render and deploy the site. It is also important to note that _the gh-pages branch should never be edited manually_. All changes to the docs happen inside the `docs` directory on the `main` branch.
+
+## Editing the docs
+
+### Changing content
+All the documentation is contained in the `docs` directory, and is managed in _Markdown_. Markdown is a very simple and convenient way to produce text documents with formatting instructions, and is very easy to learn - it is also used, for example, in GitHub issues. This is a normal editing workflow:
+
+1. Open the `.md` file you want to change in an editor of choice (a simple text editor is often best). _IMPORTANT_: Do not edit any files in the `docs/odk-workflows/` directory. These files are managed by the ODK system and will be overwritten when the repository is upgraded! If you wish to change these files, make an issue on the [ODK issue tracker](https://github.com/INCATools/ontology-development-kit/issues).
+2. Perform the edit and save the file
+3. Commit the file to a branch, and create a pull request as usual. 
+4. If your development team likes your changes, merge the docs into master.
+5. Deploy the documentation (see below)
+
+## Deploy the documentation
+
+The documentation is _not_ automatically updated from the Markdown, and needs to be deployed deliberately. To do this, perform the following steps:
+
+1. In your terminal, navigate to the edit directory of your ontology, e.g.:
+   ```
+   cd {{ project.id }}/src/ontology
+   ```
+2. Now you are ready to build the docs as follows:
+   ```
+   sh run.sh make update_docs
+   ```
+   [Mkdocs](https://www.mkdocs.org/) now sets off to build the site from the markdown pages. You will be asked to
+    - Enter your username
+    - Enter your password (see [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) for using GitHub access tokens instead)
+      _IMPORTANT_: Using password based authentication will be deprecated this year (2021). Make sure you read up on [personal access tokens](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) if that happens!
+
+   If everything was successful, you will see a message similar to this one:
+
+   ```
+   INFO    -  Your documentation should shortly be available at: https://{{ project.github_org }}.github.io/{{ project.repo }}/ 
+   ```
+3. Just to double check, you can now navigate to your documentation pages (usually https://{{ project.github_org }}.github.io/{{ project.repo }}/). 
+   Just make sure you give GitHub 2-5 minutes to build the pages!
 
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
 theme: readthedocs
 nav:
-  - Basics:
-      - Overview: index.md
-      - Cite: cite.md
-      - History: history.md
-  - Editors Guide:
+  - Getting started: index.md
+  - Cite: cite.md
+  - History: history.md
+  - How-to guides:
       - Standard ODK workflows:
+          - Overview: odk-workflows/index.md
           - Editors Workflow: odk-workflows/EditorsWorkflow.md
           - Release Workflow: odk-workflows/ReleaseWorkflow.md
           - Manage your ODK Repository: odk-workflows/RepoManagement.md
           - Setting up Docker for ODK: odk-workflows/SettingUpDockerForODK.md
           - Imports management: odk-workflows/UpdateImports.md
+          - Managing the documentation: odk-workflows/ManageDocumentation.md
+          - Continuous Integration: odk-workflows/ContinuousIntegration.md
+          - Your ODK Repository Overview: odk-workflows/RepositoryFileStructure.md 
       - Contributing: contributing.md
 {% if project.use_dosdps %}  - Design Patterns:
     - Design Patterns Overview: design-patterns.md
 {% endif -%}
-#  - Components
-#  - Imports
-#    - Modules Overview: modules.md
-#  - Mappings:
-#  - Contributing:
-#    - Editors guide: editing-ro.md
 {% endif -%}

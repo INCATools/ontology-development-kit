@@ -141,7 +141,7 @@ ENV COURSIER_CACHE "/tools/.coursier-cache"
 
 ###### FASTOBO ######
 ENV FASTOBO_VALIDATOR v0.4.0
-RUN wget https://dl.bintray.com/fastobo/fastobo-validator/$FASTOBO_VALIDATOR/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
+RUN wget https://github.com/fastobo/fastobo-validator/releases/download/$FASTOBO_VALIDATOR/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
 && chmod +x /tools/fastobo-validator
 
 ###### JENA ######
@@ -159,7 +159,7 @@ RUN (echo "#!/usr/bin/env sh" \
 RUN amm /dev/null
 
 ###### DOSDPTOOLS ######
-ENV DOSDPVERSION=0.16
+ENV DOSDPVERSION=0.17
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
 # LAYERSIZE ~200MB
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPVERSION/dosdp-tools-$DOSDPVERSION.tgz \
@@ -178,7 +178,7 @@ ENV PATH "/root/.local/share/swi-prolog/pack/sparqlprog/bin:$PATH"
 RUN ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
 
 RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 --branch docker-dash https://github.com/OBOFoundry/OBO-Dashboard.git && \
-    cd OBO-Dashboard && git checkout docker-dash && echo "Dashboard: using branch" &&\
+    cd OBO-Dashboard && git checkout docker-dash && echo "Dashboard: using branch |" &&\
     python3 -m pip install -r requirements.txt && echo " " >> Makefile &&\
     echo "build/robot.jar:" >> Makefile &&\
     echo "	echo 'skipped ROBOT jar download' && touch \$@" >> Makefile && echo "" >> Makefile
