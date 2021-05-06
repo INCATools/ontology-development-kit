@@ -1,3 +1,11 @@
+# v1.2.28 (6 May 2021)
+- New DOSDP tools version [0.17](https://github.com/INCATools/dosdp-tools/releases/tag/v0.17)
+- Major: made the new image compatible with M1! Thanks to @gouttegd who did all the hard work. Super excited about this!
+- Some major fixes to the automatic documentation generator, see for example https://pato-ontology.github.io/pato/. Please get in touch if you want help setting up your own awesome documentation site!
+- A bug fix in the OWL2DL validation pipeline for testing
+- A bug fix for the subset injection during Module creation, see [here](https://github.com/INCATools/ontology-development-kit/issues/411)
+- Minor fixes to GitHub instructions (switching wordings from master to main)
+
 # v1.2.27 (4 April 2021)
 - revived odklite image with a minimum install (smaller in size than odkfull, with just robot and owltools!)
 - revived robot image with just robot installed
