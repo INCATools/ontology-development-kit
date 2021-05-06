@@ -2,5 +2,5 @@
 
 set -e
 
-make IM=obolibrary/odkfull_m1 IMLITE=obolibrary/odklite_m1 DEV=obolibrary/odkdev_m1 ROB=obolibrary/robot_m1 docker-build docker-test
-make IM=obolibrary/odkfull_m1 IMLITE=obolibrary/odklite_m1 DEV=obolibrary/odkdev_m1 ROB=obolibrary/robot_m1 docker-publish
+make IM=obotools/odkfull_m1 IMLITE=obotools/odklite_m1 DEV=obotools/odkdev_m1 ROB=obotools/robot_m1 docker-test
+make IM=obotools/odkfull_m1 IMLITE=obotools/odklite_m1 DEV=obotools/odkdev_m1 ROB=obotools/robot_m1 docker-publish
