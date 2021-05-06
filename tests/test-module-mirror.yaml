@@ -1,0 +1,13 @@
+id: modmir
+title: "Test ROBOT extract minimal with base and large option"
+github_org: INCATools
+repo: ontology-development-kit
+edit_format: obo
+export_formats:
+  - owl
+  - obo
+import_group:
+  products:
+    - id: envo
+      module_type: mirror
+
