@@ -9,6 +9,10 @@ CMD = ./odk/odk.py seed
 
 EMAIL_ARGS=
 
+CACHE=
+
+PLATFORMS=linux/amd64,linux/arm64
+
 .PHONY: .FORCE
 
 custom_tests: test_no_yaml_dependencies_none test_no_yaml_dependencies_ro_pato test_no_yaml_dependencies_ro_pato_cl test_go_mini
@@ -46,75 +50,81 @@ ROB=obolibrary/robot
 #ROBOT_JAR="https://github.com/monarch-ebi-dev/odk_utils/raw/master/robot_maven_test.jar"
 ROBOT_JAR_ARGS=#--build-arg ROBOT_JAR=$(ROBOT_JAR)
 
-docker-build-no-cache:
-	@docker build  --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) --no-cache -t $(IM):$(VERSION) . \
-	&& docker tag $(IM):$(VERSION) $(IM):latest && docker tag $(IM):$(VERSION) $(DEV):latest && \
-	docker build -f docker/odklite/Dockerfile -t $(IMLITE):$(VERSION) . \
-	&& docker tag $(IMLITE):$(VERSION) $(IMLITE):latest && cd docker/robot/ && make docker-build
-	
-docker-build:
-	@docker build --build-arg ODK_VERSION=$(VERSION)  $(ROBOT_JAR_ARGS)  -t $(IM):$(VERSION) . \
-	&& docker tag $(IM):$(VERSION) $(IM):latest && docker tag $(IM):$(VERSION) $(DEV):latest && \
-	docker build -f docker/odklite/Dockerfile -t $(IMLITE):$(VERSION) . \
-	&& docker tag $(IMLITE):$(VERSION) $(IMLITE):latest && cd docker/robot/ && make docker-build
+build:
+	docker build $(CACHE) \
+	    --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) \
+	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
+	    .
+	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) CACHE=$(CACHE) build
+	$(MAKE) -C docker/robot CACHE=$(CACHE) build
 
-docker-build-dev:
-	@docker build --build-arg ODK_VERSION=$(VERSION) -t $(DEV):$(VERSION) . \
-	&& docker tag $(DEV):$(VERSION) $(DEV):latest
+build-no-cache:
+	$(MAKE) build CACHE=--no-cache
 
-docker-clean:
-	docker kill $(IM) || echo not running ;
-	docker rm $(IM) || echo not made 
+build-dev:
+	docker build --build-arg ODK_VERSION=$(VERSION) \
+	    -t $(DEV):$(VERSION) -t $(DEV):latest \
+	    .
+
+clean:
+	docker kill $(IM) || echo not running
+	docker rm $(IM) || echo not made
+
 
 #### TESTING #####
 
-docker-test-full: docker-build
-	docker images | grep odkfull &&\
-	make test CMD=./seed-via-docker.sh
+test-flavor:
+	docker images | grep odk$(FLAVOR) && \
+	    $(MAKE) test CMD=./seed-via-docker.sh
 
-docker-test-dev: docker-build-dev
-	docker images | grep odkdev &&\
-	make test CMD=./seed-via-docker.sh
+test-full: build
+	$(MAKE) test-flavor FLAVOR=full
 
-docker-test-lite: docker-build
-	docker images | grep odklite &&\
-	make test CMD=./seed-via-docker.sh
+test-dev: build-dev
+	$(MAKE) test-flavor FLAVOR=dev
 
-docker-test: docker-test-full docker-test-dev
+test-lite: build
+	$(MAKE) test-flavor FLAVOR=lite
 
-docker-test-no-build:
-	docker images | grep odkfull &&\
-	make test CMD=./seed-via-docker.sh
-	
-docker-test-dev-no-build:
-	docker images | grep odkdev &&\
-	make test CMD=./seed-via-docker.sh
-	
-docker-test-lite-no-build:
-	docker images | grep odklite &&\
-	make test CMD=./seed-via-docker.sh
+test: test-full test-dev
+
+test-no-build:
+	$(MAKE) test-flavor FLAVOR=full
+
+test-dev-no-build:
+	$(MAKE) test-flavor FLAVOR=dev
+
+test-lite-no-build:
+	$(MAKE) test-flavor FLAVOR=lite
+
 
 #### Publishing #####
 
-docker-publish-no-build:
-	@docker push $(DEV):$(VERSION) \
-	&& docker push $(DEV):latest \
-	&& docker push $(IMLITE):latest \
-	&& docker push $(IMLITE):$(VERSION) \
-	&& docker push $(IM):latest \
-	&& docker push $(IM):$(VERSION)
+publish-no-build:
+	docker push $(DEV):$(VERSION)
+	docker push $(DEV):latest
+	docker push $(IM):latest
+	docker push $(IM):$(VERSION)
+	$(MAKE) -C docker/odklite publish-no-build
+	$(MAKE) -C docker/robot publish-no-build
 
-docker-publish: docker-build
-	@docker push $(DEV):$(VERSION) \
-	&& docker push $(DEV):latest \
-	&& docker push $(IMLITE):latest \
-	&& docker push $(IMLITE):$(VERSION) \
-	&& docker push $(IM):latest \
-	&& docker push $(IM):$(VERSION)
+publish: build
+	$(MAKE) publish-no-build
 
-docker-publish-dev-no-build:
-	@docker push $(DEV):$(VERSION) \
-	&& docker push $(DEV):latest
+publish-dev-no-build:
+	docker push $(DEV):$(VERSION)
+	docker push $(DEV):latest
+
+publish-multiarch:
+	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
+	    --build-arg ODK_VERSION=$(VERSION) \
+	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
+	    .
+	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) \
+	    CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
+	    publish-multiarch
+	$(MAKE) -C docker/robot CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
+	    publish-multiarch
 
 clean-tests:
 	rm -rf target/*

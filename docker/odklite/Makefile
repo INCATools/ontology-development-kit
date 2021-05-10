@@ -1,20 +1,30 @@
 
 # Building docker image
-VERSION = "v1.2.27" 
+VERSION = "v1.2.27"
 IM=obolibrary/odklite
 
-build:
-	@docker build -t $(IM):$(VERSION) . \
-	&& docker tag $(IM):$(VERSION) $(IM):latest
+CACHE=
 
-docker-build-no-cache:
-	@docker build  --build-arg ODK_VERSION=$(VERSION) --no-cache -t $(IM):$(VERSION) . \
-	&& docker tag $(IM):$(VERSION) $(IM):latest
-	
-docker-build:
-	@docker build --build-arg ODK_VERSION=$(VERSION) -t $(IM):$(VERSION) . \
-	&& docker tag $(IM):$(VERSION) $(IM):latest
+PLATFORMS=linux/amd64,linux/arm64
+
+build:
+	docker build $(CACHE) -f Dockerfile \
+	    --build-arg ODK_VERSION=$(VERSION) \
+	    -t $(IM):$(VERSION) -t $(IM):latest \
+	    ../..
+
+build-no-cache:
+	$(MAKE) build CACHE=--no-cache
+
+publish-no-build:
+	docker push $(IM):$(VERSION)
+	docker push $(IM):latest
 
 publish: build
-	@docker push $(IM):$(VERSION) \
-	&& docker push $(IM):latest
+	$(MAKE) publish-no-build
+
+publish-multiarch:
+	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
+	    --build-arg ODK_VERSION=$(VERSION) \
+	    -t $(IM):$(VERSION) -t $(IM):latest \
+	    ../..
