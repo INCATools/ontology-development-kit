@@ -15,13 +15,11 @@ COPY odk/make-release-assets.py /tools/
 # LAYERSIZE ~1000MB
 RUN apt-get update &&\
   apt-get install -y software-properties-common &&\
-  add-apt-repository ppa:swi-prolog/stable &&\
   apt-get upgrade -y &&\
   apt-get install -y build-essential \
     git \
     openjdk-8-jre \
     openjdk-8-jdk \
-    swi-prolog \
     maven \
     python3-pip \
     python3-dev \
@@ -40,6 +38,9 @@ RUN apt-get update &&\
     dos2unix \
     sqlite3 \
     libjson-perl \
+    libfreetype6-dev \
+    libpng-dev \
+    pkg-config \
     xlsx2csv &&\
     cd /usr/local/bin \
     && ln -s /usr/bin/python3 python \
@@ -48,6 +49,54 @@ RUN apt-get update &&\
   	&& if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi \
   	&& if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
   	&& rm -r /root/.cache
+
+
+### 3. Install SWI-Prolog
+# We normally install it from the binary package provided by upstream,
+# but on arm64, there is no such package and we need to build it from
+# source after installing its compile-time dependencies.
+ARG TARGETARCH
+RUN test "x$TARGETARCH" != xarm64 && ( \
+        add-apt-repository ppa:swi-prolog/stable && \
+        apt-get install -y swi-prolog \
+    ) || ( \
+        apt-get install -y \
+            cmake \
+	    ncurses-dev \
+	    libreadline-dev \
+	    libedit-dev \
+	    libgoogle-perftools-dev \
+	    libunwind-dev \
+	    libgmp-dev \
+	    libssl-dev \
+	    unixodbc-dev \
+	    zlib1g-dev \
+	    libarchive-dev \
+	    libxext-dev \
+	    libice-dev \
+	    libjpeg-dev \
+	    libxinerama-dev \
+	    libxft-dev \
+	    libxpm-dev \
+	    libxt-dev \
+	    libdb-dev \
+	    libpcre3-dev \
+	    libyaml-dev \
+	    junit4 && \
+        wget https://www.swi-prolog.org/download/stable/src/swipl-8.2.4.tar.gz -O /tools/swipl-8.2.4.tar.gz && \
+        cd /tools && \
+        tar xf swipl-8.2.4.tar.gz && \
+        cd swipl-8.2.4 && \
+        mkdir build && \
+        cd build && \
+        cmake -DCMAKE_INSTALL_PREFIX=/usr .. && \
+        make && \
+        make install && \
+        cd /tools && \
+        rm swipl-8.2.4.tar.gz && \
+        rm -rf swipl-8.2.4 \
+    )
+
 
 ### 4. Install custom tools
 #  scripts/droid
@@ -92,7 +141,7 @@ ENV COURSIER_CACHE "/tools/.coursier-cache"
 
 ###### FASTOBO ######
 ENV FASTOBO_VALIDATOR v0.4.0
-RUN wget https://github.com/fastobo/fastobo-validator/releases/download/v0.4.0/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
+RUN wget https://github.com/fastobo/fastobo-validator/releases/download/$FASTOBO_VALIDATOR/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
 && chmod +x /tools/fastobo-validator
 
 ###### JENA ######
@@ -110,7 +159,7 @@ RUN (echo "#!/usr/bin/env sh" \
 RUN amm /dev/null
 
 ###### DOSDPTOOLS ######
-ENV DOSDPVERSION=0.16
+ENV DOSDPVERSION=0.17
 ENV PATH "/tools/dosdp-tools/bin:$PATH"
 # LAYERSIZE ~200MB
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPVERSION/dosdp-tools-$DOSDPVERSION.tgz \
@@ -138,7 +187,7 @@ ENV PATH "/root/.local/share/swi-prolog/pack/sparqlprog/bin:$PATH"
 RUN ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
 
 RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 --branch docker-dash https://github.com/OBOFoundry/OBO-Dashboard.git && \
-    cd OBO-Dashboard && git checkout docker-dash && echo "Dashboard: using branch" &&\
+    cd OBO-Dashboard && git checkout docker-dash && echo "Dashboard: using branch |" &&\
     python3 -m pip install -r requirements.txt && echo " " >> Makefile &&\
     echo "build/robot.jar:" >> Makefile &&\
     echo "	echo 'skipped ROBOT jar download' && touch \$@" >> Makefile && echo "" >> Makefile

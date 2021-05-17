@@ -6,4 +6,6 @@ INSERT { ?y rdfs:subPropertyOf <http://www.geneontology.org/formats/oboInOwl#Sub
 
 WHERE {
   ?x <http://www.geneontology.org/formats/oboInOwl#inSubset>  ?y .
+  FILTER(isIRI(?y))
+  FILTER(regex(str(?y),"^(http://purl.obolibrary.org/obo/)") || regex(str(?y),"^(http://www.ebi.ac.uk/efo/)") || regex(str(?y),"^(https://w3id.org/biolink/)"))
 }

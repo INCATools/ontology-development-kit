@@ -867,12 +867,13 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         print("    E.g.:")
         print("cd {}".format(outdir))
         print("git remote add origin git\@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
-        print("git push -u origin master\n")
+        print("git branch -M main\n")
+        print("git push -u origin main\n")
         print("BE BOLD: you can always delete your repo and start again\n")
         print("")
         print("FINAL STEPS:")
         print("Follow your customized instructions here:\n")
-        print("    https://github.com/{org}/{repo}/blob/master/src/ontology/README-editors.md".format(org=project.github_org, repo=project.repo))
+        print("    https://github.com/{org}/{repo}/blob/main/src/ontology/README-editors.md".format(org=project.github_org, repo=project.repo))
     else:
         print("Repository files have been successfully copied, but no git commands have been run.")
 
