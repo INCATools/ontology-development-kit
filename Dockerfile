@@ -92,7 +92,7 @@ ENV COURSIER_CACHE "/tools/.coursier-cache"
 
 ###### FASTOBO ######
 ENV FASTOBO_VALIDATOR v0.4.0
-RUN wget https://dl.bintray.com/fastobo/fastobo-validator/$FASTOBO_VALIDATOR/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
+RUN wget https://github.com/fastobo/fastobo-validator/releases/download/v0.4.0/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar xzC /tools \
 && chmod +x /tools/fastobo-validator
 
 ###### JENA ######
@@ -119,6 +119,15 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDPV
 && wget --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py -O /tools/simple_pattern_tester.py \
 && chmod +x /tools/dosdp-tools \
 && chmod +x /tools/simple_pattern_tester.py
+
+###### relation-graph ######
+ENV RGVERSION=1.1
+ENV PATH "/tools/relation-graph/bin:$PATH"
+# LAYERSIZE ~200MB
+RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RGVERSION/relation-graph-$RGVERSION.tgz \
+&& tar -zxvf relation-graph-$RGVERSION.tgz \
+&& mv relation-graph-$RGVERSION /tools/relation-graph \
+&& chmod +x /tools/relation-graph 
 
 ###### SPARQLProg ######
 # See https://github.com/cmungall/sparqlprog/blob/master/INSTALL.md
