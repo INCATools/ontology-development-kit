@@ -177,8 +177,8 @@ RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt
 ENV PATH "/root/.local/share/swi-prolog/pack/sparqlprog/bin:$PATH"
 RUN ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
 
-RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 --branch docker-dash https://github.com/OBOFoundry/OBO-Dashboard.git && \
-    cd OBO-Dashboard && git checkout docker-dash && echo "Dashboard: using branch |" &&\
+RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 https://github.com/OBOFoundry/OBO-Dashboard.git && \
+    cd OBO-Dashboard && git checkout &&\
     python3 -m pip install -r requirements.txt && echo " " >> Makefile &&\
     echo "build/robot.jar:" >> Makefile &&\
     echo "	echo 'skipped ROBOT jar download' && touch \$@" >> Makefile && echo "" >> Makefile
