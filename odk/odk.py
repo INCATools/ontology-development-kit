@@ -760,7 +760,7 @@ def dump_schema():
               Optional. If not passed, a stub ontology will be created.
               """)
 @click.option('-v', '--verbose',      count=True)
-@click.option('-g', '--skipgit',      default=False)
+@click.option('-g', '--skipgit',      default=False, is_flag=True)
 @click.argument('repo', nargs=-1)
 def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo, skipgit):
     """
