@@ -11,6 +11,10 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
+      - name: Create dummy Git user name
+        run: git config --global user.name Alice
+      - name: Create dummy Git user email
+        run: git config --global user.email alice@example.org
       - name: Build the images
         run: make docker-build
       - name: Run the tests
