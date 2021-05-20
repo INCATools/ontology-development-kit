@@ -1,16 +1,32 @@
 
 # Building docker image
-VERSION = "v1.8.1" 
+VERSION = "v1.8.1"
 IM=obolibrary/robot
 
-docker-build:
-	@docker build -t $(IM):$(VERSION) . \
-	&& docker tag $(IM):$(VERSION) $(IM):latest
+CACHE=
+
+PLATFORMS=linux/amd64,linux/arm64
+
+build:
+	docker build $(CACHE) \
+	    -t $(IM):$(VERSION) -t $(IM):latest \
+	    .
+
+build-no-cache:
+	$(MAKE) build CACHE=--no-cache
 
 clean:
-	docker kill $(IM) || echo not running ;
-	docker rm $(IM) || echo not made 
+	docker kill $(IM) || echo not running
+	docker rm $(IM) || echo not made
+
+publish-no-build:
+	docker push $(IM):$(VERSION)
+	docker push $(IM):latest
 
 publish: build
-	@docker push $(IM):$(VERSION) \
-	&& docker push $(IM):latest
+	$(MAKE) publish-no-build
+
+publish-multiarch:
+	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
+	    -t $(IM):$(VERSION) -t $(IM):latest \
+	    .

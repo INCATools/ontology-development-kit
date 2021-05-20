@@ -134,7 +134,7 @@ image. This means that odk seed can now be run from anywhere!
 To build the Docker image from the top level:
 
 ```
-make docker-build
+make build
 ```
 
 Note that this means local invocations to use `obolibrary/odkfull`
@@ -143,13 +143,13 @@ will use the version you built.
 To test:
 
 ```
-make docker-test
+make tests
 ```
 
 To publish on Dockerhub:
 
 ```
-make docker-publish
+make publish
 ```
 
 ## Some notes on templating and logic

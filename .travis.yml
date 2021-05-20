@@ -7,7 +7,7 @@ services:
 # https://github.com/INCATools/ontology-starter-kit/issues/25
 # EMAIL_ARGS='-e obo-ci-reports-all@groups.io'
 script:
-  - make docker-test
+  - make tests
 
 #after_success:
 #  coveralls
