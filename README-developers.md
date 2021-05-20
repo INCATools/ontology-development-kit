@@ -152,6 +152,31 @@ To publish on Dockerhub:
 make publish
 ```
 
+### Multi-arch images
+
+To build multi-arch images that will work seemleassly on several
+platforms, you need to have [buildx](https://github.com/docker/buildx)
+enabled on your Docker installation. On MacOS with Docker Desktop,
+`buildx` should already be enabled. For other systems, refer to Docker's
+documentation.
+
+Create a *builder* instance for multi-arch builds (this only needs to be
+done once):
+
+```
+docker buildx create --name multiarch --driver docker-container --use
+```
+
+You can then build and push multi-arch images by running:
+
+```
+make publish-multiarch
+```
+
+Use the variable `PLATFORMS` to specify the architectures for which an
+image should be built. The default is `linux/amd64,linux/arm64`, for
+images that work on both x86_64 and arm64 machines.
+
 ## Some notes on templating and logic
 
 There is a potential for some confusion as to responsibility for
