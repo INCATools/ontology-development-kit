@@ -3,6 +3,7 @@ name: Build and publish the multi-arch ODK images
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   build:
