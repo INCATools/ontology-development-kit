@@ -136,8 +136,7 @@ SUBSETS = {% for x in project.subset_group.products %} {{ x.id }}{% endfor %}
 SUBSETS =
 {% endif %}
 SUBSET_ROOTS = $(patsubst %, subsets/%, $(SUBSETS))
-SUBSET_FORMATS = $(sort tsv owl)
-SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(foreach f,$(SUBSET_FORMATS), $(n).$(f)))
+SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(foreach f,$(FORMATS_INCL_TSV), $(n).$(f)))
 
 .PHONY: all_subsets
 all_subsets: $(SUBSET_FILES)
@@ -443,8 +442,24 @@ subsets/%.tsv: subsets/%.owl
 .PRECIOUS: subsets/%.tsv
 
 subsets/%.owl: $(ONT).owl
-	owltools --use-catalog $< --extract-ontology-subset --fill-gaps --subset $* -o $@.tmp.owl && mv $@.tmp.owl $@
+	owltools --use-catalog $< --extract-ontology-subset --fill-gaps --subset $* -o $@.tmp.owl && mv $@.tmp.owl $@ &&\
+	$(ROBOT) annotate --input $@ --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@.tmp.owl && mv $@.tmp.owl $@
 .PRECIOUS: subsets/%.owl
+
+{% if 'obo' in project.export_formats %}
+subsets/%.obo: subsets/%.owl
+	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+{% endif -%}
+{% if 'ttl' in project.export_formats %}
+subsets/%.ttl: subsets/%.owl
+	$(ROBOT) convert --input $< --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
+{% endif -%}
+{% if 'json' in project.export_formats %}
+subsets/%.json: subsets/%.owl
+	$(ROBOT) convert --input $< --check false -f json -o $@.tmp.json &&\
+	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
+{% endif -%}
+
 {% endif %}
 
 # ----------------------------------------
