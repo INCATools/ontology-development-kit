@@ -1,6 +1,6 @@
 
 # Building docker image
-VERSION = "v1.2.27"
+VERSION = "v1.2.29"
 IM=obolibrary/odklite
 
 CACHE=
