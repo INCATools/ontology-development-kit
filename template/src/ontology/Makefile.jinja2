@@ -77,7 +77,7 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if r
 all: odkversion all_imports {% if project.use_dosdps %}patterns {% endif %}all_main all_subsets sparql_test all_reports all_assets
 
 .PHONY: test
-test: odkversion sparql_test all_reports {% if project.robot_report.ensure_owl2dl_profile %}$(REPORTDIR)/validate_profile_owl2dl_%.txt{% endif %}
+test: odkversion sparql_test all_reports {% if project.robot_report.ensure_owl2dl_profile %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
 	$(ROBOT) reason --input $(SRC) --reasoner {{ project.reasoner }}  --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --output test.owl && rm test.owl && echo "Success"
 
 .PHONY: odkversion
