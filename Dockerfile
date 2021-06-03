@@ -204,11 +204,6 @@ RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 https://github.
 ARG ODK_VERSION=0.0.0
 ENV ODK_VERSION=${ODK_VERSION}
 
-### TODO REVIEW THIS. As we speak, jq is official still stalled at 1.5, but for the walk function, we
-### Need 1.6 - once 1.6 is offcial, the following RUN can be removed.
-# LAYERSIZE: ~4MB
-RUN wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -O /tools/jq && chmod +x /tools/jq
-
 COPY odk/odk.py /tools/
 COPY template/ /tools/templates/
 RUN chmod +x /tools/*.py
