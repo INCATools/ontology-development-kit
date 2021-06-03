@@ -1,6 +1,6 @@
 ### From https://stackoverflow.com/questions/51121875/how-to-run-docker-with-python-and-java
 ### 1. Get Linux
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL maintainer="obo-tools@googlegroups.com" 
 
 ### 2. Get Java, Python and all required system libraries (version control etc)
