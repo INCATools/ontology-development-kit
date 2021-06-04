@@ -1,6 +1,6 @@
 ### From https://stackoverflow.com/questions/51121875/how-to-run-docker-with-python-and-java
 ### 1. Get Linux
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL maintainer="obo-tools@googlegroups.com" 
 
 ### 2. Get Java, Python and all required system libraries (version control etc)
@@ -50,11 +50,6 @@ RUN curl -L $ROBOT_JAR -o /tools/robot.jar &&\
 ### 5. Install ODK
 ARG ODK_VERSION=0.0.0
 ENV ODK_VERSION=${ODK_VERSION}
-
-### TODO REVIEW THIS. As we speak, jq is official still stalled at 1.5, but for the walk function, we
-### Need 1.6 - once 1.6 is offcial, the following RUN can be removed.
-# LAYERSIZE: ~4MB
-RUN curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tools/jq && chmod +x /tools/jq
 
 COPY odk/odk.py /tools/
 COPY template/ /tools/templates/
