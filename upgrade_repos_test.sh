@@ -23,7 +23,8 @@ ROOTDIR_ALT=/Volumes/Nico-EBI/odk_repos_update
 #./upgrade-via-docker.sh bto $CONFIGDIR/bto-odk.yaml $ROOTDIR/BTO
 #./upgrade-via-docker.sh maxo $CONFIGDIR/maxo-odk.yaml $ROOTDIR/MAxO
 #cp $ROOTDIR/upheno-dev/src/curation/upheno-config.yaml $CONFIGDIR/upheno-odk.yaml
-./upgrade-via-docker.sh upheno $CONFIGDIR/upheno-odk.yaml $ROOTDIR/upheno
+#./upgrade-via-docker.sh upheno $CONFIGDIR/upheno-odk.yaml $ROOTDIR/upheno
+./upgrade-via-docker.sh mondo $CONFIGDIR/mondo-odk.yaml $ROOTDIR/mondo
 #./upgrade-via-docker.sh xpo $CONFIGDIR/xpo-odk.yaml $ROOTDIR/xenopus-phenotype-ontology
 #./upgrade-via-docker.sh planp $CONFIGDIR/planp-odk.yaml $ROOTDIR/planarian-phenotype-ontology
 #./upgrade-via-docker.sh phipo $CONFIGDIR/phipo-odk.yaml $ROOTDIR/phipo

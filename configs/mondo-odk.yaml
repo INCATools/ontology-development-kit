@@ -1,0 +1,42 @@
+id: mondo
+title: "Mondo Disease Ontology"
+github_org: monarch-initiative
+repo: mondo
+#report_fail_on: ERROR
+report_fail_on: None
+use_dosdps: TRUE
+export_formats:
+  - owl
+  - obo
+  - json
+namespaces: 
+  - http://purl.obolibrary.org/obo/MONDO_
+  - http://purl.obolibrary.org/obo/mondo#
+release_artefacts: 
+  - base
+  - full
+  - custom-mondo-with-equivalents
+import_group:
+  products:
+    - id: uberon
+      is_large: TRUE
+      use_gzipped: TRUE
+    - id: cl
+    - id: go
+    - id: pato
+    - id: envo 
+    - id: ro
+    - id: hp
+    - id: mf
+    - id: oba
+    - id: ncbitaxon
+    - id: chebi
+      is_large: TRUE
+      use_gzipped: TRUE
+    - id: ncit
+    - id: hgnc
+    - id: foodon
+    - id: so
+    - id: ecto
+    - id: omo
+robot_java_args: '-Xmx8G'
