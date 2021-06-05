@@ -368,7 +368,7 @@ refresh-%:
 # ----------------------------------------
 # Some ontologies contain external and internal components. A component is included in the ontology in its entirety.
 
-$(COMPONENTSDIR)/%: .FORCE
+$(COMPONENTSDIR)/%:
 	touch $@
 .PRECIOUS: $(COMPONENTSDIR)/%
 
