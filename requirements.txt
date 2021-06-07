@@ -24,3 +24,7 @@ networkx==2.5
 ontodev-cogs>=0.0
 sssom==0.14.11.dev0
 mkdocs >= 0.0
+funowl >= 0.0
+kgx >= 0.0
+linkml >= 0.0
+
