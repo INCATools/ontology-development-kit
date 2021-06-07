@@ -440,6 +440,9 @@ class OntologyProject(JsonSchemaMixin):
     use_external_date: bool = False
     """Flag to set if you want odk to use the host `date` rather than the docker internal `date`"""
     
+    remove_owl_nothing: bool = False
+    """Flag to set if you want odk to remove owl:Nothing from releases."""
+    
     export_project_yaml: bool = False
     """Flag to set if you want a full project.yaml to be exported, including all the default options."""
     
