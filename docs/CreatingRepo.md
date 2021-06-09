@@ -34,7 +34,7 @@ Passing arguments on the command line:
 
     ./seed-via-docker.sh -d po -d ro -d pato -u cmungall -t "Triffid Behavior ontology" triffo
 
-Using a the predefined [https://github.com/INCATools/ontology-development-kit/blob/master/examples/triffo/project.yaml) file:
+Using a the predefined [project.yaml](https://github.com/INCATools/ontology-development-kit/blob/master/examples/triffo/project.yaml) file:
 
     ./seed-via-docker.sh -C examples/triffo/project.yaml
 
