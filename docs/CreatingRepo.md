@@ -55,9 +55,13 @@ Using a the predefined [project.yaml](https://raw.githubusercontent.com/INCATool
 
     seed-via-docker.bat -C project.yaml
 
-You can add a -c (lowercase) just before the -C (capital c) in the command to first delete any previous attempt to generate your ontology with the ODK, and then replaces it with a completely new one. So, `-c` stands for `clean` or "clean up previous attempts before running again" and `-C` stands for "the next parameter is the relative path to my config file".
+### General instructions for both Linux and Windows
 
-In general, we now _always_ recommend the use of config files. The ODK has a rich set of configuration options, most of which can only be set through the config file, but in general the config also serves as documentation and will help with updating your ontology at later stages. To create a config file, you can download for example [project.yaml](https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/examples/triffo/project.yaml) by clicking on the link and then typing `command+s` on Mac or `ctrl+s` on Windows to save it in the same directory as your `seed-via-docker` script. Then you can open the file with a text editor like Notepad++, Atom, Sublime or even nano, and adapt it to your project. Other more comprehensive examples can be found [here](https://github.com/INCATools/ontology-development-kit/tree/master/configs).
+- Instead of `-u cmungall` you should be using your own username (i.e. `-u nico`), for example for your GitHub or GitLab hosting sites.
+- You can add a -c (lowercase) just before the -C (capital c) in the command to first delete any previous attempt to generate your ontology with the ODK, and then replaces it with a completely new one. So, `-c` stands for `clean` or "clean up previous attempts before running again" and `-C` stands for "the next parameter is the relative path to my config file".
+- In general, we now _always_ recommend the use of config files. The ODK has a rich set of configuration options, most of which can only be set through the config file, but in general the config also serves as documentation and will help with updating your ontology at later stages. 
+To create a config file, you can download for example [project.yaml](https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/examples/triffo/project.yaml) by clicking on the link and then typing `command+s` on Mac or `ctrl+s` on Windows to save it in the same directory as your `seed-via-docker` script. 
+Then you can open the file with a text editor like Notepad++, Atom, Sublime or even nano, and adapt it to your project. Other more comprehensive examples can be found [here](https://github.com/INCATools/ontology-development-kit/tree/master/configs).
 
 This will create your starter files in
 `target/triffid-behavior-ontology`. It will also prepare an initial
@@ -65,9 +69,13 @@ release and initialize a local repository (not yet pushed to your Git host site 
 
 ### Problems?
 
-There are two frequently encountered problems at this stage:
+There are three frequently encountered problems at this stage:
 
-#### No `.gitconfig` in user directory.
+1. No `.gitconfig` in user directory
+2. Spaces is user path
+3. During download, your filenames got changed (Windows)
+
+#### No `.gitconfig` in user directory
 
 The seed-via-docker script requires a `.gitconfig` file in your user directory. If your `.gitconfig` is in a different directory, you need to change the path in the downloaded `seed-via-docker` script. For example on Windows (look at `seed-via-docker.bat`):
 
@@ -83,6 +91,13 @@ We have had reports of users having trouble if there paths (say, `D:\data`) cont
 
 You can customize at this stage, but we recommend to first push the changes to you Git hosting site (see next steps).
 
+#### During download, your filenames got changed (Windows)
+
+Windows users, occasionally it has been reported that files downloaded on a Windows machine get a wrong file ending, 
+for example `seed-via-docker.bat.txt` instead of `seed-via-docker.bat`, or, as we will see later, `project.yaml.txt` 
+instead of `project.yaml`. If you have problems, double check your files are named correctly after the download!
+
+
 ## 4. Push to Git hosting website
 
 The development kit will automatically initialize a git project, add all files and commit.
@@ -92,7 +107,7 @@ You will need to create a project on you Git hosting site.
 *For GitHub:*
 
  1. Go to: https://github.com/new
- 2. The owner MUST be the org you selected with the `-u` option. The name MUST be the one you set with `-t`.
+ 2. The owner MUST be the org you selected with the `-u` option. The name MUST be the one you set with `-t`, just with lower case letters and dashes instead of spaces. In our example above, the name "Triffid Behavior Ontology" translates to `triffid-behavior-ontology`.
  3. Do not initialize with a README (you already have one)
  4. Click Create
  5. See the section under "…or push an existing repository from the command line"
