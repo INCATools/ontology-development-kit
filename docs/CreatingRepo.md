@@ -69,7 +69,7 @@ There are two frequently encountered problems at this stage:
 
 #### No `.gitconfig` in user directory.
 
-The seed-my-repo script requires a `.gitconfig` file in your user directory. If your `.gitconfig` is in a different directory, you need to change the path in the downloaded `seed-my-repo` script. For example on Windows (look at `seed-my-repo.bat`):
+The seed-via-docker script requires a `.gitconfig` file in your user directory. If your `.gitconfig` is in a different directory, you need to change the path in the downloaded `seed-via-docker` script. For example on Windows (look at `seed-via-docker.bat`):
 
 ```
 docker run -v %userprofile%/.gitconfig:/root/.gitconfig -v %cd%:/work -w /work --rm -ti obolibrary/odkfull /tools/odk.py seed %*
