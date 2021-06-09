@@ -11,12 +11,11 @@ We will walk you though the steps to make a new ontology project
 
  * [docker](https://www.docker.com/get-docker)
 
-See the README on the [ODK site](https://github.com/INCATools/ontology-development-kit) for instructions on how to do this without Docker.
-
 ## 2. Download the wrapper script and pull latest ODK version
 
  * Linux/Mac: [seed-via-docker.sh](https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/seed-via-docker.sh)
  * PC: [seed-via-docker.bat](https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/seed-via-docker.bat)
+ * You should have git installed - for the repo command to work perfectly, it requires a `.gitconfig` file in your user directory!
  * First, make sure you have Docker running (you will see the Docker whale in your toolbar on a Mac)
  * To make sure you have the latest version of the ODK installed, run in the command line 
 
@@ -26,23 +25,53 @@ See the README on the [ODK site](https://github.com/INCATools/ontology-developme
 
 ## 3. Run the wrapper script
 
-You can either pass in a `project.yaml` file that specifies your ontology project setup, or you can pass arguments on the command line.
+You can either pass in a configuration file in YAML format that specifies your ontology project setup, or you can pass arguments on the command line.
+
+### Unix (Max, Linux)
 
 Passing arguments on the command line:
 
     ./seed-via-docker.sh -d po -d ro -d pato -u cmungall -t "Triffid Behavior ontology" triffo
 
-Using a the predefined [examples/triffo/project.yaml](examples/triffo/project.yaml) file:
+Using a the predefined [https://github.com/INCATools/ontology-development-kit/blob/master/examples/triffo/project.yaml) file:
 
     ./seed-via-docker.sh -C examples/triffo/project.yaml
 
-You can add a -c (lowercase) just before the -C (capital c) in the command to first delete any previous attempt to generate your ontology with the ODK, and then replaces it with a completely new one.
+### Windows
+
+Passing arguments on the command line:
+
+    seed-via-docker.bat -d po -d ro -d pato -u cmungall -t "Triffid Behavior ontology" triffo
+
+Using a the predefined [https://github.com/INCATools/ontology-development-kit/blob/master/examples/triffo/project.yaml) file:
+
+    seed-via-docker.bat -C project.yaml
+
+You can add a -c (lowercase) just before the -C (capital c) in the command to first delete any previous attempt to generate your ontology with the ODK, and then replaces it with a completely new one. So, `-c` stands for `clean` or "clean up previous attempts before running again" and `-C` stands for "the next parameter is the relative path to my config file".
 
 This will create your starter files in
 `target/triffid-behavior-ontology`. It will also prepare an initial
 release and initialize a local repository (not yet pushed to your Git host site such as GitHub or GitLab).
 
-You can customize at this stage, or (recommended) after making an initial push to your git host.
+### Problems?
+
+There are two frequently encountered problems at this stage:
+
+#### No `.gitconfig` in user directory.
+
+The seed-my-repo script requires a `.gitconfig` file in your user directory. If your `.gitconfig` is in a different directory, you need to change the path in the downloaded `seed-my-repo` script. For example on Windows (look at `seed-my-repo.bat`):
+
+```
+docker run -v %userprofile%/.gitconfig:/root/.gitconfig -v %cd%:/work -w /work --rm -ti obolibrary/odkfull /tools/odk.py seed %*
+```
+
+`%userprofile%/.gitconfig` should be changed to the correct path of your local `.gitconfig` file.
+
+#### Spaces is user path
+
+We have had reports of users having trouble if there paths (say, `D:\data`) contain a space symbol, like `D:/Dropbox (Personal)` or similar. In this case, we recommend to find a directory you can work in that does not contain a space symbol.
+
+You can customize at this stage, but we recommend to first push the changes to you Git hosting site (see next steps).
 
 ## 4. Push to Git hosting website
 
