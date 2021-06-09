@@ -21,4 +21,4 @@ jobs:
       - name: Build the images
         run: make build
       - name: Run the tests
-        run: make tests
+        run: make test-full
