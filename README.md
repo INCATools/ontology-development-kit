@@ -1,6 +1,6 @@
 # The Ontology Development Kit (ODK)
 
-[![Build Status](https://travis-ci.org/INCATools/ontology-development-kit.svg?branch=master)](https://travis-ci.org/INCATools/ontology-development-kit)
+[![Build the ODK images and run the tests](https://github.com/INCATools/ontology-development-kit/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/INCATools/ontology-development-kit/actions/workflows/build-and-test.yml)
 [![DOI](https://zenodo.org/badge/48047921.svg)](https://zenodo.org/badge/latestdoi/48047921)
 
 
