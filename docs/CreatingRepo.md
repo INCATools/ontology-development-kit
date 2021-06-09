@@ -120,40 +120,34 @@ You will need to create a project on you Git hosting site.
  4. Click 'Create project'
  5. See the section under "Push an existing Git repository"
 
-Follow the instructions there. E.g.
+Follow the instructions there. E.g. (make sure the location of your remote is exactly correct!).
 
 ```
-cd target/triffid-behavior-ontology
-git remote add origin git@github.com:cmungall/triffid-behavior-ontology.git
-git push -u origin master
+cd target/triffo
+git remote add origin https://github.com/matentzn/triffid-behavior-ontology.git
+git branch -M main
+git push -u origin main
 ```
 
 Note: you can now mv `target/triffid-behavior-ontology` to anywhere you like in your home directory. Or you can do a fresh checkout from github.
 
+### Alternative recommendation for GitHub by @matentzn
+
+I generally feel its easier and less error prone to deviate from the standard instructions above. I keep having problems with git, passwords, typose etc, so I tend to do it, inofficially, as follows:
+
+1. When my repo is created I go to my GitHub Desktop
+2. I then do File > Add local repository, and select the directory which contains my newly created repo (e.g. `target/triffo`).
+3. I then Click on "Publish repository". 
+4. If I want the code to be public, I deselect "Keep this code private". By default, the repo will be uploaded to my own user profile on GitHub, but I can also select another Organization I have access to in the respective Dropdown menu.
+5. NOTE: there seem to be some issues with pushing a GitHub Workflow file recently - you may be asked by GitHub Desktop to provide an additional permission to push the Workflow file.
 
 ## Next Steps: Edit and release cycle
 
 In your repo you will see a README-editors.md file that has been customized for your project. Follow these instructions.
 
-Generally the cycle is to:
-
- - branch
- - edit the edit.owl file
- - make test
- - git commit
- - git push
-
-To make a release:
-
-`make prepare_release`
-
-Note that any make step can be preceded by run.sh if you have Docker installed:
-
-`sh run.sh make prepare_release`
-
 ## OBO Library metadata
 
-The assumption here is that you are ahdering to OBO principles and
+The assumption here is that you are adhering to OBO principles and
 want to eventually submit to OBO. Your repo will contain stub metadata
 files to help you do this.
 
@@ -165,7 +159,6 @@ For more documentation, see http://obofoundry.org
 
 You will want to also:
 
- * enable travis
- * enable zenodo (optional)
+ * enable GitHub actions
 
 See the README-editors.md file that has been generated for your project.
