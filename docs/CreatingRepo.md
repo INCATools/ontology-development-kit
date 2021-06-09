@@ -1,4 +1,4 @@
-# Creating a Repository
+# Creating a new Repository with the Ontology Development Kit
 
 This is instructions on how to create an ontology repository in
 GitHub. This will only need to be done once per project. You may need
