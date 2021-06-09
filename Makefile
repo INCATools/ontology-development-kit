@@ -75,7 +75,7 @@ clean:
 
 test-flavor:
 	docker images | grep odk$(FLAVOR) && \
-	    $(MAKE) test CMD=./seed-via-docker.sh
+	    $(MAKE) test CMD=./seed-via-docker.sh IMAGE=odk$(FLAVOR)
 
 test-full: build
 	$(MAKE) test-flavor FLAVOR=full
