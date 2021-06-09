@@ -7,9 +7,10 @@ instructions here.
 
 We will walk you though the steps to make a new ontology project
 
-## 1. Install and Start Docker
+## 1. Install and Start Requirements
 
  * [docker](https://www.docker.com/get-docker)
+ * git, for example bundled with [GitHub Desktop](https://desktop.github.com/)
 
 ## 2. Download the wrapper script and pull latest ODK version
 
