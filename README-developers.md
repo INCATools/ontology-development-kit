@@ -122,6 +122,24 @@ preserving protected files. TBD how to determine protected
 files. Obviously the edit file should not be touched. Could use git
 log to determine if any modifications have been made?
 
+## General SOP for ODK release and publication
+
+* Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).
+* Do any amount of testing as needed to be confident we are ready for release (at the very least, do a local build with `make build` and run the test suite with `make tests`; possibly run some mock releases on known ontologies such as `FBbt`, etc.).
+* Tag the release and push the tag to GitHub.
+* From GitHub, create a formal release from the newly pushed tag. This should automatically trigger the `build-multiarch.yml` GitHub Action, leading to both the x86_64 and arm64 images being built and published under the `obolibrary/` namespace.
+
+To then publish the multi-arch images under the `obotools/` namespace, we need to run locally:
+
+```sh
+$ docker buildx create --name multiarch --driver docker-container --use
+$ make publish-multiarch IM=obotools/odkfull IMLITE=obotools/odklite DEV=obotools/odkdev
+```
+
+(The first command only being needed when you attempt a multi-arch build for the first time. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.)
+
+More details below.
+
 ## Docker
 
 Note that with v1.2 the main odkfull [Dockerfile](Dockerfile) is at
