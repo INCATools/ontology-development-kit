@@ -41,14 +41,12 @@ RUN apt-get update &&\
     libfreetype6-dev \
     libpng-dev \
     pkg-config \
-    xlsx2csv &&\
-    cd /usr/local/bin \
-    && ln -s /usr/bin/python3 python \
-    && pip3 install --upgrade pip setuptools \
-    && pip3 install -r /tools/requirements.txt \
-  	&& if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi \
-  	&& if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
-  	&& rm -r /root/.cache
+    xlsx2csv \
+    && python3 -m pip install --upgrade pip setuptools \
+    && python3 -m pip install -r /tools/requirements.txt \
+    && if [ ! -e /usr/bin/pip ]; then ln -sf /usr/bin/pip3 /usr/bin/pip ; fi \
+    && if [ ! -e /usr/bin/python ]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
+    && rm -r /root/.cache
 
 
 ### 3. Install SWI-Prolog
