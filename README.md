@@ -24,6 +24,40 @@ For more details, see
   -  If you have issues, file them here: https://github.com/INCATools/ontology-development-kit/issues
   -  We also have an active community on slack, you can request access by making a ticket [here](https://github.com/INCATools/ontology-development-kit/issues) as well
 
+# Core team
+
+* @matentzn Nicolas Matentzoglu (Semanticly Ltd)
+* @gouttegd Damien Goutte-Gattat (Flybase)
+* @cmungall Chris Mungall (LBNL)
+
+Full list of contributors: 
+https://github.com/INCATools/ontology-development-kit/graphs/contributors
+
+# Outstanding contributions
+Outstanding contributors are groups and institutions that have helped with organising the ODK development, providing funding,
+advice and infrastructure. We are very grateful for all your contribution - the project would not exist without you!
+
+## Monarch Initiative
+<img src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" width="300" />
+
+https://monarchinitiative.org/
+
+## European Bioinformatics Institute
+<img src="https://user-images.githubusercontent.com/7070631/121600529-813c6700-ca3c-11eb-8590-871a963a3cfd.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600529-813c6700-ca3c-11eb-8590-871a963a3cfd.png" width="300" />
+
+
+https://www.ebi.ac.uk/spot/
+
+## University of Florida Biomedical Informatics Program
+<img src="https://user-images.githubusercontent.com/7070631/121600373-46d2ca00-ca3c-11eb-8899-c814c4041d54.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600373-46d2ca00-ca3c-11eb-8899-c814c4041d54.png" width="300" />
+
+https://hobi.med.ufl.edu/research-2/biomedical-informatics-3/
+
+## Knocean Inc.
+<img src="https://user-images.githubusercontent.com/7070631/121600426-56eaa980-ca3c-11eb-9315-b03234bb6b06.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600426-56eaa980-ca3c-11eb-9315-b03234bb6b06.png" width="300" />
+
+http://knocean.com/
+
 # Tips and Tricks
 
 ## Customizing your ODK installation
