@@ -1,3 +1,19 @@
+# v1.2.29 (11 June 2021)
+- Switched to a more up-to-date base image (ubuntu-20.04, [pull](https://github.com/INCATools/ontology-development-kit/pull/434))
+- Lots of technical changes on how to manage releases on dockerhub, especially multi-arch (same image should now work on M1, i.e. arm64 and amd64 machines, [pull](https://github.com/INCATools/ontology-development-kit/pull/429))
+- Pip install operations now using `python3 -m pip` ([pull](https://github.com/INCATools/ontology-development-kit/pull/439))
+- Introduced a new option (`remove_owl_nothing`) in repo config to remove mentions of owl:Nothing in releases
+- New python packages: linkml, kgx and funowl
+- Moved a comprehensive test suite to GitHub actions ([pull](https://github.com/INCATools/ontology-development-kit/pull/427))
+- Updated the [documentation](https://github.com/INCATools/ontology-development-kit/blob/master/docs/CreatingRepo.md) on how to create a new repo with the ODK
+- Updated Repo [README](https://github.com/INCATools/ontology-development-kit) with more docs, a list of significant external contributors (please just let me know if anyone else needs to be added), core team etc.
+- Bugfixes: 
+   - Unnecessary use of `.FORCE` in custom components removed ([pull](https://github.com/INCATools/ontology-development-kit/pull/432))
+   - Fix another bug with OWL DL profile validation ([pull](https://github.com/INCATools/ontology-development-kit/pull/430))
+   - Changed the `-g/--skipgit` option be be a flag ([pull](https://github.com/INCATools/ontology-development-kit/pull/428))
+   - Some fixes to how subsets are handled ([pull](https://github.com/INCATools/ontology-development-kit/pull/424/files?file-filters%5B%5D=.jinja2))
+
+
 # v1.2.28 (6 May 2021)
 - New DOSDP tools version [0.17](https://github.com/INCATools/dosdp-tools/releases/tag/v0.17)
 - Major: made the new image compatible with M1! Thanks to @gouttegd who did all the hard work. Super excited about this!
