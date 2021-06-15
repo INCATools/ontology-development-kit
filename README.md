@@ -40,13 +40,14 @@ advice and infrastructure. We are very grateful for all your contribution - the 
 ## Monarch Initiative
 <img src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" width="300" />
 
-The Samples, Phenotypes and Ontologies (SPOT) team, led by Helen Parkinson, is concerned with high throughput mammalian phenotyping, Semantics as a Service and human genetics resources. Members of the SPOT team including David Osumi-Sutherland have made major contributions to ODK, and provided advice, use cases and funding.
+The Monarch Initiative is a consortium of medical, biological and computational experts that provide major ontology services such as the Human Phenotype Ontology, Mondo and an integrative data and [analytic platform](https://monarchinitiative.org/) connecting phenotypes to genotypes across species, bridging basic and applied research with semantics-based analysis.  
 
 https://monarchinitiative.org/
 
 ## European Bioinformatics Institute
 <img src="https://user-images.githubusercontent.com/7070631/121600529-813c6700-ca3c-11eb-8590-871a963a3cfd.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600529-813c6700-ca3c-11eb-8590-871a963a3cfd.png" width="300" />
 
+The Samples, Phenotypes and Ontologies (SPOT) team, led by Helen Parkinson, is concerned with high throughput mammalian phenotyping, Semantics as a Service and human genetics resources. Members of the SPOT team including David Osumi-Sutherland have made major contributions to ODK, and provided advice, use cases and funding.
 
 https://www.ebi.ac.uk/spot/
 
@@ -57,6 +58,8 @@ https://hobi.med.ufl.edu/research-2/biomedical-informatics-3/
 
 ## Knocean Inc.
 <img src="https://user-images.githubusercontent.com/7070631/121600426-56eaa980-ca3c-11eb-9315-b03234bb6b06.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600426-56eaa980-ca3c-11eb-9315-b03234bb6b06.png" width="300" />
+
+Knocean Inc. offers consulting and development services for science informatics, in particular in the area of biomedical ontologies and ontology tooling.
 
 http://knocean.com/
 
