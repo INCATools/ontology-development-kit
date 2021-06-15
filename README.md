@@ -40,6 +40,8 @@ advice and infrastructure. We are very grateful for all your contribution - the 
 ## Monarch Initiative
 <img src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" width="300" />
 
+The Samples, Phenotypes and Ontologies (SPOT) team, led by Helen Parkinson, is concerned with high throughput mammalian phenotyping, Semantics as a Service and human genetics resources. Members of the SPOT team including David Osumi-Sutherland have made major contributions to ODK, and provided advice, use cases and funding.
+
 https://monarchinitiative.org/
 
 ## European Bioinformatics Institute
@@ -57,6 +59,13 @@ https://hobi.med.ufl.edu/research-2/biomedical-informatics-3/
 <img src="https://user-images.githubusercontent.com/7070631/121600426-56eaa980-ca3c-11eb-9315-b03234bb6b06.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600426-56eaa980-ca3c-11eb-9315-b03234bb6b06.png" width="300" />
 
 http://knocean.com/
+
+## Critical Path Institute
+<img src="https://user-images.githubusercontent.com/7070631/122019745-049ee500-cdbc-11eb-9ed0-3ac3ca717d9b.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/122019745-049ee500-cdbc-11eb-9ed0-3ac3ca717d9b.png" width="300" />
+
+Critical Path for Alzheimer's Disease. The Critical Path For Alzheimer’s Disease (CPAD) is a public-private partnership aimed at creating new tools and methods that can be applied to increase the efficiency of the development process of new treatments for Alzheimer disease (AD) and related neurodegenerative disorders with impaired cognition and function.
+
+https://c-path.org/
 
 # Tips and Tricks
 
