@@ -520,7 +520,7 @@ pattern_clean:
 
 .PHONY: pattern_schema_checks
 pattern_schema_checks: update_patterns
-	if [ $(PAT) = true ]; then $(PATTERN_TESTER) $(PATTERNDIR)/dosdp-patterns/; fi
+	$(PATTERN_TESTER) $(PATTERNDIR)/dosdp-patterns/
 
 #This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now). It downloads all patterns specified in external.txt
 .PHONY: update_patterns
