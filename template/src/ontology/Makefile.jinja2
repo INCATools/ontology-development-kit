@@ -429,7 +429,7 @@ mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {%- endif %}
 {%- endif %}
-.PRECIOUS: mirror/%.owl
+.PRECIOUS: mirror/{{ ont.id }}.owl
 {% endfor -%}
 {% endif %}
 
