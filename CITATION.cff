@@ -1,8 +1,8 @@
 cff-version: 1.1.0
 message: If you use this software, please cite it as below.
 authors:
-  - family-names: Druskat
-    given-names: Stephan
-title: My Research Tool
-version: 1.0.4
-date-released: 2017-12-18
+  - family-names: Matentzoglu
+    given-names: Nicolas
+title: Ontology Development Kit
+version: 1.2.29
+date-released: 2021-07-11
