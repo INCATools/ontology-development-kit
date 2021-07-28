@@ -17,3 +17,6 @@ authors:
 title: Ontology Development Kit
 version: 1.2.29
 date-released: 2021-07-11
+doi: 10.5281/zenodo.4662066
+repository-code: https://github.com/INCATools/ontology-development-kit
+url: https://hub.docker.com/r/obolibrary/odkfull
