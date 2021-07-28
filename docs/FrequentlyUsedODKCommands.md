@@ -15,7 +15,7 @@ sh run.sh make update_docs
 ## Preparing a new release
 
 ```
-sh run.sh make prepare_release #(prepares a release..)
+sh run.sh make prepare_release
 ```
 
 ## Refreshing a single import
