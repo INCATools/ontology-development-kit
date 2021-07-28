@@ -5,8 +5,15 @@ authors:
     given-names: Nicolas
     orcid: https://orcid.org/0000-0002-7356-1779
     affiliation: "Semanticly Ltd"
+  - family-names: Mungall
+    given-names: Chris
+    orcid: https://orcid.org/0000-0002-6601-2165
+    affiliation: "Lawrence Berkeley National Laboratory (LBNL)"
+  - family-names: "Goutte-Gattat"
+    given-names: Damien
+    orcid: https://orcid.org/0000-0002-6095-8718
+    affiliation: "Flybase"
 title: "Ontology Development Kit (ODK)"
 doi: 10.5281/zenodo.4662066
 date-released: 2018-08-04
-repository-code: https://github.com/INCATools/ontology-development-kit
-url: https://hub.docker.com/r/obolibrary/odkfull
+url: https://github.com/INCATools/ontology-development-kit
