@@ -18,5 +18,4 @@ title: "Ontology Development Kit (ODK)"
 doi: 10.5281/zenodo.4662066
 date-released: 2018-08-04
 repository-code: https://github.com/INCATools/ontology-development-kit
-license: "BSD-3-Clause License"
 url: https://hub.docker.com/r/obolibrary/odkfull
