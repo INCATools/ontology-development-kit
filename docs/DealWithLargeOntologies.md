@@ -91,7 +91,9 @@ Feel free to use an even cheaper approach, even one that does not use ROBOT, as 
 
 ## Use slims when they are available
 
-For some ontologies, you can find slims that are _much_ smaller than full ontology. For example, NCBITaxon maintains a slim for OBO here: http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.obo, which is just 3 MB (!) compared to the 1 or 2 GB of the full version. Many ontologies maintain such slims, and if not, probably should. (I would really like to see an OBO slim for Protein Ontology!)
+For some ontologies, you can find slims that are _much_ smaller than full ontology. For example, NCBITaxon maintains a slim for OBO here: http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl, which smaller than the 1 or 2 GB of the full version. Many ontologies maintain such slims, and if not, probably should. (I would really like to see an OBO slim for Protein Ontology!)
+
+(note the .obo file is even smaller but currently robot has issues getting obo files from the web)
 
 You can also add your favourite taxa to the NCBITaxon slim by simply making a pull request on here: https://github.com/obophenotype/ncbitaxon/blob/master/subsets/taxon-subset-ids.txt
 
