@@ -21,8 +21,6 @@ import_group:
     - id: nbo
     - id: ncit
     - id: ncbitaxon
-    - id: npo
-      mirror_from: https://raw.githubusercontent.com/monarch-initiative/MAxO/master/maxo.owl
     - id: pato
     - id: ro
     - id: uberon 
