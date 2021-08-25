@@ -717,6 +717,18 @@ Once your [CI checks](ContinuousIntegration.md) have passed, and your reviews ar
 1. You can write whatever you want in the release title, but we typically write the date again. The description underneath should contain a concise list of changes or term additions.
 1. Click "Publish release". Done.
 
+## Debugging typical ontology release problems
+
+oort error:
+
+1. If you get a message like `make: *** [cl.Makefile:84: oort] Error 255` you might have a oort error. 
+2. To debug this, in your terminal enter `sh run.sh make IMP=false PAT=false oort -B` (assuming you are already in the ontology folder in your directory) 
+3. This should show you where the error is in the log (eg multiple different definitions) 
+WARNING: THE FIX BELOW IS NOT IDEAL, YOU SHOULD ALWAYS TRY TO FIX UPSTREAM IF POSSIBLE
+4. Open `{{ project.id }}-edit.owl` in Protege and find the offending term and delete all offending issue (eg delete ALL definition) and save. 
+*While this is not idea, as it will remove all definitions from that term, it will hopefully be added back again when the term is fixed in the ontology it was imported from and added back in.
+5. Rerun `sh run.sh make IMP=false PAT=false oort -B` and if it all passes, run the release using `sh run.sh make IMP=false PAT=false prepare_release -B`
+
 ^^^ docs/odk-workflows/RepoManagement.md
 # Managing your ODK repository
 
