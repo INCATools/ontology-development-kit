@@ -6,7 +6,7 @@
 
 # {{ project.title }}
 
-This ontology... YOUR DESCRIPTION HERE
+Description: {{ project.description }}
 
 More information can be found at http://obofoundry.org/ontology/{{ project.id }}
 
@@ -22,7 +22,7 @@ The latest version of the ontology can always be found at:
 
 ### Editors' version
 
-Editors of this ontology should use the edit version, [src/ontology/{{ project.id }}-edit.owl](src/ontology/{{ project.id }}-edit.owl)
+Editors of this ontology should use the edit version, [src/ontology/{{ project.id }}-edit.owl](src/ontology/{{ project.id }}-edit.{{ project.edit_format }})
 
 ## Contact
 
@@ -30,4 +30,4 @@ Please use this GitHub repository's [Issue tracker](https://github.com/{{ projec
 
 ## Acknowledgements
 
-This ontology repository was created using the [ontology starter kit](https://github.com/INCATools/ontology-starter-kit)
+This ontology repository was created using the [Ontology Development Kit (ODK)](https://github.com/INCATools/ontology-development-kit).
