@@ -20,9 +20,9 @@ ruamel.yaml >=0.0
 seaborn>=0.0
 upsetplot>=0.0
 plotly>=0.0
-networkx==2.5
+networkx==2.3
+sssom>=0.3.2
 ontodev-cogs>=0.0
-sssom==0.14.11.dev0
 mkdocs >= 0.0
 funowl >= 0.0
 kgx >= 0.0
