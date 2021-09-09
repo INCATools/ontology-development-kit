@@ -181,6 +181,10 @@ RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 https://github.
     echo "build/robot.jar:" >> Makefile &&\
     echo "	echo 'skipped ROBOT jar download' && touch \$@" >> Makefile && echo "" >> Makefile
 
+
+###### Souffle ######
+RUN curl -s https://packagecloud.io/install/repositories/souffle-lang/souffle/script.deb.sh | bash && apt-get install -y souffle
+
 ########## DROID #########
 # LAYERSIZE ~18MB
 #RUN apt-get install -y leiningen
