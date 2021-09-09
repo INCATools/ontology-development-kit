@@ -1,30 +1,31 @@
-click >= 0.0
-dacite >= 0.0
-dataclasses >= 0.0
-dataclasses-json >= 0.0
-dataclasses-jsonschema >= 0.0
-jinja2 >= 0.0
-jsonpath_rw >=0.0
-jsonschema >=0.0
-jupyter>=0.0
-matplotlib_venn>=0.0
+click==8.0.1
+dacite==1.6.0
+dataclasses==0.6
+dataclasses-json==0.5.5
+dataclasses-jsonschema==2.14.1
+funowl==0.1.9
+Jinja2==3.0.1
+jsonpath-rw==1.4.0
+jsonschema==3.2.0
+jupyter==1.0.0
+kgx==1.5.2
+linkml==1.0.6
+linkml-model==1.0.4
+linkml-runtime==1.0.15
 matplotlib==2.2.3
-numpy >=0.0
-ontobio>=0.0
-pandas >=0.0
-PyGithub >= 0.0
-pyyaml >= 0.0
-rdflib >=0.0
-requests >=0.0
-ruamel.yaml >=0.0
-seaborn>=0.0
-upsetplot>=0.0
-plotly>=0.0
-networkx==2.5
-ontodev-cogs>=0.0
-sssom==0.14.11.dev0
-mkdocs >= 0.0
-funowl >= 0.0
-kgx >= 0.0
-linkml >= 0.0
-
+matplotlib-venn==0.11.6
+mkdocs==1.2.2
+networkx==2.3
+numpy==1.21.2
+ontobio==2.7.9
+ontodev-cogs==0.3.3
+pandas==1.3.2
+plotly==5.3.1
+PyGithub==1.55
+PyYAML==5.4.1
+rdflib==5.0.0
+requests==2.22.0
+ruamel.yaml==0.17.16
+seaborn==0.11.2
+sssom==0.3.2
+UpSetPlot==0.6.0
