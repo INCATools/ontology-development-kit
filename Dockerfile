@@ -41,12 +41,9 @@ RUN apt-get update &&\
     libfreetype6-dev \
     libpng-dev \
     pkg-config \
-    xlsx2csv 
-
-#https://github.com/pypa/pip/issues/9187#issuecomment-853091201
-RUN  python3 -m pip install --upgrade pip==20.3.4  \
-    && python3 -m pip install --upgrade setuptools==52.0.0  \
-    && python3 -m pip install --use-feature=fast-deps --use-deprecated=legacy-resolver -r /tools/requirements.txt \
+    xlsx2csv \
+    && python3 -m pip install --upgrade pip setuptools \
+    && python3 -m pip install -r /tools/requirements.txt \
     && if [ ! -e /usr/bin/pip ]; then ln -sf /usr/bin/pip3 /usr/bin/pip ; fi \
     && if [ ! -e /usr/bin/python ]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
     && rm -r /root/.cache
