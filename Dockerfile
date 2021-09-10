@@ -186,7 +186,26 @@ RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 https://github.
 
 
 ###### Souffle ######
-RUN curl -s https://packagecloud.io/install/repositories/souffle-lang/souffle/script.deb.sh | bash && apt-get install -y souffle
+RUN apt-get install -y \
+    bison \
+    clang \
+    cmake \
+    doxygen \
+    flex \
+    g++ \
+    libffi-dev \
+    libncurses5-dev \
+    libsqlite3-dev \
+    mcpp \
+    sqlite \
+    zlib1g-dev && \
+    wget -O souffle-2.1.tar.gz https://github.com/souffle-lang/souffle/archive/refs/tags/2.1.tar.gz && \
+    tar xf souffle-2.1.tar.gz && \
+    cd souffle-2.1 && \
+    cmake -S . -B build && \
+    cmake --build build --target install && \
+    cd .. && \
+    rm -rf souffle-2.1.tar.gz souffle-2.1
 
 ########## DROID #########
 # LAYERSIZE ~18MB
