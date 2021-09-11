@@ -1,3 +1,34 @@
+# Builder image for Soufflé (and possibly other programs later)
+FROM ubuntu:20.04 AS builder
+WORKDIR /tools
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    DEBIAN_FRONTEND="noninteractive" apt-get install -y \
+        build-essential \
+        git \
+        wget \
+        bison \
+        clang \
+        cmake \
+        doxygen \
+        flex \
+        g++ \
+        libffi-dev \
+        libncurses5-dev \
+        libsqlite3-dev \
+        mcpp \
+        sqlite \
+        lsb-release \
+        zlib1g-dev && \
+    mkdir -p staging && \
+    wget -O souffle-2.1.tar.gz https://github.com/souffle-lang/souffle/archive/refs/tags/2.1.tar.gz && \
+    tar xf souffle-2.1.tar.gz && \
+    cd souffle-2.1 && \
+    cmake -S . -B build && \
+    cmake --build build --target install DESTDIR=/tools/staging && \
+    cd .. && \
+    rm -rf souffle-2.1.tar.gz souffle-2.1
+
 ### From https://stackoverflow.com/questions/51121875/how-to-run-docker-with-python-and-java
 ### 1. Get Linux
 FROM ubuntu:20.04
@@ -186,26 +217,8 @@ RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 https://github.
 
 
 ###### Souffle ######
-RUN apt-get install -y \
-    bison \
-    clang \
-    cmake \
-    doxygen \
-    flex \
-    g++ \
-    libffi-dev \
-    libncurses5-dev \
-    libsqlite3-dev \
-    mcpp \
-    sqlite \
-    zlib1g-dev && \
-    wget -O souffle-2.1.tar.gz https://github.com/souffle-lang/souffle/archive/refs/tags/2.1.tar.gz && \
-    tar xf souffle-2.1.tar.gz && \
-    cd souffle-2.1 && \
-    cmake -S . -B build && \
-    cmake --build build --target install && \
-    cd .. && \
-    rm -rf souffle-2.1.tar.gz souffle-2.1
+RUN apt-get install -y libgomp1 sqlite
+COPY --from=builder /tools/staging /
 
 ########## DROID #########
 # LAYERSIZE ~18MB
