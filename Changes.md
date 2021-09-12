@@ -1,3 +1,15 @@
+# v1.2.30 (tbd)
+- The way we install python packages has changed significantly because of problems with the new python dependency resolver. If you have problems with non-interoperable python packages let us know immediately and we will hot fix.
+- For those who are using DOSDP patterns we re-introduced the pattern schema check even if pattern generation is skipped (it is very fast).
+- Created a simple way to cite ODK from within GitHub, using the CITATION.cff file. If you go to https://github.com/INCATools/ontology-development-kit, you will now see a "cite this repo" section under the *About* section.
+- Changed the default README.md to include a better reference to ODK, the correct ontology description text a the correct edit file extension.
+- Created a [page](https://github.com/INCATools/ontology-development-kit/blob/master/docs/FrequentlyUsedODKCommands.md) for frequently used ODK commands.
+- Bugfixes:
+  - project repo name was not read correctly during `make update_repo` causing it to be named "False" ([commit](https://github.com/INCATools/ontology-development-kit/commit/856a7f63c6b24b614eeae07deaf8ef1724903473))
+  - Fixed a bug where mirrors were not considered precious
+  - Fixed a bug where where the report directories where not created when running a sparql report command ([commit](https://github.com/INCATools/ontology-development-kit/commit/dc1bb2220b978ed9adfb7cf9d2924ea6224945e3))
+
+
 # v1.2.29 (11 June 2021)
 - Switched to a more up-to-date base image (ubuntu-20.04, [pull](https://github.com/INCATools/ontology-development-kit/pull/434))
 - Lots of technical changes on how to manage releases on dockerhub, especially multi-arch (same image should now work on M1, i.e. arm64 and amd64 machines, [pull](https://github.com/INCATools/ontology-development-kit/pull/429))
