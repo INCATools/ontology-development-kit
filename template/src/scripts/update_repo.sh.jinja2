@@ -11,7 +11,7 @@ CONFIG=$OID"-odk.yaml"
 
 rm -rf target
 mkdir target
-/tools/odk.py seed -c -g False -C $CONFIG
+/tools/odk.py seed -c -g -C $CONFIG
 ls -l target/$OID/src
 ls -l $SRCDIR/
 cp target/$OID/src/scripts/update_repo.sh $SRCDIR/scripts/
