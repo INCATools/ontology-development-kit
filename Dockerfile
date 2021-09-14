@@ -217,7 +217,7 @@ RUN cd /tools/ && chmod +x /tools/obodash && git clone --depth 1 https://github.
 
 
 ###### Souffle ######
-RUN apt-get install -y libgomp1 sqlite
+RUN apt-get install -y g++ libffi-dev libncurses5-dev libsqlite3-dev mcpp zlib1g-dev
 COPY --from=builder /tools/staging /
 
 ########## DROID #########
