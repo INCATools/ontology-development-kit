@@ -1,61 +1,79 @@
-### From https://stackoverflow.com/questions/51121875/how-to-run-docker-with-python-and-java
-### 1. Get Linux
 FROM ubuntu:20.04
-LABEL maintainer="obo-tools@googlegroups.com" 
+LABEL maintainer="obo-tools@googlegroups.com"
 
-### 2. Get Java, Python and all required system libraries (version control etc)
-ENV JAVA_HOME="/usr"
+ENV ROBOT_VERSION 1.8.1
+ENV DOSDP_VERSION 0.17
+ENV OWLTOOLS_VERSION 2020-04-06
+ENV AMMONITE_VERSION 2.0.3
+
 WORKDIR /tools
-ENV PATH "/tools/:$PATH"
-COPY requirements.txt.lite /tools/requirements.txt
-COPY odk/make-release-assets.py /tools/
+ENV JAVA_HOME "/usr"
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+ENV PATH "/tools:/tools/dosdp-tools/bin:$PATH"
 
-#ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
-# LAYERSIZE ~1000MB
-RUN apt-get update &&\
-  apt-get install -y software-properties-common &&\
-  apt-get upgrade -y &&\
-  apt-get install -y build-essential \
-    git \
-    openjdk-8-jre \
-    make \
-    unzip \
-    rsync \
-    curl \
-    jq \
-    openssl
+# Base tools from Ubuntu
+RUN apt-get update && \
+    DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
+        git \
+        openjdk-8-jre-headless \
+        python3-pip \
+        make \
+        unzip \
+        wget \
+        jq \
+        rsync
 
-###### owltools & OORT ######
-# For now we get these from jenkins builds, but these should be obtained
-# by composing existing Dockerfiles, or by obtaining directly from maven
-ENV OWLTOOLS 2020-04-06
-RUN curl -L https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS/owltools -o /tools/owltools && \
-    curl -L https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS/ontology-release-runner -o /tools/ontology-release-runner && \
-    curl -L https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS/owltools-oort-all.jar -o /tools/owltools-oort-all.jar && \
+# Python environment
+RUN python3 -m pip install \
+        dataclasses \
+        dataclasses-jsonschema \
+        dataclasses-json \
+        jinja2 \
+        pyyaml \
+        dacite \
+        click \
+        jsonpath_rw \
+        ruamel.yaml \
+        PyGithub && \
+    if [ ! -e /usr/bin/python ] ; then ln -sf /usr/bin/python3 /usr/bin/python ; fi
+
+# ROBOT
+RUN wget -nv https://github.com/ontodev/robot/releases/download/v$ROBOT_VERSION/robot.jar \
+        -O /tools/robot.jar && \
+    wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/bin/robot \
+        -O /tools/robot && \
+    chmod 755 /tools/robot
+
+# DOSDPTOOLS
+RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_VERSION/dosdp-tools-$DOSDP_VERSION.tgz && \
+    tar zxf dosdp-tools-$DOSDP_VERSION.tgz && \
+    rm dosdp-tools-$DOSDP_VERSION.tgz && \
+    mv dosdp-tools-$DOSDP_VERSION /tools/dosdp-tools && \
+    wget -nv --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py \
+        -O /tools/simple_pattern_tester.py && \
+    chmod 755 /tools/simple_pattern_tester.py
+
+# OWLTOOLS
+RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools \
+        -O /tools/owltools && \
+    wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/ontology-release-runner \
+        -O /tools/ontology-release-runner && \
+    wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools-oort-all.jar \
+        -O /tools/owltools-oort-all.jar && \
     chmod +x /tools/owltools && \
     chmod +x /tools/ontology-release-runner && \
     chmod +x /tools/owltools-oort-all.jar
 
-###### ROBOT ######
-ENV ROBOT v1.8.1
-ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
-ENV ROBOT_JAR ${ROBOT_JAR}
+# AMMONITE
+RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VERSION/2.13-$AMMONITE_VERSION \
+        -O /tools/amm && \
+    chmod 755 /tools/amm && \
+    /tools/amm /dev/null
 
-# LAYERSIZE ~66MB
-RUN curl -L $ROBOT_JAR -o /tools/robot.jar &&\
-    curl -L https://raw.githubusercontent.com/ontodev/robot/$ROBOT/bin/robot -o /tools/robot && \
-    chmod +x /tools/robot && \
-    chmod +x /tools/robot.jar
-
-### 5. Install ODK
-ARG ODK_VERSION=0.0.0
-ENV ODK_VERSION=${ODK_VERSION}
-
-COPY odk/odk.py /tools/
+# ODK
+COPY odk/make-release-assets.py /tools
+COPY odk/odk.py /tools
 COPY template/ /tools/templates/
-RUN chmod +x /tools/*.py
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
-RUN echo "Keep me in sync with obolibrary/odkfull!"
-
+RUN chmod 755 /tools/*.py
 CMD python /tools/odk.py
