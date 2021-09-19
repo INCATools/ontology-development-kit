@@ -12,6 +12,9 @@ ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 ENV PATH "/tools:/tools/dosdp-tools/bin:$PATH"
 
+ARG ODK_VERSION 0.0.0
+ENV ODK_VERSION $ODK_VERSION
+
 # Base tools from Ubuntu
 RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
