@@ -166,8 +166,8 @@ RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-3.12.0.tar
     mv /tools/apache-jena-3.12.0 /tools/apache-jena
 
 # SPARQLProg
-RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt
-RUN ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
+RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
+    ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
 
 # OBO-Dashboard
 COPY scripts/obodash /tools
