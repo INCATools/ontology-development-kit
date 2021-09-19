@@ -86,8 +86,6 @@ RUN apt-get update && \
 FROM obolibrary/odklite:latest
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV JENA_VERSION 3.12.0
-
 ENV PATH "/tools/apache-jena/bin:/tools/sparqlprog/bin:$PATH"
 
 ARG ODK_VERSION 0.0.0
@@ -164,8 +162,8 @@ RUN wget -nv https://github.com/konclude/Konclude/releases/download/v0.6.2-845/K
     chmod +x /tools/Konclude
 
 # JENA
-RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERSION.tar.gz -O- | tar xzC /tools && \
-    mv /tools/apache-jena-$JENA_VERSION /tools/apache-jena
+RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-3.12.0.tar.gz -O- | tar xzC /tools && \
+    mv /tools/apache-jena-3.12.0 /tools/apache-jena
 
 # SPARQLProg
 RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt
