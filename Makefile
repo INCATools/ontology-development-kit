@@ -51,12 +51,11 @@ ROB=obolibrary/robot
 ROBOT_JAR_ARGS=#--build-arg ROBOT_JAR=$(ROBOT_JAR)
 
 build:
+	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) CACHE=$(CACHE) build
 	docker build $(CACHE) \
 	    --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) \
 	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
 	    .
-	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) CACHE=$(CACHE) build
-	$(MAKE) -C docker/robot CACHE=$(CACHE) build
 
 build-no-cache:
 	$(MAKE) build CACHE=--no-cache
@@ -106,7 +105,6 @@ publish-no-build:
 	docker push $(IM):latest
 	docker push $(IM):$(VERSION)
 	$(MAKE) -C docker/odklite publish-no-build
-	$(MAKE) -C docker/robot publish-no-build
 
 publish: build
 	$(MAKE) publish-no-build
@@ -116,15 +114,13 @@ publish-dev-no-build:
 	docker push $(DEV):latest
 
 publish-multiarch:
+	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) \
+	    CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
+	    publish-multiarch
 	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
 	    --build-arg ODK_VERSION=$(VERSION) \
 	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
 	    .
-	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) \
-	    CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
-	    publish-multiarch
-	$(MAKE) -C docker/robot CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
-	    publish-multiarch
 
 clean-tests:
 	rm -rf target/*
