@@ -71,12 +71,21 @@ RUN apt-get update && \
     cmake -S . -B build && \
     cmake --build build --target install DESTDIR=/tools/staging
 
+# Compile Fastobo-validator
+RUN apt-get update && \
+    DEBIAN_FRONTEND="noninteractive" apt-get install -y rustc wget && \
+    wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v0.4.0.tar.gz \
+        -O /tools/fastobo-validator-0.4.0.tar.gz && \
+    tar xf fastobo-validator-0.4.0.tar.gz && \
+    cd fastobo-validator-0.4.0 && \
+    cargo build --release && \
+    install -D -m 755 target/release/fastobo-validator /tools/staging/usr/bin/fastobo-validator
+
 # Final ODK image
 # Built upon the odklite image
 FROM obolibrary/odklite:latest
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV FASTOBO_VERSION 0.4.0
 ENV JENA_VERSION 3.12.0
 
 ENV PATH "/tools/apache-jena/bin:/tools/sparqlprog/bin:$PATH"
@@ -138,7 +147,7 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
         zlib1g-dev
 
 # Copy everything that we have built in the builder image
-# (for now, SWI-Prolog and Soufflé)
+# (for now, SWI-Prolog, Soufflé, and Fastobo)
 COPY --from=builder /tools/staging /
 
 # Konclude
@@ -153,12 +162,6 @@ RUN wget -nv https://github.com/konclude/Konclude/releases/download/v0.6.2-845/K
     echo "#!/bin/bash" > /tools/Konclude && \
     echo '/tools/konclude_reasoner/Binaries/Konclude $*' >> /tools/Konclude && \
     chmod +x /tools/Konclude
-
-# FASTOBO
-# FIXME: This won't work on arm64, we need to build it from source in the
-#        builder image and copy it from there
-RUN wget -nv https://github.com/fastobo/fastobo-validator/releases/download/v$FASTOBO_VERSION/fastobo_validator-x86_64-linux-musl.tar.gz -O- | tar zxC /tools && \
-    chmod 755 /tools/fastobo-validator
 
 # JENA
 RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERSION.tar.gz -O- | tar xzC /tools && \
