@@ -37,7 +37,7 @@ RUN python3 -m pip install -c /tools/constraints.txt \
         jsonpath_rw \
         ruamel.yaml \
         PyGithub && \
-    if [ ! -e /usr/bin/python ] ; then ln -sf /usr/bin/python3 /usr/bin/python ; fi
+    rm -rf /root/.cache
 
 # ROBOT
 RUN wget -nv https://github.com/ontodev/robot/releases/download/v$ROBOT_VERSION/robot.jar \
@@ -77,4 +77,4 @@ COPY odk/make-release-assets.py /tools
 COPY odk/odk.py /tools
 COPY template/ /tools/templates/
 RUN chmod 755 /tools/*.py
-CMD python /tools/odk.py
+CMD python3 /tools/odk.py
