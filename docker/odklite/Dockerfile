@@ -25,7 +25,8 @@ RUN apt-get update && \
         rsync
 
 # Python environment
-RUN python3 -m pip install \
+COPY constraints.txt /tools/constraints.txt
+RUN python3 -m pip install -c /tools/constraints.txt \
         dataclasses \
         dataclasses-jsonschema \
         dataclasses-json \
