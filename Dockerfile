@@ -81,6 +81,21 @@ RUN apt-get update && \
     cargo build --release && \
     install -D -m 755 target/release/fastobo-validator /tools/staging/usr/bin/fastobo-validator
 
+# Compile Konclude if we are not on x86_64
+# (building Konclude is time-consuming, so we avoid it on x86_64
+#  where a pre-compiled binary is available)
+ARG TARGETARCH
+RUN test "x$TARGETARCH" != xamd64 && (apt-get update && \
+        DEBIAN_FRONTEND="noninteractive" apt-get install -y qt5-default wget && \
+        wget -nv https://github.com/konclude/Konclude/archive/refs/tags/v0.7.0-1138.tar.gz \
+            -O /tools/Konclude-0.7.0.tar.gz && \
+        tar xf Konclude-0.7.0.tar.gz && \
+        cd Konclude-0.7.0-1138 && \
+        qmake -r CONFIG+=release CONFIG-=debug CONFIG+=static QT-=gui KoncludeWithoutRedland.pro && \
+        make && \
+        install -D -m 755 Release/Konclude /tools/staging/usr/bin/Konclude \
+    )
+
 # Final ODK image
 # Built upon the odklite image
 FROM obolibrary/odklite:latest
@@ -145,21 +160,20 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
         zlib1g-dev
 
 # Copy everything that we have built in the builder image
-# (for now, SWI-Prolog, Soufflé, and Fastobo)
+# (SWI-Prolog, Soufflé, Fastobo, and Konclude on arm64)
 COPY --from=builder /tools/staging /
 
 # Konclude
-# FIXME: This won't work on arm64, we need to build it from source in the
-#        builder image and copy it from there
-RUN wget -nv https://github.com/konclude/Konclude/releases/download/v0.6.2-845/Konclude-v0.6.2-845-LinuxAlpine-x64-GCC8.3.0-Static-Qt-5.13.zip \
-        -O /tools/konclude.zip && \
-    unzip /tools/konclude.zip && \
-    mv /tools/Konclude-v0.6.2-845-LinuxAlpine-x64-GCC8.3.0-Static-Qt-5.13 /tools/konclude_reasoner && \
-    rm /tools/konclude.zip && \
-    chmod +x /tools/konclude_reasoner/Binaries && \
-    echo "#!/bin/bash" > /tools/Konclude && \
-    echo '/tools/konclude_reasoner/Binaries/Konclude $*' >> /tools/Konclude && \
-    chmod +x /tools/Konclude
+# On x86_64, install a pre-compiled binary
+ARG TARGETARCH
+RUN test "x$TARGETARCH" = xamd64 && ( \
+        wget -nv https://github.com/konclude/Konclude/releases/download/v0.7.0-1138/Konclude-v0.7.0-1138-Linux-x64-GCC-Static-Qt5.12.10.zip \
+            -O /tools/Konclude.zip && \
+        unzip Konclude.zip && \
+        mv Konclude-v0.7.0-1138-Linux-x64-GCC-Static-Qt5.12.10/Binaries/Konclude /tools/Konclude && \
+        rm -rf Konclude-v0.7.0-1138-Linux-x64-GCC-Static-Qt5.12.10 && \
+        rm Konclude.zip \
+    )
 
 # JENA
 RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-3.12.0.tar.gz -O- | tar xzC /tools && \
