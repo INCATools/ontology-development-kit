@@ -51,13 +51,18 @@ ROB=obolibrary/robot
 #ROBOT_JAR="https://github.com/monarch-ebi-dev/odk_utils/raw/master/robot_maven_test.jar"
 ROBOT_JAR_ARGS=#--build-arg ROBOT_JAR=$(ROBOT_JAR)
 
-build:
-	$(MAKE) -C docker/builder ARCH=$(ARCH) CACHE=$(CACHE) build
-	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) CACHE=$(CACHE) build
+build: build-odklite
 	docker build $(CACHE) --platform $(ARCH) \
 	    --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) \
 	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
 	    .
+
+build-odklite: build-builder
+	$(MAKE) -C docker/odklite ARCH=$(ARCH) CACHE=$(CACHE) \
+		IM=$(IMLITE) VERSION=$(VERSION) build
+
+build-builder:
+	$(MAKE) -C docker/builder ARCH=$(ARCH) CACHE=$(CACHE) build
 
 build-no-cache:
 	$(MAKE) build CACHE=--no-cache
@@ -84,7 +89,7 @@ test-full: build
 test-dev: build-dev
 	$(MAKE) test-flavor FLAVOR=dev
 
-test-lite: build
+test-lite: build-odklite
 	$(MAKE) test-flavor FLAVOR=lite
 
 tests: test-full test-dev
