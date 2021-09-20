@@ -35,14 +35,23 @@ RUN apt-get update && \
 COPY requirements.txt /build/requirements.txt
 COPY requirements.txt.lite /build/requirements.txt.lite
 COPY constraints.txt /build/constraints.txt
+# First the packages needed by the odklite image.
 RUN python3 -m pip install \
         -r /build/requirements.txt.lite \
         -c /build/constraints.txt \
         --root /staging/lite
+# Then those needed by the odkfull image.
+# After installing those packages, we forcibly remove from the odkfull
+# staging tree any file already present in the odklite staging tree
+# (caused by packages installed in both trees) to avoid needlessly
+# increasing the size of the odkfull image.
 RUN python3 -m pip install \
         -c /build/constraints.txt \
         -r /build/requirements.txt \
-        --root /staging/full
+        --root /staging/full && \
+        cd /staging/lite && \
+        find . -type f | while read f ; do rm -f /staging/full/$f ; done && \
+        find . -type d -depth | while read f ; do rmdir -f /staging/full/$f || true ; done
 
 # Compile SWI-Prolog.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
