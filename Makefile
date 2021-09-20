@@ -11,6 +11,7 @@ EMAIL_ARGS=
 
 CACHE=
 
+ARCH=$(shell uname -m | sed 's/x86_64/amd64/')
 PLATFORMS=linux/amd64,linux/arm64
 
 .PHONY: .FORCE
@@ -52,7 +53,7 @@ ROBOT_JAR_ARGS=#--build-arg ROBOT_JAR=$(ROBOT_JAR)
 
 build:
 	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) CACHE=$(CACHE) build
-	docker build $(CACHE) \
+	docker build $(CACHE) --platform $(ARCH) \
 	    --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) \
 	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
 	    .
@@ -61,7 +62,7 @@ build-no-cache:
 	$(MAKE) build CACHE=--no-cache
 
 build-dev:
-	docker build --build-arg ODK_VERSION=$(VERSION) \
+	docker build --build-arg ODK_VERSION=$(VERSION) --platform $(ARCH) \
 	    -t $(DEV):$(VERSION) -t $(DEV):latest \
 	    .
 
