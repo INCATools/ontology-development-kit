@@ -9,7 +9,7 @@ ARCH=$(shell uname -m | sed 's/x86_64/amd64/')
 PLATFORMS=linux/amd64,linux/arm64
 
 build:
-	echo docker build $(CACHE) --platform $(ARCH) -f Dockerfile \
+	docker build $(CACHE) --platform $(ARCH) -f Dockerfile \
 	    --build-arg ODK_VERSION=$(VERSION) \
 	    -t $(IM):$(VERSION) -t $(IM):latest \
 	    ../..

@@ -15,41 +15,30 @@ ENV PATH "/tools:/tools/dosdp-tools/bin:$PATH"
 ARG ODK_VERSION 0.0.0
 ENV ODK_VERSION $ODK_VERSION
 
-# Base tools from Ubuntu
+# Install base tools from Ubuntu.
 RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
         git \
         openjdk-8-jre-headless \
         python3-pip \
+        python-is-python3 \
         make \
         unzip \
         wget \
         jq \
         rsync
 
-# Python environment
-COPY constraints.txt /tools/constraints.txt
-RUN python3 -m pip install -c /tools/constraints.txt \
-        dataclasses \
-        dataclasses-jsonschema \
-        dataclasses-json \
-        jinja2 \
-        pyyaml \
-        dacite \
-        click \
-        jsonpath_rw \
-        ruamel.yaml \
-        PyGithub && \
-    rm -rf /root/.cache
+# Install Python environment (copied over from the builder image).
+COPY --from=obolibrary/odkbuild:latest /staging/lite /
 
-# ROBOT
+# Install ROBOT.
 RUN wget -nv https://github.com/ontodev/robot/releases/download/v$ROBOT_VERSION/robot.jar \
         -O /tools/robot.jar && \
     wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/bin/robot \
         -O /tools/robot && \
     chmod 755 /tools/robot
 
-# DOSDPTOOLS
+# Install DOSDPTOOLS.
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_VERSION/dosdp-tools-$DOSDP_VERSION.tgz && \
     tar zxf dosdp-tools-$DOSDP_VERSION.tgz && \
     rm dosdp-tools-$DOSDP_VERSION.tgz && \
@@ -58,7 +47,7 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_
         -O /tools/simple_pattern_tester.py && \
     chmod 755 /tools/simple_pattern_tester.py
 
-# OWLTOOLS
+# Install OWLTOOLS.
 RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools \
         -O /tools/owltools && \
     wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/ontology-release-runner \
@@ -69,13 +58,13 @@ RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_V
     chmod +x /tools/ontology-release-runner && \
     chmod +x /tools/owltools-oort-all.jar
 
-# AMMONITE
+# Install Ammonite.
 RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VERSION/2.13-$AMMONITE_VERSION \
         -O /tools/amm && \
     chmod 755 /tools/amm && \
     /tools/amm /dev/null
 
-# ODK
+# Install the ODK itself.
 COPY odk/make-release-assets.py /tools
 COPY odk/odk.py /tools
 COPY template/ /tools/templates/

@@ -52,6 +52,7 @@ ROB=obolibrary/robot
 ROBOT_JAR_ARGS=#--build-arg ROBOT_JAR=$(ROBOT_JAR)
 
 build:
+	$(MAKE) -C docker/builder ARCH=$(ARCH) CACHE=$(CACHE) build
 	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) CACHE=$(CACHE) build
 	docker build $(CACHE) --platform $(ARCH) \
 	    --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) \
