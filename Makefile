@@ -121,6 +121,8 @@ publish-dev-no-build:
 	docker push $(DEV):latest
 
 publish-multiarch:
+	$(MAKE) -C docker/builder CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
+		publish-multiarch
 	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) \
 	    CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
 	    publish-multiarch

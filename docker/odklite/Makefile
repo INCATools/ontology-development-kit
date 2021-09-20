@@ -25,7 +25,7 @@ publish: build
 	$(MAKE) publish-no-build
 
 publish-multiarch:
-	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
+	docker buildx build $(CACHE) --push --platform $(PLATFORMS) -f Dockerfile \
 	    --build-arg ODK_VERSION=$(VERSION) \
 	    -t $(IM):$(VERSION) -t $(IM):latest \
 	    ../..

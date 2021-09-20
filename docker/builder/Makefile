@@ -10,3 +10,8 @@ build:
 
 build-no-cache:
 	$(MAKE) build CACHE=--no-cache
+
+build-multiarch:
+	docker buildx build $(CACHE) --platform $(PLATFORMS) -f Dockerfile \
+		-t obolibrary/odkbuild:latest \
+		../..
