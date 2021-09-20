@@ -12,7 +12,7 @@ RUN mkdir -p /staging/lite /staging/full
 
 # Install the build tools.
 RUN apt-get update && \
-    DEBIAN_FRONTEND="noninteractive" apt-get install -y \
+    DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
         build-essential \
         git \
         wget \
@@ -20,6 +20,7 @@ RUN apt-get update && \
         lsb-release \
         clang \
         rustc \
+        cargo \
         python3-dev \
         python3-pip
 
@@ -44,7 +45,7 @@ RUN python3 -m pip install \
         --root /staging/full
 
 # Compile SWI-Prolog.
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
         ncurses-dev \
         libreadline-dev \
         libedit-dev \
@@ -77,7 +78,7 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
     make install DESTDIR=/staging/full
 
 # Compile Soufflé.
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
         bison \
         doxygen \
         flex \
