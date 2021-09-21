@@ -94,9 +94,12 @@ clean:
 #### TESTING #####
 
 test-flavor:
-	docker images | grep odk$(FLAVOR) && \
-		$(MAKE) test_odk$(FLAVOR)_programs IMAGE=odk$(FLAVOR) && \
-		$(MAKE) test CMD=./seed-via-docker.sh IMAGE=odk$(FLAVOR)
+	@if docker images | grep -q odk$(FLAVOR) ; then \
+		$(MAKE) test_odk$(FLAVOR)_programs IMAGE=odk$(FLAVOR) ; \
+		$(MAKE) test CMD=./seed-via-docker.sh IMAGE=odk$(FLAVOR) ; \
+	else \
+		echo "Image obolibrary/odk$(FLAVOR) not locally available" ; \
+	fi
 
 test-full: build
 	$(MAKE) test-flavor FLAVOR=full
