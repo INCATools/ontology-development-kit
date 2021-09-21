@@ -51,7 +51,7 @@ RUN python3 -m pip install \
         --root /staging/full && \
         cd /staging/lite && \
         find . -type f | while read f ; do rm -f /staging/full/$f ; done && \
-        find . -type d -depth | while read f ; do rmdir -f /staging/full/$f || true ; done
+        find . -type d -depth | while read f ; do rmdir /staging/full/$f || true ; done
 
 # Compile SWI-Prolog.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
