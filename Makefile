@@ -30,6 +30,20 @@ test_no_yaml_dependencies_ro_pato_cl:
 test_go_mini:
 	$(CMD) -c -C examples/go-mini/project.yaml -s examples/go-mini/go-edit.obo -D target/go-mini
 
+test_odklite_programs:
+	@./tests/test-program.sh ROBOT robot --version
+	@./tests/test-program.sh DOSDP-TOOLS dosdp-tools -v
+	@./tests/test-program.sh OWLTOOLS owltools --version
+	@./tests/test-program.sh AMMONITE sh amm --help
+
+test_odkfull_programs: test_odklite_programs
+	@./tests/test-program.sh KONCLUDE Konclude -h
+	@./tests/test-program.sh SOUFFLE souffle --version
+	@./tests/test-program.sh JENA jena
+	@./tests/test-program.sh SPARQL sparql --version
+
+test_odkdev_programs: test_odkfull_programs
+
 TESTS = $(notdir $(wildcard tests/*.yaml))
 TEST_FILES = $(foreach n,$(TESTS), tests/$(n))
 #TEST_FILES = tests/test-release.yaml
@@ -81,7 +95,8 @@ clean:
 
 test-flavor:
 	docker images | grep odk$(FLAVOR) && \
-	    $(MAKE) test CMD=./seed-via-docker.sh IMAGE=odk$(FLAVOR)
+		$(MAKE) test_odk$(FLAVOR)_programs IMAGE=odk$(FLAVOR) && \
+		$(MAKE) test CMD=./seed-via-docker.sh IMAGE=odk$(FLAVOR)
 
 test-full: build
 	$(MAKE) test-flavor FLAVOR=full
