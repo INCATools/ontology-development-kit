@@ -25,6 +25,7 @@ RUN apt-get update && \
         make \
         unzip \
         wget \
+        curl \
         jq \
         rsync
 
