@@ -240,3 +240,45 @@ The examples folder serves for both unit test and documentation purposes.
 ## Migration System
 
 TODO
+
+
+## Adding new programs or Python modules to the ODK
+
+How and where to add a component to the ODK depends on the nature of the
+component and whether it is to be added to `odkfull` or `odklite`.
+
+As a general rule, new components should probably be added to `odkfull`,
+as `odklite` is intended to be kept small. Components should only be
+added to `odklite` if they are required in rules from the ODK-generated
+standard Makefile. Note that any component added to `odklite` will
+automatically be part of `odkfull`.
+
+Is the component available as a standard Ubuntu package? Then add it to
+the list of packages in the `apt-get install` invocation in [the main
+Dockerfile](Dockerfile) (for inclusion into `odkfull`) or in [the
+Dockerfile for odklite](docker/odklite/Dockerfile).
+
+Is the component available as a pre-built binary? Be careful that many
+projets only provide pre-built binaries for the x86 architecture. Using
+such a binary would result in the component being unusable in the arm64
+version of the ODK (notably used on Apple computers equipped with M1
+CPUs, aka "Apple Silicon").
+
+Java programs available as pre-built jars can be installed by adding new
+`RUN` commands at the end of either the main Dockerfile (for `odkfull`)
+or the Dockerfile for `odklite`.
+
+If the component needs to be built from source, do so in [the Dockerfile
+for odkbuild](docker/build/Dockerfile), and install the compiled file(s)
+in either the `/staging/full` tree or the `/staging/lite` tree, for
+inclusion in `odkfull` or `odklite` respectively.
+
+If the component is a Python package, adds it to the `requirements.txt`
+file, and *also* in the `requirements.txt.lite` file if it is to be part
+of `odklite`. Please try to avoid version constraints unless you can
+explain why you need one.
+
+Python packages are "frozen" before a release by installing all the
+packages listed in `requirements.txt` into a virtual environment and
+running `python -m pip freeze > constraints.txt` from within that
+environment.
