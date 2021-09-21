@@ -125,6 +125,7 @@ log to determine if any modifications have been made?
 ## General SOP for ODK release and publication
 
 * Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).
+* Update the [constraits.txt file](https://github.com/INCATools/ontology-development-kit/pull/476#issuecomment-924050937)
 * Do any amount of testing as needed to be confident we are ready for release (at the very least, do a local build with `make build` and run the test suite with `make tests`; possibly run some mock releases on known ontologies such as `FBbt`, etc.).
 * Tag the release and push the tag to GitHub.
 * From GitHub, create a formal release from the newly pushed tag. This should automatically trigger the `build-multiarch.yml` GitHub Action, leading to both the x86_64 and arm64 images being built and published under the `obolibrary/` namespace.
