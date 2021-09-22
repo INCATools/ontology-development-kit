@@ -11,7 +11,7 @@ build:
 build-no-cache:
 	$(MAKE) build CACHE=--no-cache
 
-build-multiarch:
+publish-multiarch:
 	docker buildx build $(CACHE) --platform $(PLATFORMS) -f Dockerfile \
-		-t obolibrary/odkbuild:latest \
+		-t obolibrary/odkbuild:latest --push \
 		../..
