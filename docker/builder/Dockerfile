@@ -84,7 +84,9 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
     cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr .. -DSWIPL_PACKAGES_QT=OFF -DSWIPL_PACKAGES_X=OFF && \
     make && \
-    make install DESTDIR=/staging/full
+    make install DESTDIR=/staging/full && \
+    cd /build && \
+    rm -rf swipl-8.2.4 swipl-8.2.4.tar.gz
 
 # Compile Soufflé.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
@@ -102,7 +104,9 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
     tar xf souffle-2.1.tar.gz && \
     cd souffle-2.1 && \
     cmake -S . -B build && \
-    cmake --build build --target install DESTDIR=/staging/full
+    cmake --build build --target install DESTDIR=/staging/full && \
+    cd /build && \
+    rm -rf souffle-2.1 souffle-2.1.tar.gz
 
 # Compile Fastobo-validator.
 RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v0.4.0.tar.gz \
@@ -110,7 +114,9 @@ RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v0.4
     tar xf fastobo-validator-0.4.0.tar.gz && \
     cd fastobo-validator-0.4.0 && \
     cargo build --release && \
-    install -D -m 755 target/release/fastobo-validator /staging/full/usr/bin/fastobo-validator
+    install -D -m 755 target/release/fastobo-validator /staging/full/usr/bin/fastobo-validator && \
+    cd /build && \
+    rm -rf fastobo-validator-0.4.0 fastobo-validator-0.4.0.tar.gz /root/.cargo
 
 # Compile Konclude if we are not on x86_64
 # (building Konclude is time-consuming, so we avoid it
@@ -124,5 +130,7 @@ RUN test "x$TARGETARCH" != xamd64 && (apt-get update && \
         cd Konclude-0.7.0-1138 && \
         qmake -r CONFIG+=release CONFIG-=debug CONFIG+=static QT-=gui KoncludeWithoutRedland.pro && \
         make && \
-        install -D -m 755 Release/Konclude /staging/full/usr/bin/Konclude \
+        install -D -m 755 Release/Konclude /staging/full/usr/bin/Konclude && \
+        cd /build && \
+        rm -rf Konclude-0.7.0-1138 Konclude-0.7.0.tar.gz \
     ) || true
