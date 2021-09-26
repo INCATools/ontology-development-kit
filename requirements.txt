@@ -24,6 +24,7 @@ networkx
 sssom
 ontodev-cogs
 mkdocs
+mkdocs-material
 funowl
 kgx
 linkml
