@@ -17,7 +17,7 @@ ENV ODK_VERSION $ODK_VERSION
 
 # Install base tools from Ubuntu.
 RUN apt-get update && \
-    DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends --fix-missing \
         git \
         openjdk-8-jre-headless \
         python3-pip \
