@@ -45,6 +45,16 @@
             },
             "type": "object"
         },
+        "DocumentationGroup": {
+            "description": "\n    Setting for the repos documentation system\n    ",
+            "properties": {
+                "documentation_system": {
+                    "default": "mkdocs",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "ImportGroup": {
             "allOf": [
                 {
@@ -52,6 +62,16 @@
                 },
                 {
                     "properties": {
+                        "annotation_properties": {
+                            "default": [
+                                "rdfs:label",
+                                "IAO:0000115"
+                            ],
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
                         "directory": {
                             "default": "imports/",
                             "type": "string"
@@ -91,8 +111,47 @@
                 },
                 {
                     "properties": {
+                        "annotation_properties": {
+                            "default": [
+                                "rdfs:label",
+                                "IAO:0000115"
+                            ],
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "base_iris": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "is_large": {
+                            "default": false,
+                            "type": "boolean"
+                        },
                         "mirror_from": {
                             "type": "string"
+                        },
+                        "module_type": {
+                            "type": "string"
+                        },
+                        "module_type_slme": {
+                            "default": "BOT",
+                            "type": "string"
+                        },
+                        "slme_individuals": {
+                            "default": "include",
+                            "type": "string"
+                        },
+                        "use_base": {
+                            "default": false,
+                            "type": "boolean"
+                        },
+                        "use_gzipped": {
+                            "default": false,
+                            "type": "boolean"
                         }
                     },
                     "type": "object"
@@ -296,7 +355,6 @@
         },
         "ci": {
             "default": [
-                "travis",
                 "github_actions"
             ],
             "items": {
@@ -333,6 +391,9 @@
         "description": {
             "default": "None",
             "type": "string"
+        },
+        "documentation": {
+            "$ref": "#/definitions/DocumentationGroup"
         },
         "dosdp_tools_options": {
             "default": "--obo-prefixes=true",
@@ -439,6 +500,10 @@
             "default": false,
             "type": "boolean"
         },
+        "remove_owl_nothing": {
+            "default": false,
+            "type": "boolean"
+        },
         "repo": {
             "default": "",
             "type": "string"
@@ -462,11 +527,11 @@
                     "obsoletes",
                     "synonyms"
                 ],
+                "ensure_owl2dl_profile": false,
                 "fail_on": null,
                 "release_reports": false,
                 "report_on": [
-                    "edit",
-                    ".owl"
+                    "edit"
                 ],
                 "use_labels": true
             },
@@ -498,6 +563,10 @@
             "default": "http://purl.obolibrary.org/obo",
             "type": "string"
         },
+        "use_custom_import_module": {
+            "default": false,
+            "type": "boolean"
+        },
         "use_dosdps": {
             "default": false,
             "type": "boolean"
@@ -517,8 +586,47 @@
         },
         {
             "properties": {
+                "annotation_properties": {
+                    "default": [
+                        "rdfs:label",
+                        "IAO:0000115"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "base_iris": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "is_large": {
+                    "default": false,
+                    "type": "boolean"
+                },
                 "mirror_from": {
                     "type": "string"
+                },
+                "module_type": {
+                    "type": "string"
+                },
+                "module_type_slme": {
+                    "default": "BOT",
+                    "type": "string"
+                },
+                "slme_individuals": {
+                    "default": "include",
+                    "type": "string"
+                },
+                "use_base": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "use_gzipped": {
+                    "default": false,
+                    "type": "boolean"
                 }
             },
             "type": "object"
