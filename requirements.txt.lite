@@ -1,17 +1,11 @@
-click >= 0.0
-dacite >= 0.0
-dataclasses >= 0.0
-dataclasses-json >= 0.0
-dataclasses-jsonschema >= 0.0
-jinja2 >= 0.0
-jsonpath_rw >=0.0
-jsonschema >=0.0
-pandas >=0.0
-PyGithub >= 0.0
-pyyaml >= 0.0
-rdflib >=0.0
-requests >=0.0
-ruamel.yaml >=0.0
-seaborn>=0.0
-upsetplot>=0.0
-mkdocs >= 0.0
+click
+dacite
+dataclasses
+dataclasses-json
+dataclasses-jsonschema
+jinja2
+jsonpath_rw
+jsonschema
+PyGithub
+pyyaml
+ruamel.yaml

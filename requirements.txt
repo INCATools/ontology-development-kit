@@ -1,31 +1,29 @@
-click >= 0.0
-dacite >= 0.0
-dataclasses >= 0.0
-dataclasses-json >= 0.0
-dataclasses-jsonschema >= 0.0
-jinja2 >= 0.0
-jsonpath_rw >=0.0
-jsonschema >=0.0
-jupyter>=0.0
-matplotlib_venn>=0.0
-matplotlib==2.2.3
-numpy >=0.0
-ontobio>=0.0
-pandas >=0.0
-PyGithub >= 0.0
-pyyaml >= 0.0
-rdflib >=0.0
-requests >=0.0
-ruamel.yaml >=0.0
-seaborn>=0.0
-upsetplot>=0.0
-plotly>=0.0
-networkx==2.3
-sssom>=0.3.2
-ontodev-cogs>=0.0
-mkdocs >= 0.0
-mkdocs-material >= 0.0
-funowl >= 0.0
-kgx >= 0.0
-linkml >= 0.0
-
+click
+dacite
+dataclasses
+dataclasses-json
+dataclasses-jsonschema
+jinja2
+jsonpath_rw
+jsonschema
+jupyter
+matplotlib_venn
+matplotlib
+numpy
+ontobio
+pandas
+PyGithub
+pyyaml
+rdflib
+requests
+ruamel.yaml
+seaborn
+upsetplot
+plotly
+networkx
+sssom
+ontodev-cogs
+mkdocs
+funowl
+kgx
+linkml

@@ -9,4 +9,7 @@
 # we therefore map the whole repo (../..) to a docker volume.
 #
 # See README-editors.md for more details.
-docker run -v $PWD/../../:/work -w /work/src/ontology {% if project.robot_java_args is defined %}-e ROBOT_JAVA_ARGS='{{ project.robot_java_args }}' -e JAVA_OPTS='{{ project.robot_java_args }}'{% endif %} {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/odkfull "$@"
+
+IMAGE=${IMAGE:-odkfull}
+
+docker run -v $PWD/../../:/work -w /work/src/ontology {% if project.robot_java_args is defined %}-e ROBOT_JAVA_ARGS='{{ project.robot_java_args }}' -e JAVA_OPTS='{{ project.robot_java_args }}'{% endif %} {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$IMAGE "$@"
