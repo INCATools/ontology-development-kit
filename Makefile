@@ -11,6 +11,7 @@ EMAIL_ARGS=
 
 CACHE=
 
+ARCH=$(shell uname -m | sed 's/x86_64/amd64/')
 PLATFORMS=linux/amd64,linux/arm64
 
 .PHONY: .FORCE
@@ -28,6 +29,20 @@ test_no_yaml_dependencies_ro_pato_cl:
 
 test_go_mini:
 	$(CMD) -c -C examples/go-mini/project.yaml -s examples/go-mini/go-edit.obo -D target/go-mini
+
+test_odklite_programs:
+	@./tests/test-program.sh ROBOT robot --version
+	@./tests/test-program.sh DOSDP-TOOLS dosdp-tools -v
+	@./tests/test-program.sh OWLTOOLS owltools --version
+	@./tests/test-program.sh AMMONITE sh amm --help
+
+test_odkfull_programs: test_odklite_programs
+	@./tests/test-program.sh KONCLUDE Konclude -h
+	@./tests/test-program.sh SOUFFLE souffle --version
+	@./tests/test-program.sh JENA jena
+	@./tests/test-program.sh SPARQL sparql --version
+
+test_odkdev_programs: test_odkfull_programs
 
 TESTS = $(notdir $(wildcard tests/*.yaml))
 TEST_FILES = $(foreach n,$(TESTS), tests/$(n))
@@ -50,19 +65,24 @@ ROB=obolibrary/robot
 #ROBOT_JAR="https://github.com/monarch-ebi-dev/odk_utils/raw/master/robot_maven_test.jar"
 ROBOT_JAR_ARGS=#--build-arg ROBOT_JAR=$(ROBOT_JAR)
 
-build:
-	docker build $(CACHE) \
+build: build-odklite
+	docker build $(CACHE) --platform $(ARCH) \
 	    --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) \
 	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
 	    .
-	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) CACHE=$(CACHE) build
-	$(MAKE) -C docker/robot CACHE=$(CACHE) build
+
+build-odklite: build-builder
+	$(MAKE) -C docker/odklite ARCH=$(ARCH) CACHE=$(CACHE) \
+		IM=$(IMLITE) VERSION=$(VERSION) build
+
+build-builder:
+	$(MAKE) -C docker/builder ARCH=$(ARCH) CACHE=$(CACHE) build
 
 build-no-cache:
 	$(MAKE) build CACHE=--no-cache
 
 build-dev:
-	docker build --build-arg ODK_VERSION=$(VERSION) \
+	docker build --build-arg ODK_VERSION=$(VERSION) --platform $(ARCH) \
 	    -t $(DEV):$(VERSION) -t $(DEV):latest \
 	    .
 
@@ -74,8 +94,12 @@ clean:
 #### TESTING #####
 
 test-flavor:
-	docker images | grep odk$(FLAVOR) && \
-	    $(MAKE) test CMD=./seed-via-docker.sh IMAGE=odk$(FLAVOR)
+	@if docker images | grep -q odk$(FLAVOR) ; then \
+		$(MAKE) test_odk$(FLAVOR)_programs IMAGE=odk$(FLAVOR) ; \
+		$(MAKE) test CMD=./seed-via-docker.sh IMAGE=odk$(FLAVOR) ; \
+	else \
+		echo "Image obolibrary/odk$(FLAVOR) not locally available" ; \
+	fi
 
 test-full: build
 	$(MAKE) test-flavor FLAVOR=full
@@ -83,7 +107,7 @@ test-full: build
 test-dev: build-dev
 	$(MAKE) test-flavor FLAVOR=dev
 
-test-lite: build
+test-lite: build-odklite
 	$(MAKE) test-flavor FLAVOR=lite
 
 tests: test-full test-dev
@@ -106,7 +130,6 @@ publish-no-build:
 	docker push $(IM):latest
 	docker push $(IM):$(VERSION)
 	$(MAKE) -C docker/odklite publish-no-build
-	$(MAKE) -C docker/robot publish-no-build
 
 publish: build
 	$(MAKE) publish-no-build
@@ -116,15 +139,15 @@ publish-dev-no-build:
 	docker push $(DEV):latest
 
 publish-multiarch:
+	$(MAKE) -C docker/builder CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
+		publish-multiarch
+	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) \
+	    CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
+	    publish-multiarch
 	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
 	    --build-arg ODK_VERSION=$(VERSION) \
 	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
 	    .
-	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) \
-	    CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
-	    publish-multiarch
-	$(MAKE) -C docker/robot CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
-	    publish-multiarch
 
 clean-tests:
 	rm -rf target/*
