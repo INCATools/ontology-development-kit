@@ -260,6 +260,12 @@ class ImportGroup(ProductGroup):
     slme_individuals : str = "include"
     """See http://robot.obolibrary.org/extract#syntactic-locality-module-extractor-slme"""
     
+    mirror_retry_download : int = 4
+    """Corresponds to the cURL --retry parameter, see http://www.ipgp.fr/~arnaudl/NanoCD/software/win32/curl/docs/curl.html"""
+    
+    mirror_max_time_download : int = 200
+    """Corresponds to the cURL --max-time parameter (in seconds), see http://www.ipgp.fr/~arnaudl/NanoCD/software/win32/curl/docs/curl.html"""
+    
     release_imports : bool = False
     """If set to True, imports are copied to the release directory."""
     
@@ -832,8 +838,12 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         tgts.append(tgt_project_file)
     if source is not None:
         copyfile(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
+    odk_config_file = "{}/src/ontology/{}-odk.yaml".format(outdir, project.id)
+    tgts.append(odk_config_file)
     if config is not None:
-        copyfile(config, "{}/src/ontology/{}-odk.yaml".format(outdir, project.id))
+        copyfile(config, odk_config_file)
+    else:
+        save_project_yaml(project, odk_config_file)
     logging.info("Created files:")
     for tgt in tgts:
         logging.info("  File: {}".format(tgt))

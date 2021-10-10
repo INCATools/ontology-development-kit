@@ -566,7 +566,7 @@ Ensure that there is a ticket on your issue tracker that describes the change yo
 In your local environment (e.g. your laptop), make sure you are on the `main` (prev. `master`) branch and ensure that you have all the upstream changes, for example:
 
 ```
-git checkout master
+git checkout {{ project.git_main_branch }}
 git pull
 ```
 
@@ -681,8 +681,8 @@ These steps are outlined in detail in the following.
 Preparation:
 
 1. Ensure that all your pull requests are merged into your main (master) branch
-2. Make sure that all changes to master are committed to Github (`git status` should say that there are no modified files)
-3. Locally make sure you have the latest changes from master (`git pull`)
+2. Make sure that all changes to {{ project.git_main_branch }} are committed to Github (`git status` should say that there are no modified files)
+3. Locally make sure you have the latest changes from {{ project.git_main_branch }} (`git pull`)
 4. Checkout a new branch (e.g. `git checkout -b release-2021-01-01`)
 5. You may or may not want to refresh your imports as part of your release strategy (see [here](UpdateImports.md))
 6. Make sure you have the latest ODK installed by running `docker pull obolibrary/odkfull`
@@ -1050,7 +1050,7 @@ All the documentation is contained in the `docs` directory, and is managed in _M
 1. Open the `.md` file you want to change in an editor of choice (a simple text editor is often best). _IMPORTANT_: Do not edit any files in the `docs/odk-workflows/` directory. These files are managed by the ODK system and will be overwritten when the repository is upgraded! If you wish to change these files, make an issue on the [ODK issue tracker](https://github.com/INCATools/ontology-development-kit/issues).
 2. Perform the edit and save the file
 3. Commit the file to a branch, and create a pull request as usual. 
-4. If your development team likes your changes, merge the docs into master.
+4. If your development team likes your changes, merge the docs into {{ project.git_main_branch }} branch.
 5. Deploy the documentation (see below)
 
 ## Deploy the documentation
@@ -1097,6 +1097,32 @@ nav:
           - Continuous Integration: odk-workflows/ContinuousIntegration.md
           - Your ODK Repository Overview: odk-workflows/RepositoryFileStructure.md 
       - Contributing: contributing.md
+{% if 'github_actions' in project.ci %}
+^^^ .github/workflows/docs.yml
+# Basic ODK workflow
+name: Docs
+
+# Controls when the action will run. 
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    name: Deploy docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v2
+
+      - name: Deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@{{ project.git_main_branch }}
+        # Or use mhausenblas/mkdocs-deploy-gh-pages@nomaterial to build without the mkdocs-material theme
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+          CONFIG_FILE: mkdocs.yaml
+{% endif -%}
 {% if project.use_dosdps %}  - Design Patterns:
     - Design Patterns Overview: design-patterns.md
 {% endif -%}
