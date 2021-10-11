@@ -1,13 +1,16 @@
-# v1.2.30 (tbd)
-- The way we install python packages has changed significantly because of problems with the new python dependency resolver. If you have problems with non-interoperable python packages let us know immediately and we will hot fix.
+# v1.2.30 (11 October 2021)
+- The way we install python packages has changed significantly because of problems with the new python dependency resolver. If you have problems with non-interoperable python packages let us know immediately and we will hot fix ([issue](https://github.com/INCATools/ontology-development-kit/issues/463)).
 - For those who are using DOSDP patterns we re-introduced the pattern schema check even if pattern generation is skipped (it is very fast).
 - Created a simple way to cite ODK from within GitHub, using the CITATION.cff file. If you go to https://github.com/INCATools/ontology-development-kit, you will now see a "cite this repo" section under the *About* section.
 - Changed the default README.md to include a better reference to ODK, the correct ontology description text a the correct edit file extension.
+- Added a GitHub action to deploy the ODK-based mkdocs documentation ([issue](https://github.com/INCATools/ontology-development-kit/issues/478)).
 - Created a [page](https://github.com/INCATools/ontology-development-kit/blob/master/docs/FrequentlyUsedODKCommands.md) for frequently used ODK commands.
 - Bugfixes:
   - project repo name was not read correctly during `make update_repo` causing it to be named "False" ([commit](https://github.com/INCATools/ontology-development-kit/commit/856a7f63c6b24b614eeae07deaf8ef1724903473))
   - Fixed a bug where mirrors were not considered precious
   - Fixed a bug where where the report directories where not created when running a sparql report command ([commit](https://github.com/INCATools/ontology-development-kit/commit/dc1bb2220b978ed9adfb7cf9d2924ea6224945e3))
+  - Fixed a bug where `report` command incorrectly did not include components in the check ([issue](https://github.com/INCATools/ontology-development-kit/issues/447))
+  - Fixed a bug where myont-odk.yaml was not created when using command line mode during seeding ([issue](https://github.com/INCATools/ontology-development-kit/issues/384))
 
 
 # v1.2.29 (11 June 2021)

@@ -111,6 +111,7 @@ test-lite: build-odklite
 	$(MAKE) test-flavor FLAVOR=lite
 
 tests: test-full test-dev
+	make test_odkfull_programs
 
 test-no-build:
 	$(MAKE) test-flavor FLAVOR=full
