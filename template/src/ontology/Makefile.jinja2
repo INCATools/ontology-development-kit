@@ -118,6 +118,10 @@ IMPORT_FILES = $(IMPORT_OWL_FILES) $(IMPORT_OBO_FILES)
 normalize_obo_src: $(SRC)
 	owltools --use-catalog  $< --merge-axiom-annotations -o -f obo $(TMPDIR)/NORM.obo && robot convert -i $(TMPDIR)/NORM.obo -o $(TMPDIR)/NORM.tmp.obo && mv $(TMPDIR)/NORM.tmp.obo $(SRC)
 
+.PHONY: normalize_src
+normalize_src: $(SRC)
+	$(ROBOT) convert -i $< -f {% if 'obo' == project.edit_format %}obo --check false{% else %}ofn{% endif %} -o tmp/normalise && mv tmp/normalise $<
+
 {% else %}
 IMPORT_FILES = $(IMPORT_OWL_FILES)
 {% endif %}
@@ -415,18 +419,18 @@ mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 {%- elif ont.use_base %}
 {%- if ont.use_gzipped %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz -o $@.tmp.owl && mv $@.tmp.owl $@; fi
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o mirror/{{ ont.id }}-base.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}-base.owl.gz -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {%- else %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl --create-dirs -o mirror/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {%- endif %}
 {%- else %}
 {%- if ont.use_gzipped %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl.gz -o $@.tmp.owl && mv $@.tmp.owl $@; fi
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl.gz --create-dirs -o mirror/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl.gz -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {%- else %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I $(URIBASE)/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl --create-dirs -o mirror/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {%- endif %}
 {%- endif %}
 .PRECIOUS: mirror/{{ ont.id }}.owl
@@ -488,6 +492,10 @@ endif
 # ----------------------------------------
 # ROBOT report
 # ----------------------------------------
+
+$(REPORTDIR)/$(SRC)-obo-report.tsv: $(SRCMERGED) | $(REPORTDIR)
+	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) --print 5 -o $@
+
 $(REPORTDIR)/%-obo-report.tsv: % | $(REPORTDIR)
 	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) --print 5 -o $@
 
