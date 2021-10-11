@@ -1,6 +1,6 @@
 # v1.2.30 (11 October 2021)
 - The way we install python packages has changed significantly because of problems with the new python dependency resolver. If you have problems with non-interoperable python packages let us know immediately and we will hot fix ([issue](https://github.com/INCATools/ontology-development-kit/issues/463)).
-- Mirrors are now downloaded with CURL instead of ROBOT, and configurable with `mirror_retry_download` and `mirror_max_time_download` in the `import_group` section of the ODK config file ([PR](https://github.com/INCATools/ontology-development-kit/pull/474)).
+- Mirrors are now downloaded with CURL instead of ROBOT, and configurable with `mirror_retry_download` and `mirror_max_time_download` in the `import_group` section of the ODK config file ([PR](https://github.com/INCATools/ontology-development-kit/pull/474)). *Note that the default `mirror_max_time_download` is 200 sec (a bit more than 3 minutes), which may be tight for some huge ontologies*.
 - For those who are using DOSDP patterns we re-introduced the pattern schema check even if pattern generation is skipped (it is very fast).
 - Created a simple way to cite ODK from within GitHub, using the CITATION.cff file. If you go to https://github.com/INCATools/ontology-development-kit, you will now see a "cite this repo" section under the *About* section.
 - Changed the default README.md to include a better reference to ODK, the correct ontology description text a the correct edit file extension.
