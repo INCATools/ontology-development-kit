@@ -1,5 +1,6 @@
 # v1.2.30 (11 October 2021)
 - The way we install python packages has changed significantly because of problems with the new python dependency resolver. If you have problems with non-interoperable python packages let us know immediately and we will hot fix ([issue](https://github.com/INCATools/ontology-development-kit/issues/463)).
+- Mirrors are now downloaded with CURL instead of ROBOT, and configurable with `mirror_retry_download` and `mirror_max_time_download` in the `import_group` section of the ODK config file ([PR](https://github.com/INCATools/ontology-development-kit/pull/474)).
 - For those who are using DOSDP patterns we re-introduced the pattern schema check even if pattern generation is skipped (it is very fast).
 - Created a simple way to cite ODK from within GitHub, using the CITATION.cff file. If you go to https://github.com/INCATools/ontology-development-kit, you will now see a "cite this repo" section under the *About* section.
 - Changed the default README.md to include a better reference to ODK, the correct ontology description text a the correct edit file extension.
@@ -11,6 +12,7 @@
   - Fixed a bug where where the report directories where not created when running a sparql report command ([commit](https://github.com/INCATools/ontology-development-kit/commit/dc1bb2220b978ed9adfb7cf9d2924ea6224945e3))
   - Fixed a bug where `report` command incorrectly did not include components in the check ([issue](https://github.com/INCATools/ontology-development-kit/issues/447))
   - Fixed a bug where myont-odk.yaml was not created when using command line mode during seeding ([issue](https://github.com/INCATools/ontology-development-kit/issues/384))
+  - Added some tests for external tools ([issue](https://github.com/INCATools/ontology-development-kit/issues/472)) to ODK built process
 
 
 # v1.2.29 (11 June 2021)
