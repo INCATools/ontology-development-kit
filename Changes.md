@@ -6,6 +6,7 @@
 - Changed the default README.md to include a better reference to ODK, the correct ontology description text a the correct edit file extension.
 - Added a GitHub action to deploy the ODK-based mkdocs documentation ([issue](https://github.com/INCATools/ontology-development-kit/issues/478)).
 - Created a [page](https://github.com/INCATools/ontology-development-kit/blob/master/docs/FrequentlyUsedODKCommands.md) for frequently used ODK commands.
+- Using curl for downloading mirrors to enable retries
 - Bugfixes:
   - project repo name was not read correctly during `make update_repo` causing it to be named "False" ([commit](https://github.com/INCATools/ontology-development-kit/commit/856a7f63c6b24b614eeae07deaf8ef1724903473))
   - Fixed a bug where mirrors were not considered precious
