@@ -1,12 +1,12 @@
 # v1.2.30 (11 October 2021)
-- The way we install python packages has changed significantly because of problems with the new python dependency resolver. If you have problems with non-interoperable python packages let us know immediately and we will hot fix ([issue](https://github.com/INCATools/ontology-development-kit/issues/463)).
+- Important: The way we install python packages has changed significantly: we are now using _fixed version dependencies_ ([issue](https://github.com/INCATools/ontology-development-kit/issues/463)). If there are problems with the versions of packages we are using, please let us know immediately.
+- We are now using multi-stage builds in ODK for docker. The `obolibrary/odklite` container is considerably lighter (smaller) than the normal `odkfull` container you have been using so far, and it should be sufficient for most ODK pipelines.
 - Mirrors are now downloaded with CURL instead of ROBOT, and configurable with `mirror_retry_download` and `mirror_max_time_download` in the `import_group` section of the ODK config file ([PR](https://github.com/INCATools/ontology-development-kit/pull/474)). *Note that the default `mirror_max_time_download` is 200 sec (a bit more than 3 minutes), which may be tight for some huge ontologies*.
 - For those who are using DOSDP patterns we re-introduced the pattern schema check even if pattern generation is skipped (it is very fast).
 - Created a simple way to cite ODK from within GitHub, using the CITATION.cff file. If you go to https://github.com/INCATools/ontology-development-kit, you will now see a "cite this repo" section under the *About* section.
-- Changed the default README.md to include a better reference to ODK, the correct ontology description text a the correct edit file extension.
+- Changed the default README.md to include a better reference to ODK, the correct ontology description text and the correct edit file extension.
 - Added a GitHub action to deploy the ODK-based mkdocs documentation ([issue](https://github.com/INCATools/ontology-development-kit/issues/478)).
 - Created a [page](https://github.com/INCATools/ontology-development-kit/blob/master/docs/FrequentlyUsedODKCommands.md) for frequently used ODK commands.
-- Using curl for downloading mirrors to enable retries
 - Bugfixes:
   - project repo name was not read correctly during `make update_repo` causing it to be named "False" ([commit](https://github.com/INCATools/ontology-development-kit/commit/856a7f63c6b24b614eeae07deaf8ef1724903473))
   - Fixed a bug where mirrors were not considered precious
@@ -14,6 +14,7 @@
   - Fixed a bug where `report` command incorrectly did not include components in the check ([issue](https://github.com/INCATools/ontology-development-kit/issues/447))
   - Fixed a bug where myont-odk.yaml was not created when using command line mode during seeding ([issue](https://github.com/INCATools/ontology-development-kit/issues/384))
   - Added some tests for external tools ([issue](https://github.com/INCATools/ontology-development-kit/issues/472)) to ODK built process
+
 
 
 # v1.2.29 (11 June 2021)
