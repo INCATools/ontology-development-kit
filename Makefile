@@ -75,6 +75,9 @@ build-odklite: build-builder
 	$(MAKE) -C docker/odklite ARCH=$(ARCH) CACHE=$(CACHE) \
 		IM=$(IMLITE) VERSION=$(VERSION) build
 
+build-robot:
+	$(MAKE) -C docker/robot ARCH=$(ARCH) CACHE=$(CACHE) build
+
 build-builder:
 	$(MAKE) -C docker/builder ARCH=$(ARCH) CACHE=$(CACHE) build
 
@@ -140,6 +143,8 @@ publish-dev-no-build:
 	docker push $(DEV):latest
 
 publish-multiarch:
+	$(MAKE) -C docker/robot CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
+		publish-multiarch
 	$(MAKE) -C docker/builder CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
 		publish-multiarch
 	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION) \
