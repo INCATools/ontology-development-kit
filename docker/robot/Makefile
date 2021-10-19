@@ -5,10 +5,11 @@ IM=obolibrary/robot
 
 CACHE=
 
+ARCH=$(shell uname -m | sed 's/x86_64/amd64/')
 PLATFORMS=linux/amd64,linux/arm64
 
 build:
-	docker build $(CACHE) \
+	docker build $(CACHE) --platform $(ARCH) \
 	    -t $(IM):$(VERSION) -t $(IM):latest \
 	    .
 

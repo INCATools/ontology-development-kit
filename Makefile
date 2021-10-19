@@ -75,6 +75,9 @@ build-odklite: build-builder
 	$(MAKE) -C docker/odklite ARCH=$(ARCH) CACHE=$(CACHE) \
 		IM=$(IMLITE) VERSION=$(VERSION) build
 
+build-robot:
+	$(MAKE) -C docker/robot ARCH=$(ARCH) CACHE=$(CACHE) build
+
 build-builder:
 	$(MAKE) -C docker/builder ARCH=$(ARCH) CACHE=$(CACHE) build
 
