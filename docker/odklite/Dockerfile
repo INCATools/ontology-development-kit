@@ -15,6 +15,9 @@ ENV PATH "/tools:/tools/dosdp-tools/bin:$PATH"
 ARG ODK_VERSION 0.0.0
 ENV ODK_VERSION $ODK_VERSION
 
+ARG ROBOT_JAR https://github.com/ontodev/robot/releases/download/v$ROBOT_VERSION/robot.jar
+ENV ROBOT_JAR $ROBOT_JAR
+
 # Install base tools from Ubuntu.
 RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
@@ -33,7 +36,7 @@ RUN apt-get update && \
 COPY --from=obolibrary/odkbuild:latest /staging/lite /
 
 # Install ROBOT.
-RUN wget -nv https://github.com/ontodev/robot/releases/download/v$ROBOT_VERSION/robot.jar \
+RUN wget -nv $ROBOT_JAR \
         -O /tools/robot.jar && \
     wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/bin/robot \
         -O /tools/robot && \
