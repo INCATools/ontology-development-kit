@@ -29,6 +29,8 @@ EDIT_FORMAT=                {{ project.edit_format|default('owl') }}
 SRC =                       $(ONT)-edit.$(EDIT_FORMAT)
 CATALOG=                    {{ project.catalog_file }}
 ROBOT=                      robot --catalog $(CATALOG)
+OWLTOOLS_MEMORY=            {{ project.owltools_memory }}
+OWLTOOLS=                   {% if project.owltools_memory is defined %}OWLTOOLS_MEMORY=$(OWLTOOLS_MEMORY) {% endif %}owltools --use-catalog  $<
 RELEASEDIR=                 ../..
 REPORTDIR=                  reports
 TEMPLATEDIR=                ../templates
@@ -116,7 +118,7 @@ IMPORT_FILES = $(IMPORT_OWL_FILES) $(IMPORT_OBO_FILES)
 
 .PHONY: normalize_obo_src
 normalize_obo_src: $(SRC)
-	owltools --use-catalog  $< --merge-axiom-annotations -o -f obo $(TMPDIR)/NORM.obo && robot convert -i $(TMPDIR)/NORM.obo -o $(TMPDIR)/NORM.tmp.obo && mv $(TMPDIR)/NORM.tmp.obo $(SRC)
+	$(OWLTOOLS) --merge-axiom-annotations -o -f obo $(TMPDIR)/NORM.obo && robot convert -i $(TMPDIR)/NORM.obo -o $(TMPDIR)/NORM.tmp.obo && mv $(TMPDIR)/NORM.tmp.obo $(SRC)
 
 .PHONY: normalize_src
 normalize_src: $(SRC)
@@ -446,7 +448,7 @@ subsets/%.tsv: subsets/%.owl
 .PRECIOUS: subsets/%.tsv
 
 subsets/%.owl: $(ONT).owl
-	owltools --use-catalog $< --extract-ontology-subset --fill-gaps --subset $* -o $@.tmp.owl && mv $@.tmp.owl $@ &&\
+	$(OWLTOOLS) --extract-ontology-subset --fill-gaps --subset $* -o $@.tmp.owl && mv $@.tmp.owl $@ &&\
 	$(ROBOT) annotate --input $@ --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@.tmp.owl && mv $@.tmp.owl $@
 .PRECIOUS: subsets/%.owl
 

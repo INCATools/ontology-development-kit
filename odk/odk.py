@@ -442,6 +442,9 @@ class OntologyProject(JsonSchemaMixin):
     
     robot_java_args: Optional[str] = ""
     """Java args to pass to ROBOT at runtime, such as -Xmx6G"""
+    
+    owltools_memory: Optional[str] = ""
+    """OWLTools memory, for example 4GB."""
 
     use_external_date: bool = False
     """Flag to set if you want odk to use the host `date` rather than the docker internal `date`"""
