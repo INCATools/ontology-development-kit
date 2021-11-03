@@ -19,7 +19,7 @@ ENV ODK_VERSION $ODK_VERSION
 RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
         git \
-        openjdk-8-jre-headless \
+        openjdk-11-jre-headless \
         python3-pip \
         python-is-python3 \
         make \
