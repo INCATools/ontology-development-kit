@@ -273,16 +273,25 @@ ANNOTATION_PROPERTIES={% for p in project.import_group.annotation_properties %}{
 # This pattern uses ROBOT to generate an import module
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
 # Should be able to drop this if robot can just take a big messy list of terms as input.
-imports/%_terms_combined.txt: $(IMPORTSEED) imports/%_terms.txt
+
+imports/%_terms_pre_combined.txt: $(IMPORTSEED) imports/%_terms.txt
 	if [ $(IMP) = true ]; then cat $^ | grep -v ^# | sort | uniq >  $@; fi
 
 {% if 'slme' == project.import_group.module_type %}
+imports/%_terms_combined.txt: imports/%_terms_pre_combined.txt {% if project.import_group.use_base_merging %}mirror/merged.owl{% endif %}
+	if [ $(IMP) = true ]; then {% if project.import_group.use_base_merging %}$(ROBOT) extract -i mirror/merged.owl -T $< --force true --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
+	query --update ../sparql/inject-subset-declaration.ru {% else %}cp $< $@{% endif %}; fi
+
 imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) query -i $< --update ../sparql/preprocess-module.ru \
 		extract -T imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif 'minimal' == project.import_group.module_type %}
+imports/%_terms_combined.txt: imports/%_terms_pre_combined.txt {% if project.import_group.use_base_merging %}mirror/merged.owl{% endif %}
+	if [ $(IMP) = true ]; then {% if project.import_group.use_base_merging %}$(ROBOT) extract -i mirror/merged.owl -T $< --force true --method BOT \
+	query --update ../sparql/inject-subset-declaration.ru {% else %}cp $< $@{% endif %}; fi
+
 imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
 		extract -T imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --method BOT \
