@@ -269,6 +269,9 @@ class ImportGroup(ProductGroup):
     release_imports : bool = False
     """If set to True, imports are copied to the release directory."""
     
+    merge_mirrors: bool = False
+    """If set to true, mirrors will be merged before module extraction is attempted"""
+    
     annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115'])
     """Define which annotation properties to pull in."""
     
