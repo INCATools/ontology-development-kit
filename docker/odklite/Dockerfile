@@ -1,19 +1,22 @@
 FROM ubuntu:20.04
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV ROBOT_VERSION 1.8.1
-ENV DOSDP_VERSION 0.17
-ENV OWLTOOLS_VERSION 2020-04-06
-ENV AMMONITE_VERSION 2.0.3
+ENV ROBOT_VERSION=1.8.1
+ENV DOSDP_VERSION=0.17
+ENV OWLTOOLS_VERSION=2020-04-06
+ENV AMMONITE_VERSION=2.0.3
 
 WORKDIR /tools
-ENV JAVA_HOME "/usr"
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
-ENV PATH "/tools:/tools/dosdp-tools/bin:$PATH"
+ENV JAVA_HOME="/usr"
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV PATH="/tools:/tools/dosdp-tools/bin:$PATH"
 
-ARG ODK_VERSION 0.0.0
-ENV ODK_VERSION $ODK_VERSION
+ARG ODK_VERSION=0.0.0
+ENV ODK_VERSION=$ODK_VERSION
+
+ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/v$ROBOT_VERSION/robot.jar
+ENV ROBOT_JAR=$ROBOT_JAR
 
 # Install base tools from Ubuntu.
 RUN apt-get update && \
@@ -33,7 +36,7 @@ RUN apt-get update && \
 COPY --from=obolibrary/odkbuild:latest /staging/lite /
 
 # Install ROBOT.
-RUN wget -nv https://github.com/ontodev/robot/releases/download/v$ROBOT_VERSION/robot.jar \
+RUN wget -nv $ROBOT_JAR \
         -O /tools/robot.jar && \
     wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/bin/robot \
         -O /tools/robot && \
