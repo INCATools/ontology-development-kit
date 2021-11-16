@@ -441,7 +441,8 @@ mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 ALL_MIRRORS = $(patsubst %, mirror/%.owl, $(IMPORTS))
 
 mirror/merged.owl: $(ALL_MIRRORS)
-	$(ROBOT) merge $(patsubst %, -i %, $^) -o $@
+	if [ $(MIR) = true ] && [ $(IMP) = true ]$(ROBOT) merge $(patsubst %, -i %, $^) -o $@; fi
+.PRECIOUS: mirror/merged.owl
 
 {% endif %}
 
