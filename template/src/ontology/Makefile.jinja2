@@ -780,6 +780,13 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
 {% endif -%}
 {% endfor -%}
 
+# ----------------------------------------
+# Debugging Tools
+# ----------------------------------------
+
+explain_unsat: $(SRC) 
+	$(ROBOT) explain -i $(SRC) -M unsatisfiability --unsatisfiable random:10 --explanation $(TMP)/$@.md
+
 {%- if project.public_release != 'none'  %}
 # ----------------------------------------
 # GitHub release (HIGHLY experimental)
