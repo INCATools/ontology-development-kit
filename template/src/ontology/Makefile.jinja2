@@ -785,7 +785,7 @@ $(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
 # ----------------------------------------
 
 explain_unsat: $(SRC) 
-	$(ROBOT) explain -i $(SRC) -M unsatisfiability --unsatisfiable random:10 --explanation $(TMP)
+	$(ROBOT) explain -i $(SRC) -M unsatisfiability --unsatisfiable random:10 --explanation $(TMP)/$@.md
 
 {%- if project.public_release != 'none'  %}
 # ----------------------------------------
