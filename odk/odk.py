@@ -299,7 +299,7 @@ class ReportConfig(JsonSchemaMixin):
     report_on : List[str] = field(default_factory=lambda: ['edit'])
     """Chose which files to run the report on."""
     
-    ensure_owl2dl_profile : bool = False
+    ensure_owl2dl_profile : bool = True
     """This will ensure that the main .owl release file conforms to the owl2 profile during make test."""
     
     release_reports : bool = False
