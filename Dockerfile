@@ -15,7 +15,7 @@ ENV COURSIER_CACHE "/tools/.coursier-cache"
 # Install tools provided by Ubuntu.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
     build-essential \
-    openjdk-8-jdk-headless \
+    openjdk-11-jdk-headless \
     maven \
     python3-dev \
     subversion \

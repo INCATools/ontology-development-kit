@@ -10,7 +10,7 @@ ENV ROBOT_JAR ${ROBOT_JAR}
 RUN apt-get update &&\
   apt-get upgrade -y &&\
   apt-get install -y --no-install-recommends make \
-    openjdk-8-jre-headless \
+    openjdk-11-jre-headless \
     unzip \
     rsync \
     curl
