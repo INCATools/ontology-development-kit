@@ -375,8 +375,8 @@ WHERE {
   { ?term ?p2 ?o2 . }
   FILTER(isIRI(?term) && (regex(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || regex(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
-{% if project.import_group is defined %}
-{% if project.import_group.use_base_merging %}
+{%- if project.import_group is defined %}
+{%- if project.import_group.use_base_merging %}
 ^^^ src/sparql/tbox-signature.sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix owl: <http://www.w3.org/2002/07/owl#>

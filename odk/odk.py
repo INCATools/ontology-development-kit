@@ -126,6 +126,9 @@ class ImportProduct(Product):
     use_base: bool = False
     """if use_base is true, try use the base IRI instead of normal one to mirror from."""
     
+    make_base: bool = False
+    """if make_base is true, try to extract a base file from the mirror."""
+    
     use_gzipped: bool = False
     """if use_gzipped is true, try use the base IRI instead of normal one to mirror from."""
 
