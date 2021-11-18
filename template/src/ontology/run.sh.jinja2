@@ -12,4 +12,14 @@
 
 IMAGE=${IMAGE:-odkfull}
 
-docker run -v $PWD/../../:/work -w /work/src/ontology {% if project.robot_java_args is defined %}-e ROBOT_JAVA_ARGS='{{ project.robot_java_args }}' -e JAVA_OPTS='{{ project.robot_java_args }}'{% endif %} {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$IMAGE "$@"
+ODK_DEBUG=${ODK_DEBUG:-no}
+
+TIMECMD=
+if [ x$ODK_DEBUG = xyes ]; then
+    # If you wish to change the format string, take care of using
+    # non-breaking spaces (U+00A0) instead of normal spaces, to
+    # prevent the shell from tokenizing the format string.
+    TIMECMD="/usr/bin/time -f ### DEBUG STATS ###\nElapsed time: %E\nPeak memory: %M kb"
+fi
+
+docker run -v $PWD/../../:/work -w /work/src/ontology {% if project.robot_java_args is defined %}-e ROBOT_JAVA_ARGS='{{ project.robot_java_args }}' -e JAVA_OPTS='{{ project.robot_java_args }}'{% endif %} {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$IMAGE $TIMECMD "$@"
