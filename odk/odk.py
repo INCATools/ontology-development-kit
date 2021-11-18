@@ -491,7 +491,7 @@ class OntologyProject(JsonSchemaMixin):
     release_date : bool = False
     """if true, releases will be tagged with a release date (oboInOwl:date)"""
     
-    allow_equivalents : str = "all"
+    allow_equivalents : str = "assert-only"
     """can be all, none or assert-only (see ROBOT documentation: http://robot.obolibrary.org/reason)"""
     
     ci : Optional[List[str]] = field(default_factory=lambda: ['github_actions'])
