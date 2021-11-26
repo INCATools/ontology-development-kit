@@ -275,6 +275,9 @@ class ImportGroup(ProductGroup):
     use_base_merging: bool = False
     """If set to true, mirrors will be merged before determining a suitable seed. This can be a quite costly process."""
     
+    export_obo: bool = False
+    """If set to true, modules will not only be created in OWL, but also OBO format"""
+    
     annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115'])
     """Define which annotation properties to pull in."""
     

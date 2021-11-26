@@ -1054,6 +1054,49 @@ If you wish to skip refreshing the mirror, i.e. skip downloading the latest vers
 ```
 sh run.sh make IMP=true MIR=false PAT=false imports/go_import.owl -B
 ```
+
+## Using the Base Module approach
+
+Since ODK 1.2.31, we support an entirely new approach to generate modules: Using base files.
+The idea is to only import axioms from ontologies that _actually belong to it_. 
+A base file is a subset of the ontology that only contains those axioms that nominally 
+belong there. In other words, the base file does not contain any axioms that belong
+to another ontology. An example would be this:
+
+Imagine this being the full Uberon ontology:
+
+```
+Axiom 1: BFO:123 SubClassOf BFO:124
+Axiom 1: UBERON:123 SubClassOf BFO:123
+Axiom 1: UBERON:124 SubClassOf UBERON 123
+```
+
+The base file is the set of all axioms that are about UBERON terms:
+
+```
+Axiom 1: UBERON:123 SubClassOf BFO:123
+Axiom 1: UBERON:124 SubClassOf UBERON 123
+```
+
+I.e.
+
+```
+Axiom 1: BFO:123 SubClassOf BFO:124
+```
+
+Gets removed.
+
+The base file pipeline is a bit more complex then the normal pipelines, because
+of the logical interactions between the imported ontologies. This is solved by _first 
+merging all mirrors into one huge file and then extracting one mega module from it.
+
+Example: Let's say we are importing terms from Uberon, GO and RO in our ontologies.
+When we use the base pipelines, we
+
+1) First obtain the base (ususally by simply downloading it, but there is also an option now to create it with ROBOT)
+2) We merge all base files into one big pile
+3) Then we extract a single module `imports/merged_import.owl`
+
 ^^^ docs/odk-workflows/ManageDocumentation.md
 # Updating the Documentation
 
