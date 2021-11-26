@@ -273,31 +273,17 @@ ANNOTATION_PROPERTIES={% for p in project.import_group.annotation_properties %}{
 # This pattern uses ROBOT to generate an import module
 # Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
 # Should be able to drop this if robot can just take a big messy list of terms as input.
-
-ALL_TERMS_COMBINED = $(patsubst %, imports/%_terms_combined.txt, $(IMPORTS))
-
-imports/merged_terms_combined.txt: $(ALL_TERMS_COMBINED)
-	if [ $(IMP) = true ]; then cat $^ | grep -v ^# | sort | uniq >  $@; fi
-
-imports/%_terms_pre_combined.txt: $(IMPORTSEED) imports/%_terms.txt
+imports/%_terms_combined.txt: $(IMPORTSEED) imports/%_terms.txt
 	if [ $(IMP) = true ]; then cat $^ | grep -v ^# | sort | uniq >  $@; fi
 
 {% if 'slme' == project.import_group.module_type %}
-imports/%_terms_combined.txt: imports/%_terms_pre_combined.txt {% if project.import_group.use_base_merging %}mirror/merged.owl{% endif %}
-	if [ $(IMP) = true ]; then {% if project.import_group.use_base_merging %}$(ROBOT) extract -i mirror/merged.owl -T $< --force true --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
-	query --query ../sparql/tbox-signature.sparql $@{% else %}cp $< $@{% endif %}; fi
-
-imports/%_import.owl: mirror/%.owl imports/merged_terms_combined.txt
+imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) query -i $< --update ../sparql/preprocess-module.ru \
 		extract -T imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif 'minimal' == project.import_group.module_type %}
-imports/%_terms_combined.txt: imports/%_terms_pre_combined.txt {% if project.import_group.use_base_merging %}mirror/merged.owl{% endif %}
-	if [ $(IMP) = true ]; then {% if project.import_group.use_base_merging %}$(ROBOT) extract -i mirror/merged.owl -T $< --force true --method BOT \
-	query --query ../sparql/tbox-signature.sparql $@{% else %}cp $< $@{% endif %}; fi
-
-imports/%_import.owl: mirror/%.owl imports/merged_terms_combined.txt
+imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
 		extract -T imports/$*_terms_combined.txt --force true --copy-ontology-annotations true --method BOT \
 		remove --base-iri $(URIBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
@@ -305,17 +291,11 @@ imports/%_import.owl: mirror/%.owl imports/merged_terms_combined.txt
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T imports/$*_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif 'mirror' == project.import_group.module_type %}
-imports/%_terms_combined.txt: imports/%_terms_pre_combined.txt
-	if [ $(IMP) = true ]; then cp $< $@; fi
-
-imports/%_import.owl: mirror/%.owl imports/merged_terms_combined.txt
+imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) merge -i $< query --update ../sparql/preprocess-module.ru --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif 'filter' == project.import_group.module_type %}
-imports/%_terms_combined.txt: imports/%_terms_pre_combined.txt
-	if [ $(IMP) = true ]; then cp $< $@; fi
-
-imports/%_import.owl: mirror/%.owl imports/merged_terms_combined.txt
+imports/%_import.owl: mirror/%.owl imports/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) merge -i $< \
 		query --update ../sparql/preprocess-module.ru \
 		remove --base-iri $(URIBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
@@ -339,29 +319,18 @@ imports/%_import.obo: imports/%_import.owl
 {% if ont.is_large or ont.module_type is not none %}
 ## Module for ontology: {{ ont.id }}
 {% if ont.is_large or ('fast_slme' == ont.module_type) or (ont.module_type is none and 'fast_slme' == project.import_group.module_type) %}
-imports/{{ ont.id }}_terms_combined.txt: imports/{{ ont.id }}_terms_pre_combined.txt {% if project.import_group.use_base_merging %}mirror/merged.owl{% endif %}
-	if [ $(IMP) = true ]; then {% if project.import_group.use_base_merging %}$(ROBOT) extract -i mirror/merged.owl -T $< --force true --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
-	query --query ../sparql/tbox-signature.sparql $@{% else %}cp $< $@{% endif %}; fi
-
-imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/merged_terms_combined.txt
+imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/{{ ont.id }}_terms_combined.txt
 	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) extract -i $< -T imports/{{ ont.id }}_terms_combined.txt --force true --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif ('slme' == ont.module_type) or (ont.module_type is none and 'slme' == project.import_group.module_type) %}
-imports/{{ ont.id }}_terms_combined.txt: imports/%_terms_pre_combined.txt {% if project.import_group.use_base_merging %}mirror/merged.owl{% endif %}
-	if [ $(IMP) = true ]; then {% if project.import_group.use_base_merging %}$(ROBOT) extract -i mirror/merged.owl -T $< --force true --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
-	query --query ../sparql/tbox-signature.sparql $@{% else %}cp $< $@{% endif %}; fi
-
-imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/merged_terms_combined.txt
+imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/{{ ont.id }}_terms_combined.txt
 	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
 		extract -T imports/{{ ont.id }}_terms_combined.txt --force true --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif ('filter' == ont.module_type) or (ont.module_type is none and 'filter' == project.import_group.module_type) %}
-imports/{{ ont.id }}_terms_combined.txt: imports/{{ ont.id }}_terms_pre_combined.txt
-	if [ $(IMP) = true ]; then cp $< $@; fi
-
-imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/merged_terms_combined.txt
+imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/{{ ont.id }}_terms_combined.txt
 	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) merge -i $< \
 		query --update ../sparql/preprocess-module.ru \
 		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
@@ -369,19 +338,12 @@ imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/merged_terms_co
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif ('mirror' == ont.module_type) or (ont.module_type is none and 'mirror' == project.import_group.module_type) %}
-imports/{{ ont.id }}_terms_combined.txt: imports/{{ ont.id }}_terms_pre_combined.txt
-	if [ $(IMP) = true ]; then cp $< $@; fi
-
-imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/merged_terms_combined.txt
+imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/{{ ont.id }}_terms_combined.txt
 	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) merge -i $< \
 		query --update ../sparql/preprocess-module.ru --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif ('minimal' == ont.module_type) or (ont.module_type is none and 'minimal' == project.import_group.module_type) %}
-imports/{{ ont.id }}_terms_combined.txt: imports/{{ ont.id }}_terms_pre_combined.txt {% if project.import_group.use_base_merging %}mirror/merged.owl{% endif %}
-	if [ $(IMP) = true ]; then {% if project.import_group.use_base_merging %}$(ROBOT) extract -i mirror/merged.owl -T $< --force true --method BOT \
-	query --query ../sparql/tbox-signature.sparql $@{% else %}cp $< $@{% endif %}; fi
-
-imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/merged_terms_combined.txt
+imports/{{ ont.id }}_import.owl: mirror/{{ ont.id }}.owl imports/{{ ont.id }}_terms_combined.txt
 	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) extract  -i $< -T imports/{{ ont.id }}_terms_combined.txt --force true --method BOT \
 		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 		query --update ../sparql/inject-subset-declaration.ru \
@@ -464,13 +426,11 @@ mirror/{{ ont.id }}.trigger:
 
 {%- if ont.mirror_from %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl{%- if ont.make_base %} && \
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $@; fi
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {%- elif ont.use_base %}
 {%- if ont.use_gzipped %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o mirror/{{ ont.id }}-base.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}-base.owl.gz -o $@.tmp.owl{%- if ont.make_base %} &&\
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $@; fi
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o mirror/{{ ont.id }}-base.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}-base.owl.gz -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {%- else %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl --create-dirs -o mirror/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
@@ -478,12 +438,10 @@ mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
 {%- else %}
 {%- if ont.use_gzipped %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl.gz --create-dirs -o mirror/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl.gz -o $@.tmp.owl{%- if ont.make_base %} && \
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $@; fi
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl.gz --create-dirs -o mirror/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl.gz -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {%- else %}
 mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl --create-dirs -o mirror/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl -o $@.tmp.owl{%- if ont.make_base %} && \
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $@; fi
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl --create-dirs -o mirror/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
 {%- endif %}
 {%- endif %}
 .PRECIOUS: mirror/{{ ont.id }}.owl
