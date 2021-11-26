@@ -1,3 +1,15 @@
+# v1.2.31 (unpublished)
+- Adding `use_base_merging` to config files. This allows to use the base import pipline. For more detail read ([pull](https://github.com/INCATools/ontology-development-kit/pull/496/files))
+- Adding back [ssh/scp](https://github.com/INCATools/ontology-development-kit/issues/494)
+- Adding `make_base` feature that allows to autogenerate base files from ontologies where they do not exist ([pull](https://github.com/INCATools/ontology-development-kit/pull/496/files))
+- Adding new command `sh run.sh make no-mirror-refresh-imports` which refreshes imports without refreshing mirrors. Can be used for individual ontologies as well.
+- New command `sh run.sh make explain_unsat` which generates a nicely formatted set of explanations for your unsatisfiable classes ([pull](https://github.com/INCATools/ontology-development-kit/pull/493/files))
+- Adding method to [measure the memory consumption of your builds](https://github.com/INCATools/ontology-development-kit/pull/495)
+- Migrated to Java 11 ([pull](https://github.com/INCATools/ontology-development-kit/pull/492))
+- _Breaking changes_:
+  - OBO Modules are no longer generated automatically. You can use the export_obo option to add them back  ([pull](https://github.com/INCATools/ontology-development-kit/pull/496/files))
+  - Equivalent class default setting changed from `all` to `asserted only` ([pull](https://github.com/INCATools/ontology-development-kit/pull/497)). This means that from now on, if you dont change the setting deliberately, your pipeline will fail if their are equivalent classes that are not deliberately asserted.
+
 # v1.2.30 (11 October 2021)
 - Important: The way we install python packages has changed significantly: we are now using _fixed version dependencies_ ([issue](https://github.com/INCATools/ontology-development-kit/issues/463)). If there are problems with the versions of packages we are using, please let us know immediately.
 - We are now using multi-stage builds in ODK for docker. The `obolibrary/odklite` container is considerably lighter (smaller) than the normal `odkfull` container you have been using so far, and it should be sufficient for most ODK pipelines.
