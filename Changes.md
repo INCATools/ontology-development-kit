@@ -3,8 +3,11 @@
 - Updated to [DOSDP tools 0.18](https://github.com/INCATools/dosdp-tools/releases/tag/v0.18)
 - Adding `use_base_merging` to config files, which _enables the BASE file pipeline_, a completely different way to handle imports. This feature is not ready for primetime, but if you are interested in testing this, get in touch. For more details read ([pull](https://github.com/INCATools/ontology-development-kit/pull/496/files)).
 - Adding back [ssh/scp](https://github.com/INCATools/ontology-development-kit/issues/494)
+- Migrated to Java 11 as the base Java in ODK ([pull](https://github.com/INCATools/ontology-development-kit/pull/492))
 - Adding `make_base` feature that allows to autogenerate base files from ontologies where they do not exist ([pull](https://github.com/INCATools/ontology-development-kit/pull/496/files))
 - Adding new command `sh run.sh make no-mirror-refresh-imports` which refreshes imports without refreshing mirrors. Can be used for individual ontologies as well.
+- Making `owltools` where necessary configurable with a bespoke memory parameter ([pull](https://github.com/INCATools/ontology-development-kit/pull/487))
+- Fixing the GitHub action to auto-deploy the documentation ([pr](https://github.com/INCATools/ontology-development-kit/pull/485)).
 - Fixed a bug where the [DOSDP pages in ODK where generated in the wrong part](https://github.com/INCATools/ontology-development-kit/pull/496/files) of the mkdocs documentation.
 - New command `sh run.sh make explain_unsat` which generates a nicely formatted set of explanations for your unsatisfiable classes ([pull](https://github.com/INCATools/ontology-development-kit/pull/493/files))
 - Adding method to [measure the memory consumption of your builds](https://github.com/INCATools/ontology-development-kit/pull/495). For example, you can now run `IMAGE=odklite ODK_DEBUG=yes ./run.sh make prepare_release` to run your release on the (much lighter) `odklite` container of ODK, and get a nice benchmark summary at the end: 
@@ -13,10 +16,10 @@
 Elapsed time: 7:49.24
 Peak memory: 6517356 kb
 ```
-- Migrated to Java 11 ([pull](https://github.com/INCATools/ontology-development-kit/pull/492))
 - _Breaking changes_:
   - OBO Modules are no longer generated automatically. You can use the `export_obo` option to add them back  ([pull](https://github.com/INCATools/ontology-development-kit/pull/496/files))
   - Equivalent class default setting changed from `all` to `asserted only` ([pull](https://github.com/INCATools/ontology-development-kit/pull/497)). This means that from now on, if you dont change the setting deliberately, your pipeline will fail if their are equivalent classes that are not deliberately asserted.
+  - OWL 2 DL profile checking is now `true` by [default](https://github.com/INCATools/ontology-development-kit/pull/481). You have to actively switch it off by setting `ensure_owl2dl_profile` to `FALSE` in your config file. 
 
 # v1.2.30 (11 October 2021)
 - Important: The way we install python packages has changed significantly: we are now using _fixed version dependencies_ ([issue](https://github.com/INCATools/ontology-development-kit/issues/463)). If there are problems with the versions of packages we are using, please let us know immediately.
