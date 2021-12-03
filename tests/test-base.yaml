@@ -1,0 +1,18 @@
+id: tbase
+title: "Test Base"
+github_org: INCATools
+repo: ontology-development-kit
+import_group:
+  use_base_merging: TRUE
+  exclude_iri_patterns:
+    - <http://purl.obolibrary.org/obo/GOCHE_*>
+    - <http://purl.obolibrary.org/obo/OBA_*>
+  slme_individuals: exclude
+  mirror_max_time_download: 400
+  products:
+    - id: ro
+    - id: cl
+      use_base: TRUE
+    - id: pr
+      make_base: TRUE
+      mirror_from: https://raw.githubusercontent.com/obophenotype/pro_obo_slim/master/pr_slim.owl

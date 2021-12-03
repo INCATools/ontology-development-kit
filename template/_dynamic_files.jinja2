@@ -1075,6 +1075,10 @@ When we use the base pipelines, we
 2) We merge all base files into one big pile
 3) Then we extract a single module `imports/merged_import.owl`
 
+The first implementation of this pipeline is PATO, see https://github.com/pato-ontology/pato/blob/master/src/ontology/pato-odk.yaml.
+
+As we will test and roll out this feature more widely, we will also expand the documentation.
+
 ^^^ docs/odk-workflows/ManageDocumentation.md
 # Updating the Documentation
 
@@ -1121,6 +1125,10 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
 3. Just to double check, you can now navigate to your documentation pages (usually https://{{ project.github_org }}.github.io/{{ project.repo }}/). 
    Just make sure you give GitHub 2-5 minutes to build the pages!
 
+^^^ docs/templates/dosdp.md
+# DOSDP documentation stub
+
+Do not overwrite, contents will be generated automatically,
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
 theme: readthedocs
@@ -1139,7 +1147,10 @@ nav:
           - Managing the documentation: odk-workflows/ManageDocumentation.md
           - Continuous Integration: odk-workflows/ContinuousIntegration.md
           - Your ODK Repository Overview: odk-workflows/RepositoryFileStructure.md 
-      - Contributing: contributing.md
+      - Contributing: contributing.md{% if project.use_dosdps %}
+  - Reference:
+    - Design Patterns:
+      - Design Patterns Overview: dosdp.md{% endif %}
 {% if 'github_actions' in project.ci %}
 ^^^ .github/workflows/docs.yml
 # Basic ODK workflow
@@ -1168,8 +1179,5 @@ jobs:
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
           CONFIG_FILE: mkdocs.yaml
-{% endif -%}
-{% if project.use_dosdps %}  - Design Patterns:
-    - Design Patterns Overview: design-patterns.md
 {% endif -%}
 {% endif -%}

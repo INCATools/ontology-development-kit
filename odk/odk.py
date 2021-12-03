@@ -275,6 +275,9 @@ class ImportGroup(ProductGroup):
     use_base_merging: bool = False
     """If set to true, mirrors will be merged before determining a suitable seed. This can be a quite costly process."""
     
+    exclude_iri_patterns: Optional[List[str]] = None
+    """List of IRI patterns. If set, IRIs matching and IRI pattern will be removed from the import."""
+    
     export_obo: bool = False
     """If set to true, modules will not only be created in OWL, but also OBO format"""
     
