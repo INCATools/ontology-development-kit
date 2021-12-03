@@ -5,23 +5,5 @@ markdown_extensions:
       permalink: true
 nav:
   - Initial Setup: InitialSetup.md
-  - Creating repo: CreatingRepo.md
-  - Add Term to Import: AddTermToImport.md
-  - Create New Term: CreateNewTerm.md
-  - Daily Workflow: DailyWorkflow.md
-  - Deal with Large Ontologies: DealWithLargeOntologies.md
-  - Deleting Asserted Subclasses: DeletingAssertedSubClasses.md
-  - Frequently Used ODK Commands: FrequentlyUsedODKCommands.md
-  - Install Git: Installgit.md
-  - Create Slim:
-    - New Slim: NewSlim.md
-    - New Slim term: NewSlimTerm.md
-  - Merging and Obsoleting:
-    - Merge Terms: MergeTerms.md
-    - Oboslete Term: ObsoleteTerm.md
-  - Release Artefacts: ReleaseArtefacts.md
-  - Synonynms: Synonyms.md
-  - Taxon Restriction: TaxonRestriction.md
-  - Term Comments: TermComments.md
 repo_url: https://github.com/INCATools/ontology-development-kit
 
