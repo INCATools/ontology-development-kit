@@ -13,10 +13,10 @@ nav:
   - Deleting Asserted Subclasses: DeletingAssertedSubClasses.md
   - Frequently Used ODK Commands: FrequentlyUsedODKCommands.md
   - Install Git: Installgit.md
-  - Create Slim
+  - Create Slim:
     - New Slim: NewSlim.md
     - New Slim term: NewSlimTerm.md
-  - Merging and Obsoleting
+  - Merging and Obsoleting:
     - Merge Terms: MergeTerms.md
     - Oboslete Term: ObsoleteTerm.md
   - Release Artefacts: ReleaseArtefacts.md
