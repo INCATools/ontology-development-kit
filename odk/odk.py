@@ -126,6 +126,9 @@ class ImportProduct(Product):
     use_base: bool = False
     """if use_base is true, try use the base IRI instead of normal one to mirror from."""
     
+    make_base: bool = False
+    """if make_base is true, try to extract a base file from the mirror."""
+    
     use_gzipped: bool = False
     """if use_gzipped is true, try use the base IRI instead of normal one to mirror from."""
 
@@ -268,6 +271,15 @@ class ImportGroup(ProductGroup):
     
     release_imports : bool = False
     """If set to True, imports are copied to the release directory."""
+    
+    use_base_merging: bool = False
+    """If set to true, mirrors will be merged before determining a suitable seed. This can be a quite costly process."""
+    
+    exclude_iri_patterns: Optional[List[str]] = None
+    """List of IRI patterns. If set, IRIs matching and IRI pattern will be removed from the import."""
+    
+    export_obo: bool = False
+    """If set to true, modules will not only be created in OWL, but also OBO format"""
     
     annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115'])
     """Define which annotation properties to pull in."""

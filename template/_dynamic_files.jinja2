@@ -1009,7 +1009,7 @@ First, you navigate in your terminal to the ontology directory (underneath src i
 cd src/ontology
 ```
 
-Then, you regenerate the import that will now include any new terms you have added.
+Then, you regenerate the import that will now include any new terms you have added. Note: You must have [docker installed](SettingUpDockerForODK.md).
 
 ```
 sh run.sh make PAT=false imports/go_import.owl -B
@@ -1032,6 +1032,53 @@ If you wish to skip refreshing the mirror, i.e. skip downloading the latest vers
 ```
 sh run.sh make IMP=true MIR=false PAT=false imports/go_import.owl -B
 ```
+
+## Using the Base Module approach
+
+Since ODK 1.2.31, we support an entirely new approach to generate modules: Using base files.
+The idea is to only import axioms from ontologies that _actually belong to it_. 
+A base file is a subset of the ontology that only contains those axioms that nominally 
+belong there. In other words, the base file does not contain any axioms that belong
+to another ontology. An example would be this:
+
+Imagine this being the full Uberon ontology:
+
+```
+Axiom 1: BFO:123 SubClassOf BFO:124
+Axiom 1: UBERON:123 SubClassOf BFO:123
+Axiom 1: UBERON:124 SubClassOf UBERON 123
+```
+
+The base file is the set of all axioms that are about UBERON terms:
+
+```
+Axiom 1: UBERON:123 SubClassOf BFO:123
+Axiom 1: UBERON:124 SubClassOf UBERON 123
+```
+
+I.e.
+
+```
+Axiom 1: BFO:123 SubClassOf BFO:124
+```
+
+Gets removed.
+
+The base file pipeline is a bit more complex then the normal pipelines, because
+of the logical interactions between the imported ontologies. This is solved by _first 
+merging all mirrors into one huge file and then extracting one mega module from it.
+
+Example: Let's say we are importing terms from Uberon, GO and RO in our ontologies.
+When we use the base pipelines, we
+
+1) First obtain the base (ususally by simply downloading it, but there is also an option now to create it with ROBOT)
+2) We merge all base files into one big pile
+3) Then we extract a single module `imports/merged_import.owl`
+
+The first implementation of this pipeline is PATO, see https://github.com/pato-ontology/pato/blob/master/src/ontology/pato-odk.yaml.
+
+As we will test and roll out this feature more widely, we will also expand the documentation.
+
 ^^^ docs/odk-workflows/ManageDocumentation.md
 # Updating the Documentation
 
@@ -1078,6 +1125,10 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
 3. Just to double check, you can now navigate to your documentation pages (usually https://{{ project.github_org }}.github.io/{{ project.repo }}/). 
    Just make sure you give GitHub 2-5 minutes to build the pages!
 
+^^^ docs/templates/dosdp.md
+# DOSDP documentation stub
+
+Do not overwrite, contents will be generated automatically,
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
 theme: readthedocs
@@ -1096,7 +1147,10 @@ nav:
           - Managing the documentation: odk-workflows/ManageDocumentation.md
           - Continuous Integration: odk-workflows/ContinuousIntegration.md
           - Your ODK Repository Overview: odk-workflows/RepositoryFileStructure.md 
-      - Contributing: contributing.md
+      - Contributing: contributing.md{% if project.use_dosdps %}
+  - Reference:
+    - Design Patterns:
+      - Design Patterns Overview: dosdp.md{% endif %}
 {% if 'github_actions' in project.ci %}
 ^^^ .github/workflows/docs.yml
 # Basic ODK workflow
@@ -1125,8 +1179,5 @@ jobs:
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
           CONFIG_FILE: mkdocs.yaml
-{% endif -%}
-{% if project.use_dosdps %}  - Design Patterns:
-    - Design Patterns Overview: design-patterns.md
 {% endif -%}
 {% endif -%}
