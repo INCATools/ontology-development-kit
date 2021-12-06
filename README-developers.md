@@ -127,17 +127,19 @@ log to determine if any modifications have been made?
 * Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).
 * Update the [constraits.txt file](https://github.com/INCATools/ontology-development-kit/pull/476#issuecomment-924050937)
 * Do any amount of testing as needed to be confident we are ready for release (at the very least, do a local build with `make build` and run the test suite with `make tests`; possibly run some mock releases on known ontologies such as `FBbt`, etc.).
-* Tag the release and push the tag to GitHub.
-* From GitHub, create a formal release from the newly pushed tag. This should automatically trigger the `build-multiarch.yml` GitHub Action, leading to both the x86_64 and arm64 images being built and published under the `obolibrary/` namespace.
+* Tag the release and push the tag to GitHub and create a formal release from the newly pushed tag.
+* Run `docker login` to ensure you are logged in. You must have access rights to `obolibrary` organisation to run the following.
+* Run `docker buildx create --name multiarch --driver docker-container --use` if you have not done so in the past. This command needs to be run only once, see below.
+* Run `make publish-multiarch` to publish the ODK in the `obolibrary` dockerhub organisation.
 
-To then publish the multi-arch images under the `obotools/` namespace, we need to run locally:
+If you want publish the multi-arch images under the `obotools/` organisation, you need to run locally:
 
 ```sh
 $ docker buildx create --name multiarch --driver docker-container --use
 $ make publish-multiarch IM=obotools/odkfull IMLITE=obotools/odklite DEV=obotools/odkdev
 ```
 
-(The first command only being needed when you attempt a multi-arch build for the first time. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.)
+Same as before, the first command (`docker buildx create..`) only being needed when you attempt a multi-arch build for the first time. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.
 
 More details below.
 
