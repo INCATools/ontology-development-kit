@@ -129,6 +129,7 @@ log to determine if any modifications have been made?
 * Do any amount of testing as needed to be confident we are ready for release (at the very least, do a local build with `make build` and run the test suite with `make tests`; possibly run some mock releases on known ontologies such as `FBbt`, etc.).
 * Tag the release and push the tag to GitHub and create a formal release from the newly pushed tag.
 * Run `docker login` to ensure you are logged in. You must have access rights to `obolibrary` organisation to run the following.
+* Run `docker buildx create --name multiarch --driver docker-container --use` if you have not done so in the past. This command needs to be run only once, see below.
 * Run `make publish-multiarch` to publish the ODK in the `obolibrary` dockerhub organisation.
 
 If you want publish the multi-arch images under the `obotools/` organisation, you need to run locally:
@@ -138,7 +139,7 @@ $ docker buildx create --name multiarch --driver docker-container --use
 $ make publish-multiarch IM=obotools/odkfull IMLITE=obotools/odklite DEV=obotools/odkdev
 ```
 
-The first command only being needed when you attempt a multi-arch build for the first time. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.
+Same as before, the first command (`docker buildx create..`) only being needed when you attempt a multi-arch build for the first time. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.
 
 More details below.
 
