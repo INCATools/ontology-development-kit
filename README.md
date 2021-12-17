@@ -4,8 +4,9 @@
 [![DOI](https://zenodo.org/badge/48047921.svg)](https://zenodo.org/badge/latestdoi/48047921)
 [![DOI](https://img.shields.io/docker/pulls/obolibrary/odkfull.svg)](https://hub.docker.com/r/obolibrary/odkfull)
 
-
-Initialize a Git repo for managing your ontology the OBO Library way!
+Manage your ontology's life cycle with the Ontology Development Kit (ODK)! The ODK is
+- a toolbox of various ontology related tools such as ROBOT, owltools, dosdp-tools and many more, bundled as a docker image
+- a set of executable workflows for managing your ontologies continuous integration, quality control, releases and dynamic imports
 
 For more details, see
 
