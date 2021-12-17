@@ -1,3 +1,9 @@
+# v1.2.33 (unpublished, target date 15 February 2022)
+- no changes yet
+
+# v1.2.32 (16 December 2021)
+- Updated to [ROBOT 1.8.3](https://github.com/ontodev/robot/releases/tag/v1.8.3), which removes Log4J and [fixes some issues](https://github.com/ontodev/robot/blob/master/CHANGELOG.md#183---2021-12-16)
+
 # v1.2.31 (3 December 2021)
 - Updated to [ROBOT 1.8.2](https://github.com/ontodev/robot/releases/tag/v1.8.2)
 - Updated to [DOSDP tools 0.18](https://github.com/INCATools/dosdp-tools/releases/tag/v0.18)
