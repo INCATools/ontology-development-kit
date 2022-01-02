@@ -8,6 +8,10 @@ export_formats:
   - owl
   - obo
   - json
+release_artefacts: 
+  - base
+  - simple
+  - full
 import_group:
   products:
     - id: ro
@@ -17,11 +21,13 @@ import_group:
     - id: uberon
       use_base: True
     - id: chebi
+      mirror_from: http://purl.obolibrary.org/obo/chebi.owl.gz
     - id: pco
     - id: foodon
     - id: go
       use_base: True
     - id: ncbitaxon
+      mirror_from: http://purl.obolibrary.org/obo/ncbitaxon/taxslim.obo
     - id: obi
     - id: po
     - id: iao
