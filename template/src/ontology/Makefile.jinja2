@@ -59,7 +59,7 @@ ONTOLOGYTERMS =             $(TMPDIR)/ontologyterms.txt
 {%- if project.use_dosdps %}
 PATTERNDIR=                 ../patterns
 DOSDP_SCHEMA=                http:// # change to PURL when ready.
-PATTERN_TESTER=              simple_pattern_tester.py
+PATTERN_TESTER=              dosdp validate -i
 DOSDPT=                      dosdp-tools
 PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
 
