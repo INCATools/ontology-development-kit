@@ -28,3 +28,4 @@ mkdocs-material
 funowl
 kgx
 linkml
+dosdp
