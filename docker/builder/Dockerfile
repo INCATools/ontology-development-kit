@@ -32,7 +32,7 @@ RUN apt-get update && \
 # Therefore we install all of them on the builder image (where we have
 # all the build tools required to compile them if needed), and we'll
 # copy the entire Python tree to the final images.
-COPY requirements.txt /build/requirements.txt
+COPY requirements.txt.full /build/requirements.txt
 COPY requirements.txt.lite /build/requirements.txt.lite
 COPY constraints.txt /build/constraints.txt
 # First the packages needed by the odklite image.
