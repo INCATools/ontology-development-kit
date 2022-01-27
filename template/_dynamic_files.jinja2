@@ -378,8 +378,8 @@ WHERE {
 {#-
     SPARQL QUERY checks
 #}
-^^^ src/sparql/def-lacks-xref-violation.sparql
 {%- if project.robot_report.custom_sparql_checks is not defined or 'def-lacks-xref' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/def-lacks-xref-violation.sparql
 PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
 PREFIX def: <http://purl.obolibrary.org/obo/IAO_0000115>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -392,10 +392,10 @@ SELECT ?cls ?def (group_concat(?xref) as ?xrefs) WHERE
   FILTER (!isBlank(?cls))
 }
 GROUP BY ?cls ?def
-{%- endif %}
+{% endif %}
 
-^^^ src/sparql/equivalent-classes-violation.sparql
 {%- if project.robot_report.custom_sparql_checks is not defined or 'equivalent-classes' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/equivalent-classes-violation.sparql
 PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -409,10 +409,10 @@ SELECT ?baseClass ?baseLabel ?equivalentClass ?equivalentLabel WHERE
   FILTER (!isBlank(?baseClass)) .
   FILTER (!isBlank(?equivalentClass))
 }
-{%- endif %}
+{% endif %}
 
-^^^ src/sparql/nolabels-violation.sparql
 {%- if project.robot_report.custom_sparql_checks is not defined or 'nolabels' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/nolabels-violation.sparql
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -426,10 +426,10 @@ SELECT ?cls WHERE {
         FILTER ( regex(str(?cls), "^http://purl.obolibrary.org/obo/GO_"))
 }
 ORDER BY ?cls
-{%- endif %}
+{% endif %}
 
-^^^ src/sparql/obsolete-violation.sparql
 {%- if project.robot_report.custom_sparql_checks is not defined or 'obsolete' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/obsolete-violation.sparql
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -454,10 +454,10 @@ SELECT ?cls ?clsLabel ?rule WHERE {
         }
 }
 ORDER BY ?cls
-{%- endif %}
+{% endif %}
 
-^^^ src/sparql/owldef-self-reference-violation.sparql
 {%- if project.robot_report.custom_sparql_checks is not defined or 'owldef-self-reference' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/owldef-self-reference-violation.sparql
 PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -468,10 +468,10 @@ SELECT ?c WHERE {
     UNION
   { ?c owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first [ owl:someValuesFrom ?c ] ] ] }
 }
-{%- endif %}
+{% endif %}
 
-^^^ src/sparql/redundant-subClassOf-violation.sparql
 {%- if project.robot_report.custom_sparql_checks is not defined or 'redundant-subClassOf' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/redundant-subClassOf-violation.sparql
 PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -484,7 +484,7 @@ SELECT ?x ?xl ?y ?yl ?z ?zl WHERE {
   ?x rdfs:subClassOf ?z .
   ?z rdfs:label ?zl .
 }
-{%- endif %}
+{% endif %}
 
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
