@@ -1,9 +1,0 @@
-prefix oio: <http://www.geneontology.org/formats/oboInOwl#>
-prefix owl: <http://www.w3.org/2002/07/owl#>
-prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-WELECT *
-WHERE {
-  ?c rdfs:subClassOf ?d ;
-     owl:equivalentClass [
-        owl:intersectionOf TODO
