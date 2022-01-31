@@ -486,6 +486,30 @@ SELECT ?x ?xl ?y ?yl ?z ?zl WHERE {
 }
 {% endif %}
 
+{%- if project.robot_report.custom_sparql_checks is not defined or 'taxon-range' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/taxon-range-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+
+SELECT ?term ?property ?taxon
+WHERE {
+  VALUES ?property { never_in_taxon: present_in_taxon: }
+  ?term ?property ?taxon .
+  FILTER (!isIRI(?taxon) || !STRSTARTS(STR(?taxon), "http://purl.obolibrary.org/obo/NCBITaxon_"))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'iri-range' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/iri-range-violation.sparql
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+SELECT ?term ?property ?taxon
+WHERE {
+  VALUES ?property { oboInOwl:inSubset }
+  ?term ?property ?value .
+  FILTER (!isIRI(?value))
+}
+{% endif %}
+
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
 ^^^ src/ontology/components/{{ component.filename }}
