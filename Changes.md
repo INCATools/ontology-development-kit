@@ -1,6 +1,6 @@
 # v1.2.33 (unpublished, target date 15 February 2022)
 - no changes yet
-- rm $SRCDIR/sparql/owldef-violation.sparql $SRCDIR/sparql/nolabels-violation.sparql $SRCDIR/sparql/def-lacks-xref-violation.sparql $SRCDIR/sparql/obsolete-violation.sparql $SRCDIR/sparql/redundant-subClassOf-violation.sparql
+- rm ../sparql/owldef-violation.sparql ../sparql/nolabels-violation.sparql ../sparql/def-lacks-xref-violation.sparql ../sparql/obsolete-violation.sparql ../sparql/redundant-subClassOf-violation.sparql
 
 # v1.2.32 (16 December 2021)
 - Updated to [ROBOT 1.8.3](https://github.com/ontodev/robot/releases/tag/v1.8.3), which removes Log4J and [fixes some issues](https://github.com/ontodev/robot/blob/master/CHANGELOG.md#183---2021-12-16)
