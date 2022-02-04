@@ -1045,7 +1045,7 @@ This page discusses how to update the contents of your imports, like adding or r
 
 Note: some ontologies now use a merged-import system to manage dynamic imports, for these please follow instructions in the section title "Using the Base Module approach".
 
-Importing a new term is split into to sub-phases:
+Importing a new term is split into two sub-phases:
 
 1. Declaring the terms to be imported
 2. Refreshing imports dynamically
@@ -1059,7 +1059,8 @@ There are three ways to declare terms that are to be imported from an external o
 
 #### Protege-based declaration
 
-This workflow is to be avoided, but may be appropriate if the editor _does not have access to the ODK docker container_.
+This workflow is to be avoided, but may be appropriate if the editor _does not have access to the ODK docker container_. 
+This approach also applies to ontologies that use base module import approach.
 
 1. Open your ontology (edit file) in Protege (5.5+).
 1. Select 'owl:Thing'
@@ -1194,15 +1195,7 @@ To check if your ontology uses this method, check src/ontology/{{ project.id }}-
 
 If your ontology uses Base Module approach, please use the following steps: 
 
-Start by declaring the term to be imported in Protege:
-
-1. Open your ontology (edit file) in Protege (5.5+).
-1. Select 'owl:Thing'
-1. Add a new class as usual.
-1. Paste the _full iri_ in the 'Name:' field, for example, http://purl.obolibrary.org/obo/CHEBI_50906.
-1. Click 'OK'
-
-<img src="https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/docs/img/AddingClasses.png" alt="Adding Classes" />
+First, add the term to be imported to the term file associated with it (see above "Using term files" section if this is not clear to you)
 
 Next, you navigate in your terminal to the ontology directory (underneath src in your hpo root directory). 
 ```
@@ -1219,9 +1212,6 @@ Note: if your mirrors are updated, you can run `sh run.sh make no-mirror-refresh
 This requires quite a bit of memory on your local machine, so if you encounter an error, it might be a lack of memory on your computer. A solution would be to create a ticket in an issue tracker requesting for the term to be imported, and your one of the local devs should pick this up and run the import for you.
 
 Lastly, restart Protege, and the term should be imported in ready to be used.
-
-Warning: Adding declarations on editors file might cause issues if the declared class is no longer used. The declarations should be removed if no longer in use
-Warning: If the term is declared, and import is not refreshed, failure of the SPARQL label and definition checks might be triggered.
 
 ^^^ docs/odk-workflows/ManageDocumentation.md
 # Updating the Documentation
