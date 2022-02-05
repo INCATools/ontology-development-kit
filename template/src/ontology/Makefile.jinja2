@@ -58,7 +58,6 @@ ONTOLOGYTERMS =             $(TMPDIR)/ontologyterms.txt
 
 {%- if project.use_dosdps %}
 PATTERNDIR=                 ../patterns
-DOSDP_SCHEMA=                http:// # change to PURL when ready.
 PATTERN_TESTER=              dosdp validate -i
 DOSDPT=                      dosdp-tools
 PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
@@ -250,10 +249,10 @@ $(IMPORT_MODULE_SIGNATURE): $(IMPORT_MODULE)
 	cat $@.tmp | sort | uniq >  $@
 {% endif %}
 
-ALLSEED = $(PRESEED) {% if project.use_dosdps %} $(PATTERNDIR)/all_pattern_terms.txt {% endif %}\
+ALLSEED = $(PRESEED) {% if project.use_dosdps %} $(TMPDIR)/all_pattern_terms.txt {% endif %}\
 {% if project.use_custom_import_module %} $(IMPORT_MODULE_SIGNATURE) {% endif %}
 
-$(IMPORTSEED): {% if project.use_dosdps %} prepare_patterns {% endif %} $(ALLSEED) 
+$(IMPORTSEED): $(ALLSEED)
 	if [ $(IMP) = true ]; then cat $(ALLSEED) | sort | uniq > $@; fi
 
 
@@ -280,10 +279,10 @@ imports/merged_import.owl: mirror/merged.owl imports/merged_terms_combined.txt
 		extract -T imports/merged_terms_combined.txt --force true --copy-ontology-annotations true --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
-{% endif %}
 {% else %}
 imports/merged_import.owl: mirror/merged.owl imports/merged_terms_combined.txt
 	echo "ERROR: You have configured your default module type to be {{project.import_group.module_type}}; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
+{% endif %}
 {% endif %}
 
 {% if 'slme' == project.import_group.module_type %}
@@ -425,38 +424,32 @@ IMP_LARGE=true # Global parameter to bypass handling of large imports
 {% if ont.description  -%}
 ## {{ ont.description }}
 {% endif -%}
-{% if ont.rebuild_if_source_changes -%}
-## Copy of {{ont.id}} is re-downloaded whenever source changes
-mirror/{{ ont.id }}.trigger: $(SRC)
-{% else -%}
-## Copy of {{ont.id}} is re-downloaded manually
-mirror/{{ ont.id }}.trigger:
-	touch $@
-{% endif -%}
+
+.PHONY: mirror-{{ ont.id }}
+.PRECIOUS: mirror/{{ ont.id }}.owl
 
 {%- if ont.mirror_from %}
-mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
+mirror-{{ ont.id }}:
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl{%- if ont.make_base %} && \
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $@; fi
+		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
 {%- elif ont.use_base %}
 {%- if ont.use_gzipped %}
-mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
+mirror-{{ ont.id }}:
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o mirror/{{ ont.id }}-base.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}-base.owl.gz -o $@.tmp.owl{%- if ont.make_base %} &&\
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $@; fi{%- else %}
-mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl --create-dirs -o mirror/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- else %}
+mirror-{{ ont.id }}:
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl --create-dirs -o mirror/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
 {%- endif %}
 {%- else %}
 {%- if ont.use_gzipped %}
-mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
+mirror-{{ ont.id }}:
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl.gz --create-dirs -o mirror/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl.gz -o $@.tmp.owl{%- if ont.make_base %} && \
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $@; fi
+		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
 {%- else %}
-mirror/{{ ont.id }}.owl: mirror/{{ ont.id }}.trigger
+mirror-{{ ont.id }}:
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl --create-dirs -o mirror/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && $(ROBOT) convert -i mirror/{{ ont.id }}.owl -o $@.tmp.owl{%- if ont.make_base %} && \
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $@; fi{%- endif %}
+		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} && mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- endif %}
 {%- endif %}
-.PRECIOUS: mirror/{{ ont.id }}.owl
 {% endfor -%}
 {% if project.import_group.use_base_merging %}
 ALL_MIRRORS = $(patsubst %, mirror/%.owl, $(IMPORTS))
@@ -466,6 +459,10 @@ mirror/merged.owl: $(ALL_MIRRORS)
 	if [ $(IMP) = true ] && [ $(MERGE_MIRRORS) = true ]; then $(ROBOT) merge $(patsubst %, -i %, $^) -o $@; fi
 .PRECIOUS: mirror/merged.owl
 {% endif %}
+
+mirror/%.owl: mirror-%
+	cmp -s $(TMPDIR)/mirror-$*.owl $@; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && mv $(TMPDIR)/mirror-$*.owl $@; fi
+
 {% endif %}
 
 {% if project.subset_group is defined %}
@@ -545,81 +542,104 @@ endif
 
 {%- if project.use_dosdps %}
 # ----------------------------------------
-# Patterns (experimental)
+# Patterns
 # ----------------------------------------
 
-# Test patterns for schema compliance:
-
-.PHONY: patterns
-patterns: all_imports $(PATTERNDIR)/pattern.owl $(PATTERNDIR)/definitions.owl
+ALL_PATTERN_FILES=$(wildcard $(PATTERNDIR)/dosdp-patterns/*.yaml)
 
 .PHONY: pattern_clean
 pattern_clean:
-	echo "Not implemented"
+	rm -f $(DOSDP_OWL_FILES_DEFAULT)
+	rm -f $(DOSDP_TERM_FILES_DEFAULT){% if project.pattern_pipelines_group is defined %}
+	{%- for pipeline in project.pattern_pipelines_group.products %}
+	rm -f $(DOSDP_OWL_FILES_{{ pipeline.id.upper() }})
+	rm -f $(DOSDP_TERM_FILES_{{ pipeline.id.upper() }})
+	{%- endfor %}{% endif %}
+
+.PHONY: patterns dosdp
+patterns dosdp:
+	echo "Validating all DOSDP templates"
+	make pattern_schema_checks
+	echo "Building $(PATTERNDIR)/definitions.owl"
+	make $(PATTERNDIR)/pattern.owl $(PATTERNDIR)/definitions.owl
+
+# DOSDP Template Validation
+
+$(TMPDIR)/pattern_schema_checks: $(ALL_PATTERN_FILES)
+	$(PATTERN_TESTER) $(PATTERNDIR)/dosdp-patterns/ && touch $@
 
 .PHONY: pattern_schema_checks
-pattern_schema_checks: update_patterns
-	$(PATTERN_TESTER) $(PATTERNDIR)/dosdp-patterns/
+pattern_schema_checks: $(TMPDIR)/pattern_schema_checks
 
-#This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now). It downloads all patterns specified in external.txt
+# This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now).
+# It downloads all patterns specified in external.txt
 .PHONY: update_patterns
-update_patterns: .FORCE
-	if [ $(PAT) = true ]; then rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1 || true; fi
-	if [ $(PAT) = true ] && [ -s $(PATTERNDIR)/dosdp-patterns/external.txt ]; then wget -i $(PATTERNDIR)/dosdp-patterns/external.txt --backups=1 -P $(PATTERNDIR)/dosdp-patterns; fi
-	if [ $(PAT) = true ]; then rm -f $(PATTERNDIR)/dosdp-patterns/*.yaml.1 || true; fi
+update_patterns:
+	if [ $(PAT) = true ]; then rm -f $(TMPDIR)/dosdp/*.yaml.1 || true; fi
+	if [ $(PAT) = true ] && [ -s $(PATTERNDIR)/dosdp-patterns/external.txt ]; then wget -i $(PATTERNDIR)/dosdp-patterns/external.txt --backups=1 -P $(TMPDIR)/dosdp; fi
+	if [ $(PAT) = true ]; then rm -f $(TMPDIR)/dosdp/*.yaml.1 || true; fi
 
+$(PATTERNDIR)/dospd-patterns/%.yml: update_patterns
+	cmp -s $(TMPDIR)/dosdp-$*.yml $@; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && mv $(TMPDIR)/dosdp/$*.yml $@; fi
 
-$(PATTERNDIR)/pattern.owl: pattern_schema_checks update_patterns
-	if [ $(PAT) = true ]; then $(DOSDPT) prototype --obo-prefixes true --template=$(PATTERNDIR)/dosdp-patterns --outfile=$@; fi
+# DOSDP Template: Pipelines
+# Each pipeline gets its own directory structure
 
-individual_patterns_default := $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv)))
-pattern_term_lists_default := $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.txt, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv)))
+# DOSDP default pipeline
 
-{% if project.pattern_pipelines_group is defined %}
-{% for pipeline in project.pattern_pipelines_group.products %}
-individual_patterns_{{ pipeline.id }} := $(patsubst %.tsv, $(PATTERNDIR)/data/{{ pipeline.id }}/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv)))
-pattern_term_lists_{{ pipeline.id }} := $(patsubst %.tsv, $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv)))
-{% endfor %}
-{% endif %}
+DOSDP_TSV_FILES_DEFAULT = $(wildcard $(PATTERNDIR)/data/default/*.tsv)
+DOSDP_OWL_FILES_DEFAULT = $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv)))
+DOSDP_TERM_FILES_DEFAULT = $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.txt, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv)))
+DOSDP_PATTERN_NAMES_DEFAULT = $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv))))
 
-# Generating the individual pattern modules and merging them into definitions.owl
-$(PATTERNDIR)/definitions.owl: prepare_patterns update_patterns dosdp_patterns_default {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} dosdp_patterns_{{ pipeline.id }}{% endfor %}{% endif %}
-	if [ $(PAT) = true ] && [ "${individual_patterns_names_default}" ] {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} || [ "${individual_patterns_names_{{ pipeline.id }}}" ]{% endfor %}{% endif %} && [ $(PAT) = true ]; then $(ROBOT) merge $(addprefix -i , $(individual_patterns_default)) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(addprefix -i , $(individual_patterns_{{ pipeline.id }})){% endfor %}{% endif %} annotate --ontology-iri $(ONTBASE)/patterns/definitions.owl  --version-iri $(ONTBASE)/releases/$(TODAY)/patterns/definitions.owl --annotation owl:versionInfo $(VERSION) -o definitions.ofn && mv definitions.ofn $@; fi
-
-individual_patterns_names_default := $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv))))
-dosdp_patterns_default: $(SRC) all_imports .FORCE
-	if [ $(PAT) = true ] && [ "${individual_patterns_names_default}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/default/ --template=$(PATTERNDIR)/dosdp-patterns --batch-patterns="$(individual_patterns_names_default)" --ontology=$< {{ project.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/default; fi
+$(DOSDP_OWL_FILES_DEFAULT): $(SRC) $(DOSDP_TSV_FILES_DEFAULT) $(ALL_PATTERN_FILES)
+	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_DEFAULT}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/default/ --template=$(PATTERNDIR)/dosdp-patterns --batch-patterns="$(DOSDP_PATTERN_NAMES_DEFAULT)" --ontology=$< {{ project.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/default; fi
 
 {% if project.pattern_pipelines_group is defined %}
 {% for pipeline in project.pattern_pipelines_group.products %}
-individual_patterns_names_{{ pipeline.id }} := $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv))))
-dosdp_patterns_{{ pipeline.id }}: $(SRC) all_imports .FORCE
-	if [ $(PAT) = true ] && [ "${individual_patterns_names_{{ pipeline.id }}}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/{{ pipeline.id }} --template=$(PATTERNDIR)/dosdp-patterns/ --batch-patterns="$(individual_patterns_names_{{ pipeline.id }})" --ontology=$< {{ pipeline.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/{{ pipeline.id }}; fi
+# DOSDP {{ pipeline.id }} pipeline
+
+DOSDP_OWL_FILES_{{ pipeline.id.upper() }} = $(patsubst %.tsv, $(PATTERNDIR)/data/{{ pipeline.id }}/%.ofn, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv)))
+DOSDP_TERM_FILES_{{ pipeline.id.upper() }} = $(patsubst %.tsv, $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv)))
+DOSDP_TSV_FILES_{{ pipeline.id.upper() }} = $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv)
+DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }} = $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv))))
+
+$(DOSDP_OWL_FILES_{{ pipeline.id.upper() }}): $(SRC) $(DOSDP_TSV_FILES_{{ pipeline.id.upper() }}) $(ALL_PATTERN_FILES)
+	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml --infile=$(PATTERNDIR)/data/{{ pipeline.id }} --template=$(PATTERNDIR)/dosdp-patterns/ --batch-patterns="$(DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }})" --ontology=$< {{ pipeline.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/{{ pipeline.id }}; fi
 {% endfor %}
 {% endif %}
 
-# Generating the seed file from all the TSVs. If Pattern generation is deactivated, we still extract a seed from definitions.owl
-$(PATTERNDIR)/all_pattern_terms.txt: $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %} $(PATTERNDIR)/pattern_owl_seed.txt
-	if [ $(PAT) = true ]; then cat $^ | sort | uniq > $@; else $(ROBOT) query --use-graphs true -f csv -i ../patterns/definitions.owl --query ../sparql/terms.sparql $@; fi
+# Generate template file seeds
 
-$(PATTERNDIR)/pattern_owl_seed.txt: $(PATTERNDIR)/pattern.owl
-	if [ $(PAT) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
-
-$(PATTERNDIR)/data/default/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERNDIR)/data/default/%.tsv .FORCE
+## Generate template file seeds
+$(PATTERNDIR)/data/default/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERNDIR)/data/default/%.tsv
 	if [ $(PAT) = true ]; then $(DOSDPT) terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@; fi
-
-.PHONY: prepare_patterns
-prepare_patterns:
-	if [ $(PAT) = true ]; then touch $(PATTERNDIR)/data $(pattern_term_lists_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(pattern_term_lists_{{ pipeline.id }}){% endfor %}{% endif %}; fi
-	if [ $(PAT) = true ]; then touch $(PATTERNDIR)/data $(individual_patterns_default) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(individual_patterns_{{ pipeline.id }}){% endfor %}{% endif %}; fi
-
 
 {% if project.pattern_pipelines_group is defined -%}
 {% for pipeline in project.pattern_pipelines_group.products %}
-$(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERNDIR)/data/{{ pipeline.id }}/%.tsv .FORCE
+$(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml $(PATTERNDIR)/data/{{ pipeline.id }}/%.tsv
 	if [ $(PAT) = true ]; then $(DOSDPT) terms --infile=$(word 2, $^) --template=$< --obo-prefixes=true --outfile=$@; fi
 {% endfor %}
 {% endif -%}
+
+# Generating the seed file from all the TSVs. If Pattern generation is deactivated, we still extract a seed from definitions.owl
+$(TMPDIR)/all_pattern_terms.txt: $(DOSDP_TERM_FILES_DEFAULT) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(DOSDP_TERM_FILES_{{ pipeline.id.upper() }}){% endfor %}{% endif %} $(TMPDIR)/pattern_owl_seed.txt
+	if [ $(PAT) = true ]; then cat $^ | sort | uniq > $@; else $(ROBOT) query --use-graphs true -f csv -i $(PATTERNDIR)/definitions.owl --query ../sparql/terms.sparql $@; fi
+
+$(TMPDIR)/pattern_owl_seed.txt: $(PATTERNDIR)/pattern.owl
+	if [ $(PAT) = true ]; then $(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@; fi
+
+# Pattern pipeline main target
+
+# Create pattern.owl, an ontology of all DOSDP patterns
+$(PATTERNDIR)/pattern.owl: $(ALL_PATTERN_FILES)
+	if [ $(PAT) = true ]; then $(DOSDPT) prototype --obo-prefixes true --template=$(PATTERNDIR)/dosdp-patterns --outfile=$@; fi
+
+# Generating the individual pattern modules and merging them into definitions.owl
+$(PATTERNDIR)/definitions.owl: $(DOSDP_OWL_FILES_DEFAULT) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(DOSDP_OWL_FILES_{{ pipeline.id.upper() }}){% endfor %}{% endif %}
+	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_DEFAULT}" ] {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} || [ "${DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}}" ]{% endfor %}{% endif %} && [ $(PAT) = true ]; then $(ROBOT) merge $(addprefix -i , $^) \
+		annotate --ontology-iri $(ONTBASE)/patterns/definitions.owl  --version-iri $(ONTBASE)/releases/$(TODAY)/patterns/definitions.owl --annotation owl:versionInfo $(VERSION) -o definitions.ofn && mv definitions.ofn $@; fi
+
 {% endif %}
 
 # ----------------------------------------
@@ -878,7 +898,7 @@ normalize_obo_src: $(SRC)
 
 .PHONY: normalize_src
 normalize_src: $(SRC)
-	$(ROBOT) convert -i $< -f {% if 'obo' == project.edit_format %}obo --check false{% else %}ofn{% endif %} -o tmp/normalise && mv tmp/normalise $<
+	$(ROBOT) convert -i $< -f {% if 'obo' == project.edit_format %}obo --check false{% else %}ofn{% endif %} -o $(TMPDIR)/normalise && mv $(TMPDIR)/normalise $<
 
 
 .PHONY: validate_idranges
@@ -893,5 +913,39 @@ update_repo:
 update_docs:
 	mkdocs gh-deploy --config-file ../../mkdocs.yaml
 {%- endif %}
+
+.PHONY: clean
+clean:
+	rm -rf $(TMPDIR)/
+
+.PHONY: help
+help:
+	@echo "$$data"
+
+define data
+Usage: [IMAGE=(odklite|odkfull)] [ODK_DEBUG=yes] sh run.sh make [(IMP|MIR|IMP_LARGE|PAT)=(false|true)] command
+
+Command reference:
+* prepare_release:	Run the entire release pipeline. Use make IMP=false prepare_release to avoid rerunning the imports{% if project.use_dosdps %}
+* patterns:		Run the DOSDP patterns pipeline
+* update_patterns:	Pull updated patterns listed in dosdp-patterns/external.txt{% endif %}
+* update_repo:		Update the ODK repository setup using the config file {{ project.id }}-odk.yaml
+* validate_idranges:	Make sure your ID ranges file is formatted correctly
+* normalize_src:	Load and safe your {{ project.id }}-edit file after you to make sure its serialised correctly{% if 'obo' in project.edit_format %}
+* normalize_obo_src:	Load and safe your {{ project.id }}-edit.obo file after you to merge duplicate annotation assertions{% endif %}
+* explain_unsat:	If you have unsatisfiable classes, this command will create a markdown file (tmp/explain_unsat.md) which will explain all your unsatisfiable classes
+
+Examples: 
+* sh run.sh make IMP=false prepare_release
+* sh run.sh make update_repo
+* sh run.sh make test
+
+Tricks:
+* Add -B to the end of your command to force re-running it even if nothing has changed
+* Use the IMAGE parameter to the run.sh script to use a different image like odklite
+* Use ODK_DEBUG=yes sh run.sh make ... to print information about timing and debugging
+
+endef
+export data
 
 include {{ project.id }}.Makefile
