@@ -93,3 +93,11 @@ RUN chmod +x /tools/obodash && \
     echo "build/robot.jar:" >> Makefile && \
     echo "	echo 'skipped ROBOT jar download' && touch \$@" >> Makefile && \
     echo "" >> Makefile
+
+# Install relation-graph
+ENV RG=2.0
+ENV PATH "/tools/relation-graph/bin:$PATH"
+RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/relation-graph-$RG.tgz \
+&& tar -zxvf relation-graph-$RG.tgz \
+&& mv relation-graph-$RG /tools/relation-graph \
+&& chmod +x /tools/relation-graph

@@ -469,6 +469,55 @@ SELECT ?x ?xl ?y ?yl ?z ?zl WHERE {
 }
 {% endif %}
 
+{%- if project.robot_report.custom_sparql_checks is not defined or 'taxon-range' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/taxon-range-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+
+SELECT ?term ?property ?taxon
+WHERE {
+  VALUES ?property { never_in_taxon: present_in_taxon: }
+  ?term ?property ?taxon .
+  FILTER (!isIRI(?taxon) || !STRSTARTS(STR(?taxon), "http://purl.obolibrary.org/obo/NCBITaxon_"))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'iri-range' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/iri-range-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?term ?property ?value
+WHERE {
+  VALUES ?property { 
+    never_in_taxon: 
+    present_in_taxon: 
+    oboInOwl:inSubset
+    dcterms:contributor  }
+  ?term ?property ?value .
+  FILTER (!isIRI(?value))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'any-uri-range' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/any-uri-range-violation.sparql
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?term ?property ?value
+WHERE {
+  VALUES ?property { 
+    rdfs:seeAlso
+    foaf:depicted_by  }
+  ?term ?property ?value .
+  FILTER (datatype(?value) != xsd:anyURI)
+}
+{% endif %}
+
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
 ^^^ src/ontology/components/{{ component.filename }}
