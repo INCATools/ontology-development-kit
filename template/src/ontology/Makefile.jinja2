@@ -251,7 +251,7 @@ prepare_initial_release: all_assets
 IMPORTSEED=$(TMPDIR)/seed.txt
 PRESEED=$(TMPDIR)/pre_seed.txt
 
-$(SRCMERGED): $(SRC)
+$(SRCMERGED): $(SRC) $(OTHER_SRC)
 	$(ROBOT) remove --input $< --select imports --trim false \
 		merge  $(patsubst %, -i %, $(OTHER_SRC)) -o $@
 
