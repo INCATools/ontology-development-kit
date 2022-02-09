@@ -21,6 +21,7 @@
 #}
 ^^^ src/ontology/{{ project.id }}-edit.{{ project.edit_format }}
 {% if project.edit_format == "obo" %}
+format-version: 1.2
 {% if project.import_group is defined -%}
 {% for imp in project.import_group.products %}
 import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl
@@ -38,17 +39,32 @@ property_value: http://purl.org/dc/elements/1.1/title "{{ project.title }}" xsd:
 property_value: http://purl.org/dc/terms/license {{ project.license }}
 
 [Term]
-id: {{ project.id | upper }}:00000000
+id: {{ project.id | upper }}:0000000
 name: root node
+
+[Typedef]
+id: http://purl.org/dc/elements/1.1/description
+name: description
+is_metadata_tag: true
+
+[Typedef]
+id: http://purl.org/dc/elements/1.1/title
+name: title
+is_metadata_tag: true
+
+[Typedef]
+id: http://purl.org/dc/terms/license
+name: license
+is_metadata_tag: true
 
 {% else %}
 Prefix(:=<http://purl.obolibrary.org/obo/{{ project.id }}.owl#>)
+Prefix(dce:=<http://purl.org/dc/elements/1.1/>)
 Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
 Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
 Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
 Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
 Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
-Prefix(dce:=<http://purl.org/dc/elements/1.1/>)
 Prefix(dcterms:=<http://purl.org/dc/terms/>)
 
 
@@ -65,21 +81,31 @@ Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/definitions.owl
 Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl>)
 {% endif -%}
 {% endif %}
-
-Annotation(dce:title "{{ project.title }}")
+Annotation(dcterms:description "{{ project.description }}")
 Annotation(dcterms:license <{{ project.license }}>)
-Annotation(dce:description "{{ project.description }}")
+Annotation(dcterms:title "{{ project.title }}")
 
-Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>))
 
+Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_0000000>))
+Declaration(AnnotationProperty(dcterms:description))
+Declaration(AnnotationProperty(dcterms:license))
+Declaration(AnnotationProperty(dcterms:title))
+
+############################
+#   Annotation Properties
+############################
+
+AnnotationAssertion(rdfs:label dcterms:description "description")
+AnnotationAssertion(rdfs:label dcterms:license "license")
+AnnotationAssertion(rdfs:label dcterms:title "title")
 
 ############################
 #   Classes
 ############################
 
-# Class: <http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>
+# Class: <http://purl.obolibrary.org/obo/{{ project.id | upper }}_0000000> (root node)
 
-AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000> "root node"@en)
+AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | upper }}_0000000> "root node"@en)
 
 
 )
