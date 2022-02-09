@@ -399,71 +399,11 @@ WHERE {
   { ?s1 ?p1 ?term . }
   UNION
   { ?term ?p2 ?o2 . }
-  FILTER(isIRI(?term) && (regex(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || regex(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && (regex(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
 {#-
-    SPARQL QUERY checks
+    SPARQL QUERY QC checks
 #}
-{%- if project.robot_report.custom_sparql_checks is not defined or 'def-lacks-xref' in project.robot_report.custom_sparql_checks %}
-^^^ src/sparql/def-lacks-xref-violation.sparql
-PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
-PREFIX def: <http://purl.obolibrary.org/obo/IAO_0000115>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-
-SELECT ?cls ?def (group_concat(?xref) as ?xrefs) WHERE 
-{
-  ?cls a owl:Class .
-  OPTIONAL { ?cls oio:hasDbXref ?xref } .
-  OPTIONAL { ?cls def: ?def } .
-  FILTER (!isBlank(?cls))
-}
-GROUP BY ?cls ?def
-{% endif %}
-
-{%- if project.robot_report.custom_sparql_checks is not defined or 'equivalent-classes' in project.robot_report.custom_sparql_checks %}
-^^^ src/sparql/equivalent-classes-violation.sparql
-PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT ?baseClass ?baseLabel ?equivalentClass ?equivalentLabel WHERE 
-{
-  ?baseClass owl:equivalentClass ?equivalentClass .
-  ?baseClass rdfs:label ?baseLabel .
-  ?equivalentClass rdfs:label ?equivalentLabel .
-
-  FILTER (!isBlank(?baseClass)) .
-  FILTER (!isBlank(?equivalentClass))
-}
-{% endif %}
-
-{%- if project.robot_report.custom_sparql_checks is not defined or 'obsolete' in project.robot_report.custom_sparql_checks %}
-^^^ src/sparql/obsolete-violation.sparql
-prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX replaced_by: <http://purl.obolibrary.org/obo/IAO_0100001>
-PREFIX consider: <http://www.geneontology.org/formats/oboInOwl#consider>
-
-SELECT ?cls ?clsLabel ?rule WHERE {
-       ?cls a owl:Class  ;
-            rdfs:label ?clsLabel ;
-	    owl:deprecated "true"^^xsd:boolean
-        {
-          {
-            FILTER ( ! regex(str(?clsLabel), "^obsolete ") )
-            BIND ("obsolete label must start with obsolete" AS ?rule)
-          }
-          UNION
-          {
-            ?cls rdfs:subClassOf ?parent
-            BIND("no logical axioms for obsolete" AS ?rule)
-          }
-        }
-}
-ORDER BY ?cls
-{% endif %}
 
 {%- if project.robot_report.custom_sparql_checks is not defined or 'owldef-self-reference' in project.robot_report.custom_sparql_checks %}
 ^^^ src/sparql/owldef-self-reference-violation.sparql
