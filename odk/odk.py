@@ -20,7 +20,7 @@ import yaml
 import os
 import subprocess
 import shutil
-from shutil import copyfile
+from shutil import copy, copymode
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -827,7 +827,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
             logging.info('  Copying: {} -> {}'.format(srcf, tgtf))
             if not tgtf.endswith(TEMPLATE_SUFFIX):
                 # copy file directly, no template expansions
-                copyfile(srcf, tgtf)
+                copy(srcf, tgtf)
                 tgts.append(tgtf)
         logging.info('Applying templates')
         # ...then apply templates
@@ -846,17 +846,19 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
                         logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
                         s.write(mg.generate(srcf))
                         tgts.append(derived_file)
+                if not f.startswith("_dynamic"):
+                    copymode(srcf, derived_file)
 
     tgt_project_file = "{}/project.yaml".format(outdir)
     if project.export_project_yaml:
         save_project_yaml(project, tgt_project_file)
         tgts.append(tgt_project_file)
     if source is not None:
-        copyfile(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
+        copy(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
     odk_config_file = "{}/src/ontology/{}-odk.yaml".format(outdir, project.id)
     tgts.append(odk_config_file)
     if config is not None:
-        copyfile(config, odk_config_file)
+        copy(config, odk_config_file)
     else:
         save_project_yaml(project, odk_config_file)
     logging.info("Created files:")
