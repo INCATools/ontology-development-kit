@@ -75,10 +75,10 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if r
 .PHONY: .FORCE
 
 .PHONY: all
-all: odkversion all_imports {% if project.use_dosdps %}patterns {% endif %}all_main all_subsets sparql_test all_reports all_assets
+all: odkversion test all_assets
 
 .PHONY: test
-test: odkversion sparql_test {% if project.use_dosdps %}pattern_schema_checks {% endif %}all_reports {% if project.robot_report.ensure_owl2dl_profile %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
+test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
 	$(ROBOT) reason --input $(SRC) --reasoner {{ project.reasoner }}  --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --output test.owl && rm test.owl && echo "Success"
 
 .PHONY: odkversion
@@ -89,20 +89,21 @@ odkversion:
 $(TMPDIR) $(REPORTDIR) :
 	mkdir -p $@
 
-## -- main targets --
-##
-## By default this is the cross-product of {ont, ont-base} x FORMATS
+# ----------------------------------------
+# Release assets
+# ----------------------------------------
 
 MAIN_PRODUCTS = $(sort $(foreach r,$(RELEASE_ARTEFACTS), $(r)) $(ONT))
-MAIN_GZIPPED = {% if project.gzip_main %}$(foreach f,$(FORMATS), $(ONT).$(f).gz){% endif %}
-MAIN_FILES = $(foreach n,$(MAIN_PRODUCTS), $(foreach f,$(FORMATS), $(n).$(f))) $(MAIN_GZIPPED)
+MAIN_GZIPPED  = {% if project.gzip_main %}$(foreach f,$(FORMATS), $(ONT).$(f).gz){% endif %}
+MAIN_FILES    = $(foreach n,$(MAIN_PRODUCTS), $(foreach f,$(FORMATS), $(n).$(f))) $(MAIN_GZIPPED)
+SRCMERGED     = $(TMPDIR)/merged-$(SRC)
 
 .PHONY: all_main
 all_main: $(MAIN_FILES)
 
-## -- import targets --
-##
-## By default this is the cross-product of IMPORT_MODULES x FORMATS
+# ----------------------------------------
+# Import assets
+# ----------------------------------------
 
 {% if project.import_group is defined %}
 IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %}
@@ -122,10 +123,9 @@ IMPORT_FILES = $(IMPORT_OWL_FILES)
 .PHONY: all_imports
 all_imports: $(IMPORT_FILES)
 
-## -- subset targets --
-##
-## By default this is the cross-product of SUBSETS x FORMATS
-## Note we also include TSV as a format
+# ----------------------------------------
+# Subset assets
+# ----------------------------------------
 
 {% if project.subset_group is defined %}
 SUBSETS = {% for x in project.subset_group.products %} {{ x.id }}{% endfor %}
@@ -138,6 +138,10 @@ SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(foreach f,$(FORMATS_INCL_TSV), $(n
 .PHONY: all_subsets
 all_subsets: $(SUBSET_FILES)
 
+# ----------------------------------------
+# QC Reports & Utilities
+# ----------------------------------------
+
 OBO_REPORT = {% for x in project.robot_report.report_on %} {% if x=="edit" %}$(SRC){% else %}{{ x }}{% endif %}-obo-report{% endfor %}
 REPORTS = $(OBO_REPORT)
 REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
@@ -146,36 +150,72 @@ REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
 robot_reports: $(REPORT_FILES)
 
 .PHONY: all_reports
-all_reports: all_reports_onestep $(REPORT_FILES)
+all_reports: custom_reports robot_reports
+
+# ----------------------------------------
+# ROBOT OWL Profile checking
+# ----------------------------------------
 
 $(REPORTDIR)/validate_profile_owl2dl_%.txt: % | $(REPORTDIR)
-	$(ROBOT) validate-profile --profile DL -i $< -o $@
+	$(ROBOT) validate-profile --profile DL -i $< -o $@ || { cat $@ && exit 1; }
 .PRECIOUS: $(REPORTDIR)/validate_profile_owl2dl_%.txt
 
 .PHONY: validate_profile_%
-validate_profile_%: $(REPORTDIR)/validate_profile_owl2dl_%.txt
+validate_profile_%: $(REPORTDIR)/validate_profile_owl2dl_$*.txt
+	echo "$* profile validation completed."
 
-## -- all files/assets --
+# ----------------------------------------
+# Sparql queries: Q/C
+# ----------------------------------------
+
+# these live in the ../sparql directory, and have suffix -violation.sparql
+# adding the name here will make the violation check live.
+
+SPARQL_VALIDATION_QUERIES = $(foreach V,$(SPARQL_VALIDATION_CHECKS),$(SPARQLDIR)/$(V)-violation.sparql)
+
+sparql_test: $(SRC) catalog-v001.xml | $(REPORTDIR)
+ifneq ($(SPARQL_VALIDATION_QUERIES),)
+	$(ROBOT) verify  --catalog catalog-v001.xml -i $< --queries $(SPARQL_VALIDATION_QUERIES) -O $(REPORTDIR)
+endif
+
+# ----------------------------------------
+# ROBOT report
+# ----------------------------------------
+
+$(REPORTDIR)/$(SRC)-obo-report.tsv: $(SRCMERGED) | $(REPORTDIR)
+	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) --print 5 -o $@
+
+$(REPORTDIR)/%-obo-report.tsv: % | $(REPORTDIR)
+	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) --print 5 -o $@
+
+.PHONY: validate-tsv-%
+validate-tsv-%: %
+	tsvalid $* > $(TMPDIR)/validate.txt
+	if [ -s $(TMPDIR)/validate.txt ]; then tail $@ && exit 1; fi
+
+# ----------------------------------------
+# Release assets
+# ----------------------------------------
 
 ASSETS = \
   $(IMPORT_FILES) \
-  $(MAIN_FILES) \
+  $(MAIN_FILES) \{% if project.use_dosdps %}
+  $(PATTERN_RELEASE_FILES) \{% endif %}
   $(REPORT_FILES) \
   $(SUBSET_FILES)
 
 RELEASE_ASSETS = \
-  $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}{% if project.robot_report.release_reports %}$(REPORT_FILES){% endif -%}\
-  $(SUBSET_FILES)
+  $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}\
+  $(SUBSET_FILES){% if project.robot_report.release_reports %} \
+  $(REPORT_FILES){% endif %}
 
 .PHONY: all_assets
 all_assets: $(ASSETS)
-
 
 .PHONY: show_assets
 show_assets:
 	echo $(ASSETS)
 	du -sh $(ASSETS)
-
 
 # ----------------------------------------
 # Release Management
@@ -190,24 +230,18 @@ CLEANFILES=$(MAIN_FILES) $(SRCMERGED)
 # It will ensure that all assets/files are fresh, and will copy to release folder
 
 .PHONY: prepare_release
-prepare_release: $(ASSETS) $(PATTERN_RELEASE_FILES)
-	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\
-  {% if project.use_dosdps -%}
-  mkdir -p $(RELEASEDIR)/patterns &&\
-  cp $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\
-  {% endif -%}
-  rm -f $(CLEANFILES) &&\
-  echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release on your git hosting site such as GitHub or GitLab"
+prepare_release: all
+	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.use_dosdps %}
+	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
+	rm -f $(CLEANFILES) &&\
+	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release on your git hosting site such as GitHub or GitLab"
 
 .PHONY: prepare_initial_release
-prepare_initial_release: prepare_release
+prepare_initial_release: all_assets
+	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.use_dosdps %}
+	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
+	rm -f $(CLEANFILES) &&\
 	cd $(RELEASEDIR) && git add $(RELEASE_ASSETS)
-
-# ----------------------------------------
-# Import modules
-# ----------------------------------------
-# Most ontologies are modularly constructed using portions of other ontologies
-# These live in the imports/ folder
 
 # ------------------------
 # Imports: Seeding system 
@@ -215,7 +249,6 @@ prepare_initial_release: prepare_release
 
 # seed.txt contains all referenced entities
 IMPORTSEED=$(TMPDIR)/seed.txt
-SRCMERGED=$(TMPDIR)/merged-$(SRC)
 PRESEED=$(TMPDIR)/pre_seed.txt
 
 $(SRCMERGED): $(SRC)
@@ -255,14 +288,16 @@ ALLSEED = $(PRESEED) {% if project.use_dosdps %} $(TMPDIR)/all_pattern_terms.txt
 $(IMPORTSEED): $(ALLSEED)
 	if [ $(IMP) = true ]; then cat $(ALLSEED) | sort | uniq > $@; fi
 
-
 {% if project.import_group is defined -%}
 ANNOTATION_PROPERTIES={% for p in project.import_group.annotation_properties %}{{ p }} {% endfor %}
 
-# -- Generate Import Modules --
-#
+# ----------------------------------------
+# Import modules
+# ----------------------------------------
+# Most ontologies are modularly constructed using portions of other ontologies
+# These live in the imports/ folder
 # This pattern uses ROBOT to generate an import module
-# Generate terms.txt for each import.  (Assume OBO-style Possibly hacky step?)
+
 # Should be able to drop this if robot can just take a big messy list of terms as input.
 imports/%_terms_combined.txt: $(IMPORTSEED) imports/%_terms.txt
 	if [ $(IMP) = true ]; then cat $^ | grep -v ^# | sort | uniq >  $@; fi
@@ -372,7 +407,6 @@ refresh-imports:
 no-mirror-refresh-imports:
 	make IMP=true MIR=false PAT=false IMP_LARGE=true all_imports -B
 
-
 .PHONY: refresh-imports-excluding-large
 refresh-imports-excluding-large:
 	make IMP=true MIR=true PAT=false IMP_LARGE=false all_imports -B
@@ -406,18 +440,15 @@ $(COMPONENTSDIR)/{{ component.filename }}: .FORCE
 {% endif %}
 {% endfor %}
 {% endif %}
-
+{% if project.import_group is defined -%}
 # ----------------------------------------
 # Mirroring upstream ontologies
 # ----------------------------------------
-#
 
 IMP=true # Global parameter to bypass import generation
 MIR=true # Global parameter to bypass mirror generation
 IMP_LARGE=true # Global parameter to bypass handling of large imports
-{% if project.use_dosdps %}PAT=true # Global parameter to bypass pattern generation{% endif -%}
 
-{% if project.import_group is defined -%}
 {% for ont in project.import_group.products %}
 
 ## ONTOLOGY: {{ ont.id }}
@@ -461,7 +492,7 @@ mirror/merged.owl: $(ALL_MIRRORS)
 {% endif %}
 
 mirror/%.owl: mirror-%
-	cmp -s $(TMPDIR)/mirror-$*.owl $@; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && mv $(TMPDIR)/mirror-$*.owl $@; fi
+	cmp -s $(TMPDIR)/mirror-$*.owl $@; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && cp $(TMPDIR)/mirror-$*.owl $@; fi
 
 {% endif %}
 
@@ -494,57 +525,25 @@ subsets/%.json: subsets/%.owl
 
 {% endif %}
 
-# ----------------------------------------
-# Release
-# ----------------------------------------
-# copy from staging area (this directory) to top-level
-.PHONY: release
-release: $(ONT).owl $(ONT).obo
-	cp $^ $(RELEASEDIR) && cp imports/* $(RELEASEDIR)/imports
-
-# ----------------------------------------
-# Sparql queries: Q/C
-# ----------------------------------------
-
-# these live in the ../sparql directory, and have suffix -violation.sparql
-# adding the name here will make the violation check live.
-# NOTE: these will soon be phased out and replaced by robot-report
-
-#  run all violation checks
-SPARQL_VALIDATION_QUERIES = $(foreach V,$(SPARQL_VALIDATION_CHECKS),$(SPARQLDIR)/$(V)-violation.sparql)
-sparql_test: $(SRC) catalog-v001.xml | $(REPORTDIR)
-ifneq ($(SPARQL_VALIDATION_QUERIES),)
-	$(ROBOT) verify  --catalog catalog-v001.xml -i $< --queries $(SPARQL_VALIDATION_QUERIES) -O $(REPORTDIR)
-endif
-
-# ----------------------------------------
-# ROBOT report
-# ----------------------------------------
-
-$(REPORTDIR)/$(SRC)-obo-report.tsv: $(SRCMERGED) | $(REPORTDIR)
-	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) --print 5 -o $@
-
-$(REPORTDIR)/%-obo-report.tsv: % | $(REPORTDIR)
-	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) --print 5 -o $@
-
-# ----------------------------------------
-# Sparql queries: Exports
-# ----------------------------------------
+# ---------------------------------------------
+# Sparql queries: Table exports / Query Reports
+# ---------------------------------------------
 
 SPARQL_EXPORTS_ARGS = $(foreach V,$(SPARQL_EXPORTS),-s $(SPARQLDIR)/$(V).sparql $(REPORTDIR)/$(V).tsv)
 # This combines all into one single command
 
-.PHONY: all_reports_onestep
-all_reports_onestep: $(SRC) | $(REPORTDIR)
+.PHONY: custom_reports
+custom_reports: $(SRC) | $(REPORTDIR)
 ifneq ($(SPARQL_EXPORTS_ARGS),)
 	$(ROBOT) query -f tsv -i $< $(SPARQL_EXPORTS_ARGS)
 endif
 
 {%- if project.use_dosdps %}
 # ----------------------------------------
-# Patterns
+# DOSDP Templates/Patterns
 # ----------------------------------------
 
+PAT=true # Global parameter to bypass pattern generation
 ALL_PATTERN_FILES=$(wildcard $(PATTERNDIR)/dosdp-patterns/*.yaml)
 
 .PHONY: pattern_clean
@@ -556,30 +555,34 @@ pattern_clean:
 	rm -f $(DOSDP_TERM_FILES_{{ pipeline.id.upper() }})
 	{%- endfor %}{% endif %}
 
-.PHONY: patterns dosdp
-patterns dosdp:
+.PHONY: patterns
+patterns:
 	echo "Validating all DOSDP templates"
-	make pattern_schema_checks
+	make dosdp_validation
 	echo "Building $(PATTERNDIR)/definitions.owl"
 	make $(PATTERNDIR)/pattern.owl $(PATTERNDIR)/definitions.owl
 
 # DOSDP Template Validation
 
-$(TMPDIR)/pattern_schema_checks: $(ALL_PATTERN_FILES)
+$(TMPDIR)/pattern_schema_checks: $(ALL_PATTERN_FILES) | $(TMPDIR)
 	$(PATTERN_TESTER) $(PATTERNDIR)/dosdp-patterns/ && touch $@
 
 .PHONY: pattern_schema_checks
-pattern_schema_checks: $(TMPDIR)/pattern_schema_checks
+pattern_schema_checks dosdp_validation: $(TMPDIR)/pattern_schema_checks
+
+.PHONY: update_patterns
+update_patterns: download_patterns
+	cp -r $(TMPDIR)/dosdp/*.yaml $(PATTERNDIR)/dosdp-patterns
 
 # This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now).
 # It downloads all patterns specified in external.txt
-.PHONY: update_patterns
-update_patterns:
+.PHONY: download_patterns
+download_patterns:
 	if [ $(PAT) = true ]; then rm -f $(TMPDIR)/dosdp/*.yaml.1 || true; fi
 	if [ $(PAT) = true ] && [ -s $(PATTERNDIR)/dosdp-patterns/external.txt ]; then wget -i $(PATTERNDIR)/dosdp-patterns/external.txt --backups=1 -P $(TMPDIR)/dosdp; fi
 	if [ $(PAT) = true ]; then rm -f $(TMPDIR)/dosdp/*.yaml.1 || true; fi
 
-$(PATTERNDIR)/dospd-patterns/%.yml: update_patterns
+$(PATTERNDIR)/dospd-patterns/%.yml: download_patterns
 	cmp -s $(TMPDIR)/dosdp-$*.yml $@; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && mv $(TMPDIR)/dosdp/$*.yml $@; fi
 
 # DOSDP Template: Pipelines
@@ -761,7 +764,7 @@ $(ONT)-base.owl: $(SRC) $(OTHER_SRC)
 		{% if project.release_date -%} --annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 
 # Full: The full artefacts with imports merged, reasoned
-$(ONT)-full.owl: $(SRC) $(OTHER_SRC)
+$(ONT)-full.owl: $(SRC) $(OTHER_SRC) $(IMPORT_FILES)
 	$(ROBOT) merge --input $< \
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
 		relax \
@@ -770,7 +773,7 @@ $(ONT)-full.owl: $(SRC) $(OTHER_SRC)
 
 {% if 'non-classified' in project.release_artefacts or project.primary_release == 'non-classified' -%}
 # foo-non-classified: (edit->imports-merged)
-$(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
+$(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC) $(IMPORT_FILES)
 	$(ROBOT) merge --input $< \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
@@ -780,7 +783,7 @@ $(ONT)-non-classified.owl: $(SRC) $(OTHER_SRC)
 # drop every axiom: filter --term-file keep_terms.txt --trim true
 #	remove --select imports --trim false \
 
-$(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED)
+$(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILES)
 	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
 		relax \
@@ -797,7 +800,7 @@ $(ONT)-simple.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED)
 # Should this be the non-classified ontology with the drop foreign axiom filter?
 # Consider adding remove --term "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace"
 
-$(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
+$(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS) $(IMPORT_FILES)
 	$(ROBOT) remove --input $< --select imports --trim true \
 		merge  $(patsubst %, -i %, $(OTHER_SRC))  \
 		remove --axioms equivalent \
@@ -810,7 +813,7 @@ $(ONT)-simple-non-classified.owl: $(SRC) $(OTHER_SRC) $(ONTOLOGYTERMS)
 # foo-basic: A version of -simple containing only relationships using relations on a configurable whitelist (default = BFO:0000050 (?)). See above (David comment) for explanation.
 # removes any axioms that contains one of the ops that not in the whitelist file
 
-$(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS)
+$(ONT)-basic.owl: $(SRC) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS) $(IMPORT_FILES)
 	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
 		relax \
@@ -890,6 +893,10 @@ public_release:
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {%- endif %}
 
+# ----------------------------------------
+# Editors Utilities
+# ----------------------------------------
+
 {% if 'obo' in project.edit_format %}
 .PHONY: normalize_obo_src
 normalize_obo_src: $(SRC)
@@ -899,7 +906,6 @@ normalize_obo_src: $(SRC)
 .PHONY: normalize_src
 normalize_src: $(SRC)
 	$(ROBOT) convert -i $< -f {% if 'obo' == project.edit_format %}obo --check false{% else %}ofn{% endif %} -o $(TMPDIR)/normalise && mv $(TMPDIR)/normalise $<
-
 
 .PHONY: validate_idranges
 validate_idranges:
@@ -915,8 +921,10 @@ update_docs:
 {%- endif %}
 
 .PHONY: clean
-clean:
+clean:{% if project.use_dosdps %}
+	make pattern_clean{%- endif %}
 	rm -rf $(TMPDIR)/
+	rm -f $(CLEANFILES)
 
 .PHONY: help
 help:
@@ -925,15 +933,51 @@ help:
 define data
 Usage: [IMAGE=(odklite|odkfull)] [ODK_DEBUG=yes] sh run.sh make [(IMP|MIR|IMP_LARGE|PAT)=(false|true)] command
 
-Command reference:
-* prepare_release:	Run the entire release pipeline. Use make IMP=false prepare_release to avoid rerunning the imports{% if project.use_dosdps %}
-* patterns:		Run the DOSDP patterns pipeline
-* update_patterns:	Pull updated patterns listed in dosdp-patterns/external.txt{% endif %}
+----------------------------------------
+	Command reference
+----------------------------------------
+
+Core commands:
+* prepare_release:	Run the entire release pipeline. Use make IMP=false prepare_release to avoid rerunning the imports
 * update_repo:		Update the ODK repository setup using the config file {{ project.id }}-odk.yaml
+* test:			Running all validation tests
+* odkversion:		Show the current version of the ODK Makefile and ROBOT.
+* clean:		Delete all temporary files
+* help:			Print ODK Usage information
+
+{% if project.import_group is defined %}
+Imports management:
+* refresh-imports:			Refresh all imports and mirrors.
+* no-mirror-refresh-imports:		Refresh all imports without downloading mirrors.
+* refresh-imports-excluding-large:	Refresh all imports and mirrors, but skipping the ones labelled as 'is_large'.
+* refresh-%:				Refresh a single import, i.e. refresh-go will refresh 'imports/go_import.owl'.
+* no-mirror-refresh-%:			Refresh a single import without updating the mirror, i.e. refresh-go will refresh 'imports/go_import.owl'.
+* mirror-%:				Refresh a single mirror.
+{% endif %}{% if project.use_dosdps %}
+DOSDP templates
+* dosdp:			Run the DOSDP patterns pipeline
+* patterns:			Alias of the 'dosdp' command
+* pattern_clean:		Delete all temporary pattern files
+* dosdp_validation:		Run all validation checks on DOSDP template files and tables
+* pattern_schema_checks:	Alias of the 'dosdp_validation' command
+* update_patterns:		Pull updated patterns listed in dosdp-patterns/external.txt
+{% endif %}
+Editor utilities:
 * validate_idranges:	Make sure your ID ranges file is formatted correctly
 * normalize_src:	Load and safe your {{ project.id }}-edit file after you to make sure its serialised correctly{% if 'obo' in project.edit_format %}
 * normalize_obo_src:	Load and safe your {{ project.id }}-edit.obo file after you to merge duplicate annotation assertions{% endif %}
 * explain_unsat:	If you have unsatisfiable classes, this command will create a markdown file (tmp/explain_unsat.md) which will explain all your unsatisfiable classes
+
+Additional build commands (advanced users)
+* all:			Run the entire pipeline (like prepare_release), but without copying the release files to the release directory.
+* all_subsets:		Build all subsets
+* custom_reports:	Generate all custom sparql reports you have configured in your {{ project.id }}-odk.yaml file.
+* all_assets:		Build all assets
+* show_assets:		Print a list of all assets that would be build by the release pipeline
+
+Additional QC commands (advanced users)
+* robot_reports:	Run all configured ROBOT reports
+* validate_profile_%:	Run an OWL2 DL profile validation check, for example validate_profile_{{ project.id }}-edit.owl.
 
 Examples: 
 * sh run.sh make IMP=false prepare_release
