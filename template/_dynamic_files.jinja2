@@ -543,7 +543,7 @@ SELECT ?term ?value
 WHERE {
   ?term rdfs:label ?value .
   FILTER (REGEX(?value, "http[s]?[:]"))
-  FILTER(isIRI(?term) && (REGEX(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || REGEX(str(?term), "{{ ns }}"){% endfor %}{% endif %})
+  FILTER (isIRI(?term) && (REGEX(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || REGEX(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
 {% endif %}
 
