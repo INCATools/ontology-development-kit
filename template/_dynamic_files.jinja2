@@ -484,6 +484,18 @@ WHERE {
 }
 {% endif %}
 
+{%- if project.robot_report.custom_sparql_checks is not defined or 'label-with-iri' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/label-with-iri-violation.sparql
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?term ?value
+WHERE {
+  ?term rdfs:label ?value .
+  FILTER (REGEX(?value, "http[s]?[:]"))
+  FILTER (isIRI(?term) && (REGEX(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || REGEX(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+}
+{% endif %}
+
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
 ^^^ src/ontology/components/{{ component.filename }}

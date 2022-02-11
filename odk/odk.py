@@ -318,7 +318,7 @@ class ReportConfig(JsonSchemaMixin):
     release_reports : bool = False
     """ If true, release reports are added as assets to the release (top level directory, reports directory)"""
     
-    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range'])
+    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri'])
     """Chose which additional sparql checks yoy want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory"""
 
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
@@ -872,7 +872,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         runcmd("cd {dir} && git init && git add {files}".
                format(dir=outdir,
                       files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
-        runcmd("cd {}/src/ontology && make && git commit -m 'initial commit' -a && make prepare_initial_release && git commit -m 'first release'".format(outdir))
+        runcmd("cd {dir}/src/ontology && make && git commit -m 'initial commit' -a && git branch -M {branch} && make prepare_initial_release && git commit -m 'first release'".format(dir=outdir, branch=project.git_main_branch))
         print("\n\n####\nNEXT STEPS:")
         print(" 0. Examine {} and check it meets your expectations. If not blow it away and start again".format(outdir))
         print(" 1. Go to: https://github.com/new")
@@ -883,8 +883,8 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         print("    E.g.:")
         print("cd {}".format(outdir))
         print("git remote add origin git\@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
-        print("git branch -M main\n")
-        print("git push -u origin main\n")
+        print("git branch -M {branch}\n".format(branch=project.git_main_branch))
+        print("git push -u origin {branch}\n".format(branch=project.git_main_branch))
         print("BE BOLD: you can always delete your repo and start again\n")
         print("")
         print("FINAL STEPS:")
