@@ -679,7 +679,7 @@ on:
 jobs:
   edit_file:
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:v1.2.32
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
     steps:
       - uses: actions/checkout@v2
       # Checks-out main branch under "main" directory
@@ -696,7 +696,7 @@ jobs:
           path: edit-diff.md
   classify_branch:
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:v1.2.32
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
     steps:
       - uses: actions/checkout@v2
       - name: Classify ontology
@@ -709,7 +709,7 @@ jobs:
           retention-days: 1
   classify_main:
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:v1.2.32
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -727,7 +727,7 @@ jobs:
       - classify_branch
       - classify_main
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:v1.2.32
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
     steps:
       - uses: actions/checkout@v2
       - name: Download master classification
