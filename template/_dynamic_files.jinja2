@@ -688,7 +688,7 @@ jobs:
           ref: master
           path: master
       - name: Diff classification
-        run: export ROBOT_JAVA_ARGS=-Xmx6G; robot diff --left master/src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --left-catalog master/src/ontology/catalog-v001.xml --right src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --right-catalog src/ontology/catalog-v001.xml -f markdown -o edit-diff.md
+        run: export ROBOT_JAVA_ARGS=-Xmx6G; robot diff --labels True --left master/src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --left-catalog master/src/ontology/catalog-v001.xml --right src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --right-catalog src/ontology/catalog-v001.xml -f markdown -o edit-diff.md
       - name: Upload diff
         uses: actions/upload-artifact@v2
         with:
@@ -741,7 +741,7 @@ jobs:
           name: {{ project.id }}-pr.owl
           path: src/ontology/{{ project.id }}-pr.owl
       - name: Diff classification
-        run: export ROBOT_JAVA_ARGS=-Xmx6G; cd src/ontology; robot diff --left {{ project.id }}-master.owl/{{ project.id }}.owl --left-catalog catalog-v001.xml --right {{ project.id }}-pr.owl/{{ project.id }}.owl --right-catalog catalog-v001.xml -f markdown -o classification-diff.md
+        run: export ROBOT_JAVA_ARGS=-Xmx6G; cd src/ontology; robot diff --labels True --left {{ project.id }}-master.owl/{{ project.id }}.owl --left-catalog catalog-v001.xml --right {{ project.id }}-pr.owl/{{ project.id }}.owl --right-catalog catalog-v001.xml -f markdown -o classification-diff.md
       - name: Upload diff
         uses: actions/upload-artifact@v2
         with:
