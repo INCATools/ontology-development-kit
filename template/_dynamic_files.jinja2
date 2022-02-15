@@ -758,7 +758,7 @@ jobs:
           name: classification-diff.md
           path: classification-diff.md
       - name: Prepare reasoned comment
-        run: "echo \"Here's a diff of how these changes impact the classified ontology: \n\" >comment.md; cat classification-diff.md/classification-diff.md >>comment.md"
+        run: "echo \"<details>\n <summary> Here's a diff of how these changes impact the classified ontology: </summary> \n\" >comment.md; cat classification-diff.md/classification-diff.md >>comment.md"
       - name: Post reasoned comment
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
@@ -773,7 +773,7 @@ jobs:
           name: edit-diff.md
           path: edit-diff.md
       - name: Prepare edit file comment
-        run: "echo \"Here's a diff of your edit file (unreasoned) \n\" >edit-comment.md; cat edit-diff.md/edit-diff.md >>edit-comment.md"
+        run: "echo \"<details>\n <summary> Here's a diff of your edit file (unreasoned) </summary> \n\" >edit-comment.md; cat edit-diff.md/edit-diff.md >>edit-comment.md"
       - name: Post comment
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
