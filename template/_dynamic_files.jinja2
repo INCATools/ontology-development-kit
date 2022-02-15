@@ -761,7 +761,7 @@ jobs:
         run: "echo \"Here's a diff of how these changes impact the classified ontology: \n\" >comment.md; cat classification-diff.md/classification-diff.md >>comment.md"
       - name: Post reasoned comment
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
         uses: NejcZdovc/comment-pr@v1.1.1
         with:
           file: "../../comment.md"
@@ -776,7 +776,7 @@ jobs:
         run: "echo \"Here's a diff of your edit file (unreasoned) \n\" >edit-comment.md; cat edit-diff.md/edit-diff.md >>edit-comment.md"
       - name: Post comment
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
         uses: NejcZdovc/comment-pr@v1.1.1
         with:
           file: "../../edit-comment.md"
