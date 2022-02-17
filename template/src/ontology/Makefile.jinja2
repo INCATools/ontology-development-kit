@@ -425,6 +425,8 @@ no-mirror-refresh-%:
 # ----------------------------------------
 # Some ontologies contain external and internal components. A component is included in the ontology in its entirety.
 
+COMP=true # Global parameter to bypass component generation
+
 $(COMPONENTSDIR)/%: | $(COMPONENTSDIR)
 	touch $@
 .PRECIOUS: $(COMPONENTSDIR)/%
@@ -437,7 +439,8 @@ component-download-{{ component.filename }}: | $(TMPDIR)
 	annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $(TMPDIR)/$@.owl; fi
 
 $(COMPONENTSDIR)/{{ component.filename }}:  component-download-{{ component.filename }}
-	cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $@; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo "Component identical, ignoring."; else echo "Component is different, updating." && cp $(TMPDIR)/component-download-{{ component.filename }}.owl $@; fi
+	if [ $(COMP) = true ] ; then if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $@ ; then echo "Component identical."; else echo "Component is different, updating." && cp $(TMPDIR)/component-download-{{ component.filename }}.owl $@; fi; fi
+
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 {% endif %}
 {% endfor %}
@@ -494,7 +497,7 @@ $(MIRRORDIR)/merged.owl: $(ALL_MIRRORS)
 {% endif %}
 
 $(MIRRORDIR)/%.owl: mirror-% | $(MIRRORDIR)
-	cmp -s $(TMPDIR)/mirror-$*.owl $@; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && cp $(TMPDIR)/mirror-$*.owl $@; fi
+	if [ $(IMP) = true ] && [ $(MIR) = true ]; then if cmp -s $(TMPDIR)/mirror-$*.owl $@ ; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && cp $(TMPDIR)/mirror-$*.owl $@; fi; fi
 
 {% endif %}
 
@@ -586,7 +589,8 @@ download_patterns:
 	if [ $(PAT) = true ]; then rm -f $(TMPDIR)/dosdp/*.yaml.1 || true; fi
 
 $(PATTERNDIR)/dospd-patterns/%.yml: download_patterns
-	cmp -s $(TMPDIR)/dosdp-$*.yml $@; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && mv $(TMPDIR)/dosdp/$*.yml $@; fi
+	if [ $(PAT) = true ] ; then if cmp -s $(TMPDIR)/dosdp-$*.yml $@ ; then echo "DOSDP templates identical."; else echo "DOSDP templates different, updating." && cp $(TMPDIR)/dosdp-$*.yml $@; fi; fi
+
 
 # DOSDP Template: Pipelines
 # Each pipeline gets its own directory structure
