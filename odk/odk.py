@@ -141,6 +141,7 @@ class PatternPipelineProduct(Product):
     Each pipeline gets their own specific directory
     """
     dosdp_tools_options: str = "--obo-prefixes=true"
+    ontology: str = "$(SRC)"
 
 @dataclass_json
 @dataclass
@@ -317,7 +318,7 @@ class ReportConfig(JsonSchemaMixin):
     release_reports : bool = False
     """ If true, release reports are added as assets to the release (top level directory, reports directory)"""
     
-    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['equivalent-classes', 'owldef-self-reference', 'iri-range', 'label-with-iri'])
+    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri'])
     """Chose which additional sparql checks yoy want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory"""
 
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
@@ -366,6 +367,9 @@ class PatternPipelineGroup(ProductGroup):
     
     products : Optional[List[PatternPipelineProduct]] = None
     """all pipeline products"""
+    
+    matches: Optional[List[PatternPipelineProduct]] = None
+    """pipelines specifically configured for matching, NOT generating."""
 
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
