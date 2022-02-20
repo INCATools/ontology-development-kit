@@ -34,8 +34,8 @@ import: http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl
 {% endif -%}
 {% endif %}
 ontology: {{project.id}}
-property_value: http://purl.org/dc/elements/1.1/description "{{ project.description }}" xsd:string
-property_value: http://purl.org/dc/elements/1.1/title "{{ project.title }}" xsd:string
+property_value: http://purl.org/dc/terms/description "{{ project.description }}" xsd:string
+property_value: http://purl.org/dc/terms/title "{{ project.title }}" xsd:string
 property_value: http://purl.org/dc/terms/license {{ project.license }}
 
 [Term]
@@ -43,12 +43,12 @@ id: {{ project.id | upper }}:0000000
 name: root node
 
 [Typedef]
-id: http://purl.org/dc/elements/1.1/description
+id: http://purl.org/dc/terms/description
 name: description
 is_metadata_tag: true
 
 [Typedef]
-id: http://purl.org/dc/elements/1.1/title
+id: http://purl.org/dc/terms/title
 name: title
 is_metadata_tag: true
 
@@ -119,7 +119,7 @@ AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | u
 ## ID Ranges File
 Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 Prefix: idsfor: <http://purl.obolibrary.org/obo/IAO_0000598>
-Prefix: dc: <http://purl.org/dc/elements/1.1/>
+Prefix: dce: <http://purl.org/dc/elements/1.1/>
 Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
 Prefix: allocatedto: <http://purl.obolibrary.org/obo/IAO_0000597>
 Prefix: xml: <http://www.w3.org/XML/1998/namespace>
@@ -454,33 +454,20 @@ PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
 PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
 PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
 SELECT ?term ?property ?value
 WHERE {
-  VALUES ?property { 
-    never_in_taxon: 
-    present_in_taxon: 
+  VALUES ?property {
+    never_in_taxon:
+    present_in_taxon:
+    rdfs:seeAlso
+    foaf:depicted_by
     oboInOwl:inSubset
     dcterms:contributor  }
   ?term ?property ?value .
   FILTER (!isIRI(?value))
-}
-{% endif %}
-
-{%- if project.robot_report.custom_sparql_checks is not defined or 'any-uri-range' in project.robot_report.custom_sparql_checks %}
-^^^ src/sparql/any-uri-range-violation.sparql
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dct: <http://purl.org/dc/terms/>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-SELECT ?term ?property ?value
-WHERE {
-  VALUES ?property { 
-    rdfs:seeAlso
-    foaf:depicted_by  }
-  ?term ?property ?value .
-  FILTER (datatype(?value) != xsd:anyURI)
 }
 {% endif %}
 
