@@ -399,7 +399,7 @@ WHERE {
   { ?s1 ?p1 ?term . }
   UNION
   { ?term ?p2 ?o2 . }
-  FILTER(isIRI(?term) && (regex(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
 {#-
     SPARQL QUERY QC checks
@@ -412,10 +412,11 @@ PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?c WHERE {
-  { ?c owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first ?c ] ] }
+SELECT ?term WHERE {
+  { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first ?term ] ] }
     UNION
-  { ?c owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first [ owl:someValuesFrom ?c ] ] ] }
+  { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first [ owl:someValuesFrom ?term ] ] ] }
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
 {% endif %}
 
@@ -425,13 +426,15 @@ PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?x ?xl ?y ?yl ?z ?zl WHERE {
-  ?x rdfs:subClassOf ?y ;
+SELECT ?term ?xl ?y ?yl ?z ?zl WHERE {
+  ?term rdfs:subClassOf ?y ;
      rdfs:label ?xl .
   ?y rdfs:subClassOf+ ?z ;
      rdfs:label ?yl .
-  ?x rdfs:subClassOf ?z .
+  ?term rdfs:subClassOf ?z .
   ?z rdfs:label ?zl .
+  
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
 {% endif %}
 
@@ -445,11 +448,34 @@ WHERE {
   VALUES ?property { never_in_taxon: present_in_taxon: }
   ?term ?property ?taxon .
   FILTER (!isIRI(?taxon) || !STRSTARTS(STR(?taxon), "http://purl.obolibrary.org/obo/NCBITaxon_"))
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
 {% endif %}
 
 {%- if project.robot_report.custom_sparql_checks is not defined or 'iri-range' in project.robot_report.custom_sparql_checks %}
 ^^^ src/sparql/iri-range-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT ?term ?property ?value
+WHERE {
+  VALUES ?property {
+    never_in_taxon:
+    present_in_taxon:
+    foaf:depicted_by
+    oboInOwl:inSubset
+    dcterms:contributor  }
+  ?term ?property ?value .
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER (!isIRI(?value))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'iri-range-advanced' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/iri-range-advanced-violation.sparql
 PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
 PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
 PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
@@ -467,6 +493,7 @@ WHERE {
     oboInOwl:inSubset
     dcterms:contributor  }
   ?term ?property ?value .
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
   FILTER (!isIRI(?value))
 }
 {% endif %}
@@ -479,7 +506,7 @@ SELECT ?term ?value
 WHERE {
   ?term rdfs:label ?value .
   FILTER (REGEX(?value, "http[s]?[:]"))
-  FILTER (isIRI(?term) && (REGEX(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || REGEX(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
 {% endif %}
 

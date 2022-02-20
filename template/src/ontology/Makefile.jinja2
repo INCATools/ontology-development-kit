@@ -109,7 +109,7 @@ all_main: $(MAIN_FILES)
 # ----------------------------------------
 
 {% if project.import_group is defined %}
-IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %}
+IMPORTS = {% if project.import_group.use_base_merging %} merged{% else %}{% for imp in project.import_group.products %} {{ imp.id }}{% endfor %}{% endif %}
 {% else %}
 IMPORTS =
 {% endif %}
