@@ -232,7 +232,7 @@ CLEANFILES=$(MAIN_FILES) $(SRCMERGED)
 prepare_release: all
 	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.use_dosdps %}
 	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
-	rm -f $(patsubst %, ./%, $(CLEANFILES)) &&\
+	rm -f $(CLEANFILES) &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release on your git hosting site such as GitHub or GitLab"
 
 .PHONY: prepare_initial_release
@@ -561,7 +561,7 @@ PATTERN_CLEAN_FILES=../patterns/all_pattern_terms.txt \
 # the environment does not malicously set `PATTERN_CLEAN_FILES` to `\`.
 .PHONY: pattern_clean
 pattern_clean:
-	rm -f $(patsubst %, ./%, $(PATTERN_CLEAN_FILES))
+	rm -f $(PATTERN_CLEAN_FILES)
 
 .PHONY: patterns
 patterns dosdp:
@@ -953,7 +953,8 @@ update_docs:
 .PHONY: clean
 clean:{% if project.use_dosdps %}
 	make pattern_clean{%- endif %}
-	rm -rf ./tmp/* ./mirror/*
+	[ -n "$(MIRRORDIR)" ] && [ $(MIRRORDIR) != "." ] && [ $(MIRRORDIR) != "/" ] && [ $(MIRRORDIR) != ".." ] && [ -d ./$(MIRRORDIR) ] && rm -rf ./$(MIRRORDIR)/*
+	[ -n "$(TMPDIR)" ] && [ $(TMPDIR) != "." ] && [ $(TMPDIR) != "/" ] && [ $(TMPDIR) != ".." ] && [ -d ./$(TMPDIR) ] && rm -rf ./$(TMPDIR)/*
 	rm -f $(patsubst %, ./%, $(CLEANFILES))
 
 .PHONY: help
