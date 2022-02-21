@@ -955,7 +955,7 @@ clean:{% if project.use_dosdps %}
 	make pattern_clean{%- endif %}
 	[ -n "$(MIRRORDIR)" ] && [ $(MIRRORDIR) != "." ] && [ $(MIRRORDIR) != "/" ] && [ $(MIRRORDIR) != ".." ] && [ -d ./$(MIRRORDIR) ] && rm -rf ./$(MIRRORDIR)/*
 	[ -n "$(TMPDIR)" ] && [ $(TMPDIR) != "." ] && [ $(TMPDIR) != "/" ] && [ $(TMPDIR) != ".." ] && [ -d ./$(TMPDIR) ] && rm -rf ./$(TMPDIR)/*
-	rm -f $(patsubst %, ./%, $(CLEANFILES))
+	rm -f $(CLEANFILES)
 
 .PHONY: help
 help:
