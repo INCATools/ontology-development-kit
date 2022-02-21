@@ -109,7 +109,7 @@ all_main: $(MAIN_FILES)
 # ----------------------------------------
 
 {% if project.import_group is defined %}
-IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %}
+IMPORTS = {% if project.import_group.use_base_merging %} merged{% else %}{% for imp in project.import_group.products %} {{ imp.id }}{% endfor %}{% endif %}
 {% else %}
 IMPORTS =
 {% endif %}
@@ -239,7 +239,7 @@ prepare_release: all
 prepare_initial_release: all_assets
 	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.use_dosdps %}
 	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
-	rm -f $(CLEANFILES) &&\
+	rm -f $(patsubst %, ./%, $(CLEANFILES)) &&\
 	cd $(RELEASEDIR) && git add $(RELEASE_ASSETS)
 
 # ------------------------
@@ -552,14 +552,16 @@ PAT=true # Global parameter to bypass pattern generation
 ALL_PATTERN_FILES=$(wildcard $(PATTERNDIR)/dosdp-patterns/*.yaml)
 ALL_PATTERN_NAMES=$(strip $(patsubst %.yaml,%, $(notdir $(wildcard $(PATTERNDIR)/dosdp-patterns/*.yaml))))
 
+PATTERN_CLEAN_FILES=../patterns/all_pattern_terms.txt \
+	$(DOSDP_OWL_FILES_DEFAULT) $(DOSDP_TERM_FILES_DEFAULT) \{% if project.pattern_pipelines_group is defined %}
+	{% for pipeline in project.pattern_pipelines_group.products -%}
+		$(DOSDP_OWL_FILES_{{ pipeline.id.upper() }}) $(DOSDP_TERM_FILES_{{ pipeline.id.upper() }}) {% endfor %}{% endif %}
+
+# Note to future generations: prepending ./ is a safety measure to ensure that 
+# the environment does not malicously set `PATTERN_CLEAN_FILES` to `\`.
 .PHONY: pattern_clean
 pattern_clean:
-	rm -f $(DOSDP_OWL_FILES_DEFAULT)
-	rm -f $(DOSDP_TERM_FILES_DEFAULT){% if project.pattern_pipelines_group is defined %}
-	{%- for pipeline in project.pattern_pipelines_group.products %}
-	rm -f $(DOSDP_OWL_FILES_{{ pipeline.id.upper() }})
-	rm -f $(DOSDP_TERM_FILES_{{ pipeline.id.upper() }})
-	{%- endfor %}{% endif %}
+	rm -f $(PATTERN_CLEAN_FILES)
 
 .PHONY: patterns
 patterns dosdp:
@@ -946,11 +948,13 @@ update_docs:
 	mkdocs gh-deploy --config-file ../../mkdocs.yaml
 {%- endif %}
 
+# Note to future generations: prepending ./ is a safety measure to ensure that 
+# the environment does not malicously set `CLEANFILES` to `\`.
 .PHONY: clean
 clean:{% if project.use_dosdps %}
 	make pattern_clean{%- endif %}
-	rm -rf $(TMPDIR)/
-	rm -rf $(MIRROR)/
+	[ -n "$(MIRRORDIR)" ] && [ $(MIRRORDIR) != "." ] && [ $(MIRRORDIR) != "/" ] && [ $(MIRRORDIR) != ".." ] && [ -d ./$(MIRRORDIR) ] && rm -rf ./$(MIRRORDIR)/*
+	[ -n "$(TMPDIR)" ] && [ $(TMPDIR) != "." ] && [ $(TMPDIR) != "/" ] && [ $(TMPDIR) != ".." ] && [ -d ./$(TMPDIR) ] && rm -rf ./$(TMPDIR)/*
 	rm -f $(CLEANFILES)
 
 .PHONY: help
