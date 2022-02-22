@@ -21,6 +21,7 @@
 - Making sure the repo seeding process preserves file privileges. This ensures, in particular, that `run.sh` is executable and can be run using `./run.sh` instead of `sh run.sh` ([issue](https://github.com/INCATools/ontology-development-kit/issues/196), [pull](https://github.com/INCATools/ontology-development-kit/pull/538))
 - DOSDP Validation now [uses python up to date library](https://github.com/INCATools/ontology-development-kit/pull/515)
 - Auto-deployment of ODK docs fixed (ODK internal, [pull request](https://github.com/INCATools/ontology-development-kit/pull/517)), but much of ODK's docs has moved to [OBOOK (OBO Academy)](https://oboacademy.github.io/obook/)
+- Fixing some issues with default values when using `robot_report` in your ODK config ([pull request](https://github.com/INCATools/ontology-development-kit/pull/558))
 
 ### New commands:
 - `sh run.sh make help`: show frequently used ODK commands and their usage ([issue](https://github.com/INCATools/ontology-development-kit/issues/531))
