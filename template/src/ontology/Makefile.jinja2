@@ -44,12 +44,12 @@ COMPONENTSDIR =             {{ project.components.directory|default('components'
 {%- if project.robot_report.custom_profile %}
 ROBOT_PROFILE =             profile.txt
 {%- endif %}
-REPORT_FAIL_ON =            {{ project.robot_report.fail_on|default('ERROR') }}
-REPORT_LABEL =              {% if project.robot_report.use_labels %}-l true{% endif %}
+REPORT_FAIL_ON =            {{ project.robot_report.fail_on|default('None') }}
+REPORT_LABEL =              {% if project.robot_report.use_labels|default(true) %}-l true{% endif %}
 REPORT_PROFILE_OPTS =       {% if project.robot_report.custom_profile %}--profile $(ROBOT_PROFILE){% endif %}
 OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
-SPARQL_VALIDATION_CHECKS =  {% if project.robot_report.custom_sparql_checks is defined %}{% for x in project.robot_report.custom_sparql_checks %} {{ x }}{% endfor %}{% endif %}
-SPARQL_EXPORTS =            {% if project.robot_report.custom_sparql_exports is defined %}{% for x in project.robot_report.custom_sparql_exports %} {{ x }}{% endfor %}{% endif %}
+SPARQL_VALIDATION_CHECKS =  {% for x in project.robot_report.custom_sparql_checks|default(['owldef-self-reference', 'iri-range', 'label-with-iri']) %}{{ x }} {% endfor %}
+SPARQL_EXPORTS =            {% for x in project.robot_report.custom_sparql_exports|default(['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms']) %}{{ x }} {% endfor %}
 ODK_VERSION_MAKEFILE =      {% if env is defined %}{{env['ODK_VERSION'] or "Unknown" }}{% else %}"Unknown"{% endif %}
 
 TODAY ?=                    $(shell date +%Y-%m-%d)
@@ -81,7 +81,7 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if r
 all: odkversion test all_assets
 
 .PHONY: test
-test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
+test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile|default(true) %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
 	$(ROBOT) reason --input $(SRC) --reasoner {{ project.reasoner }}  --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --output test.owl && rm test.owl && echo "Success"
 
 .PHONY: odkversion
@@ -109,11 +109,11 @@ all_main: $(MAIN_FILES)
 # ----------------------------------------
 
 {% if project.import_group is defined %}
-IMPORTS = {% if project.import_group.use_base_merging %} merged{% else %}{% for imp in project.import_group.products %} {{ imp.id }}{% endfor %}{% endif %}
+IMPORTS = {% for imp in project.import_group.products %} {{ imp.id }}{% endfor %}
 {% else %}
 IMPORTS =
 {% endif %}
-IMPORT_ROOTS = $(patsubst %, $(IMPORTDIR)/%_import, $(IMPORTS))
+IMPORT_ROOTS = {% if project.import_group.use_base_merging %} $(IMPORTDIR)/merged_import{% else %}$(patsubst %, $(IMPORTDIR)/%_import, $(IMPORTS)){% endif %}
 IMPORT_OWL_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).owl)
 {%- if project.import_group.export_obo %}
 IMPORT_OBO_FILES = $(foreach n,$(IMPORT_ROOTS), $(n).obo)
@@ -145,7 +145,7 @@ all_subsets: $(SUBSET_FILES)
 # QC Reports & Utilities
 # ----------------------------------------
 
-OBO_REPORT = {% for x in project.robot_report.report_on %} {% if x=="edit" %}$(SRC){% else %}{{ x }}{% endif %}-obo-report{% endfor %}
+OBO_REPORT = {% for x in project.robot_report.report_on|default(["edit"]) %} {% if x=="edit" %}$(SRC){% else %}{{ x }}{% endif %}-obo-report{% endfor %}
 REPORTS = $(OBO_REPORT)
 REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
 
