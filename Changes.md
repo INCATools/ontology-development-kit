@@ -1,4 +1,4 @@
-# v1.2.33 (24 February 2022)
+# v1.3.0 (24 February 2022)
 
 ### New features:
 
