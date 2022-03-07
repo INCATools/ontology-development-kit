@@ -427,6 +427,17 @@ no-mirror-refresh-%:
 
 COMP=true # Global parameter to bypass component generation
 
+.PHONY: all_components
+all_components: $(OTHER_SRC)
+
+.PHONY: recreate-components
+recreate-components:
+	$(MAKE) IMP=true MIR=true PAT=true IMP_LARGE=true all_components -B
+
+.PHONY: recreate-%
+recreate-%:
+	$(MAKE) IMP=true IMP_LARGE=true MIR=true PAT=true $(COMPONENTSDIR)/$*.owl -B
+
 $(COMPONENTSDIR)/%: | $(COMPONENTSDIR)
 	touch $@
 .PRECIOUS: $(COMPONENTSDIR)/%
@@ -979,6 +990,7 @@ Core commands:
 {% if project.import_group is defined %}
 Imports management:
 * refresh-imports:			Refresh all imports and mirrors.
+* refresh-components:			Refresh all components.
 * no-mirror-refresh-imports:		Refresh all imports without downloading mirrors.
 * refresh-imports-excluding-large:	Refresh all imports and mirrors, but skipping the ones labelled as 'is_large'.
 * refresh-%:				Refresh a single import, i.e. refresh-go will refresh 'imports/go_import.owl'.
