@@ -400,23 +400,23 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 {%- endfor %}
 .PHONY: refresh-imports
 refresh-imports:
-	make IMP=true MIR=true PAT=false IMP_LARGE=true all_imports -B
+	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=true all_imports -B
 
 .PHONY: no-mirror-refresh-imports
 no-mirror-refresh-imports:
-	make IMP=true MIR=false PAT=false IMP_LARGE=true all_imports -B
+	$(MAKE) IMP=true MIR=false PAT=false IMP_LARGE=true all_imports -B
 
 .PHONY: refresh-imports-excluding-large
 refresh-imports-excluding-large:
-	make IMP=true MIR=true PAT=false IMP_LARGE=false all_imports -B
+	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=false all_imports -B
 
 .PHONY: refresh-%
 refresh-%:
-	make IMP=true IMP_LARGE=true MIR=true PAT=false $(IMPORTDIR)/$*_import.owl -B
+	$(MAKE) IMP=true IMP_LARGE=true MIR=true PAT=false $(IMPORTDIR)/$*_import.owl -B
 
 .PHONY: no-mirror-refresh-%
 no-mirror-refresh-%:
-	make IMP=true IMP_LARGE=true MIR=false PAT=false $(IMPORTDIR)/$*_import.owl -B
+	$(MAKE) IMP=true IMP_LARGE=true MIR=false PAT=false $(IMPORTDIR)/$*_import.owl -B
 {%- endif %}
 
 {% if project.components is not none %}
@@ -566,9 +566,9 @@ pattern_clean:
 .PHONY: patterns
 patterns dosdp:
 	echo "Validating all DOSDP templates"
-	make dosdp_validation
+	$(MAKE) dosdp_validation
 	echo "Building $(PATTERNDIR)/definitions.owl"
-	make $(PATTERNDIR)/pattern.owl $(PATTERNDIR)/definitions.owl
+	$(MAKE) $(PATTERNDIR)/pattern.owl $(PATTERNDIR)/definitions.owl
 
 # DOSDP Template Validation
 
@@ -919,7 +919,7 @@ validate-tsv: $(TSV) | $(TMPDIR)
 	done
 
 validate-all-tsv: $(ALL_TSV_FILES)
-	make validate-tsv TSV="$^"
+	$(MAKE) validate-tsv TSV="$^"
 
 # ----------------------------------------
 # Editors Utilities
@@ -952,7 +952,7 @@ update_docs:
 # the environment does not malicously set `CLEANFILES` to `\`.
 .PHONY: clean
 clean:{% if project.use_dosdps %}
-	make pattern_clean{%- endif %}
+	$(MAKE) pattern_clean{%- endif %}
 	[ -n "$(MIRRORDIR)" ] && [ $(MIRRORDIR) != "." ] && [ $(MIRRORDIR) != "/" ] && [ $(MIRRORDIR) != ".." ] && [ -d ./$(MIRRORDIR) ] && rm -rf ./$(MIRRORDIR)/*
 	[ -n "$(TMPDIR)" ] && [ $(TMPDIR) != "." ] && [ $(TMPDIR) != "/" ] && [ $(TMPDIR) != ".." ] && [ -d ./$(TMPDIR) ] && rm -rf ./$(TMPDIR)/*
 	rm -f $(CLEANFILES)
