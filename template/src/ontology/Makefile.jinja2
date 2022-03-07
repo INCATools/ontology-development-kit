@@ -551,7 +551,7 @@ SPARQL_EXPORTS_ARGS = $(foreach V,$(SPARQL_EXPORTS),-s $(SPARQLDIR)/$(V).sparql 
 .PHONY: custom_reports
 custom_reports: $(SRC) | $(REPORTDIR)
 ifneq ($(SPARQL_EXPORTS_ARGS),)
-	$(ROBOT) query -f tsv -i $< $(SPARQL_EXPORTS_ARGS)
+	$(ROBOT) query -f tsv --use-graphs true -i $< $(SPARQL_EXPORTS_ARGS)
 endif
 
 {%- if project.use_dosdps %}
