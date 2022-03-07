@@ -31,6 +31,7 @@ cp -n target/$OID/.travis.yml $ROOTDIR/
 mkdir -p $ROOTDIR/.github
 mkdir -p $ROOTDIR/.github/workflows
 cp -n target/$OID/.github/workflows/qc.yml $ROOTDIR/.github/workflows/qc.yml
+cp -n target/$OID/.github/workflows/diff.yml $ROOTDIR/.github/workflows/diff.yml
 {% if project.documentation is not none %}
 cp -n target/$OID/.github/workflows/docs.yml $ROOTDIR/.github/workflows/docs.yml
 {% endif %}{% endif %}{% endif %}
