@@ -1,3 +1,11 @@
+# v1.3.1 (unpublished, target date 24 May 2022)
+
+- Added shortcut make commands for recreating components: `recreate-components` and `recreate-%` ([pull](https://github.com/INCATools/ontology-development-kit/pull/570)).
+- Generated ROBOT reports now consider the imports by default ([pull](https://github.com/INCATools/ontology-development-kit/pull/570))
+- Technical
+   - Run internal `make` and $(MAKE) to ensure that parameters are propagated correctly ([issue](https://github.com/INCATools/ontology-development-kit/issues/554)).
+   - Mirror goal is only run when mirrors have been downloaded ([pull](https://github.com/INCATools/ontology-development-kit/pull/570))
+
 # v1.3.0 (24 February 2022)
 
 ### New features:

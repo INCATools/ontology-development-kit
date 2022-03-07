@@ -508,7 +508,7 @@ $(MIRRORDIR)/merged.owl: $(ALL_MIRRORS)
 {% endif %}
 
 $(MIRRORDIR)/%.owl: mirror-% | $(MIRRORDIR)
-	if [ $(IMP) = true ] && [ $(MIR) = true ]; then if cmp -s $(TMPDIR)/mirror-$*.owl $@ ; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && cp $(TMPDIR)/mirror-$*.owl $@; fi; fi
+	if [ $(IMP) = true ] && [ $(MIR) = true ] && [ -f $(TMPDIR)/mirror-$*.owl ]; then if cmp -s $(TMPDIR)/mirror-$*.owl $@ ; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." && cp $(TMPDIR)/mirror-$*.owl $@; fi; fi
 
 {% endif %}
 
