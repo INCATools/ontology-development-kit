@@ -1384,26 +1384,17 @@ for .owl formats:
 Import(<http://purl.obolibrary.org/obo/{{ project.id }}/components/your-component-name.owl>)
 ```
 5. Refresh your repo by running `sh run.sh make update_repo` - this should create a new file in src/ontology/components.
-6. In your custom makefile (src/ontology/{{ project.id }}.Makefile) add a goal for your custom make file as follows (for ROBOT template goals, please see section below): 
+6. In your custom makefile (src/ontology/{{ project.id }}.Makefile) add a goal for your custom make file. In this example, the goal is a ROBOT template.
 
-```
-YOUR_COMPONENT_NAME = {insert how your component is made, for example a url it is downloaded from}
-$(COMPONENTSDIR)/your-component-name.owl: $(SRC)
-	$(ROBOT) annotate -I $(YOUR_COMPONENT_NAME) --ontology-iri $(ONTBASE)/$@ -o $@
-```
-7. Make the file by running `sh run.sh make components/your-component-name.owl`
-
-### ROBOT Templates
-
-Quick guide for adding a component that uses ROBOT template:
-
-1. Add your template in src/templates/
-2. Your custom makefile goal should look something like: 
 ```
 $(COMPONENTSDIR)/your-component-name.owl: $(SRC) ../templates/your-component-template.tsv 
 	$(ROBOT) template --template ../templates/your-component-template.tsv \
   annotate --ontology-iri $(ONTBASE)/$@ --output $(COMPONENTSDIR)/your-component-name.owl
 ```
+(If using a ROBOT template, do not forget to add your template tsv in src/templates/)
+
+7. Make the file by running `sh run.sh make components/your-component-name.owl`
+
 
 ^^^ docs/odk-workflows/ManageDocumentation.md
 # Updating the Documentation
