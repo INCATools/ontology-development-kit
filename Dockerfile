@@ -13,7 +13,7 @@ ENV ODK_VERSION $ODK_VERSION
 ENV COURSIER_CACHE "/tools/.coursier-cache"
 
 # Install tools provided by Ubuntu.
-RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get install -y --no-install-recommends  \
+RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends  \
     build-essential \
     openssh-client \
     openjdk-11-jdk-headless \
@@ -26,7 +26,10 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get install -y --no-i
     sqlite3 \
     libjson-perl \
     pkg-config \
-    xlsx2csv
+    xlsx2csv \
+    nodejs \
+    npm \
+    graphviz
 
 # Install run-time dependencies for SWI-Prolog.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
@@ -82,6 +85,10 @@ RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-3.12.0.tar
 # Install SPARQLProg.
 RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
     ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
+
+# Install obographviz
+RUN npm install obographviz && \
+    ln -s /tools/node_modules/obographviz/bin/og2dot.js /tools/og2dot.js
 
 # Install OBO-Dashboard.
 COPY scripts/obodash /tools
