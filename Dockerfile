@@ -12,6 +12,10 @@ ENV ODK_VERSION $ODK_VERSION
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
 ENV COURSIER_CACHE "/tools/.coursier-cache"
 
+# Install GH
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
 # Install tools provided by Ubuntu.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get install -y --no-install-recommends  \
     build-essential \
@@ -26,7 +30,8 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get install -y --no-i
     sqlite3 \
     libjson-perl \
     pkg-config \
-    xlsx2csv
+    xlsx2csv \
+    gh
 
 # Install run-time dependencies for SWI-Prolog.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
