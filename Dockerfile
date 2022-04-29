@@ -17,7 +17,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | s
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
 
 # Install tools provided by Ubuntu.
-RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get install -y --no-install-recommends  \
+RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends  \
     build-essential \
     openssh-client \
     openjdk-11-jdk-headless \
@@ -31,7 +31,10 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get install -y --no-i
     libjson-perl \
     pkg-config \
     xlsx2csv \
-    gh
+    gh \
+    nodejs \
+    npm \
+    graphviz
 
 # Install run-time dependencies for SWI-Prolog.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
@@ -87,6 +90,10 @@ RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-3.12.0.tar
 # Install SPARQLProg.
 RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
     ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
+
+# Install obographviz
+RUN npm install obographviz && \
+    ln -s /tools/node_modules/obographviz/bin/og2dot.js /tools/og2dot.js
 
 # Install OBO-Dashboard.
 COPY scripts/obodash /tools
