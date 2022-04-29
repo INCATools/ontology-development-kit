@@ -1401,7 +1401,7 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
    ```
 3. Just to double check, you can now navigate to your documentation pages (usually https://{{ project.github_org }}.github.io/{{ project.repo }}/). 
    Just make sure you give GitHub 2-5 minutes to build the pages!
-
+{% if project.use_dosdps %}
 ^^^ docs/templates/dosdp.md
 # DOSDP documentation stub
 
@@ -1427,7 +1427,7 @@ nav:
       - Contributing: contributing.md{% if project.use_dosdps %}
   - Reference:
     - Design Patterns:
-      - Design Patterns Overview: dosdp.md{% endif %}
+      - Design Patterns Overview: dosdp.md{% endif %}{% endif %}
 {% if 'github_actions' in project.ci %}
 ^^^ .github/workflows/docs.yml
 # Basic ODK workflow
