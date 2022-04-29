@@ -11,3 +11,5 @@ pyyaml
 ruamel.yaml
 dosdp
 tsvalid
+j2cli[yaml]
+j2cli
