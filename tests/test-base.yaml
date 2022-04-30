@@ -11,7 +11,7 @@ import_group:
   mirror_max_time_download: 400
   products:
     - id: ro
-    - id: cl
+    - id: pato
       use_base: TRUE
     - id: pr
       make_base: TRUE

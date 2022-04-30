@@ -21,6 +21,7 @@
 #}
 ^^^ src/ontology/{{ project.id }}-edit.{{ project.edit_format }}
 {% if project.edit_format == "obo" %}
+format-version: 1.2
 {% if project.import_group is defined -%}
 {% for imp in project.import_group.products %}
 import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl
@@ -33,22 +34,37 @@ import: http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl
 {% endif -%}
 {% endif %}
 ontology: {{project.id}}
-property_value: http://purl.org/dc/elements/1.1/description "{{ project.description }}" xsd:string
-property_value: http://purl.org/dc/elements/1.1/title "{{ project.title }}" xsd:string
+property_value: http://purl.org/dc/terms/description "{{ project.description }}" xsd:string
+property_value: http://purl.org/dc/terms/title "{{ project.title }}" xsd:string
 property_value: http://purl.org/dc/terms/license {{ project.license }}
 
 [Term]
-id: {{ project.id | upper }}:00000000
+id: {{ project.id | upper }}:0000000
 name: root node
+
+[Typedef]
+id: http://purl.org/dc/terms/description
+name: description
+is_metadata_tag: true
+
+[Typedef]
+id: http://purl.org/dc/terms/title
+name: title
+is_metadata_tag: true
+
+[Typedef]
+id: http://purl.org/dc/terms/license
+name: license
+is_metadata_tag: true
 
 {% else %}
 Prefix(:=<http://purl.obolibrary.org/obo/{{ project.id }}.owl#>)
+Prefix(dce:=<http://purl.org/dc/elements/1.1/>)
 Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
 Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
 Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
 Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
 Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
-Prefix(dce:=<http://purl.org/dc/elements/1.1/>)
 Prefix(dcterms:=<http://purl.org/dc/terms/>)
 
 
@@ -65,21 +81,31 @@ Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/definitions.owl
 Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl>)
 {% endif -%}
 {% endif %}
-
-Annotation(dce:title "{{ project.title }}")
+Annotation(dcterms:description "{{ project.description }}")
 Annotation(dcterms:license <{{ project.license }}>)
-Annotation(dce:description "{{ project.description }}")
+Annotation(dcterms:title "{{ project.title }}")
 
-Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>))
 
+Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_0000000>))
+Declaration(AnnotationProperty(dcterms:description))
+Declaration(AnnotationProperty(dcterms:license))
+Declaration(AnnotationProperty(dcterms:title))
+
+############################
+#   Annotation Properties
+############################
+
+AnnotationAssertion(rdfs:label dcterms:description "description")
+AnnotationAssertion(rdfs:label dcterms:license "license")
+AnnotationAssertion(rdfs:label dcterms:title "title")
 
 ############################
 #   Classes
 ############################
 
-# Class: <http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000>
+# Class: <http://purl.obolibrary.org/obo/{{ project.id | upper }}_0000000> (root node)
 
-AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | upper }}_00000000> "root node"@en)
+AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | upper }}_0000000> "root node"@en)
 
 
 )
@@ -93,7 +119,7 @@ AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | u
 ## ID Ranges File
 Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 Prefix: idsfor: <http://purl.obolibrary.org/obo/IAO_0000598>
-Prefix: dc: <http://purl.org/dc/elements/1.1/>
+Prefix: dce: <http://purl.org/dc/elements/1.1/>
 Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
 Prefix: allocatedto: <http://purl.obolibrary.org/obo/IAO_0000597>
 Prefix: xml: <http://www.w3.org/XML/1998/namespace>
@@ -373,8 +399,117 @@ WHERE {
   { ?s1 ?p1 ?term . }
   UNION
   { ?term ?p2 ?o2 . }
-  FILTER(isIRI(?term) && (regex(str(?term), UCASE("{{ project.id }}_")){% if project.namespaces %}{% for ns in project.namespaces %} || regex(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
 }
+{#-
+    SPARQL QUERY QC checks
+#}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'owldef-self-reference' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/owldef-self-reference-violation.sparql
+PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?term WHERE {
+  { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first ?term ] ] }
+    UNION
+  { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first [ owl:someValuesFrom ?term ] ] ] }
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'redundant-subClassOf' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/redundant-subClassOf-violation.sparql
+PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?term ?xl ?y ?yl ?z ?zl WHERE {
+  ?term rdfs:subClassOf ?y ;
+     rdfs:label ?xl .
+  ?y rdfs:subClassOf+ ?z ;
+     rdfs:label ?yl .
+  ?term rdfs:subClassOf ?z .
+  ?z rdfs:label ?zl .
+  
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'taxon-range' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/taxon-range-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+
+SELECT ?term ?property ?taxon
+WHERE {
+  VALUES ?property { never_in_taxon: present_in_taxon: }
+  ?term ?property ?taxon .
+  FILTER (!isIRI(?taxon) || !STRSTARTS(STR(?taxon), "http://purl.obolibrary.org/obo/NCBITaxon_"))
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'iri-range' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/iri-range-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT ?term ?property ?value
+WHERE {
+  VALUES ?property {
+    never_in_taxon:
+    present_in_taxon:
+    foaf:depicted_by
+    oboInOwl:inSubset
+    dcterms:contributor  }
+  ?term ?property ?value .
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER (!isIRI(?value))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'iri-range-advanced' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/iri-range-advanced-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT ?term ?property ?value
+WHERE {
+  VALUES ?property {
+    never_in_taxon:
+    present_in_taxon:
+    rdfs:seeAlso
+    foaf:depicted_by
+    oboInOwl:inSubset
+    dcterms:contributor  }
+  ?term ?property ?value .
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER (!isIRI(?value))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'label-with-iri' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/label-with-iri-violation.sparql
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?term ?value
+WHERE {
+  ?term rdfs:label ?value .
+  FILTER (REGEX(?value, "http[s]?[:]"))
+  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+}
+{% endif %}
+
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
 ^^^ src/ontology/components/{{ component.filename }}
@@ -490,6 +625,125 @@ jobs:
           DEFAULT_BRANCH: {{ project.git_main_branch }}
         run: cd src/ontology && make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false
 {% endif -%}
+{% endif -%}
+{% if 'github_actions' in project.ci %}
+^^^ .github/workflows/diff.yml
+name: 'Create ROBOT diffs on Pull requests'
+
+on:
+  # Triggers the workflow on pull request events for the master branch
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  edit_file:
+    runs-on: ubuntu-latest
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    steps:
+      - uses: actions/checkout@v2
+      # Checks-out main branch under "main" directory
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+          path: master
+      - name: Diff classification
+        run: export ROBOT_JAVA_ARGS=-Xmx6G; robot diff --labels True --left master/src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --left-catalog master/src/ontology/catalog-v001.xml --right src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --right-catalog src/ontology/catalog-v001.xml -f markdown -o edit-diff.md
+      - name: Upload diff
+        uses: actions/upload-artifact@v2
+        with:
+          name: edit-diff.md
+          path: edit-diff.md
+  classify_branch:
+    runs-on: ubuntu-latest
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Classify ontology
+        run: cd src/ontology; make IMP=FALSE PAT=FALSE MIR=FALSE {{ project.id }}.owl
+      - name: Upload PR {{ project.id }}.owl
+        uses: actions/upload-artifact@v2
+        with:
+          name: {{ project.id }}-pr.owl
+          path: src/ontology/{{ project.id }}.owl
+          retention-days: 1
+  classify_main:
+    runs-on: ubuntu-latest
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: Classify ontology
+        run: cd src/ontology; make IMP=FALSE PAT=FALSE MIR=FALSE {{ project.id }}.owl
+      - name: Upload master {{ project.id }}.owl
+        uses: actions/upload-artifact@v2
+        with:
+          name: {{ project.id }}-master.owl
+          path: src/ontology/{{ project.id }}.owl
+          retention-days: 1
+  diff_classification:
+    needs:
+      - classify_branch
+      - classify_main
+    runs-on: ubuntu-latest
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download master classification
+        uses: actions/download-artifact@v2
+        with:
+          name: {{ project.id }}-master.owl
+          path: src/ontology/{{ project.id }}-master.owl
+      - name: Download PR classification
+        uses: actions/download-artifact@v2
+        with:
+          name: {{ project.id }}-pr.owl
+          path: src/ontology/{{ project.id }}-pr.owl
+      - name: Diff classification
+        run: export ROBOT_JAVA_ARGS=-Xmx6G; cd src/ontology; robot diff --labels True --left {{ project.id }}-master.owl/{{ project.id }}.owl --left-catalog catalog-v001.xml --right {{ project.id }}-pr.owl/{{ project.id }}.owl --right-catalog catalog-v001.xml -f markdown -o classification-diff.md
+      - name: Upload diff
+        uses: actions/upload-artifact@v2
+        with:
+          name: classification-diff.md
+          path: src/ontology/classification-diff.md
+  post_comment:
+    needs: [diff_classification, edit_file]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download reasoned diff
+        uses: actions/download-artifact@v2
+        with:
+          name: classification-diff.md
+          path: classification-diff.md
+      - name: Prepare reasoned comment
+        run: "echo \"<details>\n <summary> Here's a diff of how these changes impact the classified ontology: </summary> \n\" >comment.md; cat classification-diff.md/classification-diff.md >>comment.md"
+      - name: Post reasoned comment
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+        uses: NejcZdovc/comment-pr@v1.1.1
+        with:
+          file: "../../comment.md"
+          identifier: "REASONED"
+      - uses: actions/checkout@v2
+      - name: Download edit diff
+        uses: actions/download-artifact@v2
+        with:
+          name: edit-diff.md
+          path: edit-diff.md
+      - name: Prepare edit file comment
+        run: "echo \"<details>\n <summary> Here's a diff of your edit file (unreasoned) </summary> \n\" >edit-comment.md; cat edit-diff.md/edit-diff.md >>edit-comment.md"
+      - name: Post comment
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+        uses: NejcZdovc/comment-pr@v1.1.1
+        with:
+          file: "../../edit-comment.md"
+          identifier: "UNREASONED"
 {% endif -%}
 {% if project.use_custom_import_module %}
 ^^^ src/templates/external_import.tsv
@@ -932,7 +1186,9 @@ This page discusses how to update the contents of your imports, like adding or r
 
 ## Importing a new term
 
-Importing a new term is split into to sub-phases:
+Note: some ontologies now use a merged-import system to manage dynamic imports, for these please follow instructions in the section title "Using the Base Module approach".
+
+Importing a new term is split into two sub-phases:
 
 1. Declaring the terms to be imported
 2. Refreshing imports dynamically
@@ -946,7 +1202,8 @@ There are three ways to declare terms that are to be imported from an external o
 
 #### Protege-based declaration
 
-This workflow is to be avoided, but may be appropriate if the editor _does not have access to the ODK docker container_.
+This workflow is to be avoided, but may be appropriate if the editor _does not have access to the ODK docker container_. 
+This approach also applies to ontologies that use base module import approach.
 
 1. Open your ontology (edit file) in Protege (5.5+).
 1. Select 'owl:Thing'
@@ -1077,7 +1334,76 @@ When we use the base pipelines, we
 
 The first implementation of this pipeline is PATO, see https://github.com/pato-ontology/pato/blob/master/src/ontology/pato-odk.yaml.
 
-As we will test and roll out this feature more widely, we will also expand the documentation.
+To check if your ontology uses this method, check src/ontology/{{ project.id }}-odk.yaml to see if `use_base_merging: TRUE` is declared under `import_group`
+
+If your ontology uses Base Module approach, please use the following steps: 
+
+First, add the term to be imported to the term file associated with it (see above "Using term files" section if this is not clear to you)
+
+Next, you navigate in your terminal to the ontology directory (underneath src in your hpo root directory). 
+```
+cd src/ontology
+```
+
+Then refresh imports by running
+
+```
+sh run.sh make imports/merged_import.owl
+```
+Note: if your mirrors are updated, you can run `sh run.sh make no-mirror-refresh-merged`
+
+This requires quite a bit of memory on your local machine, so if you encounter an error, it might be a lack of memory on your computer. A solution would be to create a ticket in an issue tracker requesting for the term to be imported, and your one of the local devs should pick this up and run the import for you.
+
+Lastly, restart Protege, and the term should be imported in ready to be used.
+
+^^^ docs/odk-workflows/components.md
+
+# Adding components to an ODK repo
+
+For details on what components are, please see component section of [repository file structure document](../odk-workflows/RepositoryFileStructure.md).
+
+To add custom components to an ODK repo, please follow the following steps:
+
+1) Locate your odk yaml file and open it with your favourite text editor (src/ontology/{{ project.id }}-odk.yaml)
+2) Search if there is already a component section to the yaml file, if not add it accordingly, adding the name of your component:
+
+```
+components:
+  products:
+    - filename: your-component-name.owl
+```
+
+3) Add the component to your catalog file (src/ontology/catalog-v001.xml)
+
+```
+  <uri name="http://purl.obolibrary.org/obo/{{ project.id }}/components/your-component-name.owl" uri="components/your-component-name.owl"/>
+```
+
+4) Add the component to the edit file (src/ontology/{{ project.id }}-edit.obo)
+for .obo formats: 
+
+```
+import: http://purl.obolibrary.org/obo/{{ project.id }}/components/your-component-name.owl
+```
+
+for .owl formats: 
+
+```
+Import(<http://purl.obolibrary.org/obo/{{ project.id }}/components/your-component-name.owl>)
+```
+
+5) Refresh your repo by running `sh run.sh make update_repo` - this should create a new file in src/ontology/components.
+6) In your custom makefile (src/ontology/{{ project.id }}.Makefile) add a goal for your custom make file. In this example, the goal is a ROBOT template.
+
+```
+$(COMPONENTSDIR)/your-component-name.owl: $(SRC) ../templates/your-component-template.tsv 
+	$(ROBOT) template --template ../templates/your-component-template.tsv \
+  annotate --ontology-iri $(ONTBASE)/$@ --output $(COMPONENTSDIR)/your-component-name.owl
+```
+
+(If using a ROBOT template, do not forget to add your template tsv in src/templates/)
+
+7) Make the file by running `sh run.sh make components/your-component-name.owl`
 
 ^^^ docs/odk-workflows/ManageDocumentation.md
 # Updating the Documentation
@@ -1131,7 +1457,7 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
 Do not overwrite, contents will be generated automatically,
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
-theme: readthedocs
+theme: material
 nav:
   - Getting started: index.md
   - Cite: cite.md
@@ -1144,6 +1470,7 @@ nav:
           - Manage your ODK Repository: odk-workflows/RepoManagement.md
           - Setting up Docker for ODK: odk-workflows/SettingUpDockerForODK.md
           - Imports management: odk-workflows/UpdateImports.md
+	  - Components management: odk-workflows/components.md
           - Managing the documentation: odk-workflows/ManageDocumentation.md
           - Continuous Integration: odk-workflows/ContinuousIntegration.md
           - Your ODK Repository Overview: odk-workflows/RepositoryFileStructure.md 

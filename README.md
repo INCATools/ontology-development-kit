@@ -31,6 +31,9 @@ For more details, see
 * @matentzn Nicolas Matentzoglu (Semanticly Ltd)
 * @gouttegd Damien Goutte-Gattat (Flybase)
 * @cmungall Chris Mungall (LBNL)
+* @shawntanzk Shawn Tan (EMBL-EBI)
+* @anitacaron Anita Caron (EMBL-EBI)
+* @dosumis David Osumi-Sutherland (EMBL-EBI)
 
 Full list of contributors: 
 https://github.com/INCATools/ontology-development-kit/graphs/contributors

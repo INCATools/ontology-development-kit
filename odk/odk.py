@@ -20,7 +20,7 @@ import yaml
 import os
 import subprocess
 import shutil
-from shutil import copyfile
+from shutil import copy, copymode
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -141,6 +141,7 @@ class PatternPipelineProduct(Product):
     Each pipeline gets their own specific directory
     """
     dosdp_tools_options: str = "--obo-prefixes=true"
+    ontology: str = "$(SRC)"
 
 @dataclass_json
 @dataclass
@@ -317,7 +318,7 @@ class ReportConfig(JsonSchemaMixin):
     release_reports : bool = False
     """ If true, release reports are added as assets to the release (top level directory, reports directory)"""
     
-    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['equivalent-classes', 'owldef-self-reference'])
+    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri'])
     """Chose which additional sparql checks yoy want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory"""
 
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
@@ -366,6 +367,9 @@ class PatternPipelineGroup(ProductGroup):
     
     products : Optional[List[PatternPipelineProduct]] = None
     """all pipeline products"""
+    
+    matches: Optional[List[PatternPipelineProduct]] = None
+    """pipelines specifically configured for matching, NOT generating."""
 
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
@@ -827,7 +831,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
             logging.info('  Copying: {} -> {}'.format(srcf, tgtf))
             if not tgtf.endswith(TEMPLATE_SUFFIX):
                 # copy file directly, no template expansions
-                copyfile(srcf, tgtf)
+                copy(srcf, tgtf)
                 tgts.append(tgtf)
         logging.info('Applying templates')
         # ...then apply templates
@@ -846,17 +850,19 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
                         logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
                         s.write(mg.generate(srcf))
                         tgts.append(derived_file)
+                if not f.startswith("_dynamic"):
+                    copymode(srcf, derived_file)
 
     tgt_project_file = "{}/project.yaml".format(outdir)
     if project.export_project_yaml:
         save_project_yaml(project, tgt_project_file)
         tgts.append(tgt_project_file)
     if source is not None:
-        copyfile(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
+        copy(source, "{}/src/ontology/{}-edit.{}".format(outdir, project.id, project.edit_format))
     odk_config_file = "{}/src/ontology/{}-odk.yaml".format(outdir, project.id)
     tgts.append(odk_config_file)
     if config is not None:
-        copyfile(config, odk_config_file)
+        copy(config, odk_config_file)
     else:
         save_project_yaml(project, odk_config_file)
     logging.info("Created files:")
@@ -866,7 +872,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         runcmd("cd {dir} && git init && git add {files}".
                format(dir=outdir,
                       files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
-        runcmd("cd {}/src/ontology && make && git commit -m 'initial commit' -a && make prepare_initial_release && git commit -m 'first release'".format(outdir))
+        runcmd("cd {dir}/src/ontology && make && git commit -m 'initial commit' -a && git branch -M {branch} && make prepare_initial_release && git commit -m 'first release'".format(dir=outdir, branch=project.git_main_branch))
         print("\n\n####\nNEXT STEPS:")
         print(" 0. Examine {} and check it meets your expectations. If not blow it away and start again".format(outdir))
         print(" 1. Go to: https://github.com/new")
@@ -877,8 +883,8 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         print("    E.g.:")
         print("cd {}".format(outdir))
         print("git remote add origin git\@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
-        print("git branch -M main\n")
-        print("git push -u origin main\n")
+        print("git branch -M {branch}\n".format(branch=project.git_main_branch))
+        print("git push -u origin {branch}\n".format(branch=project.git_main_branch))
         print("BE BOLD: you can always delete your repo and start again\n")
         print("")
         print("FINAL STEPS:")
