@@ -245,6 +245,10 @@ prepare_initial_release: all_assets
 	rm -f $(patsubst %, ./%, $(CLEANFILES)) &&\
 	cd $(RELEASEDIR) && git add $(RELEASE_ASSETS)
 
+.PHONY: prepare_release_fast
+prepare_release_fast:
+	$(MAKE) prepare_release IMP=false PAT=false MIR=false COMP=false
+
 # ------------------------
 # Imports: Seeding system 
 # ------------------------
@@ -985,6 +989,7 @@ Usage: [IMAGE=(odklite|odkfull)] [ODK_DEBUG=yes] sh run.sh make [(IMP|MIR|IMP_LA
 
 Core commands:
 * prepare_release:	Run the entire release pipeline. Use make IMP=false prepare_release to avoid rerunning the imports
+* prepare_release_fast:	Run the entire release pipeline without refreshing imports, recreating components or recompiling patterns.
 * update_repo:		Update the ODK repository setup using the config file {{ project.id }}-odk.yaml
 * test:			Running all validation tests
 * odkversion:		Show the current version of the ODK Makefile and ROBOT.

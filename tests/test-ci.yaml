@@ -3,6 +3,9 @@ title: "Test CI"
 github_org: INCATools
 repo: ontology-development-kit
 git_main_branch: master
+workflows:
+  - qc
+  - diff
 ci:
   - github_actions
 robot_report:

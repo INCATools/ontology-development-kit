@@ -1,9 +1,11 @@
 # v1.3.1 (unpublished, target date 24 May 2022)
 
 - Added shortcut make commands for recreating components: `recreate-components` and `recreate-%` ([pull](https://github.com/INCATools/ontology-development-kit/pull/570)).
+- Added new shortcut command for fast releases: `make prepare_release_fast`.
 - Added the [Ontology Access Kit](https://github.com/INCATools/ontology-access-kit), a python library for interacting with ontologies, the the ODK ([pull](https://github.com/INCATools/ontology-development-kit/pull/586)).
 - New tools: [gh](https://github.com/cli/cli), [j2cli](https://github.com/kolypto/j2cli)
 - The ontology diff GitHub action, a tool that allows you to create diffs for you ontology pull requests, is now automatically synced with your ODK setup ([pull](https://github.com/INCATools/ontology-development-kit/pull/564)).
+- Added `workflows` option to ODK config. This allows users to choose which workflows (at the moment GitHub actions-based) should be automatically synchronised.
 - Custom ROBOT SPARQL reports now consider the imports by default ([pull](https://github.com/INCATools/ontology-development-kit/pull/570))
 - Technical
    - Run internal `make` and $(MAKE) to ensure that parameters are propagated correctly ([issue](https://github.com/INCATools/ontology-development-kit/issues/554)).

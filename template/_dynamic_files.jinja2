@@ -590,7 +590,7 @@ branches:
 notifications:
   email:
     - obo-ci-reports-all@groups.io
-{% endif -%}{% if 'github_actions' in project.ci %}
+{% endif -%}{% if (('github_actions' in project.ci) and ('qc' in project.workflows)) %}
 ^^^ .github/workflows/qc.yml
 # Basic ODK workflow
 
@@ -626,7 +626,7 @@ jobs:
         run: cd src/ontology && make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false
 {% endif -%}
 {% endif -%}
-{% if 'github_actions' in project.ci %}
+{% if (('github_actions' in project.ci) and ('diff' in project.workflows)) %}
 ^^^ .github/workflows/diff.yml
 name: 'Create ROBOT diffs on Pull requests'
 
@@ -1454,7 +1454,8 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
 ^^^ docs/templates/dosdp.md
 # DOSDP documentation stub
 
-Do not overwrite, contents will be generated automatically,
+Do not overwrite, contents will be generated automatically.
+{% endif %}
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
 theme: material
@@ -1478,7 +1479,7 @@ nav:
   - Reference:
     - Design Patterns:
       - Design Patterns Overview: dosdp.md{% endif %}{% endif %}
-{% if 'github_actions' in project.ci %}
+{% if (('github_actions' in project.ci) and ('docs' in project.workflows)) %}
 ^^^ .github/workflows/docs.yml
 # Basic ODK workflow
 name: Docs
@@ -1506,5 +1507,4 @@ jobs:
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
           CONFIG_FILE: mkdocs.yaml
-{% endif -%}
 {% endif -%}
