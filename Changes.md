@@ -1,10 +1,16 @@
 # v1.3.1 (unpublished, target date 24 May 2022)
 
 - Added shortcut make commands for recreating components: `recreate-components` and `recreate-%` ([pull](https://github.com/INCATools/ontology-development-kit/pull/570)).
+- Added the [Ontology Access Kit](https://github.com/INCATools/ontology-access-kit), a python library for interacting with ontologies, the the ODK ([pull](https://github.com/INCATools/ontology-development-kit/pull/586)).
+- The ontology diff GitHub action, a tool that allows you to create diffs for you ontology pull requests, is now automatically synced with your ODK setup ([pull](https://github.com/INCATools/ontology-development-kit/pull/564)).
 - Generated ROBOT reports now consider the imports by default ([pull](https://github.com/INCATools/ontology-development-kit/pull/570))
 - Technical
    - Run internal `make` and $(MAKE) to ensure that parameters are propagated correctly ([issue](https://github.com/INCATools/ontology-development-kit/issues/554)).
    - Mirror goal is only run when mirrors have been downloaded ([pull](https://github.com/INCATools/ontology-development-kit/pull/570))
+- Documentation
+   - Some improved documentation on components ([pull](https://github.com/INCATools/ontology-development-kit/pull/577))
+   - All ODK-related general docs now moved to https://oboacademy.github.io/obook.
+   
 
 # v1.3.0 (24 February 2022)
 
