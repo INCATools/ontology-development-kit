@@ -136,7 +136,7 @@ notebook==6.4.11
 numpy==1.22.3
 numpydoc==1.2.1
 nxontology==0.4.1
-oaklib==0.1.12
+oaklib==0.1.2
 oauthlib==3.2.0
 ontobio==2.7.16
 ontodev-cogs==0.3.3
