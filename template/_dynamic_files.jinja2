@@ -626,7 +626,7 @@ jobs:
         run: cd src/ontology && make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false
 {% endif -%}
 {% endif -%}
-{% if 'github_actions' in project.ci %}
+{% if (('github_actions' in project.ci) and ('diff' in project.workflows)) %}
 ^^^ .github/workflows/diff.yml
 name: 'Create ROBOT diffs on Pull requests'
 
@@ -1450,11 +1450,12 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
    ```
 3. Just to double check, you can now navigate to your documentation pages (usually https://{{ project.github_org }}.github.io/{{ project.repo }}/). 
    Just make sure you give GitHub 2-5 minutes to build the pages!
-
+{% if project.use_dosdps %}
 ^^^ docs/templates/dosdp.md
 # DOSDP documentation stub
 
-Do not overwrite, contents will be generated automatically,
+Do not overwrite, contents will be generated automatically.
+{% endif %}
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
 theme: material
@@ -1477,8 +1478,8 @@ nav:
       - Contributing: contributing.md{% if project.use_dosdps %}
   - Reference:
     - Design Patterns:
-      - Design Patterns Overview: dosdp.md{% endif %}
-{% if 'github_actions' in project.ci %}
+      - Design Patterns Overview: dosdp.md{% endif %}{% endif %}
+{% if (('github_actions' in project.ci) and ('docs' in project.workflows)) %}
 ^^^ .github/workflows/docs.yml
 # Basic ODK workflow
 name: Docs
@@ -1501,10 +1502,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@{{ project.git_main_branch }}
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
         # Or use mhausenblas/mkdocs-deploy-gh-pages@nomaterial to build without the mkdocs-material theme
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
           CONFIG_FILE: mkdocs.yaml
-{% endif -%}
 {% endif -%}

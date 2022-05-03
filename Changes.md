@@ -1,3 +1,26 @@
+# v1.3.1 (unpublished, target date 24 May 2022)
+
+- Added shortcut make commands for recreating components: `recreate-components` and `recreate-%` ([pull](https://github.com/INCATools/ontology-development-kit/pull/570)).
+- Added new shortcut command for fast releases: `make prepare_release_fast`.
+- Added the [Ontology Access Kit](https://github.com/INCATools/ontology-access-kit), a python library for interacting with ontologies, the the ODK ([pull](https://github.com/INCATools/ontology-development-kit/pull/586)).
+- New tools: [gh](https://github.com/cli/cli), [j2cli](https://github.com/kolypto/j2cli)
+- The ontology diff GitHub action, a tool that allows you to create diffs for you ontology pull requests, is now automatically synced with your ODK setup ([pull](https://github.com/INCATools/ontology-development-kit/pull/564)).
+- Added `workflows` option to ODK config. This allows users to choose which workflows (at the moment GitHub actions-based) should be automatically synchronised.
+- Custom ROBOT SPARQL reports now consider the imports by default ([pull](https://github.com/INCATools/ontology-development-kit/pull/570))
+- Technical
+   - Run internal `make` and $(MAKE) to ensure that parameters are propagated correctly ([issue](https://github.com/INCATools/ontology-development-kit/issues/554)).
+   - Mirror goal is only run when mirrors have been downloaded ([pull](https://github.com/INCATools/ontology-development-kit/pull/570))
+- Documentation
+   - Some improved documentation on components ([pull](https://github.com/INCATools/ontology-development-kit/pull/577))
+   - All ODK-related general docs now moved to https://oboacademy.github.io/obook.
+   - DOSDP documentation pages are now only created when dosdp is configured.
+- Bugs
+   - The automatic docs workflow now correctly `uses: mhausenblas/mkdocs-deploy-gh-pages@master`.
+   - In ODK 1.3.0 `prepare_release` depended on `all`, which caused some cyclicity for some customised setups. This is now changed to a separate `all_odk` goal.
+   - Simple ontology release artefacts now correctly depend on the `simple seed`.
+   - Similar to subset declarations, ODK now injects synonymtype declarations when extracting a module.
+
+
 # v1.3.0 (24 February 2022)
 
 ### New features:
