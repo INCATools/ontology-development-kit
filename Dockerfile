@@ -108,8 +108,3 @@ RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/re
 && tar -zxvf relation-graph-$RG.tgz \
 && mv relation-graph-$RG /tools/relation-graph \
 && chmod +x /tools/relation-graph
-
-# rdftab
-ENV RDFTAB=0.1.1
-RUN wget -nv https://github.com/ontodev/rdftab.rs/releases/download/v$(RSDTAB)/rdftab-x86_64-unknown-linux-musl -O /tools/rdftab \
-&& chmod +x /tools/rdftab

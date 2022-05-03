@@ -118,6 +118,16 @@ RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v0.4
     cd /build && \
     rm -rf fastobo-validator-0.4.0 fastobo-validator-0.4.0.tar.gz /root/.cargo
 
+# Compile rdftab.
+RUN wget -nv https://github.com/ontodev/rdftab.rs/archive/refs/tags/v0.1.1.tar.gz \
+        -O /build/rdftab-0.1.1.tar.gz && \
+    tar xf rdftab-0.1.1.tar.gz && \
+    cd rdftab.rs-0.1.1 && \
+    cargo build --release && \
+    install -D -m 755 target/release/rdftab /staging/full/usr/bin/rdftab && \
+    cd /build && \
+    rm -rf rdftab.rs-0.1.1 rdftab-0.1.1.tar.gz /root/.cargo
+
 # Compile Konclude if we are not on x86_64
 # (building Konclude is time-consuming, so we avoid it
 #  on x86_64 where a pre-compiled binary is available).
