@@ -11,7 +11,8 @@
 # See README-editors.md for more details.
 
 IMAGE=${IMAGE:-odkfull}
-
+MEMORY_GB=${MEMORY_GB:-8}
+MEMORY_JAVA={% if project.robot_java_args is defined %}{{ project.robot_java_args }}{% else %}-Xmx${MEMORY_GB}G{% endif %}
 ODK_DEBUG=${ODK_DEBUG:-no}
 
 TIMECMD=
@@ -19,7 +20,13 @@ if [ x$ODK_DEBUG = xyes ]; then
     # If you wish to change the format string, take care of using
     # non-breaking spaces (U+00A0) instead of normal spaces, to
     # prevent the shell from tokenizing the format string.
+    echo "Running ${IMAGE} with ${MEMORY_JAVA} of memory for ROBOT and Java-based pipeline steps."
     TIMECMD="/usr/bin/time -f ### DEBUG STATS ###\nElapsed time: %E\nPeak memory: %M kb"
 fi
 
-docker run -v $PWD/../../:/work -w /work/src/ontology {% if project.robot_java_args is defined %}-e ROBOT_JAVA_ARGS='{{ project.robot_java_args }}' -e JAVA_OPTS='{{ project.robot_java_args }}'{% endif %} {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$IMAGE $TIMECMD "$@"
+docker run -v $PWD/../../:/work -w /work/src/ontology -e ROBOT_JAVA_ARGS="$MEMORY_JAVA" -e JAVA_OPTS="$MEMORY_JAVA" {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$IMAGE $TIMECMD "$@"
+
+
+if [[ $@ == *"update_repo"* ] || [ $@ == *"prepare_release"* ] ]; then
+  echo "Please remember to update your ODK image from time to time: https://oboacademy.github.io/obook/howto/odk-update/."
+fi
