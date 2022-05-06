@@ -10,6 +10,7 @@
 - Technical
    - Run internal `make` and $(MAKE) to ensure that parameters are propagated correctly ([issue](https://github.com/INCATools/ontology-development-kit/issues/554)).
    - Mirror goal is only run when mirrors have been downloaded ([pull](https://github.com/INCATools/ontology-development-kit/pull/570))
+   - src/ontology/run.sh can now be configured with a MEMORY_JAVA parameter. It also warns the user in certain cases to update their local ODK image.
 - Documentation
    - Some improved documentation on components ([pull](https://github.com/INCATools/ontology-development-kit/pull/577))
    - All ODK-related general docs now moved to https://oboacademy.github.io/obook.

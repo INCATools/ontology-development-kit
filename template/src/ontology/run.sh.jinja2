@@ -27,6 +27,6 @@ fi
 docker run -v $PWD/../../:/work -w /work/src/ontology -e ROBOT_JAVA_ARGS="$MEMORY_JAVA" -e JAVA_OPTS="$MEMORY_JAVA" {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$IMAGE $TIMECMD "$@"
 
 
-if [[ $@ == *"update_repo"* ] || [ $@ == *"prepare_release"* ] ]; then
+if [[ "$@" == *"update_repo"* || "$@" == *"release"*  ]]; then
   echo "Please remember to update your ODK image from time to time: https://oboacademy.github.io/obook/howto/odk-update/."
 fi
