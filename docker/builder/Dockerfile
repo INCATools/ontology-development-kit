@@ -6,6 +6,9 @@
 FROM ubuntu:20.04
 WORKDIR /build
 
+# Software versions
+ENV RDFTAB_VERSION=0.1.1
+
 # Everything that we want to get into one of the final ODK images
 # should be installed into one of these directories.
 RUN mkdir -p /staging/lite /staging/full
@@ -117,6 +120,16 @@ RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v0.4
     install -D -m 755 target/release/fastobo-validator /staging/full/usr/bin/fastobo-validator && \
     cd /build && \
     rm -rf fastobo-validator-0.4.0 fastobo-validator-0.4.0.tar.gz /root/.cargo
+
+# Compile rdftab.
+RUN wget -nv https://github.com/ontodev/rdftab.rs/archive/refs/tags/v$RDFTAB_VERSION.tar.gz \
+        -O /build/rdftab.tar.gz && \
+    tar xf rdftab.tar.gz && \
+    cd rdftab.rs-$RDFTAB_VERSION && \
+    cargo build --release && \
+    install -D -m 755 target/release/rdftab /staging/full/usr/bin/rdftab && \
+    cd /build && \
+    rm -rf rdftab.rs-$RDFTAB_VERSION rdftab.tar.gz /root/.cargo
 
 # Compile Konclude if we are not on x86_64
 # (building Konclude is time-consuming, so we avoid it
