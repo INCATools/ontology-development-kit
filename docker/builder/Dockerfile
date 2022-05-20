@@ -3,7 +3,7 @@
 # (typically because pre-compiled binaries don't exist for arm64) and
 # we don't want to build directly on the final image (to avoid
 # cluttering the image with build-time dependencies).
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 WORKDIR /build
 
 # Software versions
@@ -100,7 +100,7 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
         libncurses5-dev \
         libsqlite3-dev \
         mcpp \
-        sqlite \
+        sqlite3 \
         zlib1g-dev && \
     wget -nv https://github.com/souffle-lang/souffle/archive/refs/tags/2.1.tar.gz \
         -O /build/souffle-2.1.tar.gz && \
@@ -136,7 +136,8 @@ RUN wget -nv https://github.com/ontodev/rdftab.rs/archive/refs/tags/v$RDFTAB_VER
 #  on x86_64 where a pre-compiled binary is available).
 ARG TARGETARCH
 RUN test "x$TARGETARCH" != xamd64 && (apt-get update && \
-        DEBIAN_FRONTEND="noninteractive" apt-get install -y qt5-default wget && \
+        DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
+            qtbase5-dev qt5-qmake qtbase5-dev-tools wget && \
         wget -nv https://github.com/konclude/Konclude/archive/refs/tags/v0.7.0-1138.tar.gz \
             -O /build/Konclude-0.7.0.tar.gz && \
         tar xf Konclude-0.7.0.tar.gz && \
