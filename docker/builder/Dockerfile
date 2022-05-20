@@ -56,41 +56,6 @@ RUN python3 -m pip install \
         find . -type f | while read f ; do rm -f /staging/full/$f ; done && \
         find . -type d -depth | while read f ; do rmdir /staging/full/$f || true ; done
 
-# Compile SWI-Prolog.
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
-        ncurses-dev \
-        libreadline-dev \
-        libedit-dev \
-        libgoogle-perftools-dev \
-        libunwind-dev \
-        libgmp-dev \
-        libssl-dev \
-        unixodbc-dev \
-        zlib1g-dev \
-        libarchive-dev \
-        libxext-dev \
-        libice-dev \
-        libjpeg-dev \
-        libxinerama-dev \
-        libxft-dev \
-        libxpm-dev \
-        libxt-dev \
-        libdb-dev \
-        libpcre3-dev \
-        libyaml-dev \
-        junit4 && \
-    wget -nv https://www.swi-prolog.org/download/stable/src/swipl-8.2.4.tar.gz \
-        -O /build/swipl-8.2.4.tar.gz && \
-    tar xf swipl-8.2.4.tar.gz && \
-    cd swipl-8.2.4 && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr .. -DSWIPL_PACKAGES_QT=OFF -DSWIPL_PACKAGES_X=OFF && \
-    make && \
-    make install DESTDIR=/staging/full && \
-    cd /build && \
-    rm -rf swipl-8.2.4 swipl-8.2.4.tar.gz
-
 # Compile Soufflé.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
         bison \
