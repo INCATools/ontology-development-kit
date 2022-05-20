@@ -34,7 +34,8 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     gh \
     nodejs \
     npm \
-    graphviz
+    graphviz \
+    python3-psycopg2
 
 # Install run-time dependencies for SWI-Prolog.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \

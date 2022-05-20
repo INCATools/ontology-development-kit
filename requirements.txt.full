@@ -23,6 +23,7 @@ plotly
 networkx
 sssom
 ontodev-cogs
+ontodev-gizmos
 mkdocs
 mkdocs-material
 funowl
@@ -33,3 +34,4 @@ oaklib
 tsvalid
 j2cli[yaml]
 j2cli
+pyspellchecker
