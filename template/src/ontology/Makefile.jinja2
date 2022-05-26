@@ -368,7 +368,7 @@ $(IMPORTDIR)/%_import.obo: $(IMPORTDIR)/%_import.owl
 {%- for ont in project.import_group.products -%}
 {% if ont.is_large or ont.module_type is not none %}
 ## Module for ontology: {{ ont.id }}
-{% if ont.is_large or ('fast_slme' == ont.module_type) or (ont.module_type is none and 'fast_slme' == project.import_group.module_type) %}
+{% if (ont.is_large and ('slme' == ont.module_type or (ont.module_type is none and 'slme' == project.import_group.module_type))) or ('fast_slme' == ont.module_type) or (ont.module_type is none and 'fast_slme' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
 	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) extract -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --force true  --copy-ontology-annotations true --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
