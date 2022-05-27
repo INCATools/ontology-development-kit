@@ -1,0 +1,22 @@
+id: rrcb
+title: "Test ROBOT report: Base IRIs"
+github_org: INCATools
+repo: ontology-development-kit
+edit_format: owl
+namespaces:
+  - http://purl.obolibrary.org/obo/RRCB_
+import_group:
+  products:
+    - id: ro
+    - id: omo
+robot_report:
+  use_base_iris: True
+  release_reports: True
+  fail_on : ERROR
+  use_labels : False
+  custom_profile : True
+  report_on :
+    - edit
+  custom_sparql_checks : []
+  custom_sparql_exports : 
+    - basic-report

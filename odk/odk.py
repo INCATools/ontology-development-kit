@@ -307,7 +307,7 @@ class ReportConfig(JsonSchemaMixin):
     """see http://robot.obolibrary.org/report#labels for details. """
     
     use_base_iris: bool = True
-    """If true, only reports on problems with entities belonging to this ontology"""
+    """If true, only reports on problems with entities belonging to this ontology. Set the base_iris using the 'namespaces' at project level."""
     
     custom_profile : bool = False
     """This will replace the call to the standard OBO report to a custom profile instead."""
@@ -491,10 +491,6 @@ class OntologyProject(JsonSchemaMixin):
     
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
-    
-    base_iris: Optional[List[str]] = None
-    """list of all URI prefixes that belong to terms that belong in this ontology. If specified this URL is used rather than the default OBO PURL for the main OWL product"""
-    
     
     use_custom_import_module : bool = False
     """if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed."""
