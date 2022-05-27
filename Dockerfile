@@ -35,25 +35,8 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     nodejs \
     npm \
     graphviz \
-    python3-psycopg2
-
-# Install run-time dependencies for SWI-Prolog.
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
-        libarchive13 \
-        libedit2 \
-        libgmp10 \
-        libossp-uuid16 \
-        libpcre3 \
-        libreadline8 \
-        libssl1.1 \
-        libtinfo6 \
-        zlib1g \
-        libedit-dev \
-        libgmp-dev \
-        libjs-jquery \
-        libncursesw5-dev \
-        libreadline-dev \
-        libtcmalloc-minimal4
+    python3-psycopg2 \
+    swi-prolog
 
 # Install run-time dependencies for Soufflé.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
