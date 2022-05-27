@@ -760,10 +760,6 @@ owl:Thing	owl:Class
 Welcome to the {{ project.id.upper() }} documentation!
 
 You can find descriptions of the standard ontology engineering workflows [here](odk-workflows/index.md).
-^^^ docs/history.md
-# A brief history of {{ project.id.upper() }}
-
-The following page gives an overview of the history of {{ project.id.upper() }}.
 ^^^ docs/cite.md
 # How to cite {{ project.id.upper() }}
 ^^^ docs/contributing.md
@@ -1458,11 +1454,30 @@ Do not overwrite, contents will be generated automatically.
 {% endif %}
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
-theme: material
+theme:
+  name: material
+  features:
+    - content.tabs.link
+plugins:
+  - search
+markdown_extensions:
+  - pymdownx.highlight:
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+
+site_url: https://{{ project.github_org }}.github.io/{{ project.repo }}/
+repo_url: https://github.com/{{ project.github_org }}/{{ project.repo }}/
+
 nav:
   - Getting started: index.md
   - Cite: cite.md
-  - History: history.md
   - How-to guides:
       - Standard ODK workflows:
           - Overview: odk-workflows/index.md
