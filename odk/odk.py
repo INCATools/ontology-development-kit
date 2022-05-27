@@ -306,6 +306,9 @@ class ReportConfig(JsonSchemaMixin):
     use_labels : bool = True
     """see http://robot.obolibrary.org/report#labels for details. """
     
+    use_base_iris: bool = True
+    """If true, only reports on problems with entities belonging to this ontology. Set the base_iris using the 'namespaces' at project level."""
+    
     custom_profile : bool = False
     """This will replace the call to the standard OBO report to a custom profile instead."""
     
