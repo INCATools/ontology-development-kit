@@ -3,7 +3,7 @@
 # (typically because pre-compiled binaries don't exist for arm64) and
 # we don't want to build directly on the final image (to avoid
 # cluttering the image with build-time dependencies).
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 WORKDIR /build
 
 # Software versions
@@ -56,41 +56,6 @@ RUN python3 -m pip install \
         find . -type f | while read f ; do rm -f /staging/full/$f ; done && \
         find . -type d -depth | while read f ; do rmdir /staging/full/$f || true ; done
 
-# Compile SWI-Prolog.
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
-        ncurses-dev \
-        libreadline-dev \
-        libedit-dev \
-        libgoogle-perftools-dev \
-        libunwind-dev \
-        libgmp-dev \
-        libssl-dev \
-        unixodbc-dev \
-        zlib1g-dev \
-        libarchive-dev \
-        libxext-dev \
-        libice-dev \
-        libjpeg-dev \
-        libxinerama-dev \
-        libxft-dev \
-        libxpm-dev \
-        libxt-dev \
-        libdb-dev \
-        libpcre3-dev \
-        libyaml-dev \
-        junit4 && \
-    wget -nv https://www.swi-prolog.org/download/stable/src/swipl-8.2.4.tar.gz \
-        -O /build/swipl-8.2.4.tar.gz && \
-    tar xf swipl-8.2.4.tar.gz && \
-    cd swipl-8.2.4 && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr .. -DSWIPL_PACKAGES_QT=OFF -DSWIPL_PACKAGES_X=OFF && \
-    make && \
-    make install DESTDIR=/staging/full && \
-    cd /build && \
-    rm -rf swipl-8.2.4 swipl-8.2.4.tar.gz
-
 # Compile Soufflé.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
         bison \
@@ -100,7 +65,7 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
         libncurses5-dev \
         libsqlite3-dev \
         mcpp \
-        sqlite \
+        sqlite3 \
         zlib1g-dev && \
     wget -nv https://github.com/souffle-lang/souffle/archive/refs/tags/2.1.tar.gz \
         -O /build/souffle-2.1.tar.gz && \
@@ -136,7 +101,8 @@ RUN wget -nv https://github.com/ontodev/rdftab.rs/archive/refs/tags/v$RDFTAB_VER
 #  on x86_64 where a pre-compiled binary is available).
 ARG TARGETARCH
 RUN test "x$TARGETARCH" != xamd64 && (apt-get update && \
-        DEBIAN_FRONTEND="noninteractive" apt-get install -y qt5-default wget && \
+        DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
+            qtbase5-dev qt5-qmake qtbase5-dev-tools wget && \
         wget -nv https://github.com/konclude/Konclude/archive/refs/tags/v0.7.0-1138.tar.gz \
             -O /build/Konclude-0.7.0.tar.gz && \
         tar xf Konclude-0.7.0.tar.gz && \

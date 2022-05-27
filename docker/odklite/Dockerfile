@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 LABEL maintainer="obo-tools@googlegroups.com"
 
 ENV ROBOT_VERSION=1.8.3
