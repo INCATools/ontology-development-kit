@@ -1,10 +1,10 @@
-# The Ontology Development Kit (ODK)
-
-<img src="https://github.com/jmcmurry/closed-illustrations/raw/master/logos/odk-logos/odk-logo_black-banner.png" />
-
 [![Build the ODK images and run the tests](https://github.com/INCATools/ontology-development-kit/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/INCATools/ontology-development-kit/actions/workflows/build-and-test.yml)
 [![DOI](https://zenodo.org/badge/48047921.svg)](https://zenodo.org/badge/latestdoi/48047921)
 [![DOI](https://img.shields.io/docker/pulls/obolibrary/odkfull.svg)](https://hub.docker.com/r/obolibrary/odkfull)
+
+# The Ontology Development Kit (ODK)
+
+<img src="https://github.com/jmcmurry/closed-illustrations/raw/master/logos/odk-logos/odk-logo_black-banner.png" />
 
 Manage your ontology's life cycle with the Ontology Development Kit (ODK)! The ODK is
 - a toolbox of various ontology related tools such as ROBOT, owltools, dosdp-tools and many more, bundled as a docker image
