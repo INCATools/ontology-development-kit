@@ -87,7 +87,7 @@ RUN chmod +x /tools/obodash && \
     python3 -m pip install -r requirements.txt && \
     echo " " >> Makefile && \
     echo "build/robot.jar:" >> Makefile && \
-    echo "	echo 'skipped ROBOT jar download....' && touch \$@" >> Makefile && \
+    echo "	echo 'skipped ROBOT jar download.....' && touch \$@" >> Makefile && \
     echo "" >> Makefile
 
 # Install relation-graph
