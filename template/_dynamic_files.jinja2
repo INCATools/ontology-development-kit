@@ -1003,6 +1003,12 @@ sh run.sh make update_repo
 
 There are a large number of options that can be set to configure your ODK, but we will only discuss a few of them here.
 
+NOTE for Windows users:
+
+You may get a cryptic failure such as `Set Illegal Option -` if the update script located in `src/scripts/update_repo.sh` 
+was saved using Windows Line endings. These need to change to unix line endings. In Notepad++, for example, you can 
+click on Edit->EOL Conversion->Unix LF to change this.
+
 ## Managing imports
 
 You can use the update repository worflow described on this page to perform the following operations to your imports:
