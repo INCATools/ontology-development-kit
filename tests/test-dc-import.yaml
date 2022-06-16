@@ -1,0 +1,24 @@
+id: tdci
+title: "DC Import Ontology"
+github_org: INCATools
+repo: tdci-test
+report_fail_on: None
+export_formats:
+  - owl
+  - obo
+  - json
+release_artefacts: 
+  - base
+  - full
+import_group:
+  products:
+    - id: bfo
+      module_type: mirror
+      mirror_from: http://purl.obolibrary.org/obo/bfo/2020/bfo.owl
+    - id: dcterms
+      mirror_from: http://protege.stanford.edu/plugins/owl/dc/terms.owl
+robot_java_args: '-Xmx8G'
+create_obo_metadata: FALSE
+documentation:
+  documentation_system: mkdocs
+release_date: TRUE

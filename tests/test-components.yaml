@@ -1,6 +1,6 @@
 id: tco
 title: "Test Components Ontology"
-github_org: obophenotype
+github_org: INCATools
 repo: components
 report_fail_on: ERROR
 use_dosdps: TRUE
