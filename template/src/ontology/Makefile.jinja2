@@ -923,6 +923,15 @@ GITHUB_RELEASE_PYTHON=make-release-assets.py
 public_release:
 	ls -alt $(ASSETS)
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
+{% elif project.public_release == 'gh_main'  %}
+MAIN_FILES_RELEASE = $(foreach n,$(MAIN_FILES), ../../$(n))
+
+.PHONY: public_release
+public_release:
+	@test $(GHVERSION)
+	ls -alt $(MAIN_FILES_RELEASE)
+	gh release create $(GHVERSION) --notes "TBD." --title "$(GHVERSION)" --draft $(MAIN_FILES_RELEASE)  --generate-notes
+
 {%- endif %}
 
 # ----------------------------------------
