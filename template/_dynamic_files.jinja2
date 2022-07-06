@@ -399,7 +399,7 @@ WHERE {
   { ?s1 ?p1 ?term . }
   UNION
   { ?term ?p2 ?o2 . }
-  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
 }
 {#-
     SPARQL QUERY QC checks
@@ -416,7 +416,7 @@ SELECT ?term WHERE {
   { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first ?term ] ] }
     UNION
   { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first [ owl:someValuesFrom ?term ] ] ] }
-  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
@@ -434,7 +434,7 @@ SELECT ?term ?xl ?y ?yl ?z ?zl WHERE {
   ?term rdfs:subClassOf ?z .
   ?z rdfs:label ?zl .
   
-  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
@@ -448,7 +448,7 @@ WHERE {
   VALUES ?property { never_in_taxon: present_in_taxon: }
   ?term ?property ?taxon .
   FILTER (!isIRI(?taxon) || !STRSTARTS(STR(?taxon), "http://purl.obolibrary.org/obo/NCBITaxon_"))
-  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
@@ -469,7 +469,7 @@ WHERE {
     oboInOwl:inSubset
     dcterms:contributor  }
   ?term ?property ?value .
-  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
   FILTER (!isIRI(?value))
 }
 {% endif %}
@@ -493,7 +493,7 @@ WHERE {
     oboInOwl:inSubset
     dcterms:contributor  }
   ?term ?property ?value .
-  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
   FILTER (!isIRI(?value))
 }
 {% endif %}
@@ -506,7 +506,7 @@ SELECT ?term ?value
 WHERE {
   ?term rdfs:label ?value .
   FILTER (REGEX(?value, "http[s]?[:]"))
-  FILTER(isIRI(?term) && (STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% if project.namespaces %}{% for ns in project.namespaces %} || STRSTARTS(str(?term), "{{ ns }}"){% endfor %}{% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
