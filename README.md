@@ -80,6 +80,12 @@ Critical Path for Alzheimer's Disease. The Critical Path For Alzheimer’s Disea
 
 https://c-path.org/
 
+# Requirements
+
+## Docker
+
+Using the ODK docker image requires Docker 20.10.17 for v1.3.1. 
+
 # Tips and Tricks
 
 ## Customizing your ODK installation
