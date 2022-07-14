@@ -84,7 +84,7 @@ https://c-path.org/
 
 ## Docker
 
-Using the ODK docker image requires Docker 20.10.17 for v1.3.1. 
+Using the ODK docker image requires Docker Engine version 20.10.8 or greater for v1.3.1. 
 
 # Tips and Tricks
 
