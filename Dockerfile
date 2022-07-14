@@ -91,9 +91,9 @@ RUN chmod +x /tools/obodash && \
     echo "" >> Makefile
 
 # Install relation-graph
-ENV RG=2.1.0
+ENV RG=2.2.2
 ENV PATH "/tools/relation-graph/bin:$PATH"
-RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/relation-graph-$RG.tgz \
-&& tar -zxvf relation-graph-$RG.tgz \
-&& mv relation-graph-$RG /tools/relation-graph \
+RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/relation-graph-cli-$RG.tgz \
+&& tar -zxvf relation-graph-cli-$RG.tgz \
+&& mv relation-graph-cli-$RG /tools/relation-graph \
 && chmod +x /tools/relation-graph
