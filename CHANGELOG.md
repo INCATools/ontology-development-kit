@@ -2,7 +2,7 @@
 
 # v1.3.1
 
-- [Update to ROBOT 1.9.0](https://github.com/INCATools/ontology-development-kit/pull/621), see [ROBOT release notes](https://github.com/ontodev/robot/releases/tag/v1.9.0)
+- [Update to ROBOT 1.9.0](https://github.com/INCATools/ontology-development-kit/pull/621), see [ROBOT release notes](https://github.com/ontodev/robot/releases/tag/v1.9.0). One major change concerning ODK: the [OBOGraphs JSON serialiser](https://github.com/geneontology/obographs) has been updated significantly, which means obographs json files may look a bit different. Most important change: empty elements (xrefs) are no longer serialised.
 - Added shortcut make commands for recreating components: `recreate-components` and `recreate-%` ([pull](https://github.com/INCATools/ontology-development-kit/pull/570)).
 - Added new shortcut command for fast releases: `make prepare_release_fast`.
 - New tools:
