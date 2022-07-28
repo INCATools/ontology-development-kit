@@ -270,7 +270,7 @@ $(SRCMERGED): $(EDIT_PREPROCESSED) $(OTHER_SRC)
 		merge  $(patsubst %, -i %, $(OTHER_SRC)) -o $@
 
 $(EDIT_PREPROCESSED): $(SRC)
-	$(ROBOT) convert --input $< -f ofn $@
+	$(ROBOT) convert --input $< --format ofn --output $@
 
 $(PRESEED): $(SRCMERGED)
 	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
