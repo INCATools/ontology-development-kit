@@ -65,6 +65,8 @@ PATTERN_TESTER=              dosdp validate -i
 DOSDPT=                      dosdp-tools
 PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
 
+EDIT_PREPROCESSED = $(TMPDIR)/$(ONT)-preprocess.owl
+
 {% endif %}
 
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
@@ -109,7 +111,6 @@ MAIN_PRODUCTS = $(sort $(foreach r,$(RELEASE_ARTEFACTS), $(r)) $(ONT))
 MAIN_GZIPPED  = {% if project.gzip_main %}$(foreach f,$(FORMATS), $(ONT).$(f).gz){% endif %}
 MAIN_FILES    = $(foreach n,$(MAIN_PRODUCTS), $(foreach f,$(FORMATS), $(n).$(f))) $(MAIN_GZIPPED)
 SRCMERGED     = $(TMPDIR)/merged-$(SRC)
-EDIT_PREPROCESSED = $(TMPDIR)/$(ONT)-preprocess.owl
 
 .PHONY: all_main
 all_main: $(MAIN_FILES)
