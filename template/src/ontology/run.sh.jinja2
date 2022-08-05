@@ -11,7 +11,7 @@
 # See README-editors.md for more details.
 
 IMAGE=${IMAGE:-odkfull}
-ODK_JAVA_OPTS={% if project.robot_java_args is defined and project.robot_java_args|length %}{{ project.robot_java_args }}{% else %}${ODK_JAVA_OPTS:--Xmx8G}{% endif %}
+ODK_JAVA_OPTS={% if project.robot_java_args is defined and project.robot_java_args|length %}${ODK_JAVA_OPTS:-{{ project.robot_java_args }}}{% else %}${ODK_JAVA_OPTS:--Xmx8G}{% endif %}
 ODK_DEBUG=${ODK_DEBUG:-no}
 
 TIMECMD=
