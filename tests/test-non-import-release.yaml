@@ -9,6 +9,7 @@ release_artefacts:
   - editors
   - base
 primary_release: base
+release_use_reasoner: FALSE
 import_group:
   release_imports: TRUE
   products:
