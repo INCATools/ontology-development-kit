@@ -539,7 +539,11 @@ class OntologyProject(JsonSchemaMixin):
     
     namespaces : Optional[List[str]] = None
     """A list of namespaces that are considered at home in this ontology. Used for certain filter commands."""
-
+    
+    use_edit_file_imports : bool = True
+    """If True, ODK will release the ontology with imports explicitly specified by owl:imports in the edit file.
+    If False, ODK will build and release the ontology with _all_ imports and _all_ components specified in the ODK config file."""
+    
     dosdp_tools_options: str = "--obo-prefixes=true"
     """default parameters for dosdp-tools"""
     
@@ -586,7 +590,7 @@ class OntologyProject(JsonSchemaMixin):
     pattern_pipelines_group : Optional[PatternPipelineGroup] = None
     """Block that includes information on all ontology imports to be generated"""
 
-    robotemplate_group : Optional[RobotTemplateGroup] = None
+    robot_template_group : Optional[RobotTemplateGroup] = None
     """Block that includes information on all ROBOT templates used"""
 
     def fill_missing(self):
