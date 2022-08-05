@@ -4,6 +4,9 @@
 
 - Adding new `make reason_test` command ([pull](https://github.com/INCATools/ontology-development-kit/pull/639), [issue](https://github.com/INCATools/ontology-development-kit/issues/645))
 - Adding intermediate artefact `$(TMPDIR)/$(ONT)-preprocess.owl` to the release workflow which enable the centralisation of preprocessing in a single make step. Basically, rather than creating release artefacts directly from the editors file (e.g. bfo-edit.owl), we add intermediate step from which all releases are derived. This intermediate can then be customised by the user ([pull](https://github.com/INCATools/ontology-development-kit/pull/639), [issue](https://github.com/INCATools/ontology-development-kit/issues/544))
+- Re-defines the base from being "all axioms as edited by the ontology editors" to "all axioms and inferences as specified by the ontology editors". The new goal is much more rigorous in removing axioms from other ontologies as well. The old base file can now be exported as an  "editors release" instead ([pull](https://github.com/INCATools/ontology-development-kit/pull/643), [issue](https://github.com/INCATools/ontology-development-kit/issues/646)).
+- Introduces the option of skipping the use of reasoner during the release process (important for application ontologies), ([pull](https://github.com/INCATools/ontology-development-kit/pull/643), [issue](https://github.com/INCATools/ontology-development-kit/issues/644))
+- Introduces a new mode that enable the use of ODK entirely without owl:imports in the edit file (this is great in case we want to use the ODK workflows but not check in any files, imports or components, into version control, like huge application ontologies), ([pull](https://github.com/INCATools/ontology-development-kit/pull/643), [issue](https://github.com/INCATools/ontology-development-kit/issues/629)).
 
 # v1.3.1
 
