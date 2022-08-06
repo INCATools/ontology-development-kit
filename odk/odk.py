@@ -96,6 +96,9 @@ class ComponentProduct(JsonSchemaMixin):
     use_template: bool = True
     """If true, the component will be sourced by a template"""
     
+    template_options: Optional[str] = None
+    """ROBOT options passed to the template command"""
+    
     templates: Optional[List[str]] = None
     """A list of ROBOT template names. If set, these will be used to source this component."""
 
@@ -602,10 +605,6 @@ class OntologyProject(JsonSchemaMixin):
             self.subset_group.fill_missing()
         if self.pattern_pipelines_group is not None:
             self.pattern_pipelines_group.fill_missing()
-        if self.components is not None:
-            self.components.fill_missing()
-        if self.sssom_mappingset_group is not None:
-            self.sssom_mappingset_group.fill_missing()
 
 @dataclass
 class ExecutionContext(JsonSchemaMixin):
