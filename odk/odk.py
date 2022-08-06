@@ -93,7 +93,7 @@ class ComponentProduct(JsonSchemaMixin):
     source: Optional[str] = None
     """The URL source for which the component should be obtained."""
     
-    use_template: bool = True
+    use_template: bool = False
     """If true, the component will be sourced by a template"""
     
     template_options: Optional[str] = None
