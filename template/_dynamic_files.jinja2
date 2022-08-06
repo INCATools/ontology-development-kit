@@ -324,6 +324,16 @@ entries:
 - prefix: /
   replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/{{ project.git_main_branch }}/
 {%- endif %}
+{% if project.use_templates %}
+^^^ src/templates/README.md
+
+# Directory for managing ROBOT templates
+
+{% if project.use_mappings %}
+^^^ src/mappings/README.md
+
+# Directory for managing SSSOM mappings files
+{%- endif %}
 {#-
     Example pattern implementation TSV
 #}
@@ -1452,6 +1462,18 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
    ```
 3. Just to double check, you can now navigate to your documentation pages (usually https://{{ project.github_org }}.github.io/{{ project.repo }}/). 
    Just make sure you give GitHub 2-5 minutes to build the pages!
+{% if project.use_templates %}
+^^^ src/templates/README.md
+# ROBOT Template directory
+
+Do not overwrite, contents will be generated automatically.
+{% endif %}
+{% if project.use_mappings %}
+^^^ src/mappings/README.md
+# SSSOM mapping directory
+
+Do not overwrite, contents will be generated automatically.
+{% endif %}
 {% if project.use_dosdps %}
 ^^^ docs/templates/dosdp.md
 # DOSDP documentation stub
