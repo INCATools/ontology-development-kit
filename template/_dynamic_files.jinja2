@@ -326,10 +326,24 @@ entries:
 {%- endif %}
 {% if project.use_templates %}
 ^^^ src/templates/README.md
-
-# Directory for managing ROBOT templates
-
-{% if project.use_mappings %}
+# ROBOT templates
+{%- if project.components is not none %}
+{%- for component in project.components.products %}
+{%- if component.use_template %}
+{%- if component.templates is not none %}{% for template in component.templates %}
+^^^ src/templates/{{ template }}
+ID	LABEL
+ID	LABEL
+{%- endfor %}{% else %}
+^^^ src/templates/{{ component.filename.split('.') | first }}.tsv
+ID	LABEL
+ID	LABEL
+{%- endif %}
+{%- endif %}
+{%- endfor %}
+{%- endif %}
+{%- endif %}
+{%- if project.use_mappings %}
 ^^^ src/mappings/README.md
 
 # Directory for managing SSSOM mappings files
