@@ -1147,7 +1147,7 @@ These are the current imports in {{ project.id.upper() }}
 | Import | URL | Type |
 | ------ | --- | ---- |
 {%- for imp in project.import_group.products %}
-| {{ imp.id }} | {% if imp.mirror_from is not none %}{{ imp.mirror_from }}{% else %}{{ project.uribase }}/{{ imp.id }}.owl{% endif %} | {% if imp.module_type is defined %}{{ imp.module_type }}{% else %}{{ project.import_group.module_type }}{% endif %} |
+| {{ imp.id }} | {% if imp.mirror_from is not none %}{{ imp.mirror_from }}{% else %}http://purl.obolibrary.org/obo/{{ imp.id }}.owl{% endif %} | {% if imp.module_type is defined %}{{ imp.module_type }}{% else %}{{ project.import_group.module_type }}{% endif %} |
 {%- endfor %}
 {%- endif %}
 
