@@ -22,7 +22,8 @@
 # ----------------------------------------
 # these can be overwritten on the command line
 
-URIBASE=                    {{ project.uribase|default('http://purl.obolibrary.org/obo') }}
+OBOBASE=                    http://purl.obolibrary.org/obo
+URIBASE=                    {{ project.uribase }}
 ONT=                        {{ project.id }}
 ONTBASE=                    $(URIBASE)/$(ONT)
 EDIT_FORMAT=                {{ project.edit_format|default('owl') }}
@@ -347,7 +348,7 @@ $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRO
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %} $(IMPORTDIR)/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
 		extract -T $(IMPORTDIR)/$*_terms_combined.txt --force true --copy-ontology-annotations true --method BOT \
-		remove --base-iri $(URIBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
+		remove --base-iri $(OBOBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/$*_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
@@ -359,7 +360,7 @@ $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRO
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %} $(IMPORTDIR)/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) merge -i $< \
 		query --update ../sparql/preprocess-module.ru \
-		remove --base-iri $(URIBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
+		remove --base-iri $(OBOBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/$*_terms_combined.txt --select complement \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
@@ -394,7 +395,7 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
 	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) merge -i $< \
 		query --update ../sparql/preprocess-module.ru \
-		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
+		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
@@ -509,24 +510,24 @@ mirror-{{ ont.id }}: | $(TMPDIR)
 {%- elif ont.use_base %}
 {%- if ont.use_gzipped %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}-base.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}-base.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
 		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}-base.owl.gz -o $@.tmp.owl{%- if ont.make_base %} &&\
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
+		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
  		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- else %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}/{{ ont.id }}-base.owl --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}/{{ ont.id }}-base.owl --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
 		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
 {%- endif %}
 {%- else %}
 {%- if ont.use_gzipped %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
 		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl.gz -o $@.tmp.owl{%- if ont.make_base %} && \
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
 		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
 {%- else %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(URIBASE)/{{ ont.id }}.owl --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}.owl --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
 		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl -o $@.tmp.owl{%- if ont.make_base %} && \
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
 		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- endif %}
