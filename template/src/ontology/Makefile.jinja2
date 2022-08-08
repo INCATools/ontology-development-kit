@@ -59,6 +59,7 @@ ANNOTATE_ONTOLOGY_VERSION = annotate -V $(ONTBASE)/releases/$(VERSION)/$@ --anno
 OTHER_SRC =                 {% if project.use_dosdps -%}$(PATTERNDIR)/definitions.owl {% endif -%}{% if project.components is defined -%}{% for component in project.components.products -%}$(COMPONENTSDIR)/{{ component.filename }} {% endfor -%}{% endif %}
 ONTOLOGYTERMS =             $(TMPDIR)/ontologyterms.txt
 EDIT_PREPROCESSED = $(TMPDIR)/$(ONT)-preprocess.owl
+CONTEXT_FILE =              config/context.json
 
 {%- if project.use_dosdps %}
 PATTERNDIR=                 ../patterns
@@ -289,7 +290,7 @@ IMPORT_MODULE_TEMPLATE=$(TEMPLATEDIR)/external_import.tsv
 IMPORT_MODULE_SIGNATURE=$(TMPDIR)/external_import_terms.txt
 IMPORT_MODULE=$(IMPORTDIR)/external_import.owl
 $(IMPORT_MODULE): $(IMPORT_MODULE_TEMPLATE) | $(TMPDIR)
-	$(ROBOT) template --template $< \
+	$(ROBOT) template --template $< {% if project.use_context %}--add-prefixes $(CONTEXT_FILE) {% endif %}\
   --ontology-iri "$(ONTBASE)/external_import.owl" \
   --output $@
 
@@ -469,6 +470,13 @@ component-download-{{ component.filename }}: | $(TMPDIR)
 
 $(COMPONENTSDIR)/{{ component.filename }}:  component-download-{{ component.filename }}
 	if [ $(COMP) = true ] ; then if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $@ ; then echo "Component identical."; else echo "Component is different, updating." && cp $(TMPDIR)/component-download-{{ component.filename }}.owl $@; fi; fi
+
+.PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
+{% elif component.use_template %}
+$(COMPONENTSDIR)/{{ component.filename }}:{% if component.templates is not none %}{% for template in component.templates %} $(TEMPLATEDIR)/{{ template }}{% endfor %}{% else %} $(TEMPLATEDIR)/{{ component.filename.split('.') | first }}.tsv{% endif %}
+	if [ $(COMP) = true ] ; then $(ROBOT) template {% if component.template_options is not none %}{{ component.template_options }}{% endif %} \
+		$(patsubst %, --template %, $^) \
+		--output $@; fi
 
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 {% endif -%}

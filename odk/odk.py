@@ -91,7 +91,16 @@ class ComponentProduct(JsonSchemaMixin):
     """The filename of this component"""
     
     source: Optional[str] = None
-    """The source for which the component should be obtained."""
+    """The URL source for which the component should be obtained."""
+    
+    use_template: bool = False
+    """If true, the component will be sourced by a template"""
+    
+    template_options: Optional[str] = None
+    """ROBOT options passed to the template command"""
+    
+    templates: Optional[List[str]] = None
+    """A list of ROBOT template names. If set, these will be used to source this component."""
 
 @dataclass_json
 @dataclass
@@ -145,22 +154,12 @@ class PatternPipelineProduct(Product):
 
 @dataclass_json
 @dataclass
-class PatternProduct(Product):
-    """Represents a DOSDP template product
-    
-    The products here can be manfested as CSVs (from 'parse'ing OWL)
-    or they may be OWL (from the dosdp 'generate' command)
+class SSSOMMappingSetProduct(Product):
     """
-    pass
-
-
-@dataclass_json
-@dataclass
-class RobotTemplateProduct(Product):
+    Represents an SSSOM Mapping template template
     """
-    Represents a ROBOT template
-    """
-    pass
+    mirror_from: Optional[Url] = None
+    """if specified this URL is used to mirror the mapping set."""
 
 @dataclass_json
 @dataclass
@@ -373,27 +372,15 @@ class PatternPipelineGroup(ProductGroup):
     
     matches: Optional[List[PatternPipelineProduct]] = None
     """pipelines specifically configured for matching, NOT generating."""
+    
+    directory : Directory = "../patterns/"
+    """directory where pattern source lives, also where TSV exported to"""
 
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
             self.products = []
         self.products.append(PatternPipelineProduct(id=id))
-            
-@dataclass_json
-@dataclass
-class PatternGroup(ProductGroup):
-    """
-    A configuration section that consists of a list of `PatternProduct` descriptions
 
-    """
-    
-    products : Optional[List[PatternProduct]] = None
-    """all DOSDP pattern products"""
-
-    directory : Directory = "../patterns/"
-    """directory where pattern source lives, also where TSV exported to"""
-
-    
 @dataclass_json
 @dataclass
 class RobotTemplateGroup(JsonSchemaMixin):
@@ -402,8 +389,17 @@ class RobotTemplateGroup(JsonSchemaMixin):
     """
     
     directory : Directory = "../templates/"
+
+@dataclass_json
+@dataclass
+class SSSOMMappingSetGroup(JsonSchemaMixin):
+    """
+    A configuration section that consists of a list of `SSSOMMappingSetProduct` descriptions
+    """
     
-    products : Optional[List[RobotTemplateProduct]] = None
+    directory : Directory = "../mappings/"
+    
+    products : Optional[List[SSSOMMappingSetProduct]] = None
 
 @dataclass_json
 @dataclass
@@ -492,6 +488,12 @@ class OntologyProject(JsonSchemaMixin):
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
     
+    use_templates : bool = False
+    """if true use ROBOT templates."""
+    
+    use_mappings : bool = False
+    """if true use SSSOM mapping files."""
+    
     use_custom_import_module : bool = False
     """if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed."""
     
@@ -501,6 +503,9 @@ class OntologyProject(JsonSchemaMixin):
 """
     """A multiline string that is added to the Makefile"""
 
+    use_context: bool = False
+    """If True, a context file is created that allows the user to specify prefixes used across the project."""
+    
     public_release : str = "none"
     """if true add functions to run automated releases (experimental). Current options are: github_curl, github_python."""
 
@@ -583,15 +588,15 @@ class OntologyProject(JsonSchemaMixin):
 
     subset_group : Optional[SubsetGroup] = None
     """Block that includes information on all subsets (aka slims) to be generated"""
-
-    pattern_group : Optional[PatternGroup] = None
-    """Block that includes information on all DOSDP templates used"""
     
     pattern_pipelines_group : Optional[PatternPipelineGroup] = None
-    """Block that includes information on all ontology imports to be generated"""
-
+    """Block that includes information on all DOSDP templates used"""
+    
     robot_template_group : Optional[RobotTemplateGroup] = None
     """Block that includes information on all ROBOT templates used"""
+    
+    sssom_mappingset_group : Optional[SSSOMMappingSetGroup] = None
+    """Block that includes information on all SSSOM mapping tables used"""
 
     def fill_missing(self):
         """

@@ -324,6 +324,30 @@ entries:
 - prefix: /
   replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/{{ project.git_main_branch }}/
 {%- endif %}
+{% if project.use_templates %}
+^^^ src/templates/README.md
+# ROBOT templates
+{%- if project.components is not none %}
+{%- for component in project.components.products %}
+{%- if component.use_template %}
+{%- if component.templates is not none %}{% for template in component.templates %}
+^^^ src/templates/{{ template }}
+ID	LABEL
+ID	LABEL
+{%- endfor %}{% else %}
+^^^ src/templates/{{ component.filename.split('.') | first }}.tsv
+ID	LABEL
+ID	LABEL
+{%- endif %}
+{%- endif %}
+{%- endfor %}
+{%- endif %}
+{%- endif %}
+{%- if project.use_mappings %}
+^^^ src/mappings/README.md
+
+# Directory for managing SSSOM mappings files
+{%- endif %}
 {#-
     Example pattern implementation TSV
 #}
@@ -389,6 +413,28 @@ Documentation of the Default DOSDP Pipeline
 # Documentation of the {{ pipeline.id }} DOSDP Pipeline
 {%- endfor %}
 {%- endif %}
+{%- endif %}
+{%- if project.use_context %}
+^^^ config/context.json
+{
+	"@context": {
+		"obo": "http://purl.obolibrary.org/obo/",
+		"oboInOwl": "http://www.geneontology.org/formats/oboInOwl#",
+
+		"rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+		"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+		"rdfa": "http://www.w3.org/ns/rdfa#",
+		"xml": "http://www.w3.org/XML/1998/namespace",
+		"xsd": "http://www.w3.org/2001/XMLSchema#",
+		"owl": "http://www.w3.org/2002/07/owl#",
+
+		"dc": "http://purl.org/dc/terms/",
+		"foaf": "http://xmlns.com/foaf/0.1/",
+		"prov": "http://www.w3.org/ns/prov#",
+		"skos": "http://www.w3.org/2004/02/skos/core#",
+		"void": "http://rdfs.org/ns/void#"
+	}
+}
 {%- endif %}
 {#-
     SPARQL QUERY to collect all terms that belong to an ontology
@@ -1031,24 +1077,37 @@ import_group:
 Note: our ODK file should only have one `import_group` which can contain multiple imports (in the `products` section). Next, you run the [update repo workflow](#Updating-your-ODK-repository) to apply these changes. Note that by default, this module is going to be a SLME Bottom module, see [here](http://robot.obolibrary.org/extract). To change that or customise your module, see section "Customise an import". To finalise the addition of your import, perform the following steps:
 
 1. Add an imports statement to your `src/ontology/{{ project.id }}-edit.owl` file. We suggest to do this using a text editor, by simply copying an existing imports declaration and renaming it to the new ontology import, for example as follows:
-
-```
-...
-Ontology(<http://purl.obolibrary.org/obo/{{ project.id }}.owl>
-Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/ro_import.owl>)
-Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl>)
-...
-```
-
+    ```
+    ...
+    Ontology(<http://purl.obolibrary.org/obo/{{ project.id }}.owl>
+    Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/ro_import.owl>)
+    Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl>)
+    ...
+    ```
 2. Add your imports redirect to your catalog file `src/ontology/catalog-v001.xml`, for example:
+    ```
+    <uri name="http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl" uri="imports/go_import.owl"/>
+    ```
+3. Test whether everything is in order:
+    1. [Refresh your import](UpdateImports.md)
+    2. Open in your Ontology Editor of choice (Protege) and ensure that the expected terms are imported.
+
+Note: The catalog file `src/ontology/catalog-v001.xml` has one purpose: redirecting 
+imports from URLs to local files. For example, if you have
+
+```
+Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl>)
+```
+
+in your editors file (the ontology) and
 
 ```
 <uri name="http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl" uri="imports/go_import.owl"/>
 ```
 
-3. Test whether everything is in order:
-    1. [Refresh your import](UpdateImports.md)
-    2. Open in your Ontology Editor of choice (Protege) and ensure that the expected terms are imported.
+in you catalog, tools like `robot` or Protege will recognise the statement
+in the catalog file to redirect the URL `http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl`
+to the local file `imports/go_import.owl` (which is in your `src/ontology` directory).
 
 ### Modify an existing import
 
@@ -1124,6 +1183,59 @@ extract -T imports/ro_terms_combined.txt --force true --individuals exclude --me
 ```
 
 to another ROBOT pipeline.
+
+## Add a component
+
+A component is an import which _belongs_ to your ontology, e.g. is managed by 
+you and your team. 
+
+1. Open `src/ontology/{{ project.id }}-odk.yaml`
+1. If you dont have it yet, add a new top level section `components`
+1. Under the `components` section, add a new section called `products`. 
+This is where all your components are specified
+1. Under the `products` section, add a new component, e.g. `- filename: mycomp.owl`
+
+_Example_
+
+```
+components:
+  products:
+    - filename: mycomp.owl
+```
+
+When running `sh run.sh make update_repo`, a new file `src/ontology/components/mycomp.owl` will 
+be created which you can edit as you see fit. Typical ways to edit:
+
+1. Using a ROBOT template to generate the component (see below)
+1. Manually curating the component separately with Protege or any other editor
+1. Providing a `components/mycomp.owl:` make target in `src/ontology/{{ project.id }}.Makefile`
+and provide a custom command to generate the component.
+1. Providing an additional attribute the component in `src/ontology/{{ project.id }}-odk.yaml`, `source`,
+to specify that this component should simply be downloaded from somewhere on the web.
+
+### Adding a new component based on a ROBOT template
+
+Since ODK 1.3.2, it is possible to simply link a ROBOT template to a component without having to specify any of the import logic. In order to add a new component that is connected to one or more template files, follow these steps:
+
+1. Open `src/ontology/{{ project.id }}-odk.yaml`
+1. Make sure that `use_templates: TRUE` is set in the global project options. You should also make sure that `use_context: TRUE` is set in case you are using prefixes in your templates that are not known to `robot`, such as `OMOP:`, `CPONT:` and more. All non-standard prefixes you are using should be added to `config/context.json`.
+1. Add another component to the `products` section.
+1. To activate this component to be template-driven, simply say: `use_template: TRUE`. This will create an empty template for you in the templates directory, which will automatically be processed when recreating the component (e.g. `run.bat make recreate-mycomp`).
+1. If you want to use more than one component, use the `templates` field to add as many template names as you wish. ODK will look for them in the `src/templates` directory.
+1. Advanced: If you want to provide additional processing options, you can use the `template_options` field. This should be a string with option from [robot template](http://robot.obolibrary.org/template). One typical example for additional options you may want to provide is `--add-prefixes config/context.json` to ensure the prefix map of your context is provided to `robot`, see above.
+
+_Example_:
+
+```
+components:
+  products:
+    - filename: mycomp.owl
+      use_template: TRUE
+      template_options: --add-prefixes config/context.json
+      templates:
+        - template1.tsv
+        - template2.tsv
+```
 
 _Note_: if your mirror is particularly large and complex, read [this ODK recommendation](https://github.com/INCATools/ontology-development-kit/blob/master/docs/DealWithLargeOntologies.md).
 ^^^ docs/odk-workflows/RepositoryFileStructure.md
@@ -1452,6 +1564,18 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
    ```
 3. Just to double check, you can now navigate to your documentation pages (usually https://{{ project.github_org }}.github.io/{{ project.repo }}/). 
    Just make sure you give GitHub 2-5 minutes to build the pages!
+{%- if project.use_templates -%}
+^^^ src/templates/README.md
+# ROBOT Template directory
+
+Do not overwrite, contents will be generated automatically.
+{% endif %}
+{% if project.use_mappings %}
+^^^ src/mappings/README.md
+# SSSOM mapping directory
+
+Do not overwrite, contents will be generated automatically.
+{% endif %}
 {% if project.use_dosdps %}
 ^^^ docs/templates/dosdp.md
 # DOSDP documentation stub

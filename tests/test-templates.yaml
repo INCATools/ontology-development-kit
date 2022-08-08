@@ -1,0 +1,20 @@
+id: ttt
+title: "Template Test Ontology"
+github_org: INCATools
+repo: ttt
+use_templates: TRUE
+export_formats:
+  - owl
+import_group:
+  products:
+    - id: ro
+components:
+  products:
+    - filename: test-with-context.owl
+      use_template: TRUE
+      template_options: "--add-prefixes config/context.json"
+    - id: test-with-templates.owl
+      use_template: TRUE
+      templates:
+        - template1.tsv
+        - template2.tsv
