@@ -9,14 +9,18 @@
 # we therefore map the whole repo (../..) to a docker volume.
 #
 # To use singularity instead of docker, please issue
-#
 # export USE_SINGULARITY=<any-value>
-#
 # before running this script.
 #
 # See README-editors.md for more details.
 
 IMAGE=${IMAGE:-odkfull}
+TAG_IN_IMAGE=$(echo $IMAGE | awk -F':' '{ print $2 }')
+if [ "$TAG_IN_IMAGE" ]; then
+  # Override TAG env var if IMAGE already includes a tag
+  TAG=$TAG_IN_IMAGE
+  IMAGE=$(echo $IMAGE | awk -F':' '{ print $1 }')
+fi
 TAG=${TAG:-latest}
 ODK_JAVA_OPTS={% if project.robot_java_args is defined and project.robot_java_args|length %}${ODK_JAVA_OPTS:-{{ project.robot_java_args }}}{% else %}${ODK_JAVA_OPTS:--Xmx8G}{% endif %}
 ODK_DEBUG=${ODK_DEBUG:-no}
@@ -37,7 +41,11 @@ if [ -n "$USE_SINGULARITY" ]; then
     export ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS"
     export JAVA_OPTS="$ODK_JAVA_OPTS"
     {% if project.use_external_date is sameas True %}export TODAY=$(date +%Y-%m-%d){% endif %}
-    singularity exec --bind $VOLUME_BIND -W $WORK_DIR docker://obolibrary/$IMAGE:$TAG $TIMECMD "$@"
+    singularity exec --cleanenv \
+        --env "ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS,JAVA_OPTS=$ODK_JAVA_OPTS" \
+        --bind $VOLUME_BIND \
+        -W $WORK_DIR \
+        docker://obolibrary/$IMAGE:$TAG $TIMECMD "$@"
 else
     docker run -v $VOLUME_BIND -w $WORK_DIR -e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$IMAGE $TIMECMD "$@"
 fi
