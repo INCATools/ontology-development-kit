@@ -60,15 +60,15 @@ schema/project-schema.json:
 VERSION = "v1.3.2"
 IM=obolibrary/odkfull
 IMLITE=obolibrary/odklite
-DEV=obolibrary/odkdev
 ROB=obolibrary/robot
 #ROBOT_JAR="https://github.com/monarch-ebi-dev/odk_utils/raw/master/robot_maven_test.jar"
 ROBOT_JAR_ARGS=#--build-arg ROBOT_JAR=$(ROBOT_JAR)
+TAGS_OPTION=-t $(IM):$(VERSION) -t $(IM):latest
 
 build: build-odklite
 	docker build $(CACHE) --platform $(ARCH) \
 	    --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) \
-	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
+	    $(TAGS_OPTION) \
 	    .
 
 build-odklite: build-builder
@@ -84,10 +84,11 @@ build-builder:
 build-no-cache:
 	$(MAKE) build CACHE=--no-cache
 
-build-dev:
-	docker build --build-arg ODK_VERSION=$(VERSION) --platform $(ARCH) \
-	    -t $(DEV):$(VERSION) -t $(DEV):latest \
-	    .
+build-odklite-dev: build-builder
+	$(MAKE) TAGS_OPTION="-t $(IMLITE):dev" VERSION=$(VERSION)-dev build-odklite
+
+build-dev: build-odklite-dev
+	$(MAKE) TAGS_OPTION="-t $(IM):dev" VERSION=$(VERSION)-dev build
 
 clean:
 	docker kill $(IM) || echo not running
@@ -107,20 +108,14 @@ test-flavor:
 test-full: build
 	$(MAKE) test-flavor FLAVOR=full
 
-test-dev: build-dev
-	$(MAKE) test-flavor FLAVOR=dev
-
 test-lite: build-odklite
 	$(MAKE) test-flavor FLAVOR=lite
 
-tests: test-full test-dev
+tests: test-full
 	make test_odkfull_programs
 
 test-no-build:
 	$(MAKE) test-flavor FLAVOR=full
-
-test-dev-no-build:
-	$(MAKE) test-flavor FLAVOR=dev
 
 test-lite-no-build:
 	$(MAKE) test-flavor FLAVOR=lite
@@ -130,17 +125,12 @@ test-lite-no-build:
 
 publish-no-build:
 	docker push $(DEV):$(VERSION)
-	docker push $(DEV):latest
 	docker push $(IM):latest
 	docker push $(IM):$(VERSION)
 	$(MAKE) -C docker/odklite publish-no-build
 
 publish: build
 	$(MAKE) publish-no-build
-
-publish-dev-no-build:
-	docker push $(DEV):$(VERSION)
-	docker push $(DEV):latest
 
 publish-multiarch:
 	$(MAKE) -C docker/robot CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
@@ -152,8 +142,20 @@ publish-multiarch:
 	    publish-multiarch
 	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
 	    --build-arg ODK_VERSION=$(VERSION) \
-	    -t $(IM):$(VERSION) -t $(IM):latest -t $(DEV):latest \
+	    $(TAGS_OPTION) \
 	    .
+
+publish-multiarch-dev:
+	$(MAKE) -C docker/builder CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
+		publish-multiarch
+	$(MAKE) -C docker/odklite IM=$(IMLITE) VERSION=$(VERSION)-dev \
+		CACHE=$(CACHE) PLATFORMS=$(PLATFORMS) \
+		TAGS_OPTION="-t $(IMLITE):dev" \
+		publish-multiarch
+	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
+		--build-arg ODK_VERSION=$(VERSION)-dev \
+		-t $(IM):dev \
+		.
 
 clean-tests:
 	rm -rf target/*
