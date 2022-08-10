@@ -38,8 +38,6 @@ VOLUME_BIND=$PWD/../../:/work
 WORK_DIR=/work/src/ontology
 
 if [ -n "$USE_SINGULARITY" ]; then
-    export ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS"
-    export JAVA_OPTS="$ODK_JAVA_OPTS"
     {% if project.use_external_date is sameas True %}export TODAY=$(date +%Y-%m-%d){% endif %}
     singularity exec --cleanenv \
         --env "ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS,JAVA_OPTS=$ODK_JAVA_OPTS" \
