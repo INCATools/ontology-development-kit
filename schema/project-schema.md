@@ -1,5 +1,5 @@
 
-## ODK Project Schema
+## ODK Project Configuration Schema
 
 - **`allow_equivalents`** *(string)*: Default: `all`.
 
