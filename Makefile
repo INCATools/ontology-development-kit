@@ -98,8 +98,8 @@ clean:
 
 test-flavor:
 	@if docker images | grep -q odk$(FLAVOR) ; then \
-		$(MAKE) test_odk$(FLAVOR)_programs IMAGE=odk$(FLAVOR) ; \
-		$(MAKE) test CMD=./seed-via-docker.sh IMAGE=odk$(FLAVOR) ; \
+		$(MAKE) test_odk$(FLAVOR)_programs ODK_IMAGE=odk$(FLAVOR) ; \
+		$(MAKE) test CMD=./seed-via-docker.sh ODK_IMAGE=odk$(FLAVOR) ; \
 	else \
 		echo "Image obolibrary/odk$(FLAVOR) not locally available" ; \
 	fi
