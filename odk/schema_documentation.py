@@ -11,6 +11,7 @@ import os
 import logging
 import json
 import ast
+import click
 
 
 NESTED_REFERENCE_LIMIT = 3
@@ -23,7 +24,7 @@ CROSS_REF_TERM_ALT = "Values from *"
 logging.basicConfig(level=logging.INFO)
 
 ODK_SCHEMA = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../schema/project-schema.json")
-ODK_SCHEMA_MD = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../schema/project-schema.md")
+ODK_SCHEMA_MD = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../docs/project-schema.md")
 
 
 def generate_plain_documentation(json_schema, descriptions):
@@ -304,35 +305,6 @@ def decode_stacked_json(document):
     return json_objects
 
 
-def generate_schema_doc(json_schema=ODK_SCHEMA, md_output=ODK_SCHEMA_MD):
-    """
-    Generates documentation for the given YAML schema. Uses jsonschema2md to generate a plain documentation,
-    then decorates generated documentation through inlining referred elements.
-
-    Parameters:
-        json_schema: path of the json schema
-        md_output: output file path
-    """
-    with open(json_schema, 'r') as file:
-        schema_content = file.read()
-
-    json_objects = decode_stacked_json(schema_content)
-    odk_schema = json_objects[0]
-
-    descriptions = extract_field_descriptions()
-
-    logging.info("Target is: " + os.path.abspath(md_output))
-    with open(md_output, "w") as md_out:
-        md_out.write("\n")
-        md_out.write("## %s\n" % "ODK Project Configuration Schema")
-        md_out.write("\n")
-
-        plain_doc = generate_plain_documentation(odk_schema, descriptions)
-        for element in odk_schema["properties"].keys():
-            print_element(element, md_out, plain_doc, nesting_list=[])
-            md_out.write("\n\n")
-
-
 def extract_field_descriptions():
     """
     Extracts field descriptions from the 'odk.py' using ast.
@@ -366,4 +338,37 @@ def extract_field_descriptions():
     return comments
 
 
-generate_schema_doc(ODK_SCHEMA)
+@click.command()
+@click.option('-i', '--json_schema', default=ODK_SCHEMA, type=click.Path(exists=True), help='File path of the json schema.')
+@click.option('-o', '--md_output', default=ODK_SCHEMA_MD, type=click.Path(), help='File path of the output document.')
+def generate(json_schema=ODK_SCHEMA, md_output=ODK_SCHEMA_MD):
+    """
+    Generates documentation for the given YAML schema. Uses jsonschema2md to generate a plain documentation,
+    then decorates generated documentation through inlining referred elements.
+
+    Parameters:
+        json_schema: path of the json schema
+        md_output: output file path
+    """
+    with open(json_schema, 'r') as file:
+        schema_content = file.read()
+
+    json_objects = decode_stacked_json(schema_content)
+    odk_schema = json_objects[0]
+
+    descriptions = extract_field_descriptions()
+
+    logging.info("Target is: " + os.path.abspath(md_output))
+    with open(md_output, "w") as md_out:
+        md_out.write("\n")
+        md_out.write("## %s\n" % "ODK Project Configuration Schema")
+        md_out.write("\n")
+
+        plain_doc = generate_plain_documentation(odk_schema, descriptions)
+        for element in odk_schema["properties"].keys():
+            print_element(element, md_out, plain_doc, nesting_list=[])
+            md_out.write("\n\n")
+
+
+if __name__ == '__main__':
+    generate()
