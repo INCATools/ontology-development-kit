@@ -1077,15 +1077,13 @@ import_group:
 Note: our ODK file should only have one `import_group` which can contain multiple imports (in the `products` section). Next, you run the [update repo workflow](#Updating-your-ODK-repository) to apply these changes. Note that by default, this module is going to be a SLME Bottom module, see [here](http://robot.obolibrary.org/extract). To change that or customise your module, see section "Customise an import". To finalise the addition of your import, perform the following steps:
 
 1. Add an imports statement to your `src/ontology/{{ project.id }}-edit.owl` file. We suggest to do this using a text editor, by simply copying an existing imports declaration and renaming it to the new ontology import, for example as follows:
-
-```
-...
-Ontology(<{{ project.uribase }}/{{ project.id }}.owl>
-Import(<{{ project.uribase }}/{{ project.id }}/imports/ro_import.owl>)
-Import(<{{ project.uribase }}/{{ project.id }}/imports/go_import.owl>)
-...
-```
-
+    ```
+    ...
+    Ontology(<{{ project.uribase }}/{{ project.id }}.owl>
+    Import(<{{ project.uribase }}/{{ project.id }}/imports/ro_import.owl>)
+    Import(<{{ project.uribase }}/{{ project.id }}/imports/go_import.owl>)
+    ...
+    ```
 2. Add your imports redirect to your catalog file `src/ontology/catalog-v001.xml`, for example:
     ```
     <uri name="http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl" uri="imports/go_import.owl"/>
@@ -1219,7 +1217,7 @@ to specify that this component should simply be downloaded from somewhere on the
 
 Since ODK 1.3.2, it is possible to simply link a ROBOT template to a component without having to specify any of the import logic. In order to add a new component that is connected to one or more template files, follow these steps:
 
-1. Open `src/ontology/{{ project.id }}-odk.yaml`
+1. Open `src/ontology/{{ project.id }}-odk.yaml`.
 1. Make sure that `use_templates: TRUE` is set in the global project options. You should also make sure that `use_context: TRUE` is set in case you are using prefixes in your templates that are not known to `robot`, such as `OMOP:`, `CPONT:` and more. All non-standard prefixes you are using should be added to `config/context.json`.
 1. Add another component to the `products` section.
 1. To activate this component to be template-driven, simply say: `use_template: TRUE`. This will create an empty template for you in the templates directory, which will automatically be processed when recreating the component (e.g. `run.bat make recreate-mycomp`).
