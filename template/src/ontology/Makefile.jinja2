@@ -819,10 +819,14 @@ $(ROBOT) remove --input $< --select imports --trim false {% if project.use_dosdp
 merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}{% if project.import_group is defined -%}
 merge $(patsubst %, -i %, $(IMPORT_FILES)){% endif %}{% endif %}
 
+ROBOT_RELEASE_IMPORT_MODE_BASE={% if project.use_edit_file_imports -%}$(ROBOT) merge --input $< {% else -%}
+$(ROBOT) remove --input $< --select imports --trim false {% if project.use_dosdps or project.components is defined -%}
+merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}{% endif %}
+
 {% if 'base' in project.release_artefacts or project.primary_release == 'base' -%}
 # base: OTHER sources of interest, such as definitions owl
 $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
-	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
+	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \{% if project.release_use_reasoner %}
 	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% endif %}
 	relax \{% if project.release_use_reasoner %}
 	reduce -r {{ project.reasoner }} \{% endif %}
@@ -836,8 +840,7 @@ $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 {% if 'editors' in project.release_artefacts or project.primary_release == 'editors' -%}
 # base: OTHER sources of interest, such as definitions owl
 $(ONT)-editors.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
-	$(ROBOT) remove --input $< --select imports --trim false \
-		$(ROBOT_RELEASE_IMPORT_MODE) \
+	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \
 		$(SHARED_ROBOT_COMMANDS) annotate --link-annotation http://purl.org/dc/elements/1.1/type http://purl.obolibrary.org/obo/IAO_8000001 \
 		--ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		{% if project.release_date -%} --annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
