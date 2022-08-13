@@ -472,7 +472,7 @@ $(COMPONENTSDIR)/{{ component.filename }}:  component-download-{{ component.file
 $(COMPONENTSDIR)/{{ component.filename }}:{% if component.templates is not none %}{% for template in component.templates %} $(TEMPLATEDIR)/{{ template }}{% endfor %}{% else %} $(TEMPLATEDIR)/{{ component.filename.split('.') | first }}.tsv{% endif %}
 	if [ $(COMP) = true ] ; then $(ROBOT) template {% if component.template_options is not none %}{{ component.template_options }}{% endif %} \
 		$(patsubst %, --template %, $^) \
-		--output $@; fi
+		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@; fi
 
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 {% endif -%}
