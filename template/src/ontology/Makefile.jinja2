@@ -71,7 +71,7 @@ PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern
 
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
 FORMATS_INCL_TSV = $(sort $(FORMATS) tsv)
-RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if release.startswith('custom-') %}{{ release | replace("custom-","")}}{% else %}$(ONT)-{{ release }}{% endif %} {% endfor %}$(ONT)-base $(ONT)-full)
+RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if release.startswith('custom-') %}{{ release | replace("custom-","")}}{% else %}$(ONT)-{{ release }}{% endif %} {% endfor %})
 
 # ----------------------------------------
 # Top-level targets
@@ -744,45 +744,6 @@ $(PATTERNDIR)/definitions.owl: $(DOSDP_OWL_FILES_DEFAULT) {% if project.pattern_
 	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
 {% endif -%}
 {% endfor -%}
-
-{% if 'base' not in project.release_artefacts -%}
-# We always want a base - even if it is not explicitly configured..
-{% if 'obo' in project.export_formats -%}
-$(ONT)-base.obo: $(ONT)-base.owl
-	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
-{% endif -%}
-{% if 'ttl' in project.export_formats -%}
-$(ONT)-base.ttl: $(ONT)-base.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
-{% endif -%}
-{% if 'json' in project.export_formats -%}
-$(ONT)-base.json: $(ONT)-base.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
-{% endif -%}
-{% endif -%}
-
-
-{% if 'full' not in project.release_artefacts -%}
-# We always want a full release - even if it is not explicitly configured..
-{% if 'obo' in project.export_formats -%}
-$(ONT)-full.obo: $(ONT)-full.owl
-	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
-{% endif -%}
-{% if 'ttl' in project.export_formats -%}
-$(ONT)-full.ttl: $(ONT)-full.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
-{% endif -%}
-{% if 'json' in project.export_formats -%}
-$(ONT)-full.json: $(ONT)-full.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
-{% endif -%}
-{% endif -%}
 
 # ----------------------------------------
 # Release artefacts: main release artefacts
