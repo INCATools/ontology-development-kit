@@ -198,6 +198,19 @@ Use the variable `PLATFORMS` to specify the architectures for which an
 image should be built. The default is `linux/amd64,linux/arm64`, for
 images that work on both x86_64 and arm64 machines.
 
+To publish only the development version:
+
+```
+make publish-multiarch-dev
+```
+
+Sometimes, it may be necessary to delete the multiarch and redo it (roughly once per month):
+
+```
+docker buildx rm multiarch
+docker buildx create --name multiarch --driver docker-container --use
+```
+
 ## Some notes on templating and logic
 
 There is a potential for some confusion as to responsibility for
