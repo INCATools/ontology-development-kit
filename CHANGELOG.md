@@ -1,5 +1,10 @@
 # v1.3.2 (unpublished, target date 31 July 2022)
 
+- Changes in the `src/ontology/run.sh` wrapper script:
+  - [It is now possible](https://github.com/INCATools/ontology-development-kit/pull/640) to execute the Docker image through [Singularity](https://apptainer.org).
+  - The `IMAGE` variable, which can used to specify an alternative ODK image, [has been renamed](https://github.com/INCATools/ontology-development-kit/pull/655) to `ODK_IMAGE`.
+  - A new variable `ODK_TAG` has been introduced, allowing to specify an alternative tag (default is `latest`). A tag may also be specified directly as part of the `ODK_IMAGE` variable (as in `ODK_IMAGE=odkfull:v1.3.1`).
+
 # v1.3.1
 
 - [Update to ROBOT 1.9.0](https://github.com/INCATools/ontology-development-kit/pull/621), see [ROBOT release notes](https://github.com/ontodev/robot/releases/tag/v1.9.0). One major change concerning ODK: the [OBOGraphs JSON serialiser](https://github.com/geneontology/obographs) has been updated significantly, which means obographs json files may look a bit different. Most important change: empty elements (xrefs) are no longer serialised.
