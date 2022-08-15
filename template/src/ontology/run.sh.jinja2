@@ -16,10 +16,10 @@
 
 ODK_IMAGE=${ODK_IMAGE:-odkfull}
 TAG_IN_IMAGE=$(echo $ODK_IMAGE | awk -F':' '{ print $2 }')
-if [ "$TAG_IN_IMAGE" ]; then
+if [ -n "$TAG_IN_IMAGE" ]; then
   # Override ODK_TAG env var if IMAGE already includes a tag
   ODK_TAG=$TAG_IN_IMAGE
-  ODK_IMAGE=$(echo $IMAGE | awk -F':' '{ print $1 }')
+  ODK_IMAGE=$(echo $ODK_IMAGE | awk -F':' '{ print $1 }')
 fi
 ODK_TAG=${ODK_TAG:-latest}
 ODK_JAVA_OPTS={% if project.robot_java_args is defined and project.robot_java_args|length %}${ODK_JAVA_OPTS:-{{ project.robot_java_args }}}{% else %}${ODK_JAVA_OPTS:--Xmx8G}{% endif %}
