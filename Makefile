@@ -88,7 +88,12 @@ build-odklite-dev: build-builder
 	$(MAKE) TAGS_OPTION="-t $(IMLITE):dev" VERSION=$(VERSION)-dev build-odklite
 
 build-dev: build-odklite-dev
-	$(MAKE) TAGS_OPTION="-t $(IM):dev" VERSION=$(VERSION)-dev build
+	docker build $(CACHE) --platform $(ARCH) \
+		--build-arg ODK_VERSION=$(VERSION)-dev \
+		--build-arg ODKLITE_TAG=dev \
+		$(ROBOT_JAR_ARGS) \
+		-t $(IM):dev \
+		.
 
 clean:
 	docker kill $(IM) || echo not running
@@ -154,6 +159,7 @@ publish-multiarch-dev:
 		publish-multiarch
 	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
 		--build-arg ODK_VERSION=$(VERSION)-dev \
+		--build-arg ODKLITE_TAG=dev \
 		-t $(IM):dev \
 		.
 
