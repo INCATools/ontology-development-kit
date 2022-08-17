@@ -1,6 +1,7 @@
 # Final ODK image
 # (built upon the odklite image)
-FROM obolibrary/odklite:latest
+ARG ODKLITE_TAG=latest
+FROM obolibrary/odklite:${ODKLITE_TAG}
 LABEL maintainer="obo-tools@googlegroups.com"
 
 ENV PATH "/tools/apache-jena/bin:/tools/sparqlprog/bin:$PATH"
