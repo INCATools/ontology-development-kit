@@ -163,5 +163,13 @@ publish-multiarch-dev:
 		-t $(IM):dev \
 		.
 
+constraints.txt: requirements.txt.full
+	rm -rf ./tmpdir &&\
+	virtualenv tmpdir &&\
+	. tmpdir/bin/activate &&\
+	python3 -m pip install pip -U &&\
+	python3 -m pip install -r requirements.txt.full &&\
+	python3 -m pip freeze > constraints.txt
+
 clean-tests:
 	rm -rf target/*
