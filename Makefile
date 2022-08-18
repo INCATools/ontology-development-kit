@@ -164,12 +164,7 @@ publish-multiarch-dev:
 		.
 
 constraints.txt: requirements.txt.full
-	rm -rf ./tmpdir &&\
-	virtualenv tmpdir &&\
-	. tmpdir/bin/activate &&\
-	python3 -m pip install pip -U &&\
-	python3 -m pip install -r requirements.txt.full &&\
-	python3 -m pip freeze > constraints.txt
+	docker run -v $$PWD:/work -w /work --rm -ti obolibrary/odkbuild:latest /work/update-constraints.sh
 
 clean-tests:
 	rm -rf target/*
