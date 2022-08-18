@@ -163,5 +163,8 @@ publish-multiarch-dev:
 		-t $(IM):dev \
 		.
 
+constraints.txt: requirements.txt.full
+	docker run -v $$PWD:/work -w /work --rm -ti obolibrary/odkbuild:latest /work/update-constraints.sh
+
 clean-tests:
 	rm -rf target/*
