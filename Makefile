@@ -88,7 +88,12 @@ build-odklite-dev: build-builder
 	$(MAKE) TAGS_OPTION="-t $(IMLITE):dev" VERSION=$(VERSION)-dev build-odklite
 
 build-dev: build-odklite-dev
-	$(MAKE) TAGS_OPTION="-t $(IM):dev" VERSION=$(VERSION)-dev build
+	docker build $(CACHE) --platform $(ARCH) \
+		--build-arg ODK_VERSION=$(VERSION)-dev \
+		--build-arg ODKLITE_TAG=dev \
+		$(ROBOT_JAR_ARGS) \
+		-t $(IM):dev \
+		.
 
 clean:
 	docker kill $(IM) || echo not running
@@ -99,8 +104,8 @@ clean:
 
 test-flavor:
 	@if docker images | grep -q odk$(FLAVOR) ; then \
-		$(MAKE) test_odk$(FLAVOR)_programs IMAGE=odk$(FLAVOR) ; \
-		$(MAKE) test CMD=./seed-via-docker.sh IMAGE=odk$(FLAVOR) ; \
+		$(MAKE) test_odk$(FLAVOR)_programs ODK_IMAGE=odk$(FLAVOR) ; \
+		$(MAKE) test CMD=./seed-via-docker.sh ODK_IMAGE=odk$(FLAVOR) ; \
 	else \
 		echo "Image obolibrary/odk$(FLAVOR) not locally available" ; \
 	fi
@@ -154,8 +159,12 @@ publish-multiarch-dev:
 		publish-multiarch
 	docker buildx build $(CACHE) --push --platform $(PLATFORMS) \
 		--build-arg ODK_VERSION=$(VERSION)-dev \
+		--build-arg ODKLITE_TAG=dev \
 		-t $(IM):dev \
 		.
+
+constraints.txt: requirements.txt.full
+	docker run -v $$PWD:/work -w /work --rm -ti obolibrary/odkbuild:latest /work/update-constraints.sh
 
 clean-tests:
 	rm -rf target/*

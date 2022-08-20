@@ -10,7 +10,7 @@ WORKDIR /tools
 ENV JAVA_HOME="/usr"
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-ENV PATH="/tools:/tools/dosdp-tools/bin:$PATH"
+ENV PATH="/tools:/tools/dosdptools/bin:$PATH"
 
 ARG ODK_VERSION=0.0.0
 ENV ODK_VERSION=$ODK_VERSION
@@ -47,7 +47,7 @@ RUN wget -nv $ROBOT_JAR \
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_VERSION/dosdp-tools-$DOSDP_VERSION.tgz && \
     tar zxf dosdp-tools-$DOSDP_VERSION.tgz && \
     rm dosdp-tools-$DOSDP_VERSION.tgz && \
-    mv dosdp-tools-$DOSDP_VERSION /tools/dosdp-tools && \
+    mv dosdp-tools-$DOSDP_VERSION /tools/dosdptools && \
     wget -nv --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py \
         -O /tools/simple_pattern_tester.py && \
     chmod 755 /tools/simple_pattern_tester.py

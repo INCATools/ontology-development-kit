@@ -7,6 +7,10 @@
 - Re-defines the base from being "all axioms as edited by the ontology editors" to "all axioms and inferences as specified by the ontology editors". The new goal is much more rigorous in removing axioms from other ontologies as well. The old base file can now be exported as an  "editors release" instead ([pull](https://github.com/INCATools/ontology-development-kit/pull/643), [issue](https://github.com/INCATools/ontology-development-kit/issues/646)).
 - Introduces the option of skipping the use of reasoner during the release process (important for application ontologies), ([pull](https://github.com/INCATools/ontology-development-kit/pull/643), [issue](https://github.com/INCATools/ontology-development-kit/issues/644))
 - Introduces a new mode that enable the use of ODK entirely without owl:imports in the edit file (this is great in case we want to use the ODK workflows but not check in any files, imports or components, into version control, like huge application ontologies), ([pull](https://github.com/INCATools/ontology-development-kit/pull/643), [issue](https://github.com/INCATools/ontology-development-kit/issues/629)).
+- Changes in the `src/ontology/run.sh` wrapper script:
+  - [It is now possible](https://github.com/INCATools/ontology-development-kit/pull/640) to execute the Docker image through [Singularity](https://apptainer.org).
+  - The `IMAGE` variable, which can used to specify an alternative ODK image, [has been renamed](https://github.com/INCATools/ontology-development-kit/pull/655) to `ODK_IMAGE`.
+  - A new variable `ODK_TAG` has been introduced, allowing to specify an alternative tag (default is `latest`). A tag may also be specified directly as part of the `ODK_IMAGE` variable (as in `ODK_IMAGE=odkfull:v1.3.1`).
 
 # v1.3.1
 
