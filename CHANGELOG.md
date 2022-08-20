@@ -1,5 +1,7 @@
 # v1.3.2 (unpublished, target date 31 July 2022)
 
+- Making the `uribase` configurable. You can now set the URI base in your `myont-odk.yaml` file to something different from http://purl.obolibrary.org/obo/, which enables developers from outside OBO to use ODK. Note that there is no guarantee that you can export your ontology to the OBO file format of you customise your `baseuri` this way!
+
 # v1.3.1
 
 - [Update to ROBOT 1.9.0](https://github.com/INCATools/ontology-development-kit/pull/621), see [ROBOT release notes](https://github.com/ontodev/robot/releases/tag/v1.9.0). One major change concerning ODK: the [OBOGraphs JSON serialiser](https://github.com/geneontology/obographs) has been updated significantly, which means obographs json files may look a bit different. Most important change: empty elements (xrefs) are no longer serialised.
