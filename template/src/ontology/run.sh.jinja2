@@ -8,9 +8,20 @@
 # The assumption is that you are working in the src/ontology folder;
 # we therefore map the whole repo (../..) to a docker volume.
 #
+# To use singularity instead of docker, please issue
+# export USE_SINGULARITY=<any-value>
+# before running this script.
+#
 # See README-editors.md for more details.
 
-IMAGE=${IMAGE:-odkfull}
+ODK_IMAGE=${ODK_IMAGE:-odkfull}
+TAG_IN_IMAGE=$(echo $ODK_IMAGE | awk -F':' '{ print $2 }')
+if [ -n "$TAG_IN_IMAGE" ]; then
+  # Override ODK_TAG env var if IMAGE already includes a tag
+  ODK_TAG=$TAG_IN_IMAGE
+  ODK_IMAGE=$(echo $ODK_IMAGE | awk -F':' '{ print $1 }')
+fi
+ODK_TAG=${ODK_TAG:-latest}
 ODK_JAVA_OPTS={% if project.robot_java_args is defined and project.robot_java_args|length %}${ODK_JAVA_OPTS:-{{ project.robot_java_args }}}{% else %}${ODK_JAVA_OPTS:--Xmx8G}{% endif %}
 ODK_DEBUG=${ODK_DEBUG:-no}
 
@@ -23,7 +34,19 @@ if [ x$ODK_DEBUG = xyes ]; then
     TIMECMD="/usr/bin/time -f ### DEBUG STATS ###\nElapsed time: %E\nPeak memory: %M kb"
 fi
 
-docker run -v $PWD/../../:/work -w /work/src/ontology -e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$IMAGE $TIMECMD "$@"
+VOLUME_BIND=$PWD/../../:/work
+WORK_DIR=/work/src/ontology
+
+if [ -n "$USE_SINGULARITY" ]; then
+    {% if project.use_external_date is sameas True %}export TODAY=$(date +%Y-%m-%d){% endif %}
+    singularity exec --cleanenv \
+        --env "ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS,JAVA_OPTS=$ODK_JAVA_OPTS" \
+        --bind $VOLUME_BIND \
+        -W $WORK_DIR \
+        docker://obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
+else
+    docker run -v $VOLUME_BIND -w $WORK_DIR -e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
+fi
 
 case "$@" in
 *update_repo*|*release*)

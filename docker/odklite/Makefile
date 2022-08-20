@@ -2,6 +2,7 @@
 # Building docker image
 VERSION = "v1.2.30"
 IM=obolibrary/odklite
+TAGS_OPTION=-t $(IM):$(VERSION) -t $(IM):latest
 
 CACHE=
 
@@ -11,7 +12,7 @@ PLATFORMS=linux/amd64,linux/arm64
 build:
 	docker build $(CACHE) --platform $(ARCH) -f Dockerfile \
 	    --build-arg ODK_VERSION=$(VERSION) \
-	    -t $(IM):$(VERSION) -t $(IM):latest \
+	    $(TAGS_OPTION) \
 	    ../..
 
 build-no-cache:
@@ -27,5 +28,5 @@ publish: build
 publish-multiarch:
 	docker buildx build $(CACHE) --push --platform $(PLATFORMS) -f Dockerfile \
 	    --build-arg ODK_VERSION=$(VERSION) \
-	    -t $(IM):$(VERSION) -t $(IM):latest \
+	    $(TAGS_OPTION) \
 	    ../..
