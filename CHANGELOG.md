@@ -1,5 +1,9 @@
 # v1.3.2 (unpublished, target date 31 July 2022)
 
+## Makefile workflows
+
+- Adding new `make reason_test` command ([pull](https://github.com/INCATools/ontology-development-kit/pull/639), [issue](https://github.com/INCATools/ontology-development-kit/issues/645))
+- Adding intermediate artefact `$(TMPDIR)/$(ONT)-preprocess.owl` to the release workflow which enable the centralisation of preprocessing in a single make step. Basically, rather than creating release artefacts directly from the editors file (e.g. bfo-edit.owl), we add intermediate step from which all releases are derived. This intermediate can then be customised by the user ([pull](https://github.com/INCATools/ontology-development-kit/pull/639), [issue](https://github.com/INCATools/ontology-development-kit/issues/544))
 - Changes in the `src/ontology/run.sh` wrapper script:
   - [It is now possible](https://github.com/INCATools/ontology-development-kit/pull/640) to execute the Docker image through [Singularity](https://apptainer.org).
   - The `IMAGE` variable, which can used to specify an alternative ODK image, [has been renamed](https://github.com/INCATools/ontology-development-kit/pull/655) to `ODK_IMAGE`.

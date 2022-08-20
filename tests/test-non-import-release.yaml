@@ -1,0 +1,16 @@
+id: toner
+title: "Test Ontology for non-edit-import release system."
+github_org: obophenotype
+repo: toner
+namespaces: 
+  - http://purl.obolibrary.org/obo/TONER_
+  - http://purl.obolibrary.org/obo/PATO_
+release_artefacts: 
+  - editors
+  - base
+primary_release: base
+import_group:
+  release_imports: TRUE
+  products:
+    - id: ro
+    - id: pato
