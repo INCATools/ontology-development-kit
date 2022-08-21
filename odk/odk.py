@@ -552,6 +552,10 @@ class OntologyProject(JsonSchemaMixin):
     uribase : str = "http://purl.obolibrary.org/obo"
     """Base URI for PURLs. DO NOT MODIFY AT THIS TIME, code is still hardwired for OBO """
     
+    uribase_suffix : str = None
+    """Suffix for the uri base. If not set, the suffix will be the ontology id by default."""
+    
+    
     contact : Optional[Person] = None
     """Single contact for ontology as required by OBO"""
     
