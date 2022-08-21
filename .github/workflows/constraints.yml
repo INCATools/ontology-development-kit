@@ -15,7 +15,7 @@ jobs:
       - name: work around permission issue
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Build constraints.txt
-        run: make constraints.txt -B
+        run: sh update-constraints.sh
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
