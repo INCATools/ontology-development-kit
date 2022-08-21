@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE=${IMAGE:-odkfull}
+ODK_IMAGE=${ODK_IMAGE:-odkfull}
 
 program_name=$1; shift
 echo -n "Checking for $program_name... "
