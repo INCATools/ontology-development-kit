@@ -125,7 +125,7 @@ log to determine if any modifications have been made?
 ## General SOP for ODK release and publication
 
 * Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).
-* Update the [constraits.txt file](https://github.com/INCATools/ontology-development-kit/pull/476#issuecomment-924050937)
+* Update the [constraints.txt file](https://github.com/INCATools/ontology-development-kit/pull/476#issuecomment-924050937), with `make constraints.txt`.
 * Do any amount of testing as needed to be confident we are ready for release (at the very least, do a local build with `make build` and run the test suite with `make tests`; possibly run some mock releases on known ontologies such as `FBbt`, etc.).
 * Tag the release and push the tag to GitHub and create a formal release from the newly pushed tag.
 * Run `docker login` to ensure you are logged in. You must have access rights to `obolibrary` organisation to run the following.
@@ -197,6 +197,19 @@ make publish-multiarch
 Use the variable `PLATFORMS` to specify the architectures for which an
 image should be built. The default is `linux/amd64,linux/arm64`, for
 images that work on both x86_64 and arm64 machines.
+
+To publish only the development version:
+
+```
+make publish-multiarch-dev
+```
+
+Sometimes, it may be necessary to delete the multiarch and redo it (roughly once per month):
+
+```
+docker buildx rm multiarch
+docker buildx create --name multiarch --driver docker-container --use
+```
 
 ## Some notes on templating and logic
 
