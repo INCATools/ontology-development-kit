@@ -1,0 +1,26 @@
+name: Update python constraints
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 13 * * 1"
+jobs:
+  constraints:
+    runs-on: ubuntu-latest
+    container: obolibrary/odkfull:latest
+    strategy:
+      max-parallel: 1
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+      - name: work around permission issue
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Build constraints.txt
+        run: make constraints.txt -B
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Update constraints.txt
+          title: 'Update constraints.txt'
+          body: |
+            This pull request updates constraints.txt. Make sure you run make tests manually.
+          assignees: matentzn
