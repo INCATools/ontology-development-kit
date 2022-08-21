@@ -24,13 +24,13 @@
 format-version: 1.2
 {% if project.import_group is defined -%}
 {% for imp in project.import_group.products %}
-import: {{ project.uribase }}/{{ project.id }}/imports/{{ imp.id }}_import.owl
+import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl
 {% endfor %}
 {% endif %}
 {%- if project.use_dosdps %}
-import: {{ project.uribase }}/{{ project.id }}/patterns/definitions.owl
+import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/definitions.owl
 {%- if project.import_pattern_ontology %}
-import: {{ project.uribase }}/{{ project.id }}/patterns/pattern.owl
+import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/pattern.owl
 {% endif -%}
 {% endif %}
 ontology: {{project.id}}
@@ -71,14 +71,14 @@ Prefix(dcterms:=<http://purl.org/dc/terms/>)
 Ontology(<{{ project.uribase }}/{{ project.id }}.owl>
 {% if project.import_group is defined -%}
 {% for imp in project.import_group.products %}
-Import(<{{ project.uribase }}/{{ project.id }}/imports/{{ imp.id }}_import.owl>)
+Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl>)
 {% endfor %}
 {% endif %}
 
 {%- if project.use_dosdps %}
-Import(<{{ project.uribase }}/{{ project.id }}/patterns/definitions.owl>)
+Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/definitions.owl>)
 {%- if project.import_pattern_ontology %}
-Import(<{{ project.uribase }}/{{ project.id }}/patterns/pattern.owl>)
+Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/pattern.owl>)
 {% endif -%}
 {% endif %}
 Annotation(dcterms:description "{{ project.description }}")
@@ -129,7 +129,7 @@ Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 Prefix: idrange: <http://purl.obolibrary.org/obo/ro/idrange/>
 Prefix: owl: <http://www.w3.org/2002/07/owl#>
 
-Ontology: <{{ project.uribase }}/{{ project.id }}/{{ project.id }}-idranges.owl>
+Ontology: <{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/{{ project.id }}-idranges.owl>
 
 
 Annotations: 
@@ -197,7 +197,7 @@ imports/%_import.owl: mirror/%.owl
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="{{ project.uribase }}/{{ project.id }}/imports/{{ imp.id }}_import.owl"/>
+    <owl:Ontology rdf:about="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl"/>
 
     <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
 </rdf:RDF>
@@ -383,7 +383,7 @@ defined_class	example
 
 ^^^ src/patterns/dosdp-patterns/example.yaml
 pattern_name: example
-pattern_iri: {{ project.uribase }}/{{ project.id }}/example.yaml
+pattern_iri: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/example.yaml
 description: "This is a minimal example pattern."
 
 classes:
@@ -569,7 +569,7 @@ WHERE {
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="{{ project.uribase }}/{{ project.id }}/components/{{ component.filename }}"/>
+    <owl:Ontology rdf:about="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/components/{{ component.filename }}"/>
 
     <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
 </rdf:RDF>
@@ -1080,8 +1080,8 @@ Note: our ODK file should only have one `import_group` which can contain multipl
     ```
     ...
     Ontology(<{{ project.uribase }}/{{ project.id }}.owl>
-    Import(<{{ project.uribase }}/{{ project.id }}/imports/ro_import.owl>)
-    Import(<{{ project.uribase }}/{{ project.id }}/imports/go_import.owl>)
+    Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/ro_import.owl>)
+    Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/go_import.owl>)
     ...
     ```
 2. Add your imports redirect to your catalog file `src/ontology/catalog-v001.xml`, for example:
@@ -1102,7 +1102,7 @@ Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl>)
 in your editors file (the ontology) and
 
 ```
-<uri name="{{ project.uribase }}/{{ project.id }}/imports/go_import.owl" uri="imports/go_import.owl"/>
+<uri name="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/go_import.owl" uri="imports/go_import.owl"/>
 ```
 
 in you catalog, tools like `robot` or Protege will recognise the statement
@@ -1490,20 +1490,20 @@ components:
 3) Add the component to your catalog file (src/ontology/catalog-v001.xml)
 
 ```
-  <uri name="{{ project.uribase }}/{{ project.id }}/components/your-component-name.owl" uri="components/your-component-name.owl"/>
+  <uri name="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/components/your-component-name.owl" uri="components/your-component-name.owl"/>
 ```
 
 4) Add the component to the edit file (src/ontology/{{ project.id }}-edit.obo)
 for .obo formats: 
 
 ```
-import: {{ project.uribase }}/{{ project.id }}/components/your-component-name.owl
+import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/components/your-component-name.owl
 ```
 
 for .owl formats: 
 
 ```
-Import(<{{ project.uribase }}/{{ project.id }}/components/your-component-name.owl>)
+Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/components/your-component-name.owl>)
 ```
 
 5) Refresh your repo by running `sh run.sh make update_repo` - this should create a new file in src/ontology/components.

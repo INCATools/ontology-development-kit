@@ -25,7 +25,7 @@
 OBOBASE=                    http://purl.obolibrary.org/obo
 URIBASE=                    {{ project.uribase }}
 ONT=                        {{ project.id }}
-ONTBASE=                    $(URIBASE)/$(ONT)
+ONTBASE=                    {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}
 EDIT_FORMAT=                {{ project.edit_format|default('owl') }}
 SRC =                       $(ONT)-edit.$(EDIT_FORMAT)
 CATALOG=                    {{ project.catalog_file }}
