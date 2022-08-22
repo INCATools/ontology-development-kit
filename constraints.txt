@@ -13,7 +13,7 @@ backcall==0.2.0
 bcp47==0.0.4
 beautifulsoup4==4.11.1
 bidict==0.22.0
-bioregistry==0.5.67
+bioregistry==0.5.71
 black==21.12b0
 bleach==5.0.1
 bmt==0.8.10
@@ -22,7 +22,7 @@ certifi==2022.6.15
 cffi==1.15.1
 CFGraph==0.2.1
 chardet==4.0.0
-charset-normalizer==2.1.0
+charset-normalizer==2.1.1
 class-resolver==0.3.10
 click==8.1.3
 commonmark==0.9.1
@@ -59,7 +59,7 @@ ghp-import==2.1.0
 google==3.0.0
 google-api-core==2.8.2
 google-api-python-client==2.57.0
-google-auth==2.10.0
+google-auth==2.11.0
 google-auth-httplib2==0.1.0
 google-auth-oauthlib==0.5.2
 googleapis-common-protos==1.56.4
@@ -93,7 +93,7 @@ jsonpath-ng==1.5.3
 jsonpath-rw==1.4.0
 jsonpickle==2.2.0
 jsonpointer==2.3
-jsonschema==4.12.1
+jsonschema==4.14.0
 jsonschema2md==0.4.0
 jsonstreams==0.6.0
 jupyter==1.0.0
@@ -101,7 +101,7 @@ jupyter-client==7.3.4
 jupyter-console==6.4.4
 jupyter-core==4.11.1
 jupyterlab-pygments==0.2.2
-jupyterlab-widgets==3.0.1
+jupyterlab-widgets==3.0.2
 keyring==23.8.2
 kgcl-rdflib==0.2.0
 kgcl-schema==0.2.0
@@ -126,7 +126,7 @@ mdurl==0.1.2
 mergedeep==1.3.4
 mistune==0.8.4
 mkdocs==1.3.1
-mkdocs-material==8.4.0
+mkdocs-material==8.4.1
 mkdocs-material-extensions==1.0.3
 more-click==0.1.1
 multidict==6.0.2
@@ -275,7 +275,7 @@ watchdog==2.1.9
 wcwidth==0.2.5
 webencodings==0.5.1
 websocket-client==1.3.3
-widgetsnbextension==4.0.1
+widgetsnbextension==4.0.2
 wrapt==1.14.1
 yamldown==0.1.8
 yarl==1.8.1
