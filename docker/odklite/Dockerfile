@@ -25,6 +25,7 @@ RUN apt-get update && \
         openjdk-11-jre-headless \
         python3-pip \
         python-is-python3 \
+        python3-six \
         make \
         unzip \
         wget \
