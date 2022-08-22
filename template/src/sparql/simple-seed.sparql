@@ -1,5 +1,4 @@
 prefix owl: <http://www.w3.org/2002/07/owl#>
-prefix obo: <http://purl.obolibrary.org/obo/>
 
 SELECT DISTINCT ?cls WHERE
 {

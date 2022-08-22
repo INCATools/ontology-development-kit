@@ -1,0 +1,11 @@
+id: turibasesuffix
+title: "Test URI Base with suffix"
+github_org: INCATools
+repo: ontology-development-kit
+uribase: https://w3id.org/odk
+uribase_suffix: ontology
+import_group:
+  products:
+    - id: ro
+    - id: pato
+      use_base: TRUE

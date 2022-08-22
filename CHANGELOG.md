@@ -1,5 +1,9 @@
 # v1.3.2 (unpublished, target date 31 July 2022)
 
+## New configuration options 
+
+- Making the `uribase` configurable. You can now set the URI base in your `myont-odk.yaml` file to something different from http://purl.obolibrary.org/obo/, which enables developers from outside OBO to use ODK. Note that there is no guarantee that you can export your ontology to the OBO file format of you customise your `baseuri` this way!
+
 ## Makefile workflows
 
 - Adding new `make reason_test` command ([pull](https://github.com/INCATools/ontology-development-kit/pull/639), [issue](https://github.com/INCATools/ontology-development-kit/issues/645))
