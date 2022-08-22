@@ -1209,8 +1209,9 @@ be created which you can edit as you see fit. Typical ways to edit:
 1. Using a ROBOT template to generate the component (see below)
 1. Manually curating the component separately with Protege or any other editor
 1. Providing a `components/mycomp.owl:` make target in `src/ontology/{{ project.id }}.Makefile`
-and provide a custom command to generate the component.
-1. Providing an additional attribute the component in `src/ontology/{{ project.id }}-odk.yaml`, `source`,
+and provide a custom command to generate the component
+    - `WARNING`: Note that the custom rule to generate the component _MUST NOT_ depend on any other ODK-generated file such as seed files and the like (see [issue](https://github.com/INCATools/ontology-development-kit/issues/637)).
+1. Providing an additional attribute for the component in `src/ontology/{{ project.id }}-odk.yaml`, `source`,
 to specify that this component should simply be downloaded from somewhere on the web.
 
 ### Adding a new component based on a ROBOT template
