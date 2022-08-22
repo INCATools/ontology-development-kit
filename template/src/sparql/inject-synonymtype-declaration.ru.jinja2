@@ -7,5 +7,5 @@ INSERT { ?y rdfs:subPropertyOf <http://www.geneontology.org/formats/oboInOwl#Syn
 WHERE {
   ?x <http://www.geneontology.org/formats/oboInOwl#hasSynonymType>  ?y .
   FILTER(isIRI(?y))
-  FILTER(regex(str(?y),"^(http://purl.obolibrary.org/obo/)") || regex(str(?y),"^(http://www.ebi.ac.uk/efo/)") || regex(str(?y),"^(https://w3id.org/biolink/)"))
+  FILTER(regex(str(?y),"^(http://purl.obolibrary.org/obo/)") || regex(str(?y),"^(http://www.ebi.ac.uk/efo/)") || regex(str(?y),"^(https://w3id.org/biolink/)" || regex(str(?y),"^({{ project.uribase }})")))
 }

@@ -24,13 +24,13 @@
 format-version: 1.2
 {% if project.import_group is defined -%}
 {% for imp in project.import_group.products %}
-import: http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl
+import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl
 {% endfor %}
 {% endif %}
 {%- if project.use_dosdps %}
-import: http://purl.obolibrary.org/obo/{{ project.id }}/patterns/definitions.owl
+import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/definitions.owl
 {%- if project.import_pattern_ontology %}
-import: http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl
+import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/pattern.owl
 {% endif -%}
 {% endif %}
 ontology: {{project.id}}
@@ -58,7 +58,7 @@ name: license
 is_metadata_tag: true
 
 {% else %}
-Prefix(:=<http://purl.obolibrary.org/obo/{{ project.id }}.owl#>)
+Prefix(:=<{{ project.uribase }}/{{ project.id }}.owl#>)
 Prefix(dce:=<http://purl.org/dc/elements/1.1/>)
 Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
 Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
@@ -68,17 +68,17 @@ Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
 Prefix(dcterms:=<http://purl.org/dc/terms/>)
 
 
-Ontology(<http://purl.obolibrary.org/obo/{{ project.id }}.owl>
+Ontology(<{{ project.uribase }}/{{ project.id }}.owl>
 {% if project.import_group is defined -%}
 {% for imp in project.import_group.products %}
-Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/{{ imp.id }}_import.owl>)
+Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl>)
 {% endfor %}
 {% endif %}
 
 {%- if project.use_dosdps %}
-Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/definitions.owl>)
+Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/definitions.owl>)
 {%- if project.import_pattern_ontology %}
-Import(<http://purl.obolibrary.org/obo/{{ project.id }}/patterns/pattern.owl>)
+Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/pattern.owl>)
 {% endif -%}
 {% endif %}
 Annotation(dcterms:description "{{ project.description }}")
@@ -86,7 +86,7 @@ Annotation(dcterms:license <{{ project.license }}>)
 Annotation(dcterms:title "{{ project.title }}")
 
 
-Declaration(Class(<http://purl.obolibrary.org/obo/{{ project.id | upper }}_0000000>))
+Declaration(Class(<{{ project.uribase }}/{{ project.id | upper }}_0000000>))
 Declaration(AnnotationProperty(dcterms:description))
 Declaration(AnnotationProperty(dcterms:license))
 Declaration(AnnotationProperty(dcterms:title))
@@ -103,9 +103,9 @@ AnnotationAssertion(rdfs:label dcterms:title "title")
 #   Classes
 ############################
 
-# Class: <http://purl.obolibrary.org/obo/{{ project.id | upper }}_0000000> (root node)
+# Class: <{{ project.uribase }}/{{ project.id | upper }}_0000000> (root node)
 
-AnnotationAssertion(rdfs:label <http://purl.obolibrary.org/obo/{{ project.id | upper }}_0000000> "root node"@en)
+AnnotationAssertion(rdfs:label <{{ project.uribase }}/{{ project.id | upper }}_0000000> "root node"@en)
 
 
 )
@@ -129,12 +129,12 @@ Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 Prefix: idrange: <http://purl.obolibrary.org/obo/ro/idrange/>
 Prefix: owl: <http://www.w3.org/2002/07/owl#>
 
-Ontology: <http://purl.obolibrary.org/obo/{{ project.id }}/{{ project.id }}-idranges.owl>
+Ontology: <{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/{{ project.id }}-idranges.owl>
 
 
 Annotations: 
     idsfor: "{{ project.id | upper }}",
-    idprefix: "http://purl.obolibrary.org/obo/{{ project.id | upper }}_",
+    idprefix: "{{ project.uribase }}/{{ project.id | upper }}_",
     iddigits: 7
 
 AnnotationProperty: idprefix:
@@ -189,7 +189,7 @@ imports/%_import.owl: mirror/%.owl
 ^^^ src/ontology/imports/{{ imp.id }}_import.owl
 <?xml version="1.0"?>
 <rdf:RDF 
-     xml:base="http://purl.obolibrary.org/obo/"
+     xml:base="{{ project.uribase }}/"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
@@ -197,7 +197,7 @@ imports/%_import.owl: mirror/%.owl
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="{{ project.uribase }}/{{ project.id }}/imports/{{ imp.id }}_import.owl"/>
+    <owl:Ontology rdf:about="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl"/>
 
     <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
 </rdf:RDF>
@@ -383,7 +383,7 @@ defined_class	example
 
 ^^^ src/patterns/dosdp-patterns/example.yaml
 pattern_name: example
-pattern_iri: http://purl.obolibrary.org/obo/{{ project.id }}/example.yaml
+pattern_iri: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/example.yaml
 description: "This is a minimal example pattern."
 
 classes:
@@ -445,7 +445,7 @@ WHERE {
   { ?s1 ?p1 ?term . }
   UNION
   { ?term ?p2 ?o2 . }
-  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {#-
     SPARQL QUERY QC checks
@@ -462,7 +462,7 @@ SELECT ?term WHERE {
   { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first ?term ] ] }
     UNION
   { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first [ owl:someValuesFrom ?term ] ] ] }
-  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
@@ -480,7 +480,7 @@ SELECT ?term ?xl ?y ?yl ?z ?zl WHERE {
   ?term rdfs:subClassOf ?z .
   ?z rdfs:label ?zl .
   
-  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
@@ -494,7 +494,7 @@ WHERE {
   VALUES ?property { never_in_taxon: present_in_taxon: }
   ?term ?property ?taxon .
   FILTER (!isIRI(?taxon) || !STRSTARTS(STR(?taxon), "http://purl.obolibrary.org/obo/NCBITaxon_"))
-  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
@@ -515,7 +515,7 @@ WHERE {
     oboInOwl:inSubset
     dcterms:contributor  }
   ?term ?property ?value .
-  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
   FILTER (!isIRI(?value))
 }
 {% endif %}
@@ -539,7 +539,7 @@ WHERE {
     oboInOwl:inSubset
     dcterms:contributor  }
   ?term ?property ?value .
-  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
   FILTER (!isIRI(?value))
 }
 {% endif %}
@@ -552,7 +552,7 @@ SELECT ?term ?value
 WHERE {
   ?term rdfs:label ?value .
   FILTER (REGEX(?value, "http[s]?[:]"))
-  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "http://purl.obolibrary.org/obo/{{ project.id.upper() }}_"){% endif %}))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
@@ -561,7 +561,7 @@ WHERE {
 ^^^ src/ontology/components/{{ component.filename }}
 <?xml version="1.0"?>
 <rdf:RDF 
-     xml:base="http://purl.obolibrary.org/obo/"
+     xml:base="{{ project.uribase }}/"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
@@ -569,7 +569,7 @@ WHERE {
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="{{ project.uribase }}/{{ project.id }}/components/{{ component.filename }}"/>
+    <owl:Ontology rdf:about="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/components/{{ component.filename }}"/>
 
     <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
 </rdf:RDF>
@@ -1079,9 +1079,9 @@ Note: our ODK file should only have one `import_group` which can contain multipl
 1. Add an imports statement to your `src/ontology/{{ project.id }}-edit.owl` file. We suggest to do this using a text editor, by simply copying an existing imports declaration and renaming it to the new ontology import, for example as follows:
     ```
     ...
-    Ontology(<http://purl.obolibrary.org/obo/{{ project.id }}.owl>
-    Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/ro_import.owl>)
-    Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl>)
+    Ontology(<{{ project.uribase }}/{{ project.id }}.owl>
+    Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/ro_import.owl>)
+    Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/go_import.owl>)
     ...
     ```
 2. Add your imports redirect to your catalog file `src/ontology/catalog-v001.xml`, for example:
@@ -1102,12 +1102,13 @@ Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl>)
 in your editors file (the ontology) and
 
 ```
-<uri name="http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl" uri="imports/go_import.owl"/>
+<uri name="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/go_import.owl" uri="imports/go_import.owl"/>
 ```
 
-in you catalog, tools like `robot` or Protege will recognise the statement
+in your catalog, tools like `robot` or Protege will recognize the statement
 in the catalog file to redirect the URL `http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl`
 to the local file `imports/go_import.owl` (which is in your `src/ontology` directory).
+
 
 ### Modify an existing import
 
@@ -1209,15 +1210,16 @@ be created which you can edit as you see fit. Typical ways to edit:
 1. Using a ROBOT template to generate the component (see below)
 1. Manually curating the component separately with Protege or any other editor
 1. Providing a `components/mycomp.owl:` make target in `src/ontology/{{ project.id }}.Makefile`
-and provide a custom command to generate the component.
-1. Providing an additional attribute the component in `src/ontology/{{ project.id }}-odk.yaml`, `source`,
+and provide a custom command to generate the component
+    - `WARNING`: Note that the custom rule to generate the component _MUST NOT_ depend on any other ODK-generated file such as seed files and the like (see [issue](https://github.com/INCATools/ontology-development-kit/issues/637)).
+1. Providing an additional attribute for the component in `src/ontology/{{ project.id }}-odk.yaml`, `source`,
 to specify that this component should simply be downloaded from somewhere on the web.
 
 ### Adding a new component based on a ROBOT template
 
 Since ODK 1.3.2, it is possible to simply link a ROBOT template to a component without having to specify any of the import logic. In order to add a new component that is connected to one or more template files, follow these steps:
 
-1. Open `src/ontology/{{ project.id }}-odk.yaml`
+1. Open `src/ontology/{{ project.id }}-odk.yaml`.
 1. Make sure that `use_templates: TRUE` is set in the global project options. You should also make sure that `use_context: TRUE` is set in case you are using prefixes in your templates that are not known to `robot`, such as `OMOP:`, `CPONT:` and more. All non-standard prefixes you are using should be added to `config/context.json`.
 1. Add another component to the `products` section.
 1. To activate this component to be template-driven, simply say: `use_template: TRUE`. This will create an empty template for you in the templates directory, which will automatically be processed when recreating the component (e.g. `run.bat make recreate-mycomp`).
@@ -1490,20 +1492,20 @@ components:
 3) Add the component to your catalog file (src/ontology/catalog-v001.xml)
 
 ```
-  <uri name="http://purl.obolibrary.org/obo/{{ project.id }}/components/your-component-name.owl" uri="components/your-component-name.owl"/>
+  <uri name="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/components/your-component-name.owl" uri="components/your-component-name.owl"/>
 ```
 
 4) Add the component to the edit file (src/ontology/{{ project.id }}-edit.obo)
 for .obo formats: 
 
 ```
-import: http://purl.obolibrary.org/obo/{{ project.id }}/components/your-component-name.owl
+import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/components/your-component-name.owl
 ```
 
 for .owl formats: 
 
 ```
-Import(<http://purl.obolibrary.org/obo/{{ project.id }}/components/your-component-name.owl>)
+Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/components/your-component-name.owl>)
 ```
 
 5) Refresh your repo by running `sh run.sh make update_repo` - this should create a new file in src/ontology/components.

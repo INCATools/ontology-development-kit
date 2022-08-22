@@ -1,0 +1,10 @@
+id: turibase
+title: "Test URI Base"
+github_org: INCATools
+repo: ontology-development-kit
+uribase: https://w3id.org/odk
+import_group:
+  products:
+    - id: ro
+    - id: pato
+      use_base: TRUE
