@@ -57,6 +57,11 @@ tests/*.yaml: .FORCE
 schema/project-schema.json:
 	./odk/odk.py dump-schema > $@
 
+docs/project-schema.md: schema/project-schema.json
+	python odk/schema_documentation.py
+
+docs: docs/project-schema.md
+
 # Building docker image
 VERSION = "v1.3.2"
 IM=obolibrary/odkfull
