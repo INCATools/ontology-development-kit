@@ -454,19 +454,19 @@ all_components: $(OTHER_SRC)
 
 .PHONY: recreate-components
 recreate-components:
-	$(MAKE) IMP=true MIR=true PAT=true IMP_LARGE=true all_components -B
+	$(MAKE) COMP=true IMP=false MIR=true PAT=true IMP_LARGE=false all_components -B
 
 .PHONY: no-mirror-recreate-components
 no-mirror-recreate-components:
-	$(MAKE) IMP=false MIR=false PAT=true IMP_LARGE=false all_components -B
+	$(MAKE) COMP=true IMP=false MIR=false PAT=true IMP_LARGE=false all_components -B
 
 .PHONY: recreate-%
 recreate-%:
-	$(MAKE) IMP=true IMP_LARGE=false MIR=false PAT=true $(COMPONENTSDIR)/$*.owl -B
+	$(MAKE) COMP=true IMP=false IMP_LARGE=false MIR=true PAT=true $(COMPONENTSDIR)/$*.owl -B
 
 .PHONY: no-mirror-recreate-%
 no-mirror-recreate-%:
-	$(MAKE) IMP=false IMP_LARGE=false MIR=false PAT=true $(COMPONENTSDIR)/$*.owl -B
+	$(MAKE) COMP=true IMP=false IMP_LARGE=false MIR=false PAT=true $(COMPONENTSDIR)/$*.owl -B
 
 $(COMPONENTSDIR)/%: | $(COMPONENTSDIR)
 	touch $@
