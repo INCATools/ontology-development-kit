@@ -37,6 +37,10 @@ fi
 VOLUME_BIND=$PWD/../../:/work
 WORK_DIR=/work/src/ontology
 
+if [ -n "$ODK_BINDS" ]; then
+    VOLUME_BIND="$VOLUME_BIND,$ODK_BINDS"
+fi
+
 if [ -n "$USE_SINGULARITY" ]; then
     {% if project.use_external_date is sameas True %}export TODAY=$(date +%Y-%m-%d){% endif %}
     singularity exec --cleanenv \
@@ -45,7 +49,8 @@ if [ -n "$USE_SINGULARITY" ]; then
         -W $WORK_DIR \
         docker://obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 else
-    docker run -v $VOLUME_BIND -w $WORK_DIR -e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
+    BIND_OPTIONS="-v $(echo $VOLUME_BIND | sed 's/,/ -v /')"
+    docker run $BIND_OPTIONS -w $WORK_DIR -e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}--rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 fi
 
 case "$@" in
