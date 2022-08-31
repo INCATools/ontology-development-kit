@@ -14,6 +14,10 @@
 #
 # See README-editors.md for more details.
 
+if [ -f run.sh.conf ]; then
+    source run.sh.conf
+fi
+
 ODK_IMAGE=${ODK_IMAGE:-odkfull}
 TAG_IN_IMAGE=$(echo $ODK_IMAGE | awk -F':' '{ print $2 }')
 if [ -n "$TAG_IN_IMAGE" ]; then
