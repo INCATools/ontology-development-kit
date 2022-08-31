@@ -469,6 +469,11 @@ $(COMPONENTSDIR)/%: | $(COMPONENTSDIR)
 	touch $@
 .PRECIOUS: $(COMPONENTSDIR)/%
 
+.PHONY: component-download-mondo.owl
+component-download-mondo.owl: | $(TMPDIR)
+	if [ $(MIR) = true ] && [ $(COMP) = true ]; then $(ROBOT) merge -I http://purl.obolibrary.org/obo/mondo.owl \
+	annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $(TMPDIR)/$@.owl; fi
+
 {% for component in project.components.products %}
 {% if component.source is not none %}
 .PHONY: component-download-{{ component.filename }}
@@ -483,6 +488,7 @@ $(COMPONENTSDIR)/{{ component.filename }}:  component-download-{{ component.file
 {% endif -%}
 {% endfor -%}
 {% endif -%}
+
 {% if project.import_group is defined -%}
 # ----------------------------------------
 # Mirroring upstream ontologies
