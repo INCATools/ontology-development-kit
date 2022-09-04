@@ -47,6 +47,10 @@ For more details, see
 Full list of contributors: 
 https://github.com/INCATools/ontology-development-kit/graphs/contributors
 
+# Cite
+
+https://arxiv.org/abs/2207.02056
+
 # Outstanding contributions
 Outstanding contributors are groups and institutions that have helped with organising the ODK development, providing funding,
 advice and infrastructure. We are very grateful for all your contribution - the project would not exist without you!
