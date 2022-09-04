@@ -35,10 +35,14 @@ For more details, see
 
 * @matentzn Nicolas Matentzoglu (Semanticly Ltd)
 * @gouttegd Damien Goutte-Gattat (Flybase)
-* @cmungall Chris Mungall (LBNL)
-* @shawntanzk Shawn Tan (EMBL-EBI)
 * @anitacaron Anita Caron (EMBL-EBI)
+* @balhoff Jim Balhoff (RENCI)
+* @cmungall Chris Mungall (LBNL)
 * @dosumis David Osumi-Sutherland (EMBL-EBI)
+* @ehartley Emily Hartley (Critical Path Institute)
+* @hkir-dev Huseyin Kir (EMBL-EBI)
+* @shawntanzk Shawn Tan (EMBL-EBI)
+* @ubyndr Ismail Ugur Bayindir (EMBL-EBI)
 
 Full list of contributors: 
 https://github.com/INCATools/ontology-development-kit/graphs/contributors
