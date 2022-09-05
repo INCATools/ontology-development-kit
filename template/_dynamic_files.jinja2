@@ -773,6 +773,7 @@ You can find descriptions of the standard ontology engineering workflows [here](
 - [Setting up Docker for ODK](SettingUpDockerForODK.md)
 - [Imports management](UpdateImports.md)
 - [Managing the documentation](ManageDocumentation.md)
+- [Managing your Automated Testing](ManageAutomatedTest.md)
 
 ^^^ docs/odk-workflows/ContinuousIntegration.md
 # Introduction to Continuous Integration Workflows with ODK
@@ -1506,6 +1507,35 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
 3. Just to double check, you can now navigate to your documentation pages (usually https://{{ project.github_org }}.github.io/{{ project.repo }}/). 
    Just make sure you give GitHub 2-5 minutes to build the pages!
 {% if project.use_dosdps %}
+
+^^^ docs/odk-workflows/ManageAutomatedTest.md
+## Constraint violation checks
+
+Using [SPARQL](https://www.w3.org/TR/rdf-sparql-query/) to create custom testing is possible. They're configured to be executed via GitHub Actions. If these return any results, then the build will fail.
+
+### Steps to add a constraint violation check:
+1. Add the SPARQL query in `src/sparql`. The name of the file should end with `-violation.sparql`. Please give a name that helps to understand which violation the query wants to check.
+1. Add the name of the new file to odk configuration file `src/ontology/uberon-odk.yaml`:
+    1. Include the name of the file (without the `-violation.sparql` part) to the list inside the key `custom_sparql_checks` that is inside `robot_report` key
+    1. If the `robot_report` or `custom_sparql_checks` keys are not available, please add this code block to the end of the file.
+
+``` yaml
+  robot_report:
+    release_reports: False
+    fail_on: ERROR
+    use_labels: False
+    custom_profile: True
+    report_on:
+      - edit
+    custom_sparql_checks:
+      - name-of-the-file-check
+```
+1.. Update the repository so your new SPARQL check will be included in the QC
+
+```shell
+sh run.sh make update_repo
+```
+
 ^^^ docs/templates/dosdp.md
 # DOSDP documentation stub
 
@@ -1547,6 +1577,7 @@ nav:
           - Imports management: odk-workflows/UpdateImports.md
           - Components management: odk-workflows/components.md
           - Managing the documentation: odk-workflows/ManageDocumentation.md
+          - Managing your automated testing: odk-workflows/ManageAutomatedTest.md
           - Continuous Integration: odk-workflows/ContinuousIntegration.md
           - Your ODK Repository Overview: odk-workflows/RepositoryFileStructure.md 
       - Contributing: contributing.md{% if project.use_dosdps %}
