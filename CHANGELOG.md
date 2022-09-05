@@ -12,6 +12,8 @@
   - [It is now possible](https://github.com/INCATools/ontology-development-kit/pull/640) to execute the Docker image through [Singularity](https://apptainer.org).
   - The `IMAGE` variable, which can used to specify an alternative ODK image, [has been renamed](https://github.com/INCATools/ontology-development-kit/pull/655) to `ODK_IMAGE`.
   - A new variable `ODK_TAG` has been introduced, allowing to specify an alternative tag (default is `latest`). A tag may also be specified directly as part of the `ODK_IMAGE` variable (as in `ODK_IMAGE=odkfull:v1.3.1`).
+  - A new variable `ODK_BINDS` has been introduced, allowing to specify extra bindings between a directory on the host computer and a directory inside the Docker container.
+  - Variables used by the `run.sh` script can now be set in a `src/ontology/run.sh.conf` file, which will be sourced by the wrapper script.
 
 # v1.3.1
 
