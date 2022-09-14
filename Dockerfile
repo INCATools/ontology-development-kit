@@ -91,7 +91,7 @@ RUN npm install obographviz && \
     ln -s /tools/node_modules/obographviz/bin/og2dot.js /tools/og2dot.js
 
 # Add og2dot.js to environment path
-ENV PATH /tools/og2dot:$PATH
+ENV PATH /tools/node_modules/obographviz/bin/:$PATH
 
 # Install OBO-Dashboard.
 COPY scripts/obodash /tools
