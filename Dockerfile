@@ -90,9 +90,6 @@ RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
 RUN npm install obographviz && \
     ln -s /tools/node_modules/obographviz/bin/og2dot.js /tools/og2dot.js
 
-# Add og2dot.js to environment path
-ENV PATH /tools/node_modules/obographviz/bin/:$PATH
-
 # Install OBO-Dashboard.
 COPY scripts/obodash /tools
 RUN chmod +x /tools/obodash && \
