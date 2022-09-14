@@ -87,7 +87,7 @@ RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
     ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
 
 # Install obographviz
-RUN npm install obographviz && \
+RUN npm install -g obographviz && \
     ln -s /tools/node_modules/obographviz/bin/og2dot.js /tools/og2dot.js
 
 # Install OBO-Dashboard.
