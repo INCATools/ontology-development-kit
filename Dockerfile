@@ -13,6 +13,22 @@ ENV ODK_VERSION $ODK_VERSION
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
 ENV COURSIER_CACHE "/tools/.coursier-cache"
 
+# nvm environment variables
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 16.17.0
+
+# install nvm, node and npm
+RUN mkdir $NVM_DIR \
+    && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash \
+    && . $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+# add node and npm to path so the commands are available
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
 # Install tools provided by Ubuntu.
 RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends  \
     build-essential \
@@ -29,8 +45,6 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     pkg-config \
     xlsx2csv \
     gh \
-    nodejs \
-    npm \
     graphviz \
     python3-psycopg2 \
     swi-prolog
@@ -75,6 +89,9 @@ RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
 # Install obographviz
 RUN npm install obographviz && \
     ln -s /tools/node_modules/obographviz/bin/og2dot.js /tools/og2dot.js
+
+# Add og2dot.js to environment path
+ENV PATH /tools/og2dot:$PATH
 
 # Install OBO-Dashboard.
 COPY scripts/obodash /tools

@@ -144,7 +144,7 @@ networkx==2.8.6
 notebook==6.4.12
 numpy==1.23.3
 nxontology==0.4.1
-oaklib==0.1.41
+oaklib==0.1.42
 oauthlib==3.2.1
 ontobio==2.8.3
 ontodev-cogs==0.3.3
