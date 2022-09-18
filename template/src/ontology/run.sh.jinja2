@@ -54,7 +54,7 @@ if [ -n "$USE_SINGULARITY" ]; then
         docker://obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 else
     BIND_OPTIONS="-v $(echo $VOLUME_BIND | sed 's/,/ -v /')"
-    docker run $ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \
+    docker run -u $(id -u):$(id -g) $ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \
         -e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" \
         {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %} \
         --rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
