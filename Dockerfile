@@ -13,9 +13,9 @@ ENV ODK_VERSION $ODK_VERSION
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
 ENV COURSIER_CACHE "/tools/.coursier-cache"
 
-# Install GH
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+# Add NodeSource package repository (needed to get recent versions of Node)
+COPY thirdpartykeys/nodesource.gpg /usr/share/keyrings/nodesource.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x jammy main" > /etc/apt/sources.list.d/nodesource.list
 
 # Install tools provided by Ubuntu.
 RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends  \
@@ -34,7 +34,6 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     xlsx2csv \
     gh \
     nodejs \
-    npm \
     graphviz \
     python3-psycopg2 \
     swi-prolog
@@ -77,8 +76,7 @@ RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
     ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
 
 # Install obographviz
-RUN npm install obographviz && \
-    ln -s /tools/node_modules/obographviz/bin/og2dot.js /tools/og2dot.js
+RUN npm install -g obographviz
 
 # Install OBO-Dashboard.
 COPY scripts/obodash /tools
