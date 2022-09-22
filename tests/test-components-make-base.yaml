@@ -1,0 +1,24 @@
+id: tco
+title: "Test Components Make Base Ontology"
+github_org: INCATools
+repo: ontology-development-kit
+release_artefacts: 
+  - full
+  - simple
+primary_release: full
+export_formats:
+  - owl
+  - json
+import_group:
+  products: 
+    - id: ro
+    - id: bfo
+components:
+  products:
+    - filename: pato.owl
+      base_iris:
+        - http://purl.obolibrary.org/obo/PATO_
+        - http://purl.obolibrary.org/obo/pato#
+      make_base: True
+robot_java_args: '-Xmx8G'
+allow_equivalents: asserted-only
