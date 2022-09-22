@@ -92,6 +92,12 @@ class ComponentProduct(JsonSchemaMixin):
     
     source: Optional[str] = None
     """The source for which the component should be obtained."""
+    
+    base_iris: Optional[List[str]] = None
+    """A list of URI prefixes used to identify terms belonging to the component."""
+    
+    make_base: bool = False
+    """if make_base is true, the file is turned into a base (works with `source`)."""
 
 @dataclass_json
 @dataclass
