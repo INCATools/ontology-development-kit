@@ -16,6 +16,7 @@ import_group:
 components:
   products:
     - filename: pato.owl
+      source: http://purl.obolibrary.org/obo/pato.owl
       base_iris:
         - http://purl.obolibrary.org/obo/PATO_
         - http://purl.obolibrary.org/obo/pato#
