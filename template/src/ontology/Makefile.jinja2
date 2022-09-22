@@ -473,7 +473,8 @@ $(COMPONENTSDIR)/%: | $(COMPONENTSDIR)
 {% if component.source is not none %}
 .PHONY: component-download-{{ component.filename }}
 component-download-{{ component.filename }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(COMP) = true ]; then $(ROBOT) merge -I {{ component.source }} \
+	if [ $(MIR) = true ] && [ $(COMP) = true ]; then $(ROBOT) merge -I {{ component.source }} \{%- if component.make_base %}
+	remove {% if component.base_iris is not none %}{% for iri in component.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ project.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \{% endif %}
 	annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $(TMPDIR)/$@.owl; fi
 
 $(COMPONENTSDIR)/{{ component.filename }}:  component-download-{{ component.filename }}
