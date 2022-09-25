@@ -229,7 +229,7 @@ show_assets:
 .PHONY: check_rdfxml_assets
 check_rdfxml_assets:
 	@for product in $(MAIN_PRODUCTS) ; do  \
-		check-rdfxml $${product}.owl ; \
+		check-rdfxml {% if project.extra_rdfxml_checks %}--extra{% endif %} $${product}.owl ; \
 	done
 
 # ----------------------------------------
