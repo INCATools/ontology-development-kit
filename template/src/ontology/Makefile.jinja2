@@ -219,12 +219,18 @@ RELEASE_ASSETS = \
   $(REPORT_FILES){% endif %}
 
 .PHONY: all_assets
-all_assets: $(ASSETS)
+all_assets: $(ASSETS) check_rdfxml_assets
 
 .PHONY: show_assets
 show_assets:
 	echo $(ASSETS)
 	du -sh $(ASSETS)
+
+.PHONY: check_rdfxml_assets
+check_rdfxml_assets:
+	@for product in $(MAIN_PRODUCTS) ; do  \
+		check-rdfxml $${product}.owl ; \
+	done
 
 # ----------------------------------------
 # Release Management
