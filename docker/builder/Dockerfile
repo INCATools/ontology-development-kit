@@ -28,6 +28,24 @@ RUN apt-get update && \
         python3-pip \
         python3-virtualenv
 
+# Install LightRDF.
+# It cannot be installed with pip as all the other Python modules below
+# because:
+#   - the developers do not provide a Linux arm64 wheel;
+#   - they don't even provide a sdist on PyPI, so pip cannot build from
+#     source.
+# So we have to build from source here -- which involves installing
+# yet another Python build system, otherwise it wouldn't be funny.
+RUN python3 -m pip install maturin && \
+    wget -O lightrdf-0.3.1.tar.gz https://github.com/ozekik/lightrdf/archive/refs/tags/v0.3.1.tar.gz && \
+    tar xf lightrdf-0.3.1.tar.gz && \
+    cd lightrdf-0.3.1 && \
+    maturin build -r && \
+    python3 -m pip install --root /staging/lite target/wheels/lightrdf-*.whl && \
+    python3 -m pip install --root /staging/full target/wheels/lightrdf-*.whl && \
+    cd .. && \
+    rm -rf lightrdf-0.3.1 lightrdf-0.3.1.tar.gz
+
 # Build the Python packages.
 # On x86_64, most if not all of these packages should be available as
 # pre-compiled wheels, so we should not need to build them on a
