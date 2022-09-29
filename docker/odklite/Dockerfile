@@ -70,9 +70,12 @@ RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VER
     chmod 755 /tools/amm && \
     /tools/amm /dev/null
 
+# Install RDF/XML validation script
+COPY scripts/check-rdfxml.sh /tools/check-rdfxml
+
 # Install the ODK itself.
 COPY odk/make-release-assets.py /tools
 COPY odk/odk.py /tools
 COPY template/ /tools/templates/
-RUN chmod 755 /tools/*.py
+RUN chmod 755 /tools/*.py /tools/check-rdfxml
 CMD python3 /tools/odk.py
