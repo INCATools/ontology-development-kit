@@ -574,6 +574,12 @@ class OntologyProject(JsonSchemaMixin):
     robot_report : Dict[str, Any] = field(default_factory=lambda: ReportConfig().to_dict())
     """Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated"""
 
+    ensure_valid_rdfxml : bool = True
+    """When enabled, ensure that any RDF/XML product file is valid"""
+
+    extra_rdfxml_checks : bool = False
+    """When enabled, RDF/XML product files are checked against additional parser (currently RDFLib and Jena)"""
+
     # product groups
     import_group : Optional[ImportGroup] = None
     """Block that includes information on all ontology imports to be generated"""
