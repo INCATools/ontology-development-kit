@@ -17,12 +17,19 @@ docker pull obolibrary/odkfull:dev
 1. The `dev` snapshot of ODK _is unstable_, and therefore will have bugs. _You use it at your own risk_!
 2. You cannot rely on any of the features in the development snapshot to make it into production (at least not with more than 85% confidence).
 
-## How to use development snapshot in ODK Ontology Repo
+## How to install and use development snapshot in ODK Ontology Repo
 
-If you want to use the development snapshot with your `run.sh` docker wrapper, you will have to make sure that you use the development snapshot. 
-Make sure your repo is up to date with the latest official release version by running `docker pull obolibrary/odkfull` and `sh run.sh make update_repo` _twice_.
+If you want to use the development snapshot with your `run.sh` docker wrapper, you will have to make sure that have enabled it correctly. 
 
-Then: 
+1. `docker pull obolibrary/odkfull:dev` As mentioned above, this command installs the development snapshot
+2. `docker pull obolibrary/odkfull` Make sure your repo is up to date with the latest official release version
+3. `IMAGE=odkfull:dev sh run.sh make update_repo` 
+4. `ODK_TAG=dev sh run.sh make update_repo`
 
+You have now set your repo up to run via the development snapshot. At the top of the file, in the comments, your automatically-generated src/ontology/Makefile should now reference the development snapshot you have installed rather than the stable production release.
+
+**Finally:**
+
+5. You can now run any command via the `run.sh` docker wrapper. Just make sure you use the appropriate prefix depending on your version of the ODK:
 - If you are using ODK 1.3.1 run `IMAGE=obolibrary/odkfull:dev sh run.sh make update_repo` (or whatever other command you wanted to run).
 - If you are using ODK 1.3.2 or later (or the `dev` image), run: `ODK_TAG=dev sh run.sh make update_repo` (or whatever other command you wanted to run).
