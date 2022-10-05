@@ -21,11 +21,11 @@ docker pull obolibrary/odkfull:dev
 
 If you want to use the development snapshot with your `run.sh` docker wrapper, you will have to make sure that have enabled it correctly. 
 
-1. Make sure your repos is correctly updated to ODK 1.3.1 first
 1. `docker pull obolibrary/odkfull:dev` As mentioned above, this command installs the development snapshot
-2. `docker pull obolibrary/odkfull` Make sure your repo is up to date with the latest official release version
-3. `IMAGE=odkfull:dev sh run.sh make update_repo` 
-4. `ODK_TAG=dev sh run.sh make update_repo`
+1. `docker pull obolibrary/odkfull`
+1. Make sure your repo is up to date with the latest official release version (at least 1.3.1)
+1. If currently using 1.3.1: `IMAGE=odkfull:dev sh run.sh make update_repo`, else `ODK_TAG=dev sh run.sh make update_repo`
+1. `ODK_TAG=dev sh run.sh make update_repo` (again, if you ran it above)
 
 You have now set your repo up to run via the development snapshot. At the top of the file, in the comments, your automatically-generated src/ontology/Makefile should now reference the development snapshot you have installed rather than the stable production release.
 
