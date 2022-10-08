@@ -1,4 +1,4 @@
-cff-version: 1.1.0
+cff-version: 1.2.0
 message: If you use this software, please cite it as below.
 authors:
   - family-names: Matentzoglu
@@ -13,10 +13,101 @@ authors:
   - family-names: "Goutte-Gattat"
     given-names: Damien
     orcid: https://orcid.org/0000-0002-6095-8718
-    affiliation: "Flybase"
+    affiliation: "FlyBase"
 title: Ontology Development Kit
-version: 1.2.29
-date-released: 2021-07-11
+version: 1.2.31
+date-released: 2022-06-21
 doi: 10.5281/zenodo.4662066
 repository-code: https://github.com/INCATools/ontology-development-kit
 url: https://hub.docker.com/r/obolibrary/odkfull
+license: BSD-3-Clause
+preferred-citation:
+  authors:
+    - family-names: Matentzoglu
+      given-names: Nicolas
+      affiliation: Semanticly, Ltd
+    - family-names: Goutte-Gattat
+      given-names: Damien
+      orcid: https://orcid.org/0000-0002-6095-8718
+      affiliation: Department of Physiology, Development and Neuroscience, University of Cambridge
+    - family-names: Tan
+      given-names: Shawn Zheng Kai
+      orcid: https://orcid.org/0000-0001-7258-9596
+      affiliation: European Bioinformatics Institute
+    - family-names: Balhoff
+      given-names: James P.
+      orcid: https://orcid.org/0000-0002-8688-6599
+      affiliation: RENCI, University of North Carolina
+    - family-names: Carbon
+      given-names: Seth
+      affiliation: Berkeley Bioinformatics Open-source Projects, Lawrence Berkeley National Laboratory
+    - family-names: Caron
+      given-names: Anita R.
+      affiliation: European Bioinformatics Institute
+    - family-names: Duncan
+      given-names: William D.
+      orcid: https://orcid.org/0000-0001-9625-1899
+      affiliation: Berkeley Bioinformatics Open-source Projects, Lawrence Berkeley National Laboratory
+    - family-names: Flack
+      given-names: Joe E.
+      affiliation: School of Medicine, Johns Hopkins University
+    - family-names: Haendel
+      given-names: Melissa
+      orcid: https://orcid.org/0000-0001-9114-8737
+      affiliation: University of Colorado
+    - family-names: Harris
+      given-names: Nomi L.
+      orcid: https://orcid.org/0000-0001-6315-3707
+      affiliation: RENCI, University of North Carolina
+    - family-names: Hogan
+      given-names: William R.
+      orcid: https://orcid.org/0000-0002-9881-1017
+      affiliation: College of Medicine, University of Florida
+    - family-names: Hoyt
+      given-names: Charles Tapley
+      orcid: https://orcid.org/0000-0003-4423-4370
+      affiliation: Laboratory of Systems Pharmacology, Harvard Medical School
+    - family-names: Jackson
+      given-names: Rebecca C.
+      orcid: https://orcid.org/0000-0003-4871-5569
+      affiliation: Bend Informatics LLC
+    - family-names: Kim
+      given-names: HyeongSik
+      affiliation: Robert Bosch LLC
+    - family-names: Kir
+      given-names: Huseyin
+      affiliation: European Bioinformatics Institute
+    - family-names: Pilgrim
+      given-names: Clare
+      orcid: https://orcid.org/0000-0002-1373-1705
+      affiliation: Departement of Physiology, Development and Neuroscience, University of Cambridge
+    - family-names: Stefancsik
+      given-names: Ray
+      affiliation: European Bioinformatics Institute
+    - family-names: Robb
+      given-names: Sofia MC
+      affiliation: Stowers Institute for Medical Research
+    - family-names: Toro
+      given-names: Sabrina
+      affiliation: University of Colorado
+    - family-names: Vasilevsky
+      given-names: Nicole A.
+      affiliation: University of Colorado
+    - family-names: Walls
+      given-names: Ramona
+      affiliation: Critical Path Institute
+    - family-names: Mungall
+      given-names: Christopher J.
+      orcid: https://orcid.org/0000-0002-6601-2165
+      affiliation: Berkeley Bioinformatics Open-source Projects, Lawrence Berkeley National Laboratory
+    - family-names: Osumi-Sutherland
+      given-names: David
+      affiliation: European Bioinformatics Institute
+  title: "The Ontology Development Kit: a toolkit for building, maintaining and standardizing biomedical ontologies"
+  type: article
+  journal: Database
+  year: 2022
+  month: 10
+  volume: 2022
+  start: baac087
+  doi: 10.1093/database/baac087
