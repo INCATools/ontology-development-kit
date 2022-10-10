@@ -523,6 +523,7 @@ SELECT DISTINCT ?entity ?property ?value WHERE {
   FILTER(?value1!=?value2)
   BIND(CONCAT(str(?value1), CONCAT("|", str(?value2))) as ?value)
 }
+{% endif %} 
 
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
