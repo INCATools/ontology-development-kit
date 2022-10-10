@@ -510,6 +510,17 @@ WHERE {
 }
 {% endif %}
 
+{%- if project.robot_report.custom_sparql_checks is not defined or 'term-tracker-uri' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/term-tracker-uri-violation.sparql
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX term_tracker_item: <http://purl.obolibrary.org/obo/IAO_0000233>
+
+SELECT ?term (DATATYPE(?value) as ?term_tracker_type) WHERE {
+  ?term term_tracker_item: ?value .
+  FILTER(?term_tracker_type != xsd:anyURI) 
+}
+{% endif %}
+
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
 ^^^ src/ontology/components/{{ component.filename }}
