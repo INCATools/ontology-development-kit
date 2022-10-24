@@ -510,6 +510,21 @@ WHERE {
 }
 {% endif %}
 
+{%- if project.robot_report.custom_sparql_checks is not defined or 'multiple-replaced_by' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/multiple-replaced_by-violation.sparql
+PREFIX replaced_by: <http://purl.obolibrary.org/obo/IAO_0100001>
+
+SELECT DISTINCT ?entity ?property ?value WHERE {
+  VALUES ?property {
+    replaced_by:
+  }
+  ?entity ?property ?value1 .
+  ?entity ?property ?value2 .
+  FILTER(?value1!=?value2)
+  BIND(CONCAT(str(?value1), CONCAT("|", str(?value2))) as ?value)
+}
+{% endif %} 
+
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
 ^^^ src/ontology/components/{{ component.filename }}
