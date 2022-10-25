@@ -49,7 +49,7 @@ REPORT_FAIL_ON =            {{ project.robot_report.fail_on|default('None') }}
 REPORT_LABEL =              {% if project.robot_report.use_labels|default(true) %}-l true{% endif %}
 REPORT_PROFILE_OPTS =       {% if project.robot_report.custom_profile %}--profile $(ROBOT_PROFILE){% endif %}
 OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
-SPARQL_VALIDATION_CHECKS =  {% for x in project.robot_report.custom_sparql_checks|default(['owldef-self-reference', 'iri-range', 'label-with-iri']) %}{{ x }} {% endfor %}
+SPARQL_VALIDATION_CHECKS =  {% for x in project.robot_report.custom_sparql_checks|default(['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by']) %}{{ x }} {% endfor %}
 SPARQL_EXPORTS =            {% for x in project.robot_report.custom_sparql_exports|default(['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms']) %}{{ x }} {% endfor %}
 ODK_VERSION_MAKEFILE =      {% if env is defined %}{{env['ODK_VERSION'] or "Unknown" }}{% else %}"Unknown"{% endif %}
 
@@ -222,12 +222,18 @@ RELEASE_ASSETS = \
   $(REPORT_FILES){% endif %}
 
 .PHONY: all_assets
-all_assets: $(ASSETS)
+all_assets: $(ASSETS) {% if project.ensure_valid_rdfxml %}check_rdfxml_assets{% endif %}
 
 .PHONY: show_assets
 show_assets:
 	echo $(ASSETS)
 	du -sh $(ASSETS)
+
+check_rdfxml_%: %
+	@check-rdfxml {% if project.extra_rdfxml_checks %}--extra{% endif %} $<
+
+.PHONY: check_rdfxml_assets
+check_rdfxml_assets: $(foreach product,$(MAIN_PRODUCTS),check_rdfxml_$(product).owl)
 
 # ----------------------------------------
 # Release Management
@@ -1041,7 +1047,7 @@ Core commands:
 {% if project.import_group is defined %}
 Imports management:
 * refresh-imports:			Refresh all imports and mirrors.
-* refresh-components:			Refresh all components.
+* recreate-components:			Recreate all components.
 * no-mirror-refresh-imports:		Refresh all imports without downloading mirrors.
 * refresh-imports-excluding-large:	Refresh all imports and mirrors, but skipping the ones labelled as 'is_large'.
 * refresh-%:				Refresh a single import, i.e. refresh-go will refresh 'imports/go_import.owl'.

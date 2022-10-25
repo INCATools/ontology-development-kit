@@ -68,8 +68,8 @@ RUN test "x$TARGETARCH" = xamd64 && ( \
     )
 
 # Install Jena.
-RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-3.12.0.tar.gz -O- | tar xzC /tools && \
-    mv /tools/apache-jena-3.12.0 /tools/apache-jena
+RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-4.6.1.tar.gz -O- | tar xzC /tools && \
+    mv /tools/apache-jena-4.6.1 /tools/apache-jena
 
 # Install SPARQLProg.
 RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
@@ -90,7 +90,7 @@ RUN chmod +x /tools/obodash && \
     echo "" >> Makefile
 
 # Install relation-graph
-ENV RG=2.2.2
+ENV RG=2.3
 ENV PATH "/tools/relation-graph/bin:$PATH"
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/relation-graph-cli-$RG.tgz \
 && tar -zxvf relation-graph-cli-$RG.tgz \
