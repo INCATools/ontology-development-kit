@@ -327,7 +327,7 @@ class ReportConfig(JsonSchemaMixin):
     release_reports : bool = False
     """ If true, release reports are added as assets to the release (top level directory, reports directory)"""
     
-    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri'])
+    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by'])
     """Chose which additional sparql checks yoy want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory"""
 
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
