@@ -571,6 +571,31 @@ SELECT DISTINCT ?entity ?property ?value WHERE {
 }
 {% endif %} 
 
+{%- if project.robot_report.custom_sparql_checks is not defined or 'term-tracker-uri' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/term-tracker-uri-violation.sparql
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX term_tracker_item: <http://purl.obolibrary.org/obo/IAO_0000233>
+
+SELECT ?term ?term_tracker ?term_tracker_type WHERE {
+  ?term term_tracker_item: ?term_tracker .
+  FILTER(DATATYPE(?term_tracker) != xsd:anyURI)
+  BIND(DATATYPE(?term_tracker) as ?term_tracker_type) 
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'illegal-date' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/illegal-date-violation.sparql
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?term ?property ?value WHERE
+{
+  VALUES ?property {dct:date dct:issued dct:created}
+  ?term ?property ?value .
+  FILTER (datatype(?value) != xsd:date || !regex(str(?value), '^\\d{4}-\\d\\d-\\d\\d$'))
+}
+{% endif %}
+
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
 ^^^ src/ontology/components/{{ component.filename }}
