@@ -15,6 +15,7 @@ Manage your ontology's life cycle with the Ontology Development Kit (ODK)! The O
 
 For more details, see
 
+ * [2022 Paper](https://doi.org/10.1093/database/baac087) 
  * [2018 Article](https://douroucouli.wordpress.com/2018/08/06/new-version-of-ontology-development-kit-now-with-docker-support/)
  * [ICBO Workshop Slides 2018](https://docs.google.com/presentation/d/1nIybviEEJiRKHO2rkBMZsQ0QjtsHyU01_-9beZqD_Z4/edit?usp=sharing)
  * [ICBO Workshop Slides 2017](https://docs.google.com/presentation/d/1JPAaDl6Nitxet9NVqWI30eIygcerYAjdMIGmxbRtIn0/edit?usp=sharing)
@@ -35,13 +36,21 @@ For more details, see
 
 * @matentzn Nicolas Matentzoglu (Semanticly Ltd)
 * @gouttegd Damien Goutte-Gattat (Flybase)
-* @cmungall Chris Mungall (LBNL)
-* @shawntanzk Shawn Tan (EMBL-EBI)
 * @anitacaron Anita Caron (EMBL-EBI)
+* @balhoff Jim Balhoff (RENCI)
+* @cmungall Chris Mungall (LBNL)
 * @dosumis David Osumi-Sutherland (EMBL-EBI)
+* @ehartley Emily Hartley (Critical Path Institute)
+* @hkir-dev Huseyin Kir (EMBL-EBI)
+* @shawntanzk Shawn Tan (EMBL-EBI)
+* @ubyndr Ismail Ugur Bayindir (EMBL-EBI)
 
 Full list of contributors: 
 https://github.com/INCATools/ontology-development-kit/graphs/contributors
+
+# Cite
+
+https://doi.org/10.1093/database/baac087
 
 # Outstanding contributions
 Outstanding contributors are groups and institutions that have helped with organising the ODK development, providing funding,

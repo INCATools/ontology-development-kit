@@ -12,8 +12,6 @@ changes to this document in a pull request.
 - [Guidelines for Contributions and Requests](#contributions)
     * [Reporting problems with the ontology](#reporting-bugs)
     * [Requesting new terms](#requesting-terms)
-    * [Suggesting Enhancements](#suggesting-enhancements)
-    * [Fixing problems with the ontology by yourself](#fixing problems)
     * [Adding new terms by yourself](#adding-terms)
 - [Best practices](#best-practices)
     * [How to write a great issue?](#great-issues)
