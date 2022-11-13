@@ -174,3 +174,9 @@ constraints.txt: requirements.txt.full
 
 clean-tests:
 	rm -rf target/*
+
+dev-cronjob:
+	git pull
+	docker buildx rm multiarch
+	docker buildx create --name multiarch --driver docker-container --use
+	$(MAKE) tests publish-multiarch-dev
