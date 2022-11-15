@@ -21,8 +21,8 @@ fi
 # Look for a GitHub token
 if [ -n "$GH_TOKEN" ]; then
     :
-elif [ -f ../../.github/token ]; then
-    GH_TOKEN=$(cat ../../.github/token)
+elif [ -f ../../.github/token.txt ]; then
+    GH_TOKEN=$(cat ../../.github/token.txt)
 elif [ -f $XDG_CONFIG_HOME/ontology-development-kit/github/token ]; then
     GH_TOKEN=$(cat $XDG_CONFIG_HOME/ontology-development-kit/github/token)
 elif [ -f "$HOME/Library/Application Support/ontology-development-kit/github/token" ]; then
