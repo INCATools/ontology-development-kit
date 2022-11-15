@@ -73,6 +73,9 @@ RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VER
 # Install RDF/XML validation script
 COPY scripts/check-rdfxml.sh /tools/check-rdfxml
 
+# Force Git to accept working on a repository owned by someone else
+RUN echo "[safe]\n    directory = /work" >> /etc/gitconfig
+
 # Install the ODK itself.
 COPY odk/make-release-assets.py /tools
 COPY odk/odk.py /tools
