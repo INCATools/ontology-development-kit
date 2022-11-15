@@ -78,7 +78,7 @@ else
         --rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 fi
 
-rm run.sh.env
+rm -f run.sh.env
 
 case "$@" in
 *update_repo*|*release*)
