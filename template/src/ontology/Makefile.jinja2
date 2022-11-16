@@ -392,15 +392,15 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif ('slme' == ont.module_type) or (ont.module_type is none and 'slme' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
-	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
+	if [ $(IMP) = true ]; then $(ROBOT) query -i $< --update ../sparql/preprocess-module.ru \
 		extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif ('filter' == ont.module_type) or (ont.module_type is none and 'filter' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
-	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) merge -i $< \
-		query --update ../sparql/preprocess-module.ru \
-		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
+	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) {% if ont.is_large %}extract -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% else %}query -i $< --update ../sparql/preprocess-module.ru \
+    extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% endif %}
+    remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
@@ -411,7 +411,8 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
 {% elif ('minimal' == ont.module_type) or (ont.module_type is none and 'minimal' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
-	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) extract  -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \
+	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) {% if ont.is_large %}extract -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% else %}query -i $< --update ../sparql/preprocess-module.ru \
+    extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% endif %}
 		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
