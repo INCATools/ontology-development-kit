@@ -169,7 +169,7 @@ all_reports: custom_reports robot_reports
 # ROBOT OWL Profile checking
 # ----------------------------------------
 
-# The conversion to functional syntax is necessary to avoid undeclared entity violations.
+# The merge step is necessary to avoid undeclared entity violations.
 $(REPORTDIR)/validate_profile_owl2dl_%.txt: % | $(REPORTDIR) $(TMPDIR)
 	$(ROBOT) merge -i $< convert -f ofn -o $(TMPDIR)/validate.ofn
 	$(ROBOT) validate-profile --profile DL -i $(TMPDIR)/validate.ofn -o $@ || { cat $@ && exit 1; }
