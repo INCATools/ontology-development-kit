@@ -251,17 +251,29 @@ prepare_release: all_odk
 	rm -f $(CLEANFILES) &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
         on your git hosting site such as GitHub or GitLab"
+	{% if project.make_diff %}$(MAKE) $(REPORTDIR)/release-diff.md{% endif %}
 
 .PHONY: prepare_initial_release
 prepare_initial_release: all_assets
 	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.use_dosdps %}
 	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
 	rm -f $(patsubst %, ./%, $(CLEANFILES)) &&\
+  {% if project.make_diff %}$(MAKE) $(REPORTDIR)/release-diff.md{% endif %}
 	cd $(RELEASEDIR) && git add $(RELEASE_ASSETS)
 
 .PHONY: prepare_release_fast
 prepare_release_fast:
 	$(MAKE) prepare_release IMP=false PAT=false MIR=false COMP=false
+
+{% if project.make_diff %}
+CURRENT_RELEASE=$(ONTBASE).owl
+
+$(TMPDIR)/current-release.owl:
+	wget $(CURRENT_RELEASE) -O $@
+
+$(REPORTDIR)/release-diff.md: $(ONT).owl $(TMPDIR)/current-release.owl
+	$(ROBOT) diff --labels True --left $(TMPDIR)/current-release.owl --righ $(ONT).owl -f markdown -o $@
+{% endif %}
 
 # ------------------------
 # Imports: Seeding system 
