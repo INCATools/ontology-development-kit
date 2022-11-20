@@ -71,6 +71,14 @@ DOSDPT=                      dosdp-tools
 PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
 {% endif %}
 
+{%- if project.use_mappings %}
+MAPPINGDIR=                  ../mappings
+MAPPING_TESTER=              sssom validate
+SSSOMPY=                     sssom
+MAPPINGS=                    {%- if project.sssom_mappingset_group is not none %}{%- for mapping in project.sssom_mappingset_group.products %}{{ mapping.id }} {% endfor %}{% endif %}
+MAPPING_RELEASE_FILES=       $(foreach n,$(MAPPINGS), ../mappings/$(n).sssom.tsv)
+{% endif %}
+
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
 FORMATS_INCL_TSV = $(sort $(FORMATS) tsv)
 RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if release.startswith('custom-') %}{{ release | replace("custom-","")}}{% else %}$(ONT)-{{ release }}{% endif %} {% endfor %}$(ONT)-base $(ONT)-full)
@@ -727,6 +735,28 @@ $(PATTERNDIR)/definitions.owl: $(DOSDP_OWL_FILES_DEFAULT) {% if project.pattern_
 	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_DEFAULT}" ] {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} || [ "${DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}}" ]{% endfor %}{% endif %} && [ $(PAT) = true ]; then $(ROBOT) merge $(addprefix -i , $^) \
 		annotate --ontology-iri $(ONTBASE)/patterns/definitions.owl  --version-iri $(ONTBASE)/releases/$(TODAY)/patterns/definitions.owl \
       --annotation owl:versionInfo $(VERSION) -o definitions.ofn && mv definitions.ofn $@; fi
+
+{% endif %}
+{%- if project.use_mappings %}
+# ----------------------------------------
+# SSSOM Mapping Files
+# ----------------------------------------
+
+validate-sssom-%:
+	tsvalid $(MAPPINGDIR)/$*.sssom.tsv --comment "#"
+	sssom validate $(MAPPINGDIR)/$*.sssom.tsv
+
+{%- if project.sssom_mappingset_group is not none %}
+{%- for mapping in project.sssom_mappingset_group.products %}
+{% if mapping.maintenance == "extract" %}
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: {{ mapping.source_file }}
+	sssom parse $< -I obographs-json -m $(METADATADIR)/mondo.sssom.config.yml -o $@
+{%- endif %}
+{%- endfor %}
+{%- endif %}
+
+validate_mappings:
+	$(MAKE) $(foreach n,$(MAPPINGS), validate-sssom-$(n))
 
 {% endif %}
 
