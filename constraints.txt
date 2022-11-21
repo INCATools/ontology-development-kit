@@ -49,7 +49,7 @@ docutils==0.16
 dosdp==0.1.10.dev1
 entrypoints==0.4
 et-xmlfile==1.1.0
-exceptiongroup==1.0.2
+exceptiongroup==1.0.4
 executing==1.2.0
 fastjsonschema==2.16.2
 fastobo==0.12.1
@@ -63,14 +63,14 @@ funowl==0.1.12
 ghp-import==2.1.0
 google==3.0.0
 google-api-core==2.10.2
-google-api-python-client==2.65.0
+google-api-python-client==2.66.0
 google-auth==2.14.1
 google-auth-httplib2==0.1.0
 google-auth-oauthlib==0.7.1
-googleapis-common-protos==1.56.4
+googleapis-common-protos==1.57.0
 graphviz==0.20.1
 greenlet==2.0.1
-gspread==5.6.2
+gspread==5.7.1
 gspread-formatting==1.1.1
 hbreader==0.9.1
 httplib2==0.21.0
@@ -106,7 +106,7 @@ jsonstreams==0.6.0
 jupyter==1.0.0
 jupyter-console==6.4.4
 jupyter-server==1.23.2
-jupyter_client==7.4.5
+jupyter_client==7.4.7
 jupyter_core==5.0.0
 jupyterlab-pygments==0.2.2
 jupyterlab-widgets==3.0.3
@@ -117,9 +117,9 @@ kgx==1.7.2
 kiwisolver==1.4.4
 lark==1.1.4
 lightrdf==0.3.1
-linkml==1.3.13
+linkml==1.3.14
 linkml-dataops==0.1.0
-linkml-runtime==1.3.6
+linkml-runtime==1.3.7
 Markdown==3.3.7
 markdown-it-py==2.1.0
 MarkupSafe==2.1.1
@@ -139,7 +139,7 @@ mkdocs-material-extensions==1.1
 more-click==0.1.1
 more-itertools==9.0.0
 multidict==6.0.2
-mypy==0.990
+mypy==0.991
 mypy-extensions==0.4.3
 myst-parser==0.18.1
 nbclassic==0.4.8
@@ -151,7 +151,7 @@ nest-asyncio==1.5.6
 networkx==2.8.8
 notebook==6.5.2
 notebook_shim==0.2.2
-numpy==1.23.4
+numpy==1.23.5
 nxontology==0.4.1
 oaklib==0.1.53
 oauthlib==3.2.2
@@ -267,7 +267,7 @@ stack-data==0.6.1
 stringcase==1.2.0
 tabulate==0.9.0
 tenacity==8.1.0
-termcolor==2.1.0
+termcolor==2.1.1
 terminado==0.17.0
 terminaltables==3.1.10
 tinycss2==1.2.1
