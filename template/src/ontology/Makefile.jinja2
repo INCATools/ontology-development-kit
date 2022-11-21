@@ -82,11 +82,16 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if r
 all: all_odk
 
 .PHONY: all_odk
-all_odk: odkversion test all_assets
+all_odk: odkversion test all_assets {% if project.make_diff %}release_diff{% endif %}
 
 .PHONY: test
 test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}reason_test sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile|default(true) %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
 	echo "Finished running all tests successfully."
+
+{% if project.make_diff %}
+.PHONY: release_diff
+release_diff: $(REPORTDIR)/release-diff.md
+{% endif %}
 
 .PHONY: reason_test
 reason_test: $(EDIT_PREPROCESSED)
@@ -251,7 +256,6 @@ prepare_release: all_odk
 	rm -f $(CLEANFILES) &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
         on your git hosting site such as GitHub or GitLab"
-	{% if project.make_diff %}$(MAKE) $(REPORTDIR)/release-diff.md{% endif %}
 
 .PHONY: prepare_initial_release
 prepare_initial_release: all_assets
