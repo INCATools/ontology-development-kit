@@ -262,7 +262,6 @@ prepare_initial_release: all_assets
 	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.use_dosdps %}
 	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
 	rm -f $(patsubst %, ./%, $(CLEANFILES)) &&\
-  {% if project.make_diff %}$(MAKE) $(REPORTDIR)/release-diff.md{% endif %}
 	cd $(RELEASEDIR) && git add $(RELEASE_ASSETS)
 
 .PHONY: prepare_release_fast
