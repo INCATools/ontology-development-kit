@@ -276,7 +276,7 @@ $(TMPDIR)/current-release.owl:
 	wget $(CURRENT_RELEASE) -O $@
 
 $(REPORTDIR)/release-diff.md: $(ONT).owl $(TMPDIR)/current-release.owl
-	$(ROBOT) diff --labels True --left $(TMPDIR)/current-release.owl --right $(ONT).owl -f markdown -o $@
+	$(ROBOT) diff --labels true --left $(TMPDIR)/current-release.owl --right $(ONT).owl -f markdown -o $@
 {% endif %}
 
 # ------------------------
