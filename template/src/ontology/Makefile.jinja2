@@ -90,7 +90,6 @@ test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}reason_t
 
 .PHONY: release_diff
 release_diff: $(REPORTDIR)/release-diff.md
-{% endif %}
 
 .PHONY: reason_test
 reason_test: $(EDIT_PREPROCESSED)
