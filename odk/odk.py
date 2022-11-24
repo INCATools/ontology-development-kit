@@ -604,7 +604,7 @@ class OntologyProject(JsonSchemaMixin):
     robotemplate_group : Optional[RobotTemplateGroup] = None
     """Block that includes information on all ROBOT templates used"""
 
-    make_diff : bool = False
+    release_diff : bool = False
     """When enabled, a diff is generated between the current release and the new one"""
 
     def fill_missing(self):
