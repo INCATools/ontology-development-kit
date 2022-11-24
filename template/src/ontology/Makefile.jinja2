@@ -275,7 +275,6 @@ $(TMPDIR)/current-release.owl:
 
 $(REPORTDIR)/release-diff.md: $(ONT).owl $(TMPDIR)/current-release.owl
 	$(ROBOT) diff --labels true --left $(TMPDIR)/current-release.owl --right $(ONT).owl -f markdown -o $@
-{% endif %}
 
 # ------------------------
 # Imports: Seeding system 
