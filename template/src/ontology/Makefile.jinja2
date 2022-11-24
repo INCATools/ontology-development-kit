@@ -82,7 +82,7 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if r
 all: all_odk
 
 .PHONY: all_odk
-all_odk: odkversion test all_assets{% if project.make_diff %} release_diff{% endif %}
+all_odk: odkversion test all_assets{% if project.release_diff %} release_diff{% endif %}
 
 .PHONY: test
 test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}reason_test sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile|default(true) %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
