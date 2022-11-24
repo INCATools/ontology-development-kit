@@ -268,7 +268,6 @@ prepare_initial_release: all_assets
 prepare_release_fast:
 	$(MAKE) prepare_release IMP=false PAT=false MIR=false COMP=false
 
-{% if project.make_diff %}
 CURRENT_RELEASE=$(ONTBASE).owl
 
 $(TMPDIR)/current-release.owl:
