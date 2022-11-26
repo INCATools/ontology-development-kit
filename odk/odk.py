@@ -61,6 +61,8 @@ class Product(JsonSchemaMixin):
     description: Optional[str] = None
     """A concise textual description of the product"""
     
+    maintenance: str = "manual"
+    
     rebuild_if_source_changes : bool = True
     """If false then previously downloaded versions of external ontologies are used"""
     
@@ -166,7 +168,10 @@ class SSSOMMappingSetProduct(Product):
     """
     mirror_from: Optional[Url] = None
     """if specified this URL is used to mirror the mapping set."""
-
+    
+    mapping_set_: str = "manual"
+    """if specified this URL is used to mirror the mapping set."""
+    
 @dataclass_json
 @dataclass
 class ExportProduct(Product):
