@@ -183,7 +183,7 @@
 - **`robot_java_args`** *(string)*: Java args to pass to ROBOT at runtime, such as -Xmx6G. Default: ``.
 
 
-- **`robot_report`** *(object)*: Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated. Default: `{'custom_profile': False, 'custom_sparql_checks': ['owldef-self-reference', 'iri-range', 'label-with-iri'], 'custom_sparql_exports': ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'], 'ensure_owl2dl_profile': True, 'fail_on': None, 'release_reports': False, 'report_on': ['edit'], 'use_base_iris': True, 'use_labels': True}`.
+- **`robot_report`** *(object)*: Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated. Default: `{'custom_profile': False, 'custom_sparql_checks': ['equivalent-classes', 'owldef-self-reference'], 'custom_sparql_exports': ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'], 'ensure_owl2dl_profile': True, 'fail_on': None, 'release_reports': False, 'report_on': ['edit'], 'use_labels': True}`.
 
 
 - **`robot_settings`**:
