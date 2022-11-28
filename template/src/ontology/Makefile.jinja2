@@ -645,7 +645,7 @@ pattern_schema_checks dosdp_validation: $(TMPDIR)/pattern_schema_checks
 
 .PHONY: update_patterns
 update_patterns: download_patterns
-	if [ -d $(TMPDIR)/dosdp ]; then if [ "$$(ls $(TMPDIR)/dosdp)" ]; then cp -r $(TMPDIR)/dosdp/*.yaml $(PATTERNDIR)/dosdp-patterns; fi; fi
+	if [ -n "$$(find $(TMPDIR) -type f -path '$(TMPDIR)/dosdp/*.yaml')" ]; then cp -r $(TMPDIR)/dosdp/*.yaml $(PATTERNDIR)/dosdp-patterns; fi
 
 # This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now).
 # It downloads all patterns specified in external.txt
