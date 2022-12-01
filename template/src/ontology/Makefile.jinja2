@@ -851,7 +851,7 @@ ROBOT_RELEASE_IMPORT_MODE_BASE={% if project.use_edit_file_imports -%}$(ROBOT) m
 $(ROBOT) remove --input $< --select imports --trim false {% if project.use_dosdps or project.components is defined -%}
 merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}{% endif %}
 
-{% if 'base' in project.release_artefacts or project.primary_release == 'base' -%}
+{% if 'base' in project.release_artefacts or project.primary_release == 'base' %}
 # base: OTHER sources of interest, such as definitions owl
 $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \{% if project.release_use_reasoner %}
