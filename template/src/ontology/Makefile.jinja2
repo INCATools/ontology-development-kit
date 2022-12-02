@@ -40,6 +40,7 @@ MIRRORDIR=                  mirror
 IMPORTDIR=                  imports
 SUBSETDIR=                  subsets
 SCRIPTSDIR=                 ../scripts
+UPDATEREPODIR=              target
 SPARQLDIR =                 ../sparql
 COMPONENTSDIR =             {{ project.components.directory|default('components') }}
 {%- if project.robot_report.custom_profile %}
@@ -1028,6 +1029,7 @@ clean:{% if project.use_dosdps %}
 	$(MAKE) pattern_clean{%- endif %}
 	[ -n "$(MIRRORDIR)" ] && [ $(MIRRORDIR) != "." ] && [ $(MIRRORDIR) != "/" ] && [ $(MIRRORDIR) != ".." ] && [ -d ./$(MIRRORDIR) ] && rm -rf ./$(MIRRORDIR)/*
 	[ -n "$(TMPDIR)" ] && [ $(TMPDIR) != "." ] && [ $(TMPDIR) != "/" ] && [ $(TMPDIR) != ".." ] && [ -d ./$(TMPDIR) ] && rm -rf ./$(TMPDIR)/*
+	[ -n "$(UPDATEREPODIR)" ] && [ $(UPDATEREPODIR) != "." ] && [ $(UPDATEREPODIR) != "/" ] && [ $(UPDATEREPODIR) != ".." ] && [ -d ./$(UPDATEREPODIR) ] && rm -rf ./$(UPDATEREPODIR)/*
 	rm -f $(CLEANFILES)
 
 .PHONY: help
