@@ -590,7 +590,7 @@ $(SUBSETDIR)/%.ttl: $(SUBSETDIR)/%.owl
 {% if 'json' in project.export_formats %}
 $(SUBSETDIR)/%.json: $(SUBSETDIR)/%.owl
 	$(ROBOT) convert --input $< --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
+	mv $@.tmp.json $@
 {% endif -%}
 
 {% endif %}
@@ -751,7 +751,7 @@ $(PATTERNDIR)/definitions.owl: $(DOSDP_OWL_FILES_DEFAULT) {% if project.pattern_
 {{ release }}.json: {{ release }}.owl
 	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
+		mv $@.tmp.json $@
 {% endif -%}
 {% endfor -%}
 
@@ -770,7 +770,7 @@ $(ONT)-base.ttl: $(ONT)-base.owl
 $(ONT)-base.json: $(ONT)-base.owl
 	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
+		mv $@.tmp.json $@
 {% endif -%}
 {% endif -%}
 
@@ -790,7 +790,7 @@ $(ONT)-full.ttl: $(ONT)-full.owl
 $(ONT)-full.json: $(ONT)-full.owl
 	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
+		mv $@.tmp.json $@
 {% endif -%}
 {% endif -%}
 
@@ -814,8 +814,8 @@ $(ONT).ttl: $(ONT)-{{ project.primary_release }}.owl
 {% if 'json' in project.export_formats -%}
 $(ONT).json: $(ONT)-{{ project.primary_release }}.owl
 	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f json -o $@.tmp.json && \
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
+		convert --check false -f json -o $@.tmp.json &&\
+		mv $@.tmp.json $@
 {% endif -%}
 
 # -----------------------------------------------------
