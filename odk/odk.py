@@ -62,6 +62,7 @@ class Product(JsonSchemaMixin):
     """A concise textual description of the product"""
     
     maintenance: str = "manual"
+    """A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies."""
     
     rebuild_if_source_changes : bool = True
     """If false then previously downloaded versions of external ontologies are used"""
