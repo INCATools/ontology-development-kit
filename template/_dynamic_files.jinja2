@@ -726,6 +726,24 @@ jobs:
         env:
           DEFAULT_BRANCH: {{ project.git_main_branch }}
         run: cd src/ontology && make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false
+{% endif -%}{% if 'gitlab-ci' in project.ci %}
+^^^ .gitlab-ci.yml
+# Basic ODK workflow to run ontology QC checks
+ontology_qc:
+  stage: test
+  image: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.25" }}{%- else %}v1.2.25{% endif %}
+  # Controls when the job will run.
+  rules:
+    # Run on merge request pipelines when a merge request is open for the branch.
+    # Run on branch pipelines for main when a merge request is not open for the branch.
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  # Script defines a sequence of tasks that will be executed as part of the job
+  script:
+    - cd src/ontology
+    - make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false
 {% endif -%}
 {% endif -%}
 {% if (('github_actions' in project.ci) and ('diff' in project.workflows)) %}
@@ -892,6 +910,16 @@ ci:
 When [updateing your repo](RepoManagement.md), you will notice a new file being added: `.github/workflows/qc.yml`.
 
 This file contains your CI logic, so if you need to change, or add anything, this is the place!
+
+Alternatively, if your repo is in GitLab instead of GitHub, you can set up your repo with GitLab CI by adding 
+this to your configuration file (src/ontology/{{ project.id }}-odk.yaml):
+
+```
+ci:
+  - gitlab-ci
+```
+
+This will add a file called `.gitlab-ci.yml` in the root of your repo.
 
 ^^^ docs/odk-workflows/EditorsWorkflow.md
 # Editors Workflow

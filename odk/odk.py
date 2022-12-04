@@ -532,7 +532,7 @@ class OntologyProject(JsonSchemaMixin):
     """can be all, none or asserted-only (see ROBOT documentation: http://robot.obolibrary.org/reason)"""
     
     ci : Optional[List[str]] = field(default_factory=lambda: ['github_actions'])
-    """continuous integration defaults; currently available: travis, github_actions"""
+    """continuous integration defaults; currently available: travis, github_actions, gitlab-ci"""
     
     workflows : Optional[List[str]] = field(default_factory=lambda: ['docs'])
     """Workflows that are synced when updating the repo. Currently available: docs, diff, qc."""
