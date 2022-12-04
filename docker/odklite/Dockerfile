@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV ROBOT_VERSION=1.8.4
+ENV ROBOT_VERSION=1.9.1
 ENV DOSDP_VERSION=0.19.3
 ENV OWLTOOLS_VERSION=2020-04-06
 ENV AMMONITE_VERSION=2.0.3
@@ -10,7 +10,7 @@ WORKDIR /tools
 ENV JAVA_HOME="/usr"
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-ENV PATH="/tools:/tools/dosdp-tools/bin:$PATH"
+ENV PATH="/tools:/tools/dosdptools/bin:$PATH"
 
 ARG ODK_VERSION=0.0.0
 ENV ODK_VERSION=$ODK_VERSION
@@ -25,6 +25,7 @@ RUN apt-get update && \
         openjdk-11-jre-headless \
         python3-pip \
         python-is-python3 \
+        python3-six \
         make \
         unzip \
         wget \
@@ -47,7 +48,7 @@ RUN wget -nv $ROBOT_JAR \
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_VERSION/dosdp-tools-$DOSDP_VERSION.tgz && \
     tar zxf dosdp-tools-$DOSDP_VERSION.tgz && \
     rm dosdp-tools-$DOSDP_VERSION.tgz && \
-    mv dosdp-tools-$DOSDP_VERSION /tools/dosdp-tools && \
+    mv dosdp-tools-$DOSDP_VERSION /tools/dosdptools && \
     wget -nv --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py \
         -O /tools/simple_pattern_tester.py && \
     chmod 755 /tools/simple_pattern_tester.py
@@ -69,9 +70,15 @@ RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VER
     chmod 755 /tools/amm && \
     /tools/amm /dev/null
 
+# Install RDF/XML validation script
+COPY scripts/check-rdfxml.sh /tools/check-rdfxml
+
+# Force Git to accept working on a repository owned by someone else
+RUN echo "[safe]\n    directory = /work" >> /etc/gitconfig
+
 # Install the ODK itself.
 COPY odk/make-release-assets.py /tools
 COPY odk/odk.py /tools
 COPY template/ /tools/templates/
-RUN chmod 755 /tools/*.py
+RUN chmod 755 /tools/*.py /tools/check-rdfxml
 CMD python3 /tools/odk.py

@@ -1,6 +1,7 @@
 # Final ODK image
 # (built upon the odklite image)
-FROM obolibrary/odklite:latest
+ARG ODKLITE_TAG=latest
+FROM obolibrary/odklite:${ODKLITE_TAG}
 LABEL maintainer="obo-tools@googlegroups.com"
 
 ENV PATH "/tools/apache-jena/bin:/tools/sparqlprog/bin:$PATH"
@@ -12,9 +13,9 @@ ENV ODK_VERSION $ODK_VERSION
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
 ENV COURSIER_CACHE "/tools/.coursier-cache"
 
-# Install GH
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+# Add NodeSource package repository (needed to get recent versions of Node)
+COPY thirdpartykeys/nodesource.gpg /usr/share/keyrings/nodesource.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x jammy main" > /etc/apt/sources.list.d/nodesource.list
 
 # Install tools provided by Ubuntu.
 RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends  \
@@ -33,7 +34,6 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     xlsx2csv \
     gh \
     nodejs \
-    npm \
     graphviz \
     python3-psycopg2 \
     swi-prolog
@@ -68,16 +68,15 @@ RUN test "x$TARGETARCH" = xamd64 && ( \
     )
 
 # Install Jena.
-RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-3.12.0.tar.gz -O- | tar xzC /tools && \
-    mv /tools/apache-jena-3.12.0 /tools/apache-jena
+RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-4.6.1.tar.gz -O- | tar xzC /tools && \
+    mv /tools/apache-jena-4.6.1 /tools/apache-jena
 
 # Install SPARQLProg.
 RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
     ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
 
 # Install obographviz
-RUN npm install obographviz && \
-    ln -s /tools/node_modules/obographviz/bin/og2dot.js /tools/og2dot.js
+RUN npm install -g obographviz
 
 # Install OBO-Dashboard.
 COPY scripts/obodash /tools
@@ -91,9 +90,9 @@ RUN chmod +x /tools/obodash && \
     echo "" >> Makefile
 
 # Install relation-graph
-ENV RG=2.1.0
+ENV RG=2.3
 ENV PATH "/tools/relation-graph/bin:$PATH"
-RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/relation-graph-$RG.tgz \
-&& tar -zxvf relation-graph-$RG.tgz \
-&& mv relation-graph-$RG /tools/relation-graph \
+RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/relation-graph-cli-$RG.tgz \
+&& tar -zxvf relation-graph-cli-$RG.tgz \
+&& mv relation-graph-cli-$RG /tools/relation-graph \
 && chmod +x /tools/relation-graph
