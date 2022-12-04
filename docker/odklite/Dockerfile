@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV ROBOT_VERSION=1.9.0
+ENV ROBOT_VERSION=1.9.1
 ENV DOSDP_VERSION=0.19.3
 ENV OWLTOOLS_VERSION=2020-04-06
 ENV AMMONITE_VERSION=2.0.3
@@ -70,9 +70,15 @@ RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VER
     chmod 755 /tools/amm && \
     /tools/amm /dev/null
 
+# Install RDF/XML validation script
+COPY scripts/check-rdfxml.sh /tools/check-rdfxml
+
+# Force Git to accept working on a repository owned by someone else
+RUN echo "[safe]\n    directory = /work" >> /etc/gitconfig
+
 # Install the ODK itself.
 COPY odk/make-release-assets.py /tools
 COPY odk/odk.py /tools
 COPY template/ /tools/templates/
-RUN chmod 755 /tools/*.py
+RUN chmod 755 /tools/*.py /tools/check-rdfxml
 CMD python3 /tools/odk.py

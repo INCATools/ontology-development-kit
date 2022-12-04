@@ -92,6 +92,12 @@ class ComponentProduct(JsonSchemaMixin):
     
     source: Optional[str] = None
     """The source for which the component should be obtained."""
+    
+    base_iris: Optional[List[str]] = None
+    """A list of URI prefixes used to identify terms belonging to the component."""
+    
+    make_base: bool = False
+    """if make_base is true, the file is turned into a base (works with `source`)."""
 
 @dataclass_json
 @dataclass
@@ -321,8 +327,10 @@ class ReportConfig(JsonSchemaMixin):
     release_reports : bool = False
     """ If true, release reports are added as assets to the release (top level directory, reports directory)"""
     
-    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri'])
-    """Chose which additional sparql checks yoy want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory"""
+    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by'])
+    """ Chose which additional sparql checks you want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory.
+        The custom sparql checks available are: 'owldef-self-reference', 'redundant-subClassOf', 'taxon-range', 'iri-range', 'iri-range-advanced', 'label-with-iri', 'multiple-replaced_by', 'term-tracker-uri', 'illegal-date'.
+    """
 
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
     """Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory."""
@@ -514,7 +522,7 @@ class OntologyProject(JsonSchemaMixin):
     """can be all, none or asserted-only (see ROBOT documentation: http://robot.obolibrary.org/reason)"""
     
     ci : Optional[List[str]] = field(default_factory=lambda: ['github_actions'])
-    """continuous integration defaults; currently available: travis, github_actions"""
+    """continuous integration defaults; currently available: travis, github_actions, gitlab-ci"""
     
     workflows : Optional[List[str]] = field(default_factory=lambda: ['docs'])
     """Workflows that are synced when updating the repo. Currently available: docs, diff, qc."""
@@ -575,6 +583,9 @@ class OntologyProject(JsonSchemaMixin):
     robot_report : Dict[str, Any] = field(default_factory=lambda: ReportConfig().to_dict())
     """Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated"""
 
+    ensure_valid_rdfxml : bool = False
+    """When enabled, ensure that any RDF/XML product file is valid"""
+
     # product groups
     import_group : Optional[ImportGroup] = None
     """Block that includes information on all ontology imports to be generated"""
@@ -596,6 +607,9 @@ class OntologyProject(JsonSchemaMixin):
 
     robot_template_group : Optional[RobotTemplateGroup] = None
     """Block that includes information on all ROBOT templates used"""
+
+    release_diff : bool = False
+    """When enabled, a diff is generated between the current release and the new one"""
 
     def fill_missing(self):
         """
@@ -806,8 +820,10 @@ def dump_schema():
               """)
 @click.option('-v', '--verbose',      count=True)
 @click.option('-g', '--skipgit',      default=False, is_flag=True)
+@click.option('-n', '--gitname',      default=None)
+@click.option('-e', '--gitemail',     default=None)
 @click.argument('repo', nargs=-1)
-def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo, skipgit):
+def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo, skipgit, gitname, gitemail):
     """
     Seeds an ontology project
     """
@@ -886,6 +902,12 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     for tgt in tgts:
         logging.info("  File: {}".format(tgt))
     if not skipgit:
+        if gitname is not None:
+            os.environ['GIT_AUTHOR_NAME'] = gitname
+            os.environ['GIT_COMMITTER_NAME'] = gitname
+        if gitemail is not None:
+            os.environ['GIT_AUTHOR_EMAIL'] = gitemail
+            os.environ['GIT_COMMITTER_EMAIL'] = gitemail
         runcmd("cd {dir} && git init && git add {files}".
                format(dir=outdir,
                       files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))

@@ -57,6 +57,11 @@ tests/*.yaml: .FORCE
 schema/project-schema.json:
 	./odk/odk.py dump-schema > $@
 
+docs/project-schema.md: schema/project-schema.json
+	python odk/schema_documentation.py
+
+docs: docs/project-schema.md
+
 # Building docker image
 VERSION = "v1.3.2"
 IM=obolibrary/odkfull
@@ -169,3 +174,9 @@ constraints.txt: requirements.txt.full
 
 clean-tests:
 	rm -rf target/*
+
+dev-test-publish:
+	git pull
+	docker buildx rm multiarch
+	docker buildx create --name multiarch --driver docker-container --use
+	$(MAKE) tests publish-multiarch-dev
