@@ -924,13 +924,15 @@ public_release:
 	ls -alt $(ASSETS)
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {% elif project.public_release == 'gh_main'  %}
-MAIN_FILES_RELEASE = $(foreach n,$(MAIN_FILES), ../../$(n))
+
+RELEASE_ASSETS_RELEASE_DIR=$(foreach n,$(RELEASE_ASSETS), ../../$(n))
+GHVERSION=v$(VERSION)
 
 .PHONY: public_release
 public_release:
 	@test $(GHVERSION)
-	ls -alt $(MAIN_FILES_RELEASE)
-	gh release create $(GHVERSION) --notes "TBD." --title "$(GHVERSION)" --draft $(MAIN_FILES_RELEASE)  --generate-notes
+	ls -alt $(RELEASE_ASSETS_RELEASE_DIR)
+	gh release create $(GHVERSION) --title "$(VERSION) Release" --draft $(RELEASE_ASSETS_RELEASE_DIR) --generate-notes
 
 {%- endif %}
 
