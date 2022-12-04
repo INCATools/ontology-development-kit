@@ -844,19 +844,30 @@ $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
 	cp $< $@
 {% endif -%}
 
+# ROBOT pipeline that merges imports, including components.
 ROBOT_RELEASE_IMPORT_MODE={% if project.use_edit_file_imports -%}$(ROBOT) merge --input $< {% else -%}
 $(ROBOT) remove --input $< --select imports --trim false {% if project.use_dosdps or project.components is defined -%}
 merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}{% if project.import_group is defined -%}
 merge $(patsubst %, -i %, $(IMPORT_FILES)){% endif %}{% endif %}
 
-ROBOT_RELEASE_IMPORT_MODE_BASE={% if project.use_edit_file_imports -%}$(ROBOT) merge --input $< {% else -%}
-$(ROBOT) remove --input $< --select imports --trim false {% if project.use_dosdps or project.components is defined -%}
-merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}{% endif %}
+# ROBOT pipeline that removes imports, then merges components. This is for release artefacts that start from "base"
+ROBOT_RELEASE_IMPORT_MODE_BASE=$(ROBOT) remove --input $< --select imports --trim false {% if project.use_dosdps or project.components is defined -%}
+merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}
 
-{% if 'base' in project.release_artefacts or project.primary_release == 'base' %}
-# base: OTHER sources of interest, such as definitions owl
-$(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
-	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \{% if project.release_use_reasoner %}
+{% if 'base' in project.release_artefacts or project.primary_release == 'base' -%}
+# base: All the axioms as they are editted by the editors, excluding reasoning
+$(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
+	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \
+	$(SHARED_ROBOT_COMMANDS) \
+	annotate --link-annotation http://purl.org/dc/elements/1.1/type http://purl.obolibrary.org/obo/IAO_8000001 \
+		--ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
+		{% if project.release_date -%} --annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
+{% endif -%}
+
+{% if 'baseplus' in project.release_artefacts or project.primary_release == 'baseplus' -%}
+# baseplus: A highly experimental variant of base, UNSTABLE. Only to be used experimentally (may disappear in future ODK releases).
+$(ONT)-baseplus.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
+	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
 	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% endif %}
 	relax \{% if project.release_use_reasoner %}
 	reduce -r {{ project.reasoner }} \{% endif %}
@@ -868,21 +879,20 @@ $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 {% endif -%}
 
 {% if 'editors' in project.release_artefacts or project.primary_release == 'editors' -%}
-# base: OTHER sources of interest, such as definitions owl
+# editors: All the axioms as they are editted by the editors, excluding reasoning. This is currently the same as "base". Only to be used experimentally (may disappear in future ODK releases).
 $(ONT)-editors.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
 	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \
-		$(SHARED_ROBOT_COMMANDS) annotate --link-annotation http://purl.org/dc/elements/1.1/type http://purl.obolibrary.org/obo/IAO_8000001 \
-		--ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
+		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		{% if project.release_date -%} --annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 {% if 'full' in project.release_artefacts or project.primary_release == 'full' -%}
-# Full: The full artefacts with imports merged, reasoned
+# Full: The full artefacts with imports merged, reasoned.
 $(ONT)-full.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
-	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% endif %}
-		relax \{% if project.release_use_reasoner %}
-		reduce -r {{ project.reasoner }} \{% endif %}
+	$(ROBOT_RELEASE_IMPORT_MODE) \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
+		relax \
+		reduce -r {{ project.reasoner }} \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
@@ -914,7 +924,7 @@ $(ONT)-simple.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILE
 # Should this be the non-classified ontology with the drop foreign axiom filter?
 # Consider adding remove --term "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace"
 $(ONT)-simple-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILES)
-	$(ROBOT_RELEASE_IMPORT_MODE) \
+	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \
 		remove --axioms equivalent \{% if project.release_use_reasoner %}
 		reduce -r {{ project.reasoner }} \{% endif %}
 		filter --select ontology --term-file $(SIMPLESEED) --trim false \
