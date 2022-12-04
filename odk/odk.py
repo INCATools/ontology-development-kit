@@ -533,7 +533,7 @@ class OntologyProject(JsonSchemaMixin):
     """can be all, none or asserted-only (see ROBOT documentation: http://robot.obolibrary.org/reason)"""
     
     ci : Optional[List[str]] = field(default_factory=lambda: ['github_actions'])
-    """continuous integration defaults; currently available: travis, github_actions"""
+    """continuous integration defaults; currently available: travis, github_actions, gitlab-ci"""
     
     workflows : Optional[List[str]] = field(default_factory=lambda: ['docs'])
     """Workflows that are synced when updating the repo. Currently available: docs, diff, qc."""
@@ -611,6 +611,9 @@ class OntologyProject(JsonSchemaMixin):
     
     sssom_mappingset_group : Optional[SSSOMMappingSetGroup] = None
     """Block that includes information on all SSSOM mapping tables used"""
+
+    release_diff : bool = False
+    """When enabled, a diff is generated between the current release and the new one"""
 
     def fill_missing(self):
         """
