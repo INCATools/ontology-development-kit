@@ -57,6 +57,9 @@ if [ -n "$ODK_BINDS" ]; then
 fi
 
 # Gather environment variables into a single file
+# (and make sure that file is deleted no matter what)
+trap "rm -f run.sh.env" EXIT
+trap "rm -f run.sh.env; trap - INT; kill -INT $$" INT
 cat <<EOF > run.sh.env
 ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS
 JAVA_OPTS=$ODK_JAVA_OPTS
@@ -77,8 +80,6 @@ else
         {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %} \
         --rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 fi
-
-rm -f run.sh.env
 
 case "$@" in
 *update_repo*|*release*)
