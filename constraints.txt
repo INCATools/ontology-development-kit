@@ -120,7 +120,7 @@ kgx==1.7.2
 kiwisolver==1.4.4
 lark==1.1.5
 lightrdf==0.3.1
-linkml==1.3.15
+linkml==1.3.16
 linkml-dataops==0.1.0
 linkml-runtime==1.3.7
 Markdown==3.3.7
@@ -156,7 +156,7 @@ notebook==6.5.2
 notebook_shim==0.2.2
 numpy==1.23.5
 nxontology==0.4.1
-oaklib==0.1.60
+oaklib==0.1.61
 oauthlib==3.2.2
 ols-client==0.1.2
 ontobio==2.8.3
@@ -282,7 +282,7 @@ tornado==6.2
 tox==3.25.1
 tox-docker==3.1.0
 tqdm==4.64.1
-traitlets==5.6.0
+traitlets==5.7.0
 tsvalid==0.0.3
 twine==4.0.2
 typing-inspect==0.8.0
