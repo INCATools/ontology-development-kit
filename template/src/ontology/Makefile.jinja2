@@ -1014,13 +1014,15 @@ public_release:
 	ls -alt $(ASSETS)
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {% elif project.public_release == 'gh_main'  %}
-MAIN_FILES_RELEASE = $(foreach n,$(MAIN_FILES), ../../$(n))
+
+RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), ../../$(n))
+GHVERSION=v$(VERSION)
 
 .PHONY: public_release
 public_release:
 	@test $(GHVERSION)
-	ls -alt $(MAIN_FILES_RELEASE)
-	gh release create $(GHVERSION) --notes "TBD." --title "$(GHVERSION)" --draft $(MAIN_FILES_RELEASE)  --generate-notes
+	ls -alt $(RELEASE_ASSETS_AFTER_RELEASE)
+	gh release create $(GHVERSION) --title "$(VERSION) Release" --draft $(RELEASE_ASSETS_AFTER_RELEASE) --generate-notes
 
 {%- endif %}
 
@@ -1097,6 +1099,7 @@ Core commands:
 * odkversion:		Show the current version of the ODK Makefile and ROBOT.
 * clean:		Delete all temporary files
 * help:			Print ODK Usage information
+* public_release:	Uploads the release file to a release management system, such as GitHub releases. Must be configured.
 
 {% if project.import_group is defined %}
 Imports management:
