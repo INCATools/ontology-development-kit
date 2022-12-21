@@ -507,7 +507,13 @@ class OntologyProject(JsonSchemaMixin):
     
     use_mappings : bool = False
     """if true use SSSOM mapping files."""
+
+    set_docker_user : bool = False
+    """if true continue to use your own user when using docker, instead of the default docker user."""
     
+    use_env_file_docker : bool = False
+    """if true environment variables are collected by the docker wrapper and passed into the container."""
+
     use_custom_import_module : bool = False
     """if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed."""
     
@@ -540,6 +546,9 @@ class OntologyProject(JsonSchemaMixin):
     
     import_pattern_ontology : bool = False
     """if true import pattern.owl"""
+
+    import_component_format : str = "ofn"
+    """The default serialisation for all components and imports."""
     
     create_obo_metadata : bool = True
     """if true OBO Markdown and PURL configs are created."""
@@ -580,7 +589,6 @@ class OntologyProject(JsonSchemaMixin):
     
     uribase_suffix : str = None
     """Suffix for the uri base. If not set, the suffix will be the ontology id by default."""
-    
     
     contact : Optional[Person] = None
     """Single contact for ontology as required by OBO"""
