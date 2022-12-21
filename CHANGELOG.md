@@ -3,6 +3,9 @@
 ## New configuration options 
 
 - Making the `uribase` configurable. You can now set the URI base in your `myont-odk.yaml` file to something different from http://purl.obolibrary.org/obo/, which enables developers from outside OBO to use ODK. Note that there is no guarantee that you can export your ontology to the OBO file format of you customise your `baseuri` this way!
+- `set_docker_user`: If true, you can pass your own user credentials to docker, which means ODK will write files with your own credentials, rather than docker default user.
+- `use_env_file_docker`: If true, you can pass your local environment to the docker container. It is strongly advised to add `run.sh.env` to `.gitignore` before using this feature.
+- `import_component_format`: You can now configure the format in which your imports and components are serialised. For example, rather than owl (RDFXML), which used to be the default, you can set this option to ofn. For a complete reference see https://robot.obolibrary.org/convert.
 
 ## Makefile workflows
 
