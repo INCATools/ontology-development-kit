@@ -246,7 +246,7 @@ custom_makefile_header: |
 # v1.2.24 (6 November 2020)
 - Updated ROBOT to new version 1.7.1
 - Added the (highly experimental) ability to ODK to run OBO dashboard (see [instructions and examples](https://github.com/INCATools/ontology-development-kit#running-obo-dashboard-with-odk)).
-- Added more python packages to ODK, see [requirements.txt](requirements.txt).
+- Added more python packages to ODK, see [requirements.txt](requirements.txt.full).
 - Added a new set of configurations for ROBOT report. WARNING:
 `report_fail_on` option is now deprecated in favour of a new block of options:
 
@@ -387,7 +387,7 @@ import_group:
 
  * project.yaml files can be passed instead of command line settings
  * Docker container can now be executed anywhere, no checkout required
- * Added [README-developers.md](README-developers.md) for ODK developers
+ * Added [README-developers.md](CONTRIBUTING.md) for ODK developers
  * Docker container tracking ROBOT v1.2
  * Previously multiple dependencies: `-d ont1 ont2 ... ontN`, now `-d ont1 -id ont2 ... -d ontN`
  * New command line option `--source` to pass in an existing ontolgy-edit file

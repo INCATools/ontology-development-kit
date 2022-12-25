@@ -284,9 +284,8 @@ Java programs available as pre-built jars can be installed by adding new
 `RUN` commands at the end of either the main Dockerfile (for `odkfull`)
 or the Dockerfile for `odklite`.
 
-If the component needs to be built from source, do so in [the Dockerfile
-for odkbuild](docker/build/Dockerfile), and install the compiled file(s)
-in either the `/staging/full` tree or the `/staging/lite` tree, for
+If the component needs to be built from source, do so in [the Dockerfile for odkbuild](docker/builder/Dockerfile), 
+and install the compiled file(s) in either the `/staging/full` tree or the `/staging/lite` tree, for
 inclusion in `odkfull` or `odklite` respectively.
 
 If the component is a Python package, adds it to the `requirements.txt`
