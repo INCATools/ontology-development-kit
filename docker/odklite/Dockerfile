@@ -79,7 +79,8 @@ RUN echo "[safe]\n    directory = /work" >> /etc/gitconfig
 
 # Make sure we run under an existing user account with UID/GID
 # matching the UID/GID of the calling user
-COPY --chmod=755 scripts/entrypoint.sh /usr/local/sbin/odkuser-entrypoint.sh
+COPY scripts/entrypoint.sh /usr/local/sbin/odkuser-entrypoint.sh
+RUN chmod 755 /usr/local/sbin/odkuser-entrypoint.sh
 ENTRYPOINT ["/usr/local/sbin/odkuser-entrypoint.sh"]
 # secure_path is enabled by default in Debian/Ubuntu, disable it
 RUN sed -i '/secure_path/d' /etc/sudoers
