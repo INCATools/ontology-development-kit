@@ -64,6 +64,8 @@ cat <<EOF > run.sh.env
 ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS
 JAVA_OPTS=$ODK_JAVA_OPTS
 GH_TOKEN=$GH_TOKEN
+ODKUSER_USER_ID=$(id -u)
+ODKUSER_GROUP_ID=$(id -g)
 EOF
 
 if [ -n "$USE_SINGULARITY" ]; then
@@ -75,7 +77,7 @@ if [ -n "$USE_SINGULARITY" ]; then
         docker://obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 else
     BIND_OPTIONS="-v $(echo $VOLUME_BIND | sed 's/,/ -v /')"
-    docker run -u $(id -u):$(id -g) $ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \
+    docker run $ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \
         --env-file run.sh.env \
         {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %} \
         --rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
