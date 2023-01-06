@@ -32,7 +32,8 @@ RUN apt-get update && \
         curl \
         jq \
         rsync \
-        time
+        time \
+        sudo
 
 # Install Python environment (copied over from the builder image).
 COPY --from=obolibrary/odkbuild:latest /staging/lite /
