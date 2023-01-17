@@ -63,7 +63,7 @@ docs/project-schema.md: schema/project-schema.json
 docs: docs/project-schema.md
 
 # Building docker image
-VERSION = "v1.3.2"
+VERSION = "v1.4"
 IM=obolibrary/odkfull
 IMLITE=obolibrary/odklite
 ROB=obolibrary/robot
