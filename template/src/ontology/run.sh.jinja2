@@ -75,7 +75,7 @@ if [ -n "$USE_SINGULARITY" ]; then
         docker://obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 else
     BIND_OPTIONS="-v $(echo $VOLUME_BIND | sed 's/,/ -v /')"
-    docker run {% if project.set_docker_user is sameas True %}-u $(id -u):$(id -g) {% endif %}$ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \{% if project.use_env_file_docker is sameas True %}
+    docker run $ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \{% if project.use_env_file_docker is sameas True %}
         --env-file run.sh.env \{% endif %}
         {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %} \
         --rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
