@@ -122,7 +122,7 @@ bring advantages in terms of aligning with emerging standards ways of
 doing things. The less customization you do on your repo the easier it
 should be to migrate.
 
-Consult the [Changes.md](Changes.md) file for changes made between
+Consult the [CHANGELOG.md](CHANGELOG.md) file for changes made between
 releases to assist in upgrading.
 
 ## More documentation

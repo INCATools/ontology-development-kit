@@ -15,7 +15,7 @@
 # See README-editors.md for more details.
 
 if [ -f run.sh.conf ]; then
-    source ./run.sh.conf
+    . ./run.sh.conf
 fi
 
 # Look for a GitHub token
