@@ -130,7 +130,7 @@ class ImportProduct(Product):
     """if large, ODK may take measures to reduce the memory footprint of the import."""
     
     module_type : Optional[str] = None
-    """Module type. Supported: slme, minimal, custom"""
+    """Module type. Supported: slme, minimal, custom, mirror"""
     
     module_type_slme : str = "BOT"
     """SLME module type. Supported: BOT, TOP, STAR"""
@@ -149,6 +149,9 @@ class ImportProduct(Product):
     
     use_gzipped: bool = False
     """if use_gzipped is true, try use the base IRI instead of normal one to mirror from."""
+
+    mirror_type: Optional[str] = None
+    """If module_type is custom, define the type of the mirror. Supported: custom, none."""
 
 @dataclass_json
 @dataclass
