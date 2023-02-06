@@ -396,7 +396,7 @@ $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRO
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
 		$(ANNOTATE_CONVERT_FILE); fi
 {% elif 'custom' == project.import_group.module_type %}
-$(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %}
+$(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% elif 'no_mirror' != ont.mirror_type %}$(MIRRORDIR)/%.owl{% endif %}
 	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
 {% endif %}
 .PRECIOUS: $(IMPORTDIR)/%_import.owl
@@ -444,7 +444,7 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
 		$(ANNOTATE_CONVERT_FILE); fi
 {% elif ('custom' == ont.module_type) or (ont.module_type is none and 'custom' == project.import_group.module_type) %}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %}
+$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% elif 'no_mirror' != ont.mirror_type %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %}
 	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
 {%- endif %}
 {%- endif %}
@@ -540,19 +540,21 @@ IMP_LARGE=true # Global parameter to bypass handling of large imports
 ## {{ ont.description }}
 {% endif -%}
 
+{%- if ont.mirror_type != 'no_mirror' -%}
 .PHONY: mirror-{{ ont.id }}
 .PRECIOUS: $(MIRRORDIR)/{{ ont.id }}.owl
+{%- endif -%}
 
 {%- if ont.mirror_from %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl{%- if ont.make_base %} && \
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl{%- if ont.make_base or 'base' == ont.mirror_type %} && \
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
 		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
 {%- elif ont.use_base %}
 {%- if ont.use_gzipped %}
 mirror-{{ ont.id }}: | $(TMPDIR)
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}-base.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}-base.owl.gz -o $@.tmp.owl{%- if ont.make_base %} &&\
+		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}-base.owl.gz -o $@.tmp.owl{%- if ont.make_base or 'base' == ont.mirror_type %} &&\
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
  		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- else %}
 mirror-{{ ont.id }}: | $(TMPDIR)
@@ -563,13 +565,18 @@ mirror-{{ ont.id }}: | $(TMPDIR)
 {%- if ont.use_gzipped %}
 mirror-{{ ont.id }}: | $(TMPDIR)
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl.gz -o $@.tmp.owl{%- if ont.make_base %} && \
+		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl.gz -o $@.tmp.owl{%- if ont.make_base or 'base' == ont.mirror_type %} && \
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
 		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
+{%- elif 'custom' == ont.mirror_type %}
+$(MIRRORDIR)/{{ ont.id }}.owl: 
+	echo "ERROR: You have configured your default mirror type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
+{%- elif 'no_mirror' == ont.mirror_type -%}
+## You have configured your default mirror type to no_mirror.
 {%- else %}
 mirror-{{ ont.id }}: | $(TMPDIR)
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}.owl --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl -o $@.tmp.owl{%- if ont.make_base %} && \
+		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl -o $@.tmp.owl{%- if ont.make_base or 'base' == ont.mirror_type %} && \
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
 		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- endif %}
 {%- endif %}
