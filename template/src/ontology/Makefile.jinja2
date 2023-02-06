@@ -547,14 +547,14 @@ IMP_LARGE=true # Global parameter to bypass handling of large imports
 
 {%- if ont.mirror_from %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl{%- if ont.make_base %} && \
+	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl{%- if ont.make_base or 'base' == ont.mirror_type %} && \
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
 		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
 {%- elif ont.use_base %}
 {%- if ont.use_gzipped %}
 mirror-{{ ont.id }}: | $(TMPDIR)
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}-base.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}-base.owl.gz -o $@.tmp.owl{%- if ont.make_base %} &&\
+		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}-base.owl.gz -o $@.tmp.owl{%- if ont.make_base or 'base' == ont.mirror_type %} &&\
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
  		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- else %}
 mirror-{{ ont.id }}: | $(TMPDIR)
@@ -565,7 +565,7 @@ mirror-{{ ont.id }}: | $(TMPDIR)
 {%- if ont.use_gzipped %}
 mirror-{{ ont.id }}: | $(TMPDIR)
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl.gz -o $@.tmp.owl{%- if ont.make_base %} && \
+		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl.gz -o $@.tmp.owl{%- if ont.make_base or 'base' == ont.mirror_type %} && \
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
 		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
 {%- elif 'custom' == ont.mirror_type %}
@@ -576,7 +576,7 @@ $(MIRRORDIR)/{{ ont.id }}.owl:
 {%- else %}
 mirror-{{ ont.id }}: | $(TMPDIR)
 	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}.owl --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl -o $@.tmp.owl{%- if ont.make_base %} && \
+		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl -o $@.tmp.owl{%- if ont.make_base or 'base' == ont.mirror_type %} && \
 		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
 		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- endif %}
 {%- endif %}

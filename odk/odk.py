@@ -151,7 +151,7 @@ class ImportProduct(Product):
     """if use_gzipped is true, try use the base IRI instead of normal one to mirror from."""
 
     mirror_type: Optional[str] = None
-    """If module_type is custom, define the type of the mirror. Supported: custom, no_mirror."""
+    """Define the type of the mirror for your import. Supported: base, custom, no_mirror."""
 
 @dataclass_json
 @dataclass
