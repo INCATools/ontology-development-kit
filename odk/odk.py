@@ -172,9 +172,8 @@ class SSSOMMappingSetProduct(Product):
     """
     mirror_from: Optional[Url] = None
     """if specified this URL is used to mirror the mapping set."""
-    
-    mapping_set_: str = "manual"
-    """if specified this URL is used to mirror the mapping set."""
+
+
     
 @dataclass_json
 @dataclass
@@ -414,7 +413,7 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
     A configuration section that consists of a list of `SSSOMMappingSetProduct` descriptions
     """
     
-    directory : Directory = "../mappings/"
+    directory : Directory = "../mappings"
     
     products : Optional[List[SSSOMMappingSetProduct]] = None
 

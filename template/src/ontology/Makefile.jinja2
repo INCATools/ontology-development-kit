@@ -75,11 +75,11 @@ PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern
 {% endif %}
 
 {%- if project.use_mappings %}
-MAPPINGDIR=                  ../mappings
-MAPPING_TESTER=              sssom validate
-SSSOMPY=                     sssom
-MAPPINGS=                    {%- if project.sssom_mappingset_group is not none %}{%- for mapping in project.sssom_mappingset_group.products %}{{ mapping.id }} {% endfor %}{% endif %}
-MAPPING_RELEASE_FILES=       $(foreach n,$(MAPPINGS), ../mappings/$(n).sssom.tsv)
+MAPPINGDIR=                 {% if project.sssom_mappingset_group is not none %}{{project.sssom_mappingset_group.directory|default("../mappings")}}{% endif %}
+MAPPING_TESTER=             sssom validate
+SSSOMPY=                    sssom
+MAPPINGS=                   {% if project.sssom_mappingset_group is not none %}{%- for mapping in project.sssom_mappingset_group.products %}{{ mapping.id }} {% endfor %}{% endif %}
+MAPPING_RELEASE_FILES=      $(foreach n,$(MAPPINGS), $(MAPPINGDIR)/$(n).sssom.tsv)
 {% endif %}
 
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
@@ -773,13 +773,19 @@ validate-sssom-%:
 {%- for mapping in project.sssom_mappingset_group.products %}
 {% if mapping.maintenance == "extract" %}
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: {{ mapping.source_file }}
-	sssom parse $< -I obographs-json -m $(METADATADIR)/mondo.sssom.config.yml -o $@
+	sssom parse $< -I obographs-json {{ mapping.sssom_tools_options }} -o $@
+{%- elif mapping.maintenance == "manual" %}
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
+	test -f $@
+{%- elif mapping.maintenance == "mirror" %}
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
+	wget "{{ mapping.mirror_from }}" -O $@
 {%- endif %}
 {%- endfor %}
 {%- endif %}
 
 validate_mappings:
-	$(MAKE) $(foreach n,$(MAPPINGS), validate-sssom-$(n))
+	$(MAKE_FAST) $(foreach n,$(MAPPINGS), validate-sssom-$(n))
 
 {% endif %}
 
