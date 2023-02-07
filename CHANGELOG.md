@@ -1,4 +1,4 @@
-# v1.3.2 (unpublished, target date 31 July 2022)
+# v1.4 (unpublished, target date 7 February 2022)
 
 ## New configuration options 
 
@@ -7,6 +7,7 @@
 - `use_env_file_docker`: If true, you can pass your local environment to the docker container. It is strongly advised to add `run.sh.env` to `.gitignore` before using this feature.
 - `import_component_format`: You can now configure the format in which your imports and components are serialised. For example, rather than owl (RDFXML), which used to be the default, you can set this option to ofn. For a complete reference see https://robot.obolibrary.org/convert.
 - `mirror_type`: You can define the type of the mirror for each import. Supported: base, custom, no_mirror.
+- `release_use_reasoner`: If false, no reasoning is performed for generating release files. This is only relevant for building application ontologies, where all components are already fully classified.
 
 ## Makefile workflows
 
