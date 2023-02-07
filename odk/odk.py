@@ -343,6 +343,9 @@ class ReportConfig(JsonSchemaMixin):
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
     """Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory."""
 
+    sparql_test_on: List[str] = field(default_factory=lambda: ['edit'])
+    """Chose which file to run the custom sparql checks. Supported 'edit', any artecfact release."""
+
 @dataclass_json
 @dataclass
 class DocumentationGroup(JsonSchemaMixin):
