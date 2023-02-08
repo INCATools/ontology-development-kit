@@ -219,9 +219,16 @@ validate_profile_%: $(REPORTDIR)/validate_profile_owl2dl_%.txt
 
 SPARQL_VALIDATION_QUERIES = $(foreach V,$(SPARQL_VALIDATION_CHECKS),$(SPARQLDIR)/$(V)-violation.sparql)
 
-sparql_test: $(EDIT_PREPROCESSED) catalog-v001.xml | $(REPORTDIR)
+sparql_test: {% for x in project.robot_report.sparql_test_on|default(["edit"]) %} {% if x=="edit" %}$(EDIT_PREPROCESSED){% else %}{{ x }}{% endif %}{% endfor %} catalog-v001.xml | $(REPORTDIR)
 ifneq ($(SPARQL_VALIDATION_QUERIES),)
-	$(ROBOT) verify  --catalog catalog-v001.xml -i $< --queries $(SPARQL_VALIDATION_QUERIES) -O $(REPORTDIR)
+  {% for x in project.robot_report.sparql_test_on|default(["edit"]) -%}
+  {%- if x=="edit" -%}
+  {% set input = "$(EDIT_PREPROCESSED)"%}
+  {%- else -%}
+  {% set input = x %}
+  {% endif %}
+	$(ROBOT) verify  --catalog catalog-v001.xml -i {{ input }} --queries $(SPARQL_VALIDATION_QUERIES) -O $(REPORTDIR)
+  {%- endfor %}
 endif
 
 # ----------------------------------------
