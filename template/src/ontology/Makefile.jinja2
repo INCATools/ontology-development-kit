@@ -547,9 +547,9 @@ $(COMPONENTSDIR)/{{ component.filename }}:{% if component.templates is not none 
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 {% elif component.use_mappings %}
 $(COMPONENTSDIR)/{{ component.filename }}:{% if component.mappings is not none %}{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %}{% else %} $(MAPPINGDIR)/{{ component.filename.split('.') | first }}sssom.tsv{% endif %}
-	if [ $(COMP) = true ] ; then $(SSSOMPY) merge $^ --output $(TMPDIR){{ component.filename }}-merged.sssom.tsv &&\
-		$(SSSOMPY) convert {% if component.sssom_options is not none %}{{ component.sssom_options }}{% endif %} $(TMPDIR){{ component.filename }}-merged.sssom.tsv --output $(TMPDIR){{ component.filename }}-converted.sssom.owl \
-		$(ROBOT) merge -i $(TMPDIR){{ component.filename }}-converted.sssom.owl \
+	if [ $(COMP) = true ] ; then $(SSSOMPY) merge $^ --output $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv &&\
+		$(SSSOMPY) convert $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv {% if component.sssom_options is not none %}{{ component.sssom_options }}{% endif %} --output $(TMPDIR)/{{ component.filename }}-converted.sssom.owl \
+		$(ROBOT) merge -i $(TMPDIR)/{{ component.filename }}-converted.sssom.owl \
 		$(ANNOTATE_CONVERT_FILE); fi
 
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
