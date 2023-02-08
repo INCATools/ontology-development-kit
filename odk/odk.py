@@ -528,9 +528,6 @@ class OntologyProject(JsonSchemaMixin):
     use_mappings : bool = False
     """if true use SSSOM mapping files."""
 
-    set_docker_user : bool = False
-    """if true continue to use your own user when using docker, instead of the default docker user."""
-    
     use_env_file_docker : bool = False
     """if true environment variables are collected by the docker wrapper and passed into the container."""
 
