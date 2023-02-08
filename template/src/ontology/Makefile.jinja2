@@ -864,12 +864,12 @@ $(ONT).obo: $(ONT).owl
 	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
-$(ONT).ttl: $(ONT)-{{ project.primary_release }}.owl
+$(ONT).ttl: $(ONT).owl
 	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
 {% endif -%}
 {% if 'json' in project.export_formats -%}
-$(ONT).json: $(ONT)-{{ project.primary_release }}.owl
+$(ONT).json: $(ONT).owl
 	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f json -o $@.tmp.json &&\
 		mv $@.tmp.json $@
