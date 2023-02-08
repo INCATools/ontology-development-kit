@@ -1,9 +1,8 @@
-id: rta
-title: "Release Test A Ontology"
-github_org: obophenotype
-repo: rta
-report_fail_on: ERROR
-release_diff: TRUE
+id: rtine
+title: "Release Test Non Edit Import Ontology"
+github_org: INCATools
+repo: rtine
+use_edit_file_imports: TRUE
 namespaces: 
   - http://purl.obolibrary.org/obo/PTT_
   - http://purl.obolibrary.org/obo/PATO_
@@ -16,10 +15,7 @@ release_artefacts:
   - base
   - editors
   - baseplus
-primary_release: simple
 import_group:
   release_imports: TRUE
   products:
     - id: ro
-    - id: pato
-    - id: mpath
