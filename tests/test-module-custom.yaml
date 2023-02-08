@@ -1,7 +1,7 @@
-id: modmini
+id: modminic
 title: "Test generation of custom module type and custom mirror"
 github_org: INCATools
-repo: ontology-development-kit
+repo: modminic
 edit_format: obo
 export_formats:
   - owl
@@ -10,7 +10,7 @@ export_formats:
 import_group:
   products:
     - id: ro
-      mirror_type: custom
+      mirror_type: base
     - id: wikidata
       mirror_type: none
   module_type: custom

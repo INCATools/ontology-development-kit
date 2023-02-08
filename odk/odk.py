@@ -98,12 +98,21 @@ class ComponentProduct(JsonSchemaMixin):
     
     use_template: bool = False
     """If true, the component will be sourced by a template"""
+
+    use_mappings: bool = False
+    """If true, the component will be sourced from on or more SSSOM mapping files"""
     
     template_options: Optional[str] = None
+    """ROBOT options passed to the template command"""
+
+    sssom_options: Optional[str] = None
     """ROBOT options passed to the template command"""
     
     templates: Optional[List[str]] = None
     """A list of ROBOT template names. If set, these will be used to source this component."""
+
+    mappings: Optional[List[str]] = None
+    """A list of SSSOM template names. If set, these will be used to source this component."""
     
     base_iris: Optional[List[str]] = None
     """A list of URI prefixes used to identify terms belonging to the component."""
@@ -172,9 +181,11 @@ class SSSOMMappingSetProduct(Product):
     """
     mirror_from: Optional[Url] = None
     """if specified this URL is used to mirror the mapping set."""
-    
-    mapping_set_: str = "manual"
-    """if specified this URL is used to mirror the mapping set."""
+
+    source_file: Optional[str] = None
+    """The name of the file from which the mappings should be extracted"""
+
+
     
 @dataclass_json
 @dataclass
@@ -417,7 +428,10 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
     A configuration section that consists of a list of `SSSOMMappingSetProduct` descriptions
     """
     
-    directory : Directory = "../mappings/"
+    directory : Directory = "../mappings"
+
+    release_mappings : bool = False
+    """If set to True, mappings are copied to the release directory."""
     
     products : Optional[List[SSSOMMappingSetProduct]] = None
 

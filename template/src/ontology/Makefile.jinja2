@@ -75,11 +75,11 @@ PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern
 {% endif %}
 
 {%- if project.use_mappings %}
-MAPPINGDIR=                  ../mappings
-MAPPING_TESTER=              sssom validate
-SSSOMPY=                     sssom
-MAPPINGS=                    {%- if project.sssom_mappingset_group is not none %}{%- for mapping in project.sssom_mappingset_group.products %}{{ mapping.id }} {% endfor %}{% endif %}
-MAPPING_RELEASE_FILES=       $(foreach n,$(MAPPINGS), ../mappings/$(n).sssom.tsv)
+MAPPINGDIR=                 {% if project.sssom_mappingset_group is not none %}{{project.sssom_mappingset_group.directory|default("../mappings")}}{% endif %}
+MAPPING_TESTER=             sssom validate
+SSSOMPY=                    sssom
+MAPPINGS=                   {% if project.sssom_mappingset_group is not none %}{%- for mapping in project.sssom_mappingset_group.products %}{{ mapping.id }} {% endfor %}{% endif %}
+MAPPING_RELEASE_FILES=      $(foreach n,$(MAPPINGS), $(MAPPINGDIR)/$(n).sssom.tsv)
 {% endif %}
 
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
@@ -169,6 +169,21 @@ SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(foreach f,$(FORMATS_INCL_TSV), $(n
 all_subsets: $(SUBSET_FILES)
 
 # ----------------------------------------
+# Mapping assets
+# ----------------------------------------
+
+{% if project.sssom_mappingset_group is defined %}
+MAPPINGS = {% for x in project.sssom_mappingset_group.products %} {{ x.id }}{% endfor %}
+{% else %}
+MAPPINGS =
+{% endif %}
+MAPPING_FILES = $(patsubst %, $(MAPPINGDIR)/%.sssom.tsv, $(MAPPINGS))
+
+.PHONY: all_mappings
+all_mappings: $(MAPPING_FILES)
+
+
+# ----------------------------------------
 # QC Reports & Utilities
 # ----------------------------------------
 
@@ -235,12 +250,14 @@ ASSETS = \
   $(MAIN_FILES) \{% if project.use_dosdps %}
   $(PATTERN_RELEASE_FILES) \{% endif %}
   $(REPORT_FILES) \
-  $(SUBSET_FILES)
+  $(SUBSET_FILES) \
+  $(MAPPING_FILES)
 
 RELEASE_ASSETS = \
   $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}\
   $(SUBSET_FILES){% if project.robot_report.release_reports %} \
-  $(REPORT_FILES){% endif %}
+  $(REPORT_FILES){% endif %}{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.release_mappings %} \
+  $(MAPPING_FILES){% endif %}{% endif %}
 
 .PHONY: all_assets
 all_assets: $(ASSETS) {% if project.ensure_valid_rdfxml %}check_rdfxml_assets{% endif %}
@@ -403,7 +420,7 @@ $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRO
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
 		$(ANNOTATE_CONVERT_FILE); fi
 {% elif 'custom' == project.import_group.module_type %}
-$(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% elif 'no_mirror' != ont.mirror_type %}$(MIRRORDIR)/%.owl{% endif %}
+$(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %}
 	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
 {% endif %}
 .PRECIOUS: $(IMPORTDIR)/%_import.owl
@@ -525,6 +542,14 @@ $(COMPONENTSDIR)/{{ component.filename }}:  component-download-{{ component.file
 $(COMPONENTSDIR)/{{ component.filename }}:{% if component.templates is not none %}{% for template in component.templates %} $(TEMPLATEDIR)/{{ template }}{% endfor %}{% else %} $(TEMPLATEDIR)/{{ component.filename.split('.') | first }}.tsv{% endif %}
 	if [ $(COMP) = true ] ; then $(ROBOT) template {% if component.template_options is not none %}{{ component.template_options }}{% endif %} \
 		$(patsubst %, --template %, $^) \
+		$(ANNOTATE_CONVERT_FILE); fi
+
+.PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
+{% elif component.use_mappings %}
+$(COMPONENTSDIR)/{{ component.filename }}:{% if component.mappings is not none %}{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %}{% else %} $(MAPPINGDIR)/{{ component.filename.split('.') | first }}sssom.tsv{% endif %}
+	if [ $(COMP) = true ] ; then $(SSSOMPY) merge $^ --output $(TMPDIR){{ component.filename }}-merged.sssom.tsv &&\
+		$(SSSOMPY) convert $(TMPDIR){{ component.filename }}-merged.sssom.tsv --output $(TMPDIR){{ component.filename }}-converted.sssom.owl \
+		$(ROBOT) merge -i $(TMPDIR){{ component.filename }}-converted.sssom.owl \
 		$(ANNOTATE_CONVERT_FILE); fi
 
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
@@ -779,14 +804,26 @@ validate-sssom-%:
 {%- if project.sssom_mappingset_group is not none %}
 {%- for mapping in project.sssom_mappingset_group.products %}
 {% if mapping.maintenance == "extract" %}
-$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: {{ mapping.source_file }}
-	sssom parse $< -I obographs-json -m $(METADATADIR)/mondo.sssom.config.yml -o $@
+$(TMPDIR)/{{ mapping.id }}.obographs.json: {% if mapping.source_file is not none %}{{ mapping.source_file }}{% else %}$(EDIT_PREPROCESSED){% endif %}
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
+		convert --check false -f json -o $@.tmp.json &&\
+		mv $@.tmp.json $@
+
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: $(TMPDIR)/{{ mapping.id }}.obographs.json
+	sssom parse $< -I obographs-json {{ mapping.sssom_tools_options }} -o $@
+{%- elif mapping.maintenance == "manual" %}
+# This mappingset is manually curated, so we only check that the file actually exists.
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
+	test -f $@
+{%- elif mapping.maintenance == "mirror" %}
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
+	wget "{{ mapping.mirror_from }}" -O $@
 {%- endif %}
 {%- endfor %}
 {%- endif %}
 
 validate_mappings:
-	$(MAKE) $(foreach n,$(MAPPINGS), validate-sssom-$(n))
+	$(MAKE_FAST) $(foreach n,$(MAPPINGS), validate-sssom-$(n))
 
 {% endif %}
 
@@ -1152,6 +1189,7 @@ Additional build commands (advanced users)
 * custom_reports:	Generate all custom sparql reports you have configured in your {{ project.id }}-odk.yaml file.
 * all_assets:		Build all assets
 * show_assets:		Print a list of all assets that would be build by the release pipeline
+* all_mappings:		Update all SSSOM mapping sets
 
 Additional QC commands (advanced users)
 * robot_reports:	Run all configured ROBOT reports
