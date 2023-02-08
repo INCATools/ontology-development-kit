@@ -414,15 +414,6 @@ class PatternPipelineGroup(ProductGroup):
 
 @dataclass_json
 @dataclass
-class RobotTemplateGroup(JsonSchemaMixin):
-    """
-    A configuration section that consists of a list of `RobotTemplateProduct` descriptions
-    """
-    
-    directory : Directory = "../templates/"
-
-@dataclass_json
-@dataclass
 class SSSOMMappingSetGroup(JsonSchemaMixin):
     """
     A configuration section that consists of a list of `SSSOMMappingSetProduct` descriptions
@@ -637,9 +628,6 @@ class OntologyProject(JsonSchemaMixin):
     
     pattern_pipelines_group : Optional[PatternPipelineGroup] = None
     """Block that includes information on all DOSDP templates used"""
-    
-    robot_template_group : Optional[RobotTemplateGroup] = None
-    """Block that includes information on all ROBOT templates used"""
     
     sssom_mappingset_group : Optional[SSSOMMappingSetGroup] = None
     """Block that includes information on all SSSOM mapping tables used"""
