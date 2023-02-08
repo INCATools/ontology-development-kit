@@ -8,7 +8,7 @@
 - `import_component_format`: You can now configure the format in which your imports and components are serialised. For example, rather than owl (RDFXML), which used to be the default, you can set this option to ofn. For a complete reference see https://robot.obolibrary.org/convert.
 - `mirror_type`: You can define the type of the mirror for each import. Supported: base, custom, no_mirror.
 - `release_use_reasoner`: If false, no reasoning is performed for generating release files. This is only relevant for building application ontologies, where all components are already fully classified.
-- `sparql_test_on`: You can define the list of input files to run the custom SPARQL queries. Supported: edit, any artifact release.
+- `sparql_test_on`: You can define the list of input files to run the custom SPARQL queries. Supported: edit, any release artefact.
 - `use_edit_file_imports`: If TRUE, use whatever imports you have in the edit file to create the release (default). If FALSE,  components (and imports) are merged into the release independent of whether they are mentioned in the edit file or not. This can help for example in cases where import modules are so large, they cannot be checked into version control.
 
 ## Makefile workflows

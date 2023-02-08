@@ -12,6 +12,6 @@ import_group:
     - id: ro
       mirror_type: base
     - id: wikidata
-      mirror_type: none
+      mirror_type: no_mirror
   module_type: custom
 

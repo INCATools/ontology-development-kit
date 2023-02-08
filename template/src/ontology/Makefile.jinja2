@@ -59,19 +59,19 @@ TODAY ?=                    $(shell date +%Y-%m-%d)
 OBODATE ?=                  $(shell date +'%d:%m:%Y %H:%M')
 VERSION=                    $(TODAY)
 ANNOTATE_ONTOLOGY_VERSION = annotate -V $(ONTBASE)/releases/$(VERSION)/$@ --annotation owl:versionInfo $(VERSION)
-ANNOTATE_CONVERT_FILE =		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) convert -f {{ project.import_component_format|default('ofn') }} --output $@.tmp.owl && mv $@.tmp.owl $@
+ANNOTATE_CONVERT_FILE =     annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) convert -f {{ project.import_component_format|default('ofn') }} --output $@.tmp.owl && mv $@.tmp.owl $@
 OTHER_SRC =                 {% if project.use_dosdps -%}$(PATTERNDIR)/definitions.owl {% endif -%}{% if project.components is defined -%}{% for component in project.components.products -%}$(COMPONENTSDIR)/{{ component.filename }} {% endfor -%}{% endif %}
 ONTOLOGYTERMS =             $(TMPDIR)/ontologyterms.txt
-EDIT_PREPROCESSED = 		$(TMPDIR)/$(ONT)-preprocess.owl
+EDIT_PREPROCESSED =         $(TMPDIR)/$(ONT)-preprocess.owl
 {%- if project.use_context %}
 CONTEXT_FILE =              config/context.json
 {%- endif %}
 
 {%- if project.use_dosdps %}
 PATTERNDIR=                 ../patterns
-PATTERN_TESTER=              dosdp validate -i
-DOSDPT=                      dosdp-tools
-PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
+PATTERN_TESTER=             dosdp validate -i
+DOSDPT=                     dosdp-tools
+PATTERN_RELEASE_FILES=      $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
 {% endif %}
 
 {%- if project.use_mappings %}

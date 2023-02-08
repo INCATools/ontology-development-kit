@@ -355,7 +355,7 @@ class ReportConfig(JsonSchemaMixin):
     """Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory."""
 
     sparql_test_on: List[str] = field(default_factory=lambda: ['edit'])
-    """Chose which file to run the custom sparql checks. Supported 'edit', any artecfact release."""
+    """Chose which file to run the custom sparql checks. Supported 'edit', any release artefact."""
 
 @dataclass_json
 @dataclass
