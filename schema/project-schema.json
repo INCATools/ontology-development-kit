@@ -36,10 +36,29 @@
         "ComponentProduct": {
             "description": "\n    Represents an individual component\n    Examples: a file external to the edit file that contains axioms that belong to this ontology\n    Components are usually maintained manually.\n    ",
             "properties": {
+                "base_iris": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "filename": {
                     "type": "string"
                 },
+                "make_base": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "mappings": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "source": {
+                    "type": "string"
+                },
+                "sssom_options": {
                     "type": "string"
                 },
                 "template_options": {
@@ -50,6 +69,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "use_mappings": {
+                    "default": false,
+                    "type": "boolean"
                 },
                 "use_template": {
                     "default": false,
@@ -173,6 +196,9 @@
                         "mirror_from": {
                             "type": "string"
                         },
+                        "mirror_type": {
+                            "type": "string"
+                        },
                         "module_type": {
                             "type": "string"
                         },
@@ -257,6 +283,10 @@
                 "id": {
                     "type": "string"
                 },
+                "maintenance": {
+                    "default": "manual",
+                    "type": "string"
+                },
                 "rebuild_if_source_changes": {
                     "default": true,
                     "type": "boolean"
@@ -290,21 +320,11 @@
             },
             "type": "object"
         },
-        "RobotTemplateGroup": {
-            "description": "\n    A configuration section that consists of a list of `RobotTemplateProduct` descriptions\n    ",
-            "properties": {
-                "directory": {
-                    "default": "../templates/",
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
         "SSSOMMappingSetGroup": {
             "description": "\n    A configuration section that consists of a list of `SSSOMMappingSetProduct` descriptions\n    ",
             "properties": {
                 "directory": {
-                    "default": "../mappings/",
+                    "default": "../mappings",
                     "type": "string"
                 },
                 "products": {
@@ -312,6 +332,10 @@
                         "$ref": "#/definitions/SSSOMMappingSetProduct"
                     },
                     "type": "array"
+                },
+                "release_mappings": {
+                    "default": false,
+                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -324,6 +348,9 @@
                 {
                     "properties": {
                         "mirror_from": {
+                            "type": "string"
+                        },
+                        "source_file": {
                             "type": "string"
                         }
                     },
@@ -435,6 +462,10 @@
             "default": "owl",
             "type": "string"
         },
+        "ensure_valid_rdfxml": {
+            "default": false,
+            "type": "boolean"
+        },
         "exclude_tautologies": {
             "default": "structural",
             "type": "string"
@@ -471,6 +502,10 @@
         },
         "id": {
             "default": "",
+            "type": "string"
+        },
+        "import_component_format": {
+            "default": "ofn",
             "type": "string"
         },
         "import_group": {
@@ -533,6 +568,10 @@
             "default": false,
             "type": "boolean"
         },
+        "release_diff": {
+            "default": false,
+            "type": "boolean"
+        },
         "release_use_reasoner": {
             "default": true,
             "type": "boolean"
@@ -555,7 +594,8 @@
                 "custom_sparql_checks": [
                     "owldef-self-reference",
                     "iri-range",
-                    "label-with-iri"
+                    "label-with-iri",
+                    "multiple-replaced_by"
                 ],
                 "custom_sparql_exports": [
                     "basic-report",
@@ -571,6 +611,9 @@
                 "report_on": [
                     "edit"
                 ],
+                "sparql_test_on": [
+                    "edit"
+                ],
                 "use_base_iris": true,
                 "use_labels": true
             },
@@ -578,9 +621,6 @@
         },
         "robot_settings": {
             "$ref": "#/definitions/CommandSettings"
-        },
-        "robot_template_group": {
-            "$ref": "#/definitions/RobotTemplateGroup"
         },
         "robot_version": {
             "type": "string"
@@ -622,6 +662,10 @@
         },
         "use_edit_file_imports": {
             "default": true,
+            "type": "boolean"
+        },
+        "use_env_file_docker": {
+            "default": false,
             "type": "boolean"
         },
         "use_external_date": {
@@ -683,6 +727,9 @@
                 "mirror_from": {
                     "type": "string"
                 },
+                "mirror_type": {
+                    "type": "string"
+                },
                 "module_type": {
                     "type": "string"
                 },
@@ -723,6 +770,10 @@
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "maintenance": {
+                    "default": "manual",
                     "type": "string"
                 },
                 "rebuild_if_source_changes": {
@@ -778,6 +829,10 @@
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "maintenance": {
+                    "default": "manual",
                     "type": "string"
                 },
                 "rebuild_if_source_changes": {
