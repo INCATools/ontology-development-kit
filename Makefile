@@ -180,3 +180,8 @@ dev-test-publish:
 	docker buildx rm multiarch
 	docker buildx create --name multiarch --driver docker-container --use
 	$(MAKE) tests publish-multiarch-dev
+
+dev-test-publish-no-rm:
+	git pull
+	docker buildx create --name multiarch --driver docker-container --use
+	$(MAKE) tests publish-multiarch-dev
