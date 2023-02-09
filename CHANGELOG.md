@@ -1,5 +1,10 @@
 # v1.4 (unpublished, target date 7 February 2022)
 
+## New and updated tooling
+
+- New [ROBOT Version 1.9.2](https://github.com/ontodev/robot/releases/tag/v1.9.2)
+- A lot of [updated python tools](https://github.com/INCATools/ontology-development-kit/blob/master/constraints.txt), including [OAK (0.1.70)](https://github.com/INCATools/ontology-access-kit), [SSSOM tools](https://github.com/mapping-commons/sssom-py) (0.3.21), [LinkML](https://linkml.io/) (1.4.4) and [curies](https://github.com/cthoyt/curies) (0.4.2).
+
 ## New configuration options 
 
 - Making the `uribase` configurable. You can now set the URI base in your `myont-odk.yaml` file to something different from http://purl.obolibrary.org/obo/, which enables developers from outside OBO to use ODK. Note that there is no guarantee that you can export your ontology to the OBO file format of you customise your `baseuri` this way!
