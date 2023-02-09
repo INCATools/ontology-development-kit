@@ -547,7 +547,7 @@ $(COMPONENTSDIR)/{{ component.filename }}:{% if component.templates is not none 
 {% elif component.use_mappings %}
 $(COMPONENTSDIR)/{{ component.filename }}:{% if component.mappings is not none %}{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %}{% else %} $(MAPPINGDIR)/{{ component.filename.split('.') | first }}sssom.tsv{% endif %}
 	if [ $(COMP) = true ] ; then $(SSSOMPY) merge $^ --output $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv &&\
-		$(SSSOMPY) convert $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv {% if component.sssom_options is not none %}{{ component.sssom_options }}{% endif %} --output $(TMPDIR)/{{ component.filename }}-converted.sssom.owl \
+		$(SSSOMPY) convert $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv {% if component.sssom_tool_options is not none %}{{ component.sssom_tool_options }}{% endif %} --output $(TMPDIR)/{{ component.filename }}-converted.sssom.owl &&\
 		$(ROBOT) merge -i $(TMPDIR)/{{ component.filename }}-converted.sssom.owl \
 		$(ANNOTATE_CONVERT_FILE); fi
 

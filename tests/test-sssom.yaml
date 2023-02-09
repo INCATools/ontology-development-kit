@@ -18,3 +18,10 @@ sssom_mappingset_group:
       maintenance: extract
     - id: modmini-ontd
       maintenance: manual
+components:
+  products:
+    - filename: test-with-sssom.owl
+      use_mappings: TRUE
+      mappings:
+        - modmini-onta.sssom.tsv
+        - modmini-ontd.sssom.tsv

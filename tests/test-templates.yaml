@@ -13,7 +13,7 @@ components:
     - filename: test-with-context.owl
       use_template: TRUE
       template_options: "--add-prefixes config/context.json"
-    - id: test-with-templates.owl
+    - filename: test-with-templates.owl
       use_template: TRUE
       templates:
         - template1.tsv
