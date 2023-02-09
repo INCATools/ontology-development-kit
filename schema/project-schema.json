@@ -58,7 +58,7 @@
                 "source": {
                     "type": "string"
                 },
-                "sssom_options": {
+                "sssom_tool_options": {
                     "type": "string"
                 },
                 "template_options": {
@@ -351,6 +351,9 @@
                             "type": "string"
                         },
                         "source_file": {
+                            "type": "string"
+                        },
+                        "sssom_tools_options": {
                             "type": "string"
                         }
                     },

@@ -19,7 +19,7 @@
     - **`mappings`** *(list)* A list of SSSOM template names. If set, these will be used to source this component.
       - **Items** *(string)*
     - **`source`** *(string)* The URL source for which the component should be obtained.
-    - **`sssom_options`** *(string)* ROBOT options passed to the template command.
+    - **`sssom_tool_options`** *(string)* SSSOM toolkit options passed to the sssom command used to generate this product command.
     - **`template_options`** *(string)* ROBOT options passed to the template command.
     - **`templates`** *(list)* A list of ROBOT template names. If set, these will be used to source this component.
       - **Items** *(string)*
@@ -34,7 +34,7 @@
         - **`mappings`** *(list)* A list of SSSOM template names. If set, these will be used to source this component.
           - **Items** *(string)*
         - **`source`** *(string)* The URL source for which the component should be obtained.
-        - **`sssom_options`** *(string)* ROBOT options passed to the template command.
+        - **`sssom_tool_options`** *(string)* SSSOM toolkit options passed to the sssom command used to generate this product command.
         - **`template_options`** *(string)* ROBOT options passed to the template command.
         - **`templates`** *(list)* A list of ROBOT template names. If set, these will be used to source this component.
           - **Items** *(string)*
@@ -230,6 +230,7 @@
           - **`memory_gb`** *(integer)* Amount of memory in GB to provide for tool such as robot.
       - **`mirror_from`** *(string)*: if specified this URL is used to mirror the mapping set. Default: ``.
       - **`source_file`** *(string)*: The name of the file from which the mappings should be extracted. Default: ``.
+      - **`sssom_tools_options`** *(string)*: Custom SSSOM toolkit options to be added to command. Default: ``.
     - **`release_mappings`** *(boolean)*: If set to True, mappings are copied to the release directory. Default: `False`.
 
 
