@@ -105,7 +105,7 @@ class ComponentProduct(JsonSchemaMixin):
     template_options: Optional[str] = None
     """ROBOT options passed to the template command"""
 
-    sssom_tool_options: Optional[str] = None
+    sssom_tool_options: Optional[str] = ""
     """SSSOM toolkit options passed to the sssom command used to generate this product command"""
     
     templates: Optional[List[str]] = None
@@ -185,9 +185,8 @@ class SSSOMMappingSetProduct(Product):
     source_file: Optional[str] = None
     """The name of the file from which the mappings should be extracted"""
 
-    sssom_tools_options: Optional[str] = None
-    """Custom SSSOM toolkit options to be added to command."""
-
+    sssom_tool_options: Optional[str] = ""
+    """SSSOM toolkit options passed to the sssom command used to generate this product command"""
 
     
 @dataclass_json

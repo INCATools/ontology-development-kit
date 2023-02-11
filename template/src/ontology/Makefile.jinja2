@@ -547,7 +547,7 @@ $(COMPONENTSDIR)/{{ component.filename }}:{% if component.templates is not none 
 {% elif component.use_mappings %}
 $(COMPONENTSDIR)/{{ component.filename }}:{% if component.mappings is not none %}{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %}{% else %} $(MAPPINGDIR)/{{ component.filename.split('.') | first }}sssom.tsv{% endif %}
 	if [ $(COMP) = true ] ; then $(SSSOMPY) merge $^ --output $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv &&\
-		$(SSSOMPY) convert $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv {% if component.sssom_tool_options is not none %}{{ component.sssom_tool_options }}{% endif %} --output $(TMPDIR)/{{ component.filename }}-converted.sssom.owl &&\
+		$(SSSOMPY) convert $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv {{ component.sssom_tool_options }} --output $(TMPDIR)/{{ component.filename }}-converted.sssom.owl &&\
 		$(ROBOT) merge -i $(TMPDIR)/{{ component.filename }}-converted.sssom.owl \
 		$(ANNOTATE_CONVERT_FILE); fi
 
@@ -809,7 +809,7 @@ $(TMPDIR)/{{ mapping.id }}.obographs.json: {% if mapping.source_file is not none
 		mv $@.tmp.json $@
 
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: $(TMPDIR)/{{ mapping.id }}.obographs.json
-	sssom parse $< -I obographs-json {% if mapping.sssom_tool_options is not none %}{{ mapping.sssom_tool_options }}{% endif %} -o $@
+	sssom parse $< -I obographs-json {{ mapping.sssom_tool_options }} -o $@
 {%- elif mapping.maintenance == "manual" %}
 # This mappingset is manually curated, so we only check that the file actually exists.
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
