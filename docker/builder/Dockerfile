@@ -96,21 +96,3 @@ RUN wget -nv https://github.com/ontodev/rdftab.rs/archive/refs/tags/v$RDFTAB_VER
     install -D -m 755 target/release/rdftab /staging/full/usr/bin/rdftab && \
     cd /build && \
     rm -rf rdftab.rs-$RDFTAB_VERSION rdftab.tar.gz /root/.cargo
-
-# Compile Konclude if we are not on x86_64
-# (building Konclude is time-consuming, so we avoid it
-#  on x86_64 where a pre-compiled binary is available).
-ARG TARGETARCH
-RUN test "x$TARGETARCH" != xamd64 && (apt-get update && \
-        DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
-            qtbase5-dev qt5-qmake qtbase5-dev-tools wget && \
-        wget -nv https://github.com/konclude/Konclude/archive/refs/tags/v0.7.0-1138.tar.gz \
-            -O /build/Konclude-0.7.0.tar.gz && \
-        tar xf Konclude-0.7.0.tar.gz && \
-        cd Konclude-0.7.0-1138 && \
-        qmake -r CONFIG+=release CONFIG-=debug CONFIG+=static QT-=gui KoncludeWithoutRedland.pro && \
-        make && \
-        install -D -m 755 Release/Konclude /staging/full/usr/bin/Konclude && \
-        cd /build && \
-        rm -rf Konclude-0.7.0-1138 Konclude-0.7.0.tar.gz \
-    ) || true
