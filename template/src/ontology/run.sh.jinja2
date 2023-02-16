@@ -55,7 +55,7 @@ WORK_DIR=/work/src/ontology
 if [ -n "$ODK_BINDS" ]; then
     VOLUME_BIND="$VOLUME_BIND,$ODK_BINDS"
 fi
-
+{% if project.use_env_file_docker is sameas True %}
 # Gather environment variables into a single file
 # (and make sure that file is deleted no matter what)
 trap "rm -f run.sh.env" EXIT
@@ -65,19 +65,18 @@ ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS
 JAVA_OPTS=$ODK_JAVA_OPTS
 GH_TOKEN=$GH_TOKEN
 EOF
-
+{% endif %}
 if [ -n "$USE_SINGULARITY" ]; then
     {% if project.use_external_date is sameas True %}export TODAY=$(date +%Y-%m-%d){% endif %}
     singularity exec --cleanenv $ODK_SINGULARITY_OPTIONS \
-        --env-file run.sh.env \
+        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}--env "ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS,JAVA_OPTS=$ODK_JAVA_OPTS" {% endif %}\
         --bind $VOLUME_BIND \
         -W $WORK_DIR \
         docker://obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 else
     BIND_OPTIONS="-v $(echo $VOLUME_BIND | sed 's/,/ -v /')"
-    docker run -u $(id -u):$(id -g) $ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \
-        --env-file run.sh.env \
-        {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %} \
+    docker run $ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \
+        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}-e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}{% endif %}\
         --rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 fi
 

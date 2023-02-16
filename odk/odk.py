@@ -61,6 +61,9 @@ class Product(JsonSchemaMixin):
     description: Optional[str] = None
     """A concise textual description of the product"""
     
+    maintenance: str = "manual"
+    """A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies."""
+    
     rebuild_if_source_changes : bool = True
     """If false then previously downloaded versions of external ontologies are used"""
     
@@ -91,7 +94,25 @@ class ComponentProduct(JsonSchemaMixin):
     """The filename of this component"""
     
     source: Optional[str] = None
-    """The source for which the component should be obtained."""
+    """The URL source for which the component should be obtained."""
+    
+    use_template: bool = False
+    """If true, the component will be sourced by a template"""
+
+    use_mappings: bool = False
+    """If true, the component will be sourced from on or more SSSOM mapping files"""
+    
+    template_options: Optional[str] = None
+    """ROBOT options passed to the template command"""
+
+    sssom_tool_options: Optional[str] = ""
+    """SSSOM toolkit options passed to the sssom command used to generate this product command"""
+    
+    templates: Optional[List[str]] = None
+    """A list of ROBOT template names. If set, these will be used to source this component."""
+
+    mappings: Optional[List[str]] = None
+    """A list of SSSOM template names. If set, these will be used to source this component."""
     
     base_iris: Optional[List[str]] = None
     """A list of URI prefixes used to identify terms belonging to the component."""
@@ -118,7 +139,7 @@ class ImportProduct(Product):
     """if large, ODK may take measures to reduce the memory footprint of the import."""
     
     module_type : Optional[str] = None
-    """Module type. Supported: slme, minimal, custom"""
+    """Module type. Supported: slme, minimal, custom, mirror"""
     
     module_type_slme : str = "BOT"
     """SLME module type. Supported: BOT, TOP, STAR"""
@@ -138,6 +159,9 @@ class ImportProduct(Product):
     use_gzipped: bool = False
     """if use_gzipped is true, try use the base IRI instead of normal one to mirror from."""
 
+    mirror_type: Optional[str] = None
+    """Define the type of the mirror for your import. Supported: base, custom, no_mirror."""
+
 @dataclass_json
 @dataclass
 class PatternPipelineProduct(Product):
@@ -151,23 +175,20 @@ class PatternPipelineProduct(Product):
 
 @dataclass_json
 @dataclass
-class PatternProduct(Product):
-    """Represents a DOSDP template product
+class SSSOMMappingSetProduct(Product):
+    """
+    Represents an SSSOM Mapping template template
+    """
+    mirror_from: Optional[Url] = None
+    """if specified this URL is used to mirror the mapping set."""
+
+    source_file: Optional[str] = None
+    """The name of the file from which the mappings should be extracted"""
+
+    sssom_tool_options: Optional[str] = ""
+    """SSSOM toolkit options passed to the sssom command used to generate this product command"""
+
     
-    The products here can be manfested as CSVs (from 'parse'ing OWL)
-    or they may be OWL (from the dosdp 'generate' command)
-    """
-    pass
-
-
-@dataclass_json
-@dataclass
-class RobotTemplateProduct(Product):
-    """
-    Represents a ROBOT template
-    """
-    pass
-
 @dataclass_json
 @dataclass
 class ExportProduct(Product):
@@ -335,6 +356,9 @@ class ReportConfig(JsonSchemaMixin):
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
     """Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory."""
 
+    sparql_test_on: List[str] = field(default_factory=lambda: ['edit'])
+    """Chose which file to run the custom sparql checks. Supported 'edit', any release artefact."""
+
 @dataclass_json
 @dataclass
 class DocumentationGroup(JsonSchemaMixin):
@@ -381,37 +405,28 @@ class PatternPipelineGroup(ProductGroup):
     
     matches: Optional[List[PatternPipelineProduct]] = None
     """pipelines specifically configured for matching, NOT generating."""
+    
+    directory : Directory = "../patterns/"
+    """directory where pattern source lives, also where TSV exported to"""
 
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
             self.products = []
         self.products.append(PatternPipelineProduct(id=id))
-            
+
 @dataclass_json
 @dataclass
-class PatternGroup(ProductGroup):
+class SSSOMMappingSetGroup(JsonSchemaMixin):
     """
-    A configuration section that consists of a list of `PatternProduct` descriptions
+    A configuration section that consists of a list of `SSSOMMappingSetProduct` descriptions
+    """
+    
+    directory : Directory = "../mappings"
 
-    """
+    release_mappings : bool = False
+    """If set to True, mappings are copied to the release directory."""
     
-    products : Optional[List[PatternProduct]] = None
-    """all DOSDP pattern products"""
-
-    directory : Directory = "../patterns/"
-    """directory where pattern source lives, also where TSV exported to"""
-
-    
-@dataclass_json
-@dataclass
-class RobotTemplateGroup(JsonSchemaMixin):
-    """
-    A configuration section that consists of a list of `RobotTemplateProduct` descriptions
-    """
-    
-    directory : Directory = "../templates/"
-    
-    products : Optional[List[RobotTemplateProduct]] = None
+    products : Optional[List[SSSOMMappingSetProduct]] = None
 
 @dataclass_json
 @dataclass
@@ -500,6 +515,15 @@ class OntologyProject(JsonSchemaMixin):
     use_dosdps : bool = False
     """if true use dead simple owl design patterns"""
     
+    use_templates : bool = False
+    """if true use ROBOT templates."""
+    
+    use_mappings : bool = False
+    """if true use SSSOM mapping files."""
+
+    use_env_file_docker : bool = False
+    """if true environment variables are collected by the docker wrapper and passed into the container."""
+
     use_custom_import_module : bool = False
     """if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed."""
     
@@ -509,6 +533,9 @@ class OntologyProject(JsonSchemaMixin):
 """
     """A multiline string that is added to the Makefile"""
 
+    use_context: bool = False
+    """If True, a context file is created that allows the user to specify prefixes used across the project."""
+    
     public_release : str = "none"
     """if true add functions to run automated releases (experimental). Current options are: github_curl, github_python."""
 
@@ -529,6 +556,9 @@ class OntologyProject(JsonSchemaMixin):
     
     import_pattern_ontology : bool = False
     """if true import pattern.owl"""
+
+    import_component_format : str = "ofn"
+    """The default serialisation for all components and imports."""
     
     create_obo_metadata : bool = True
     """if true OBO Markdown and PURL configs are created."""
@@ -539,12 +569,19 @@ class OntologyProject(JsonSchemaMixin):
     release_artefacts : List[str] = field(default_factory=lambda: ['full', 'base'])
     """A list of release artefacts you wish to be exported."""
     
+    release_use_reasoner : bool = True
+    """If set to True, the reasoner will be used during the release process."""
+    
     export_formats : List[str] = field(default_factory=lambda: ['owl', 'obo'])
     """A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl."""
     
     namespaces : Optional[List[str]] = None
     """A list of namespaces that are considered at home in this ontology. Used for certain filter commands."""
-
+    
+    use_edit_file_imports : bool = True
+    """If True, ODK will release the ontology with imports explicitly specified by owl:imports in the edit file.
+    If False, ODK will build and release the ontology with _all_ imports and _all_ components specified in the ODK config file."""
+    
     dosdp_tools_options: str = "--obo-prefixes=true"
     """default parameters for dosdp-tools"""
     
@@ -562,7 +599,6 @@ class OntologyProject(JsonSchemaMixin):
     
     uribase_suffix : str = None
     """Suffix for the uri base. If not set, the suffix will be the ontology id by default."""
-    
     
     contact : Optional[Person] = None
     """Single contact for ontology as required by OBO"""
@@ -591,15 +627,12 @@ class OntologyProject(JsonSchemaMixin):
 
     subset_group : Optional[SubsetGroup] = None
     """Block that includes information on all subsets (aka slims) to be generated"""
-
-    pattern_group : Optional[PatternGroup] = None
-    """Block that includes information on all DOSDP templates used"""
     
     pattern_pipelines_group : Optional[PatternPipelineGroup] = None
-    """Block that includes information on all ontology imports to be generated"""
-
-    robotemplate_group : Optional[RobotTemplateGroup] = None
-    """Block that includes information on all ROBOT templates used"""
+    """Block that includes information on all DOSDP templates used"""
+    
+    sssom_mappingset_group : Optional[SSSOMMappingSetGroup] = None
+    """Block that includes information on all SSSOM mapping tables used"""
 
     release_diff : bool = False
     """When enabled, a diff is generated between the current release and the new one"""

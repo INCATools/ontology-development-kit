@@ -324,6 +324,46 @@ entries:
 - prefix: /
   replacement: https://raw.githubusercontent.com/{{ project.github_org }}/{{ project.repo }}/{{ project.git_main_branch }}/
 {%- endif %}
+{% if project.use_templates %}
+^^^ src/templates/README.md
+# ROBOT templates
+{%- if project.components is not none %}
+{%- for component in project.components.products %}
+{%- if component.use_template %}
+{%- if component.templates is not none %}{% for template in component.templates %}
+^^^ src/templates/{{ template }}
+ID	LABEL
+ID	LABEL
+{%- endfor %}{% else %}
+^^^ src/templates/{{ component.filename.split('.') | first }}.tsv
+ID	LABEL
+ID	LABEL
+{%- endif %}
+{%- endif %}
+{%- endfor %}
+{%- endif %}
+{%- endif %}
+{%- if project.use_mappings %}
+^^^ src/mappings/README.md
+# Directory for managing SSSOM mappings files
+
+{%- if project.sssom_mappingset_group is not none %}
+{%- for mapping in project.sssom_mappingset_group.products %}
+^^^ src/mappings/{{ mapping.id }}.sssom.tsv
+# curie_map:
+#   semapv: https://w3id.org/semapv/
+#   skos: http://www.w3.org/2004/02/skos/core#
+#   sssom: https://w3id.org/sssom/
+#   {{ project.id | upper }}: {{ project.uribase }}/{{ project.id | upper }}_
+# license: https://creativecommons.org/publicdomain/zero/1.0/
+# mapping_set_id: http://purl.obolibrary.org/obo/{{ project.id }}/mappings/{{ mapping.id }}.sssom.tsv
+subject_id	predicate_id	object_id	mapping_justification
+{{ project.id | upper }}:0000000	skos:exactMatch	sssom:NoTermFound	semapv:ManualMappingCuration
+
+{%- endfor %}
+{%- endif %}
+
+{%- endif %}
 {#-
     Example pattern implementation TSV
 #}
@@ -389,6 +429,28 @@ Documentation of the Default DOSDP Pipeline
 # Documentation of the {{ pipeline.id }} DOSDP Pipeline
 {%- endfor %}
 {%- endif %}
+{%- endif %}
+{%- if project.use_context %}
+^^^ config/context.json
+{
+	"@context": {
+		"obo": "http://purl.obolibrary.org/obo/",
+		"oboInOwl": "http://www.geneontology.org/formats/oboInOwl#",
+
+		"rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+		"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+		"rdfa": "http://www.w3.org/ns/rdfa#",
+		"xml": "http://www.w3.org/XML/1998/namespace",
+		"xsd": "http://www.w3.org/2001/XMLSchema#",
+		"owl": "http://www.w3.org/2002/07/owl#",
+
+		"dc": "http://purl.org/dc/terms/",
+		"foaf": "http://xmlns.com/foaf/0.1/",
+		"prov": "http://www.w3.org/ns/prov#",
+		"skos": "http://www.w3.org/2004/02/skos/core#",
+		"void": "http://rdfs.org/ns/void#"
+	}
+}
 {%- endif %}
 {#-
     SPARQL QUERY to collect all terms that belong to an ontology
@@ -1109,6 +1171,21 @@ Note: our ODK file should only have one `import_group` which can contain multipl
     ...
     ```
 2. Add your imports redirect to your catalog file `src/ontology/catalog-v001.xml`, for example:
+    ```
+    <uri name="http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl" uri="imports/go_import.owl"/>
+    ```
+3. Test whether everything is in order:
+    1. [Refresh your import](UpdateImports.md)
+    2. Open in your Ontology Editor of choice (Protege) and ensure that the expected terms are imported.
+
+Note: The catalog file `src/ontology/catalog-v001.xml` has one purpose: redirecting 
+imports from URLs to local files. For example, if you have
+
+```
+Import(<http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl>)
+```
+
+in your editors file (the ontology) and
 
 ```
 <uri name="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/go_import.owl" uri="imports/go_import.owl"/>
@@ -1117,7 +1194,6 @@ Note: our ODK file should only have one `import_group` which can contain multipl
 in your catalog, tools like `robot` or Protégé will recognize the statement
 in the catalog file to redirect the URL `http://purl.obolibrary.org/obo/{{ project.id }}/imports/go_import.owl`
 to the local file `imports/go_import.owl` (which is in your `src/ontology` directory).
-
 
 ### Modify an existing import
 
@@ -1220,8 +1296,8 @@ be created which you can edit as you see fit. Typical ways to edit:
 1. Manually curating the component separately with Protégé or any other editor
 1. Providing a `components/mycomp.owl:` make target in `src/ontology/{{ project.id }}.Makefile`
 and provide a custom command to generate the component
-    `WARNING`: Note that the custom rule to generate the component _MUST NOT_ depend on any other ODK-generated file such as seed files and the like (see [issue](https://github.com/INCATools/ontology-development-kit/issues/637)).
-1. Providing an additional attribute for the component in `src/ontology/cpont-odk.yaml`, `source`,
+    - `WARNING`: Note that the custom rule to generate the component _MUST NOT_ depend on any other ODK-generated file such as seed files and the like (see [issue](https://github.com/INCATools/ontology-development-kit/issues/637)).
+1. Providing an additional attribute for the component in `src/ontology/{{ project.id }}-odk.yaml`, `source`,
 to specify that this component should simply be downloaded from somewhere on the web.
 
 ### Adding a new component based on a ROBOT template
@@ -1575,6 +1651,12 @@ The documentation is _not_ automatically updated from the Markdown, and needs to
    ```
 3. Just to double check, you can now navigate to your documentation pages (usually https://{{ project.github_org }}.github.io/{{ project.repo }}/). 
    Just make sure you give GitHub 2-5 minutes to build the pages!
+{% if project.use_mappings %}
+^^^ src/mappings/README.md
+# SSSOM mapping directory
+
+Do not overwrite, contents will be generated automatically.
+{% endif %}
 {% if project.use_dosdps %}
 
 ^^^ docs/odk-workflows/ManageAutomatedTest.md

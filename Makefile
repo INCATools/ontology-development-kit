@@ -54,16 +54,14 @@ test: $(TEST_FILES) custom_tests
 tests/*.yaml: .FORCE
 	$(CMD) -c -C $@
 
-schema/project-schema.json:
-	./odk/odk.py dump-schema > $@
 
-docs/project-schema.md: schema/project-schema.json
-	python odk/schema_documentation.py
-
-docs: docs/project-schema.md
+.PHONY: docs
+docs:
+	@ODK_IMAGE=odklite ./odk.sh ./odk/odk.py dump-schema > schema/project-schema.json
+	@ODK_IMAGE=odklite ./odk.sh python ./odk/schema_documentation.py
 
 # Building docker image
-VERSION = "v1.3.2"
+VERSION = "v1.4"
 IM=obolibrary/odkfull
 IMLITE=obolibrary/odklite
 ROB=obolibrary/robot
@@ -178,5 +176,10 @@ clean-tests:
 dev-test-publish:
 	git pull
 	docker buildx rm multiarch
+	docker buildx create --name multiarch --driver docker-container --use
+	$(MAKE) tests publish-multiarch-dev
+
+dev-test-publish-no-rm:
+	git pull
 	docker buildx create --name multiarch --driver docker-container --use
 	$(MAKE) tests publish-multiarch-dev
