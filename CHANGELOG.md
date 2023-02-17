@@ -4,9 +4,10 @@ A full record of all changes can be seen [here](https://github.com/INCATools/ont
 
 ## New and updated tooling
 
-- New [ROBOT Version 1.9.2](https://github.com/ontodev/robot/releases/tag/v1.9.2)
-- A lot of [updated python tools](https://github.com/INCATools/ontology-development-kit/blob/master/constraints.txt), including [OAK (0.1.70)](https://github.com/INCATools/ontology-access-kit), [SSSOM tools](https://github.com/mapping-commons/sssom-py) (0.3.21), [LinkML](https://linkml.io/) (1.4.4) and [curies](https://github.com/cthoyt/curies) (0.4.2).
+- New [ROBOT Version 1.9.3](https://github.com/ontodev/robot/releases/tag/v1.9.3)
+- A lot of [updated python tools](https://github.com/INCATools/ontology-development-kit/blob/master/constraints.txt), including [OAK (0.1.71)](https://github.com/INCATools/ontology-access-kit), [SSSOM tools](https://github.com/mapping-commons/sssom-py) (0.3.22), [LinkML](https://linkml.io/) (1.4.4) and [curies](https://github.com/cthoyt/curies) (0.4.2).
 - `gh` is now installed in ODK, which means that GitHub workflows can be run directly through ODK. For example, try out the new `public_release` workflow which automatically creates a GitHub release for you.
+- A full list of all available python tools and there vesions is available [here](https://github.com/INCATools/ontology-development-kit/blob/master/constraints.txt)
 
 ## New configuration options 
 
