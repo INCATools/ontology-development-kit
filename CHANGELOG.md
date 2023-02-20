@@ -1,3 +1,11 @@
+# v1.5 (unpublished)
+
+A full record of all planned changes can be seen [here](https://github.com/INCATools/ontology-development-kit/milestone/7).
+
+## Makefile workflows
+
+- Added a `test_fast` goal that runs all ontology QC checks without refreshing imports or rebuilding components.
+
 # v1.4
 
 A full record of all changes can be seen [here](https://github.com/INCATools/ontology-development-kit/milestone/6?closed=1).
