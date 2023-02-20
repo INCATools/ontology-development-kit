@@ -102,6 +102,10 @@ all_odk: odkversion test all_assets{% if project.release_diff %} release_diff{% 
 test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}reason_test sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile|default(true) %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
 	echo "Finished running all tests successfully."
 
+.PHONY: test
+test_fast:
+	$(MAKE_FAST) test
+
 .PHONY: release_diff
 release_diff: $(REPORTDIR)/release-diff.md
 
@@ -1149,6 +1153,7 @@ Core commands:
 * prepare_release_fast:	Run the entire release pipeline without refreshing imports, recreating components or recompiling patterns.
 * update_repo:		Update the ODK repository setup using the config file {{ project.id }}-odk.yaml
 * test:			Running all validation tests
+* test_fast:		Runs the test suite, but without updating imports or components
 * odkversion:		Show the current version of the ODK Makefile and ROBOT.
 * clean:		Delete all temporary files
 * help:			Print ODK Usage information
