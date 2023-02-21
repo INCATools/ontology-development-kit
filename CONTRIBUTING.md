@@ -257,6 +257,20 @@ The examples folder serves for both unit test and documentation purposes.
 
 TODO
 
+## Pull request rules
+
+1. One PR per feature.
+2. Each PR must link to one or more existing issues.
+3. There should be one commit per logical change. This is important so we can be more effective at cherry picking for patch releases.
+4. Every commit should have an appropriate title and description.
+
+## Major minor system
+
+- Once a release is done, we work on the master branch towards the next major release
+- The minor release steward cherry picks certain kinds of changes for minor releases, including
+   - ROBOT updates
+   - Python tool version updates
+   - Critical bug fixes 
 
 ## Adding new programs or Python modules to the ODK
 
