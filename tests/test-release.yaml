@@ -15,7 +15,6 @@ release_artefacts:
   - full
   - base
   - editors
-  - baseplus
 primary_release: simple
 import_group:
   release_imports: TRUE
