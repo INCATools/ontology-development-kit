@@ -40,6 +40,14 @@ ODK_TAG=${ODK_TAG:-latest}
 ODK_JAVA_OPTS={% if project.robot_java_args is defined and project.robot_java_args|length %}${ODK_JAVA_OPTS:-{{ project.robot_java_args }}}{% else %}${ODK_JAVA_OPTS:--Xmx8G}{% endif %}
 ODK_DEBUG=${ODK_DEBUG:-no}
 
+# Convert OWLAPI_* environment variables to the OWLAPI as Java options
+# See http://owlcs.github.io/owlapi/apidocs_4/org/semanticweb/owlapi/model/parameters/ConfigurationOptions.html
+# for a list of allowed options
+OWLAPI_OPTIONS_NAMESPACE=org.semanticweb.owlapi.model.parameters.ConfigurationOptions
+for owlapi_var in $(env | sed -n s/^OWLAPI_//p) ; do
+    ODK_JAVA_OPTS="$ODK_JAVA_OPTS -D$OWLAPI_OPTIONS_NAMESPACE.${owlapi_var%=*}=${owlapi_var#*=}"
+done
+
 TIMECMD=
 if [ x$ODK_DEBUG = xyes ]; then
     # If you wish to change the format string, take care of using
