@@ -1180,8 +1180,8 @@ DOSDP templates
 {% endif %}
 Editor utilities:
 * validate_idranges:	Make sure your ID ranges file is formatted correctly
-* normalize_src:	Load and safe your {{ project.id }}-edit file after you to make sure its serialised correctly{% if 'obo' in project.edit_format %}
-* normalize_obo_src:	Load and safe your {{ project.id }}-edit.obo file after you to merge duplicate annotation assertions{% endif %}
+* normalize_src:	Load and save your {{ project.id }}-edit file after you to make sure its serialised correctly{% if 'obo' in project.edit_format %}
+* normalize_obo_src:	Load and save your {{ project.id }}-edit.obo file after you to merge duplicate annotation assertions{% endif %}
 * explain_unsat:	If you have unsatisfiable classes, this command will create a markdown file (tmp/explain_unsat.md) which will explain all your unsatisfiable classes
 * validate-all-tsv:	Check all your tsv files for possible problems in syntax. Use ALL_TSV_FILES variable to list files
 * validate-tsv:		Check a tsv file for syntactic problems with tsvalid. Use TSV variable to pass filepath, e.g. make TSV=../my.tsv validate-tsv.
