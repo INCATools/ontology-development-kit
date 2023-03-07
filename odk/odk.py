@@ -570,10 +570,14 @@ class OntologyProject(JsonSchemaMixin):
     """if true add a gzipped version of the main artefact"""
     
     release_artefacts : List[str] = field(default_factory=lambda: ['full', 'base'])
-    """A list of release artefacts you wish to be exported."""
+    """A list of release artefacts you wish to be exported. Supported: base, full, baselite, simple, non-classified, 
+    simple-non-classified, basic."""
     
     release_use_reasoner : bool = True
     """If set to True, the reasoner will be used during the release process."""
+
+    release_materialize_object_properties : List[str] = None
+    """Define which object properties to materialise at release time."""
     
     export_formats : List[str] = field(default_factory=lambda: ['owl', 'obo'])
     """A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl."""

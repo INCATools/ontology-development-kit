@@ -912,7 +912,7 @@ ROBOT_RELEASE_IMPORT_MODE_BASE=$(ROBOT) remove --input $< --select imports --tri
 merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}
 
 {% if 'base' in project.release_artefacts or project.primary_release == 'base' -%}
-# base: All the axioms as they are editted by the editors, excluding reasoning
+# base: A version of the ontology that does not include any externally imported axioms.
 $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
 	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
@@ -926,9 +926,9 @@ $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
 		{% if project.release_date -%} --annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
-{% if 'editors' in project.release_artefacts or project.primary_release == 'editors' -%}
-# editors: All the axioms as they are editted by the editors, excluding reasoning. This is currently the same as "base". Only to be used experimentally (may disappear in future ODK releases).
-$(ONT)-editors.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
+{% if 'baselite' in project.release_artefacts or project.primary_release == 'baselite' -%}
+# baselite: All the axioms as they are editted by the editors, excluding reasoning. This is currently the same as "base". Only to be used experimentally (may disappear in future ODK releases).
+$(ONT)-baselite.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
 	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		{% if project.release_date -%} --annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
