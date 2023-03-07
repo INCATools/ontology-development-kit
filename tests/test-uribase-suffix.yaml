@@ -7,5 +7,4 @@ uribase_suffix: ontology
 import_group:
   products:
     - id: ro
-    - id: pato
-      use_base: TRUE
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
