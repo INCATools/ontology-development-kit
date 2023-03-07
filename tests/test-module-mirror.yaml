@@ -1,5 +1,5 @@
 id: modmir
-title: "Test ROBOT extract minimal with base and large option"
+title: "Test ROBOT extract with module type mirror"
 github_org: INCATools
 repo: ontology-development-kit
 edit_format: obo
@@ -8,7 +8,8 @@ export_formats:
   - obo
 import_group:
   products:
-    - id: envo
+    - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
       module_type: mirror
 allow_equivalents: all
 
