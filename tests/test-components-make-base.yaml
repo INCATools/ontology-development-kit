@@ -12,11 +12,13 @@ export_formats:
 import_group:
   products: 
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: bfo
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/bfo.owl
 components:
   products:
     - filename: pato.owl
-      source: http://purl.obolibrary.org/obo/pato.owl
+      source: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
       base_iris:
         - http://purl.obolibrary.org/obo/PATO_
         - http://purl.obolibrary.org/obo/pato#

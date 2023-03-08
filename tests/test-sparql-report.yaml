@@ -11,6 +11,7 @@ release_artefacts:
 import_group:
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
 robot_report:
   release_reports: True
   fail_on : ERROR
