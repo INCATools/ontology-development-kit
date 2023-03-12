@@ -574,7 +574,9 @@ class OntologyProject(JsonSchemaMixin):
     simple-non-classified, basic."""
     
     release_use_reasoner : bool = True
-    """If set to True, the reasoner will be used during the release process."""
+    """If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
+    reason (the classification/subclassOf hierarchy computaton); materialize (the materialisation of simple existential/
+    object property restrictions); reduce (the removal of redundant subclassOf axioms)."""
 
     release_materialize_object_properties : List[str] = None
     """Define which object properties to materialise at release time."""
