@@ -8,6 +8,7 @@ export_formats:
 import_group:
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
 components:
   products:
     - filename: test-with-context.owl
