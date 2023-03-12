@@ -1,9 +1,8 @@
-id: rta
-title: "Release Test A Ontology"
+id: rtma
+title: "Release Test with materialisation of object properties"
 github_org: obophenotype
-repo: rta
+repo: rtma
 report_fail_on: ERROR
-release_diff: FALSE
 namespaces: 
   - http://purl.obolibrary.org/obo/PTT_
   - http://purl.obolibrary.org/obo/PATO_
@@ -12,7 +11,7 @@ release_materialize_object_properties:
 release_artefacts: 
   - full
   - base
-primary_release: simple
+primary_release: base
 import_group:
   release_imports: TRUE
   products:
