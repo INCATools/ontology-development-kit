@@ -915,8 +915,8 @@ merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}
 # base: A version of the ontology that does not include any externally imported axioms.
 $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
-	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
-	materialize \{% endif %}
+	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% if project.release_materialize_object_properties is defined %}
+	materialize {% for iri in project.release_materialize_object_properties %}--term {{iri}} {% endfor %} \{% endif %}{% endif %}
 	relax \{% if project.release_use_reasoner %}
 	reduce -r {{ project.reasoner }} \{% endif %}
 	remove {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
