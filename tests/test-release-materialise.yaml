@@ -7,14 +7,11 @@ release_diff: FALSE
 namespaces: 
   - http://purl.obolibrary.org/obo/PTT_
   - http://purl.obolibrary.org/obo/PATO_
+release_materialize_object_properties:
+  - http://purl.obolibrary.org/obo/BFO_0000050
 release_artefacts: 
-  - simple
-  - non-classified
-  - simple-non-classified
-  - basic
   - full
   - base
-  - baselite
 primary_release: simple
 import_group:
   release_imports: TRUE
