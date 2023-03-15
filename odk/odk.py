@@ -303,6 +303,9 @@ class ImportGroup(ProductGroup):
     use_base_merging: bool = False
     """If set to true, mirrors will be merged before determining a suitable seed. This can be a quite costly process."""
     
+    base_merge_drop_equivalent_class_axioms: bool = True
+    """If set to true, equivalent class axioms will be removed before extracting a module with the base-merging process."""
+
     exclude_iri_patterns: Optional[List[str]] = None
     """List of IRI patterns. If set, IRIs matching and IRI pattern will be removed from the import."""
     
@@ -567,10 +570,16 @@ class OntologyProject(JsonSchemaMixin):
     """if true add a gzipped version of the main artefact"""
     
     release_artefacts : List[str] = field(default_factory=lambda: ['full', 'base'])
-    """A list of release artefacts you wish to be exported."""
+    """A list of release artefacts you wish to be exported. Supported: base, full, baselite, simple, non-classified, 
+    simple-non-classified, basic."""
     
     release_use_reasoner : bool = True
-    """If set to True, the reasoner will be used during the release process."""
+    """If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
+    reason (the classification/subclassOf hierarchy computaton); materialize (the materialisation of simple existential/
+    object property restrictions); reduce (the removal of redundant subclassOf axioms)."""
+
+    release_materialize_object_properties : List[str] = None
+    """Define which object properties to materialise at release time."""
     
     export_formats : List[str] = field(default_factory=lambda: ['owl', 'obo'])
     """A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl."""
