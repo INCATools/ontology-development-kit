@@ -13,7 +13,7 @@ release_artefacts:
   - basic
   - full
   - base
-  - editors
+  - baselite
 import_group:
   release_imports: TRUE
   products:

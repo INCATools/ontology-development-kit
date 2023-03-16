@@ -6,7 +6,7 @@ namespaces:
   - http://purl.obolibrary.org/obo/TONER_
   - http://purl.obolibrary.org/obo/PATO_
 release_artefacts: 
-  - editors
+  - baselite
   - base
 primary_release: base
 release_use_reasoner: FALSE
