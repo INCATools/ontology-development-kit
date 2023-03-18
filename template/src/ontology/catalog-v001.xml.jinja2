@@ -3,8 +3,8 @@
 <group id="Folder Repository, directory=, recursive=false, Auto-Update=false, version=2" prefer="public" xml:base="">
 {% if project.import_group is defined %}
   {% if project.import_group.use_base_merging %}
-  <uri name="{{project.uribase}}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{imp.id}}_import.owl" uri="imports/merged_import.owl"/>
-  <uri name="{{project.uribase}}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{imp.id}}_import.owl" uri="imports/merged_import.obo"/>
+  <uri name="{{project.uribase}}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl" uri="imports/merged_import.owl"/>
+  <uri name="{{project.uribase}}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.obo" uri="imports/merged_import.obo"/>
   {% else %}
   {% for imp in project.import_group.products %}
   <uri name="{{project.uribase}}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{imp.id}}_import.owl" uri="imports/{{imp.id}}_import.owl"/>
