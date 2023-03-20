@@ -11,7 +11,7 @@ https://www.wikidata.org/wiki/Q112336713
 
 Manage your ontology's life cycle with the Ontology Development Kit (ODK)! The ODK is
 - a toolbox of various ontology related tools such as ROBOT, owltools, dosdp-tools and many more, bundled as a docker image
-- a set of executable workflows for managing your ontologies continuous integration, quality control, releases and dynamic imports
+- a set of executable workflows for managing your ontology's continuous integration, quality control, releases and dynamic imports
 
 For more details, see
 
@@ -30,7 +30,7 @@ For more details, see
   - Learn about the [different kinds of release artefacts](https://github.com/INCATools/ontology-development-kit/blob/master/docs/ReleaseArtefacts.md)
 - Community:
   -  If you have issues, file them here: https://github.com/INCATools/ontology-development-kit/issues
-  -  We also have an active community on slack, you can request access by making a ticket [here](https://github.com/INCATools/ontology-development-kit/issues) as well
+  -  We also have an active community on Slack; you can request access by making a ticket [here](https://github.com/INCATools/ontology-development-kit/issues) as well
 
 # Core team
 
@@ -42,7 +42,7 @@ For more details, see
 * @dosumis David Osumi-Sutherland (EMBL-EBI)
 * @ehartley Emily Hartley (Critical Path Institute)
 * @hkir-dev Huseyin Kir (EMBL-EBI)
-* @shawntanzk Shawn Tan (EMBL-EBI)
+* @shawntanzk Shawn Tan (Novo Nordisk)
 * @ubyndr Ismail Ugur Bayindir (EMBL-EBI)
 
 Full list of contributors: 
@@ -54,12 +54,12 @@ https://doi.org/10.1093/database/baac087
 
 # Outstanding contributions
 Outstanding contributors are groups and institutions that have helped with organising the ODK development, providing funding,
-advice and infrastructure. We are very grateful for all your contribution - the project would not exist without you!
+advice and infrastructure. We are very grateful for all your contributions - the project would not exist without you!
 
 ## Monarch Initiative
 <img src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" width="300" />
 
-The Monarch Initiative is a consortium of medical, biological and computational experts that provide major ontology services such as the Human Phenotype Ontology, Mondo and an integrative data and [analytic platform](https://monarchinitiative.org/) connecting phenotypes to genotypes across species, bridging basic and applied research with semantics-based analysis.  
+The Monarch Initiative is a consortium of medical, biological and computational experts that provide major ontology services such as the Human Phenotype Ontology, [Mondo](https://mondo.monarchinitiative.org/) and an integrative data and [analytic platform](https://monarchinitiative.org/) connecting phenotypes to genotypes across species, bridging basic and applied research with semantics-based analysis.  
 
 https://monarchinitiative.org/
 
@@ -85,7 +85,7 @@ http://knocean.com/
 ## Critical Path Institute
 <img src="https://user-images.githubusercontent.com/7070631/122019745-049ee500-cdbc-11eb-9ed0-3ac3ca717d9b.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/122019745-049ee500-cdbc-11eb-9ed0-3ac3ca717d9b.png" width="300" />
 
-Critical Path for Alzheimer's Disease. The Critical Path For Alzheimer’s Disease (CPAD) is a public-private partnership aimed at creating new tools and methods that can be applied to increase the efficiency of the development process of new treatments for Alzheimer disease (AD) and related neurodegenerative disorders with impaired cognition and function.
+The Critical Path For Alzheimer’s Disease (CPAD) is a public-private partnership aimed at creating new tools and methods that can be applied to increase the efficiency of the development process of new treatments for Alzheimer disease (AD) and related neurodegenerative disorders with impaired cognition and function.
 
 https://c-path.org/
 
@@ -107,13 +107,13 @@ An example of how you can customise your imports for example is documented [here
 
 ## Migrating an existing ontology repo to the ODK
 
-The ODK is designed for creating a new repo for a new ontology. It can still be used to help figure out how to migrate an existing git repository to the ODK structure. There are different ways to do this.
+The ODK is designed for creating a new repo for a new ontology. It can also be used to help figure out how to migrate an existing git repository to the ODK structure. There are different ways to do this.
 
  * Manually compare your ontology against the [template](https://github.com/INCATools/ontology-development-kit/tree/master/template) folder and make necessary adjustments
  * Run the seed script as if creating a new repo. Manually compare this with your existing repo and use `git mv` to rearrange, and adding any missing files by copying them across and doing a `git add`
  * Create a new repo de novo and abandon your existing one, using, for example, github issue mover to move tickets across.
  
-Obviously the second method is not ideal as you lose your git history. Note even with `git mv` history tracking becomes harder
+Obviously the second method is not ideal as you lose your git history. Note even with `git mv` history tracking becomes harder.
 
 If you have built your ontology using a previous version of ODK,
 migration of your setup is unfortunately a manual process. In general
@@ -129,7 +129,7 @@ releases to assist in upgrading.
 
 You will find additional documentation in the src/ontology/README-editors.md file in your repo.
 
-The ODK also comes with built in options to generate your own shiny documentation, see for example the [PATO documentation here](http://pato-ontology.github.io/pato/) which is almost entirely autogenerated from the ODK. 
+The ODK also comes with built in options to generate your own shiny documentation; see for example the [PATO documentation here](http://pato-ontology.github.io/pato/) which is almost entirely autogenerated from the ODK. 
 
 ## Alternative to Docker
 
