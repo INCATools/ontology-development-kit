@@ -215,7 +215,7 @@ Ontology(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ pr
 #}
 {% for imp in project.import_group.products %}
 ^^^ src/ontology/imports/{{ imp.id }}_import.owl
-Prefix(:=<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>)
+Prefix(:=<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl>)
 Prefix(obo:=<http://purl.obolibrary.org/obo/>)
 Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
 Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
@@ -224,7 +224,7 @@ Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
 Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
 Prefix(oboInOwl:=<http://www.geneontology.org/formats/oboInOwl#>)
 
-Ontology(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>
+Ontology(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl>
 # This is a placeholder, it will be regenerated when makefile is first executed.
 )
 {% endfor %}
