@@ -115,7 +115,7 @@ jupyterlab-widgets==3.0.5
 keyring==23.13.1
 kgcl-rdflib==0.3.0
 kgcl-schema==0.3.2
-kgx==2.0.1
+kgx==2.0.2
 kiwisolver==1.4.4
 lark==1.1.5
 lightrdf==0.3.1
