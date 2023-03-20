@@ -195,20 +195,18 @@ imports/%_import.owl: mirror/%.owl
 
 #}
 ^^^ src/ontology/imports/merged_import.owl
-<?xml version="1.0"?>
-<rdf:RDF 
-     xml:base="{{ project.uribase }}/"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl"/>
+Prefix(:=<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>)
+Prefix(obo:=<http://purl.obolibrary.org/obo/>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+Prefix(oboInOwl:=<http://www.geneontology.org/formats/oboInOwl#>)
 
-    <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
-</rdf:RDF>
+Ontology(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>
+# This is a placeholder, it will be regenerated when makefile is first executed.
+)
 {% else %}
 {#-
 
@@ -217,20 +215,18 @@ imports/%_import.owl: mirror/%.owl
 #}
 {% for imp in project.import_group.products %}
 ^^^ src/ontology/imports/{{ imp.id }}_import.owl
-<?xml version="1.0"?>
-<rdf:RDF 
-     xml:base="{{ project.uribase }}/"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl"/>
+Prefix(:=<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>)
+Prefix(obo:=<http://purl.obolibrary.org/obo/>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+Prefix(oboInOwl:=<http://www.geneontology.org/formats/oboInOwl#>)
 
-    <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
-</rdf:RDF>
+Ontology(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>
+# This is a placeholder, it will be regenerated when makefile is first executed.
+)
 {% endfor %}
 {% endif %}
 {#-
