@@ -1,4 +1,7 @@
 #!/bin/sh
+
+set -e
+
 virtualenv tmpdir
 . tmpdir/bin/activate
 python3 -m pip install -U pip
