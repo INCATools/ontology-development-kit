@@ -2,6 +2,8 @@
 
 A full record of all planned changes can be seen [here](https://github.com/INCATools/ontology-development-kit/milestone/7).
 
+- New [ROBOT version 1.9.4](https://github.com/ontodev/robot/releases/tag/v1.9.4)
+
 ## Makefile workflows
 
 - Added a `test_fast` goal that runs all ontology QC checks without refreshing imports or rebuilding components.
