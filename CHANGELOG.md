@@ -1,3 +1,11 @@
+# v1.4.1
+
+- New [ROBOT version 1.9.4](https://github.com/ontodev/robot/releases/tag/v1.9.4)
+- Newer versions of several Python packages, including:
+  - oaklib 1.5.6
+  - bioregistry 0.9.15
+  - linkml 1.5.2
+
 # v1.4
 
 A full record of all changes can be seen [here](https://github.com/INCATools/ontology-development-kit/milestone/6?closed=1).
