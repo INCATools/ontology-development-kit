@@ -10,7 +10,9 @@ export_formats:
 import_group:
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
   module_type: slme
   module_type_slme: STAR
   slme_individuals: exclude

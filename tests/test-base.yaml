@@ -11,8 +11,10 @@ import_group:
   mirror_max_time_download: 400
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: pato
       use_base: TRUE
+      # This test cannot be easily replaced, because use_base and custom URL dont mix
     - id: pr
       make_base: TRUE
-      mirror_from: https://raw.githubusercontent.com/obophenotype/pro_obo_slim/master/pr_slim.owl
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pr_slim.owl

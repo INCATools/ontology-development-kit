@@ -15,8 +15,9 @@ primary_release: full
 import_group:
   products:
     - id: ro
-    - id: iao
-    - id: pco
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
+    - id: omo
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/omo.owl
 components:
   products:
     - filename: pato_ext.owl
