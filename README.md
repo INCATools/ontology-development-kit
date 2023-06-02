@@ -28,6 +28,7 @@ For more details, see
   - How to [import large ontologies efficiently](https://oboacademy.github.io/obook/howto/deal-with-large-ontologies/)
 - Reference:
   - Learn about the [different kinds of release artefacts](https://oboacademy.github.io/obook/reference/release-artefacts/)
+  - Learn about the [ODK Project Configuration Schema](https://github.com/INCATools/ontology-development-kit/blob/master/docs/project-schema.md) for allowed parameters in your `[project]-odk.yaml` 
 - Community:
   -  If you have issues, file them here: https://github.com/INCATools/ontology-development-kit/issues
   -  We also have an active community on Slack; you can request access by making a ticket [here](https://github.com/INCATools/ontology-development-kit/issues) as well
