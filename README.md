@@ -23,11 +23,11 @@ For more details, see
 # Where to get help
 
 - _How-to guides_:
-  - How to [create your first repository](https://github.com/INCATools/ontology-development-kit/blob/master/docs/CreatingRepo.md) with the ODK
+  - How to [create your first repository](https://oboacademy.github.io/obook/howto/odk-create-repo/) with the ODK
   - How to [add license, title and description to your ontology](https://github.com/INCATools/ontology-development-kit/blob/master/docs/License.md)
-  - How to [import large ontologies efficiently](https://github.com/INCATools/ontology-development-kit/blob/master/docs/DealWithLargeOntologies.md)
+  - How to [import large ontologies efficiently](https://oboacademy.github.io/obook/howto/deal-with-large-ontologies/)
 - Reference:
-  - Learn about the [different kinds of release artefacts](https://github.com/INCATools/ontology-development-kit/blob/master/docs/ReleaseArtefacts.md)
+  - Learn about the [different kinds of release artefacts](https://oboacademy.github.io/obook/reference/release-artefacts/)
   - Learn about the [ODK Project Configuration Schema](https://github.com/INCATools/ontology-development-kit/blob/master/docs/project-schema.md) for allowed parameters in your `[project]-odk.yaml` 
 - Community:
   -  If you have issues, file them here: https://github.com/INCATools/ontology-development-kit/issues
