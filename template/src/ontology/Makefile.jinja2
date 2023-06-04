@@ -539,7 +539,7 @@ no-mirror-recreate-%:
 	$(MAKE) COMP=true IMP=false IMP_LARGE=false MIR=false PAT=true $(COMPONENTSDIR)/$*.owl -B
 
 $(COMPONENTSDIR)/%.owl: | $(COMPONENTSDIR)
-	touch $@
+	test -f $@ || touch $@
 .PRECIOUS: $(COMPONENTSDIR)/%.owl
 
 {% for component in project.components.products %}
