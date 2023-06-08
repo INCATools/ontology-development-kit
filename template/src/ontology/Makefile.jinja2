@@ -236,7 +236,7 @@ validate_profile_%: $(REPORTDIR)/validate_profile_owl2dl_%.txt
 
 SPARQL_VALIDATION_QUERIES = $(foreach V,$(SPARQL_VALIDATION_CHECKS),$(SPARQLDIR)/$(V)-violation.sparql)
 
-sparql_test: {% for x in project.robot_report.sparql_test_on|default(["edit"]) %} {% if x=="edit" %}$(EDIT_PREPROCESSED){% else %}{{ x }}{% endif %}{% endfor %} catalog-v001.xml | $(REPORTDIR)
+sparql_test: {% for x in project.robot_report.sparql_test_on|default(["edit"]) %} {% if x=="edit" %}$(EDIT_PREPROCESSED){% else %}{{ x }}{% endif %}{% endfor %} | $(REPORTDIR)
 ifneq ($(SPARQL_VALIDATION_QUERIES),)
   {% for x in project.robot_report.sparql_test_on|default(["edit"]) -%}
   {%- if x=="edit" -%}
@@ -244,7 +244,7 @@ ifneq ($(SPARQL_VALIDATION_QUERIES),)
   {%- else -%}
   {% set input = x %}
   {% endif %}
-	$(ROBOT) verify  --catalog catalog-v001.xml -i {{ input }} --queries $(SPARQL_VALIDATION_QUERIES) -O $(REPORTDIR)
+	$(ROBOT) verify -i {{ input }} --queries $(SPARQL_VALIDATION_QUERIES) -O $(REPORTDIR)
   {%- endfor %}
 endif
 
@@ -749,7 +749,7 @@ DOSDP_TERM_FILES_DEFAULT = $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.txt, $
 DOSDP_PATTERN_NAMES_DEFAULT = $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv))))
 
 $(DOSDP_OWL_FILES_DEFAULT): $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_DEFAULT) $(ALL_PATTERN_FILES)
-	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_DEFAULT}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml \
+	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_DEFAULT}" ]; then $(DOSDPT) generate --catalog=$(CATALOG) \
     --infile=$(PATTERNDIR)/data/default/ --template=$(PATTERNDIR)/dosdp-patterns --batch-patterns="$(DOSDP_PATTERN_NAMES_DEFAULT)" \
     --ontology=$< {{ project.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/default; fi
 
@@ -763,7 +763,7 @@ DOSDP_TSV_FILES_{{ pipeline.id.upper() }} = $(wildcard $(PATTERNDIR)/data/{{ pip
 DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }} = $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv))))
 
 $(DOSDP_OWL_FILES_{{ pipeline.id.upper() }}): $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_{{ pipeline.id.upper() }}) $(ALL_PATTERN_FILES)
-	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml \
+	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}}" ]; then $(DOSDPT) generate --catalog=$(CATALOG) \
     --infile=$(PATTERNDIR)/data/{{ pipeline.id }} --template=$(PATTERNDIR)/dosdp-patterns/ --batch-patterns="$(DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }})" \
     --ontology=$< {{ pipeline.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/{{ pipeline.id }}; fi
 {% endfor -%}
@@ -782,7 +782,7 @@ $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml 
 {% endfor %}
 {% if project.pattern_pipelines_group.matches is iterable -%}{% for matches in project.pattern_pipelines_group.matches %}
 dosdp-matches-{{ matches.id }}: {{ matches.ontology }} $(ALL_PATTERN_FILES)
-	if [ $(PAT) = true ]; then $(DOSDPT) query --ontology=$< --catalog=catalog-v001.xml --reasoner=elk {{ matches.dosdp_tools_options }} \
+	if [ $(PAT) = true ]; then $(DOSDPT) query --ontology=$< --catalog=$(CATALOG) --reasoner=elk {{ matches.dosdp_tools_options }} \
     --batch-patterns="$(ALL_PATTERN_NAMES)" --template="$(PATTERNDIR)/dosdp-patterns" --outfile="$(PATTERNDIR)/data/{{ matches.id }}/"; fi
 {% endfor %}{% endif -%}
 {% endif -%}
