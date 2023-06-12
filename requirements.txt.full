@@ -26,12 +26,13 @@ ontodev-cogs
 ontodev-gizmos
 mkdocs
 mkdocs-material
+mkdocs-table-reader-plugin
 funowl
 kgx
 linkml
 dosdp
-oaklib
 semsql
+oaklib
 tsvalid
 j2cli[yaml]
 j2cli
@@ -39,3 +40,4 @@ pyspellchecker
 jsonschema2md
 curies
 lightrdf
+tabulate

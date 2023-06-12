@@ -51,9 +51,9 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
 COPY --from=obolibrary/odkbuild:latest /staging/full /
 
 # Install Konclude.
-# On x86_64, we get it from a pre-built release; on arm64, we
-# have built it in the builder image, now we need to install
-# the run-time dependencies (Qt5).
+# On x86_64, we get it from a pre-built release from upstream; on arm64,
+# we use a custom pre-built binary to which we just need to add the
+# run-time dependencies (the binary is not statically linked).
 ARG TARGETARCH
 RUN test "x$TARGETARCH" = xamd64 && ( \
         wget -nv https://github.com/konclude/Konclude/releases/download/v0.7.0-1138/Konclude-v0.7.0-1138-Linux-x64-GCC-Static-Qt5.12.10.zip \
@@ -64,7 +64,13 @@ RUN test "x$TARGETARCH" = xamd64 && ( \
         rm Konclude.zip \
     ) || ( \
         DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
-            libqt5xml5 libqt5network5 libqt5concurrent5 \
+            libqt5xml5 libqt5network5 libqt5concurrent5 && \
+        wget -nv https://incenp.org/files/softs/konclude/0.7/Konclude-v0.7.0-1138-Linux-arm64-GCC.zip \
+            -O /tools/Konclude.zip && \
+        unzip Konclude.zip && \
+        mv Konclude-v0.7.0-1138-Linux-arm64-GCC/Binaries/Konclude /tools/Konclude && \
+        rm -rf Konclude-v0.7.0-1138-Linux-arm64-GCC && \
+        rm Konclude.zip \
     )
 
 # Install Jena.

@@ -1,0 +1,1411 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://purl.obolibrary.org/obo/omo.owl#"
+     xml:base="http://purl.obolibrary.org/obo/omo.owl"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:terms="http://purl.org/dc/terms/"
+     xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#">
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/omo.owl">
+        <owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/omo/releases/2023-02-19/omo.owl"/>
+        <protege:defaultLanguage>en</protege:defaultLanguage>
+        <dc:contributor xml:lang="en">Adam Goldstein</dc:contributor>
+        <dc:contributor xml:lang="en">Alan Ruttenberg</dc:contributor>
+        <dc:contributor xml:lang="en">Albert Goldfain</dc:contributor>
+        <dc:contributor xml:lang="en">Barry Smith</dc:contributor>
+        <dc:contributor xml:lang="en">Bjoern Peters</dc:contributor>
+        <dc:contributor xml:lang="en">Carlo Torniai</dc:contributor>
+        <dc:contributor xml:lang="en">Chris Mungall</dc:contributor>
+        <dc:contributor xml:lang="en">Chris Stoeckert</dc:contributor>
+        <dc:contributor xml:lang="en">Christian A. Boelling</dc:contributor>
+        <dc:contributor xml:lang="en">Darren Natale</dc:contributor>
+        <dc:contributor xml:lang="en">David Osumi-Sutherland</dc:contributor>
+        <dc:contributor xml:lang="en">Gwen Frishkoff</dc:contributor>
+        <dc:contributor xml:lang="en">Holger Stenzhorn</dc:contributor>
+        <dc:contributor xml:lang="en">James A. Overton</dc:contributor>
+        <dc:contributor xml:lang="en">James Malone</dc:contributor>
+        <dc:contributor xml:lang="en">Jennifer Fostel</dc:contributor>
+        <dc:contributor xml:lang="en">Jie Zheng</dc:contributor>
+        <dc:contributor xml:lang="en">Jonathan Rees</dc:contributor>
+        <dc:contributor xml:lang="en">Larisa Soldatova</dc:contributor>
+        <dc:contributor xml:lang="en">Lawrence Hunter</dc:contributor>
+        <dc:contributor xml:lang="en">Mathias Brochhausen</dc:contributor>
+        <dc:contributor xml:lang="en">Matt Brush</dc:contributor>
+        <dc:contributor xml:lang="en">Melanie Courtot</dc:contributor>
+        <dc:contributor xml:lang="en">Michel Dumontier</dc:contributor>
+        <dc:contributor xml:lang="en">Paolo Ciccarese</dc:contributor>
+        <dc:contributor xml:lang="en">Pat Hayes</dc:contributor>
+        <dc:contributor xml:lang="en">Philippe Rocca-Serra</dc:contributor>
+        <dc:contributor xml:lang="en">Randy Dipert</dc:contributor>
+        <dc:contributor xml:lang="en">Ron Rudnicki</dc:contributor>
+        <dc:contributor xml:lang="en">Satya Sahoo</dc:contributor>
+        <dc:contributor xml:lang="en">Sivaram Arabandi</dc:contributor>
+        <dc:contributor xml:lang="en">Werner Ceusters</dc:contributor>
+        <dc:contributor xml:lang="en">William Duncan</dc:contributor>
+        <dc:contributor xml:lang="en">William Hogan</dc:contributor>
+        <dc:contributor xml:lang="en">Yongqun (Oliver) He</dc:contributor>
+        <dc:description xml:lang="en">An ontology specifies terms that are used to annotate ontology terms for all OBO ontologies. The ontology was developed as part of Information Artifact Ontology (IAO).</dc:description>
+        <dc:title xml:lang="en">OBO Metadata Ontology</dc:title>
+        <terms:license rdf:resource="https://creativecommons.org/publicdomain/zero/1.0/"/>
+        <owl:versionInfo>2023-02-19</owl:versionInfo>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://protege.stanford.edu/plugins/owl/protege#defaultLanguage -->
+
+    <owl:AnnotationProperty rdf:about="http://protege.stanford.edu/plugins/owl/protege#defaultLanguage"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000111 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000111">
+        <obo:IAO_0000111 xml:lang="en">editor preferred term</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000122"/>
+        <obo:IAO_0000115 xml:lang="en">The concise, meaningful, and human-friendly name for a class or property preferred by the ontology developers. (US-English)</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Daniel Schober</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obolibrary.org/obo/obi&gt;</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">editor preferred term</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000112 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000112">
+        <obo:IAO_0000111 xml:lang="en">example of usage</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000122"/>
+        <obo:IAO_0000115 xml:lang="en">A phrase describing how a term should be used and/or a citation to a work which uses it. May also include other kinds of examples that facilitate immediate understanding, such as widely know prototypes or instances of a class, or cases where a relation is said to hold.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Daniel Schober</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obolibrary.org/obo/obi&gt;</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">example of usage</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000113 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000113">
+        <obo:IAO_0000111 xml:lang="en">in branch</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An annotation property indicating which module the terms belong to. This is currently experimental and not implemented yet.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">GROUP:OBI</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">OBI_0000277</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">in branch</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000114 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000114">
+        <obo:IAO_0000111 xml:lang="en">has curation status</obo:IAO_0000111>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Bill Bug</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Melanie Courtot</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">has curation status</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000115 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
+        <obo:IAO_0000111 xml:lang="en">definition</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000122"/>
+        <obo:IAO_0000115 xml:lang="en">The official definition, explaining the meaning of a class or property. Shall be Aristotelian, formalized and normalized. Can be augmented with colloquial definitions.</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">2012-04-05: 
+Barry Smith
+
+The official OBI definition, explaining the meaning of a class or property: &apos;Shall be Aristotelian, formalized and normalized. Can be augmented with colloquial definitions&apos;  is terrible.
+
+Can you fix to something like:
+
+A statement of necessary and sufficient conditions explaining the meaning of an expression referring to a class or property.
+
+Alan Ruttenberg
+
+Your proposed definition is a reasonable candidate, except that it is very common that necessary and sufficient conditions are not given. Mostly they are necessary, occasionally they are necessary and sufficient or just sufficient. Often they use terms that are not themselves defined and so they effectively can&apos;t be evaluated by those criteria. 
+
+On the specifics of the proposed definition:
+
+We don&apos;t have definitions of &apos;meaning&apos; or &apos;expression&apos; or &apos;property&apos;. For &apos;reference&apos; in the intended sense I think we use the term &apos;denotation&apos;. For &apos;expression&apos;, I think we you mean symbol, or identifier. For &apos;meaning&apos; it differs for class and property. For class we want documentation that let&apos;s the intended reader determine whether an entity is instance of the class, or not. For property we want documentation that let&apos;s the intended reader determine, given a pair of potential relata, whether the assertion that the relation holds is true. The &apos;intended reader&apos; part suggests that we also specify who, we expect, would be able to understand the definition, and also generalizes over human and computer reader to include textual and logical definition. 
+
+Personally, I am more comfortable weakening definition to documentation, with instructions as to what is desirable. 
+
+We also have the outstanding issue of how to aim different definitions to different audiences. A clinical audience reading chebi wants a different sort of definition documentation/definition from a chemistry trained audience, and similarly there is a need for a definition that is adequate for an ontologist to work with.  </obo:IAO_0000116>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Daniel Schober</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obolibrary.org/obo/obi&gt;</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">definition</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000116 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000116">
+        <obo:IAO_0000111 xml:lang="en">editor note</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000122"/>
+        <obo:IAO_0000115 xml:lang="en">An administrative note intended for its editor. It may not be included in the publication version of the ontology, so it should contain nothing necessary for end users to understand the ontology.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Daniel Schober</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obofoundry.org/obo/obi&gt;</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">editor note</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000117 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000117">
+        <obo:IAO_0000111 xml:lang="en">term editor</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000122"/>
+        <obo:IAO_0000115 xml:lang="en">Name of editor entering the term in the file. The term editor is a point of contact for information regarding the term. The term editor may be, but is not always, the author of the definition, which may have been worked upon by several people</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">20110707, MC: label update to term editor and definition modified accordingly. See https://github.com/information-artifact-ontology/IAO/issues/115.</obo:IAO_0000116>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Daniel Schober</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obolibrary.org/obo/obi&gt;</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">term editor</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000118 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000118">
+        <obo:IAO_0000111 xml:lang="en">alternative label</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000125"/>
+        <obo:IAO_0000115 xml:lang="en">A label for a class or property that can be used to refer to the class or property instead of the preferred rdfs:label. Alternative labels should be used to indicate community- or context-specific labels, abbreviations, shorthand forms and the like.</obo:IAO_0000115>
+        <obo:IAO_0000117>OBO Operations committee</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Daniel Schober</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obolibrary.org/obo/obi&gt;</obo:IAO_0000119>
+        <rdfs:comment>Consider re-defing to: An alternative name for a class or property which can mean the same thing as the preferred name (semantically equivalent, narrow, broad or related).</rdfs:comment>
+        <rdfs:label xml:lang="en">alternative label</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000119 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000119">
+        <obo:IAO_0000111 xml:lang="en">definition source</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000122"/>
+        <obo:IAO_0000115 xml:lang="en">Formal citation, e.g. identifier in external database to indicate / attribute source(s) for the definition. Free text indicate / attribute source(s) for the definition. EXAMPLE: Author Name, URI, MeSH Term C04, PUBMED ID, Wiki uri on 31.01.2007</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Daniel Schober</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">Discussion on obo-discuss mailing-list, see http://bit.ly/hgm99w</obo:IAO_0000119>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obolibrary.org/obo/obi&gt;</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">definition source</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000231 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000231">
+        <obo:IAO_0000111 xml:lang="en">has obsolescence reason</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Relates an annotation property to an obsolescence reason. The values of obsolescence reasons come from a list of predefined terms, instances of the class obsolescence reason specification.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Melanie Courtot</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">has obsolescence reason</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000232 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000232">
+        <obo:IAO_0000111 xml:lang="en">curator note</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000122"/>
+        <obo:IAO_0000115 xml:lang="en">An administrative note of use for a curator but of no use for a user</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">curator note</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000233 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000233">
+        <obo:IAO_0000111 xml:lang="en">term tracker item</obo:IAO_0000111>
+        <obo:IAO_0000112 xml:lang="en">the URI for an OBI Terms ticket at sourceforge, such as https://sourceforge.net/p/obi/obi-terms/772/</obo:IAO_0000112>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000125"/>
+        <obo:IAO_0000115 xml:lang="en">An IRI or similar locator for a request or discussion of an ontology term.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Person: Jie Zheng, Chris Stoeckert, Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">Person: Jie Zheng, Chris Stoeckert, Alan Ruttenberg</obo:IAO_0000119>
+        <rdfs:comment xml:lang="en">The &apos;tracker item&apos; can associate a tracker with a specific ontology term.</rdfs:comment>
+        <rdfs:label xml:lang="en">term tracker item</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000234 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000234">
+        <obo:IAO_0000111 xml:lang="en">ontology term requester</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000125"/>
+        <obo:IAO_0000115 xml:lang="en">The name of the person, project, or organization that motivated inclusion of an ontology term by requesting its addition.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Person: Jie Zheng, Chris Stoeckert, Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">Person: Jie Zheng, Chris Stoeckert, Alan Ruttenberg</obo:IAO_0000119>
+        <rdfs:comment>The &apos;term requester&apos; can credit the person, organization or project who request the ontology term.</rdfs:comment>
+        <rdfs:label xml:lang="en">ontology term requester</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000411 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000411">
+        <obo:IAO_0000111 xml:lang="en">is denotator type</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Relates an class defined in an ontology, to the type of it&apos;s denotator</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">In OWL 2 add AnnotationPropertyRange(&apos;is denotator type&apos; &apos;denotator type&apos;)</obo:IAO_0000116>
+        <obo:IAO_0000117 xml:lang="en">Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">is denotator type</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000412 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000412">
+        <obo:IAO_0000111 xml:lang="en">imported from</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000125"/>
+        <obo:IAO_0000115 xml:lang="en">For external terms/classes, the ontology from which the term was imported</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Melanie Courtot</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obolibrary.org/obo/obi&gt;</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">imported from</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000424 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000424">
+        <obo:IAO_0000111 xml:lang="en">expand expression to</obo:IAO_0000111>
+        <obo:IAO_0000112 xml:lang="en">ObjectProperty: RO_0002104
+Label: has plasma membrane part
+Annotations: IAO_0000424 &quot;http://purl.obolibrary.org/obo/BFO_0000051 some (http://purl.org/obo/owl/GO#GO_0005886 and http://purl.obolibrary.org/obo/BFO_0000051 some ?Y)&quot;
+</obo:IAO_0000112>
+        <obo:IAO_0000115 xml:lang="en">A macro expansion tag applied to an object property (or possibly a data property)  which can be used by a macro-expansion engine to generate more complex expressions from simpler ones</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Chris Mungall</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">expand expression to</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000425 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000425">
+        <obo:IAO_0000111 xml:lang="en">expand assertion to</obo:IAO_0000111>
+        <obo:IAO_0000112 xml:lang="en">ObjectProperty: RO???
+Label: spatially disjoint from
+Annotations: expand_assertion_to &quot;DisjointClasses: (http://purl.obolibrary.org/obo/BFO_0000051 some ?X)  (http://purl.obolibrary.org/obo/BFO_0000051 some ?Y)&quot;
+</obo:IAO_0000112>
+        <obo:IAO_0000115 xml:lang="en">A macro expansion tag applied to an annotation property which can be expanded into a more detailed axiom.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Chris Mungall</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">expand assertion to</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000426 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000426">
+        <obo:IAO_0000111 xml:lang="en">first order logic expression</obo:IAO_0000111>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">first order logic expression</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000427 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000427">
+        <obo:IAO_0000111 xml:lang="en">antisymmetric property</obo:IAO_0000111>
+        <obo:IAO_0000112 xml:lang="en">part_of antisymmetric property xsd:true</obo:IAO_0000112>
+        <obo:IAO_0000115 xml:lang="en">Use boolean value xsd:true to indicate that the property is an antisymmetric property</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">antisymmetric property</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/OMO_0001001"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000589 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000589">
+        <obo:IAO_0000111 xml:lang="en">OBO foundry unique label</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000125"/>
+        <obo:IAO_0000115 xml:lang="en">An alternative name for a class or property which is unique across the OBO Foundry.</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">The intended usage of that property is as follow: OBO foundry unique labels are automatically generated based on regular expressions provided by each ontology, so that SO could specify unique label = &apos;sequence &apos; + [label], etc. , MA could specify &apos;mouse + [label]&apos; etc. Upon importing terms, ontology developers can choose to use the &apos;OBO foundry unique label&apos; for an imported term or not. The same applies to tools .</obo:IAO_0000116>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Bjoern Peters</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Chris Mungall</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Melanie Courtot</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBO Foundry &lt;http://obofoundry.org/&gt;</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">OBO foundry unique label</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000596 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000596">
+        <obo:IAO_0000111 xml:lang="en">has ID digit count</obo:IAO_0000111>
+        <obo:IAO_0000112 xml:lang="en">Ontology: &lt;http://purl.obolibrary.org/obo/ro/idrange/&gt;
+  Annotations: 
+     &apos;has ID prefix&apos;: &quot;http://purl.obolibrary.org/obo/RO_&quot;
+     &apos;has ID digit count&apos; : 7,
+     rdfs:label &quot;RO id policy&quot;
+     &apos;has ID policy for&apos;: &quot;RO&quot;</obo:IAO_0000112>
+        <obo:IAO_0000115 xml:lang="en">Relates an ontology used to record id policy to the number of digits in the URI. The URI is: the &apos;has ID prefix&quot; annotation property value concatenated with an integer in the id range (left padded with &quot;0&quot;s to make this many digits)</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">has ID digit count</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000597 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000597">
+        <obo:IAO_0000111 xml:lang="en">has ID range allocated</obo:IAO_0000111>
+        <obo:IAO_0000112 xml:lang="en">Datatype: idrange:1
+Annotations: &apos;has ID range allocated to&apos;: &quot;Chris Mungall&quot;
+EquivalentTo: xsd:integer[&gt; 2151 , &lt;= 2300]
+</obo:IAO_0000112>
+        <obo:IAO_0000115 xml:lang="en">Relates a datatype that encodes a range of integers to the name of the person or organization who can use those ids constructed in that range to define new terms</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">has ID range allocated to</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000598 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000598">
+        <obo:IAO_0000111 xml:lang="en">has ID policy for</obo:IAO_0000111>
+        <obo:IAO_0000112 xml:lang="en">Ontology: &lt;http://purl.obolibrary.org/obo/ro/idrange/&gt;
+  Annotations: 
+     &apos;has ID prefix&apos;: &quot;http://purl.obolibrary.org/obo/RO_&quot;
+     &apos;has ID digit count&apos; : 7,
+     rdfs:label &quot;RO id policy&quot;
+     &apos;has ID policy for&apos;: &quot;RO&quot;</obo:IAO_0000112>
+        <obo:IAO_0000115 xml:lang="en">Relating an ontology used to record id policy to the ontology namespace whose policy it manages</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">has ID policy for</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000599 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000599">
+        <obo:IAO_0000111 xml:lang="en">has ID prefix</obo:IAO_0000111>
+        <obo:IAO_0000112 xml:lang="en">Ontology: &lt;http://purl.obolibrary.org/obo/ro/idrange/&gt;
+  Annotations: 
+     &apos;has ID prefix&apos;: &quot;http://purl.obolibrary.org/obo/RO_&quot;
+     &apos;has ID digit count&apos; : 7,
+     rdfs:label &quot;RO id policy&quot;
+     &apos;has ID policy for&apos;: &quot;RO&quot;</obo:IAO_0000112>
+        <obo:IAO_0000115 xml:lang="en">Relates an ontology used to record id policy to a prefix concatenated with an integer in the id range (left padded with &quot;0&quot;s to make this many digits) to construct an ID for a term being created.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">has ID prefix</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000600 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000600">
+        <obo:IAO_0000111 xml:lang="en">elucidation</obo:IAO_0000111>
+        <obo:IAO_0000117 xml:lang="en">person:Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">Person:Barry Smith</obo:IAO_0000119>
+        <obo:IAO_0000600 xml:lang="en">Primitive terms in a highest-level ontology such as BFO are terms which are so basic to our understanding of reality that there is no way of defining them in a non-circular fashion. For these, therefore, we can provide only elucidations, supplemented by examples and by axioms</obo:IAO_0000600>
+        <rdfs:label xml:lang="en">elucidation</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000601 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000601">
+        <obo:IAO_0000111 xml:lang="en">has associated axiom(nl)</obo:IAO_0000111>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000119>
+        <obo:IAO_0000600 xml:lang="en">An axiom associated with a term expressed using natural language</obo:IAO_0000600>
+        <rdfs:label xml:lang="en">has associated axiom(nl)</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000602 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000602">
+        <obo:IAO_0000111 xml:lang="en">has associated axiom(fol)</obo:IAO_0000111>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000119>
+        <obo:IAO_0000600 xml:lang="en">An axiom expressed in first order logic using CLIF syntax</obo:IAO_0000600>
+        <rdfs:label xml:lang="en">has associated axiom(fol)</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000603 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000603">
+        <obo:IAO_0000111 xml:lang="en">is allocated id range</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Relates an ontology IRI to an (inclusive) range of IRIs in an OBO name space. The range is give as, e.g. &quot;IAO_0020000-IAO_0020999&quot;</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:comment xml:lang="en">Add as annotation triples in the granting ontology</rdfs:comment>
+        <rdfs:label xml:lang="en">is allocated id range</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000700 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000700">
+        <obo:IAO_0000111 xml:lang="en">has ontology root term</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Ontology annotation property. Relates an ontology to a term that is a designated root term of the ontology. Display tools like OLS can use terms annotated with this property as the starting point for rendering the ontology class hierarchy. There can be more than one root.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Nicolas Matentzoglu</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">has ontology root term</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0006011 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0006011">
+        <obo:IAO_0000111 xml:lang="en">may be identical to</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A annotation relationship between two terms in an ontology that may refer to the same (natural) type but where more evidence is required before terms are merged.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">David Osumi-Sutherland</obo:IAO_0000117>
+        <obo:IAO_0000233 xml:lang="en">#40</obo:IAO_0000233>
+        <obo:IAO_0000234 xml:lang="en">VFB</obo:IAO_0000234>
+        <rdfs:comment xml:lang="en">Edges asserting this should be annotated with to record evidence supporting the assertion and its provenance.</rdfs:comment>
+        <rdfs:label xml:lang="en">may be identical to</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0006012 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0006012">
+        <obo:IAO_0000111 xml:lang="en">scheduled for obsoletion on or after</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Used when the class or object is scheduled for obsoletion/deprecation on or after a particular date.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Chris Mungall, Jie Zheng</obo:IAO_0000117>
+        <obo:IAO_0000233 xml:lang="en">https://github.com/geneontology/go-ontology/issues/15532</obo:IAO_0000233>
+        <obo:IAO_0000233 xml:lang="en">https://github.com/information-artifact-ontology/ontology-metadata/issues/32</obo:IAO_0000233>
+        <obo:IAO_0000234 xml:lang="en">GO ontology</obo:IAO_0000234>
+        <rdfs:label xml:lang="en">scheduled for obsoletion on or after</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0010000 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0010000">
+        <obo:IAO_0000111 xml:lang="en">has axiom id</obo:IAO_0000111>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000119>
+        <obo:IAO_0000600 xml:lang="en">A URI that is intended to be unique label for an axiom used for tracking change to the ontology. For an axiom expressed in different languages, each expression is given the same URI</obo:IAO_0000600>
+        <rdfs:label xml:lang="en">has axiom label</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0100001 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0100001">
+        <obo:IAO_0000111 xml:lang="en">term replaced by</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000125"/>
+        <obo:IAO_0000115 xml:lang="en">Use on obsolete terms, relating the term to another term that can be used as a substitute</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000119>
+        <rdfs:comment xml:lang="en">Add as annotation triples in the granting ontology</rdfs:comment>
+        <rdfs:label xml:lang="en">term replaced by</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OMO_0001001 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/OMO_0001001">
+        <obo:IAO_0000115>This is an annotation used on an object property to indicate a logical characterstic beyond what is possible in OWL.</obo:IAO_0000115>
+        <obo:IAO_0000119>OBO Operations call</obo:IAO_0000119>
+        <oboInOwl:created_by rdf:resource="http://orcid.org/0000-0001-5208-3432"/>
+        <rdfs:label>logical characteristic of object property</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OMO_0002000 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/OMO_0002000">
+        <obo:IAO_0000112>&apos;part disjoint with&apos; &apos;defined by construct&apos; &quot;&quot;&quot;
+    PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;
+    PREFIX : &lt;http://example.org/
+    CONSTRUCT {
+      [
+        a owl:Restriction ;
+        owl:onProperty :part_of ;
+        owl:someValuesFrom ?a ;
+        owl:disjointWith [
+          a owl:Restriction ;
+          owl:onProperty :part_of ;
+          owl:someValuesFrom ?b
+        ]
+      ]
+    }
+    WHERE {
+      ?a :part_disjoint_with ?b .
+    }</obo:IAO_0000112>
+        <obo:IAO_0000115>Links an annotation property to a SPARQL CONSTRUCT query which is meant to provide semantics for a shortcut relation.</obo:IAO_0000115>
+        <obo:IAO_0000233 rdf:resource="https://github.com/ontodev/robot/issues/963"/>
+        <dc:contributor rdf:resource="https://orcid.org/0000-0002-7356-1779"/>
+        <dc:contributor rdf:resource="https://orcid.org/0000-0002-8688-6599"/>
+        <rdfs:label>defined by construct</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/contributor -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/contributor"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/coverage -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/coverage"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/creator -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/creator"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/date -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/date"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/description -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/description"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/format -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/format"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/identifier -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/identifier"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/language -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/language"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/publisher -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/publisher"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/relation -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/relation"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/rights -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/rights"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/source -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/source"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/subject -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/subject"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/title -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/title"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/type -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/type"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/license -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/license"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#created_by -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#created_by"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#creation_date -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#creation_date"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym">
+        <obo:IAO_0000115>An alternative label for a class or property which has a more general meaning than the preferred name/primary label.</obo:IAO_0000115>
+        <obo:IAO_0000117 rdf:resource="http://orcid.org/0000-0001-5208-3432"/>
+        <obo:IAO_0000233>https://github.com/information-artifact-ontology/ontology-metadata/issues/18</obo:IAO_0000233>
+        <rdfs:label xml:lang="en">has broad synonym</rdfs:label>
+        <rdfs:seeAlso>https://github.com/information-artifact-ontology/ontology-metadata/issues/18</rdfs:seeAlso>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasExactSynonym -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasExactSynonym">
+        <obo:IAO_0000115>An alternative label for a class or property which has the exact same meaning than the preferred name/primary label.</obo:IAO_0000115>
+        <obo:IAO_0000117 rdf:resource="http://orcid.org/0000-0001-5208-3432"/>
+        <obo:IAO_0000233>https://github.com/information-artifact-ontology/ontology-metadata/issues/20</obo:IAO_0000233>
+        <rdfs:label xml:lang="en">has exact synonym</rdfs:label>
+        <rdfs:seeAlso>https://github.com/information-artifact-ontology/ontology-metadata/issues/20</rdfs:seeAlso>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym">
+        <obo:IAO_0000115>An alternative label for a class or property which has a more specific meaning than the preferred name/primary label.</obo:IAO_0000115>
+        <obo:IAO_0000117 rdf:resource="http://orcid.org/0000-0001-5208-3432"/>
+        <obo:IAO_0000233>https://github.com/information-artifact-ontology/ontology-metadata/issues/19</obo:IAO_0000233>
+        <rdfs:label xml:lang="en">has narrow synonym</rdfs:label>
+        <rdfs:seeAlso>https://github.com/information-artifact-ontology/ontology-metadata/issues/19</rdfs:seeAlso>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym">
+        <obo:IAO_0000115>An alternative label for a class or property that has been used synonymously with the primary term name, but the usage is not strictly correct.</obo:IAO_0000115>
+        <obo:IAO_0000117 rdf:resource="http://orcid.org/0000-0001-5208-3432"/>
+        <obo:IAO_0000233>https://github.com/information-artifact-ontology/ontology-metadata/issues/21</obo:IAO_0000233>
+        <rdfs:label xml:lang="en">has related synonym</rdfs:label>
+        <rdfs:seeAlso>https://github.com/information-artifact-ontology/ontology-metadata/issues/21</rdfs:seeAlso>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/BFO_0000031 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/BFO_0000031"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000027 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000027">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+        <obo:IAO_0000111 xml:lang="en">data item</obo:IAO_0000111>
+        <rdfs:label xml:lang="en">data item</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000030 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000030">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000031"/>
+        <obo:IAO_0000111 xml:lang="en">information content entity</obo:IAO_0000111>
+        <rdfs:label xml:lang="en">information content entity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000078 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000078">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:oneOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000002"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000120"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000121"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000122"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000123"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000124"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000125"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000423"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000428"/>
+                </owl:oneOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000102"/>
+        <obo:IAO_0000111 xml:lang="en">curation status specification</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000125"/>
+        <obo:IAO_0000115 xml:lang="en">The curation status of the term. The allowed values come from an enumerated list of predefined terms. See the specification of these instances for more detailed definitions of each enumerated value.</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">Better to represent curation as a process with parts and then relate labels to that process (in IAO meeting)</obo:IAO_0000116>
+        <obo:IAO_0000117 xml:lang="en">PERSON:Bill Bug</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obolibrary.org/obo/obi&gt;</obo:IAO_0000119>
+        <obo:IAO_0000119 xml:lang="en">OBI_0000266</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">curation status specification</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000102 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000102">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
+        <obo:IAO_0000111 xml:lang="en">data about an ontology part</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Data about an ontology part is a data item about a part of an ontology, for example a term</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">data about an ontology part</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000225 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000225">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:oneOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000103"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000226"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000227"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000228"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000229"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OMO_0001000"/>
+                </owl:oneOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000102"/>
+        <obo:IAO_0000111 xml:lang="en">obsolescence reason specification</obo:IAO_0000111>
+        <obo:IAO_0000114 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000125"/>
+        <obo:IAO_0000115 xml:lang="en">The reason for which a term has been deprecated. The allowed values come from an enumerated list of predefined terms. See the specification of these instances for more detailed definitions of each enumerated value.</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">The creation of this class has been inspired in part by Werner Ceusters&apos; paper, Applying evolutionary terminology auditing to the Gene Ontology.</obo:IAO_0000116>
+        <obo:IAO_0000117 xml:lang="en">PERSON: Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON: Melanie Courtot</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">obsolescence reason specification</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000409 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000409">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:oneOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000410"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000420"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000421"/>
+                </owl:oneOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000102"/>
+        <obo:IAO_0000111 xml:lang="en">denotator type</obo:IAO_0000111>
+        <obo:IAO_0000112 xml:lang="en">The Basic Formal Ontology ontology makes a distinction between Universals and defined classes, where the formal are &quot;natural kinds&quot; and the latter arbitrary collections of entities.</obo:IAO_0000112>
+        <obo:IAO_0000115 xml:lang="en">A denotator type indicates how a term should be interpreted from an ontological perspective.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">Barry Smith, Werner Ceusters</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">denotator type</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000000 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000000">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000102"/>
+        <obo:IAO_0000111 xml:lang="en">ontology module</obo:IAO_0000111>
+        <obo:IAO_0000116 xml:lang="en">I have placed this under &apos;data about an ontology part&apos;, but this can be discussed. I think this is OK if &apos;part&apos; is interpreted reflexively, as an ontology module is the whole ontology rather than part of it.</obo:IAO_0000116>
+        <obo:IAO_0000118 xml:lang="en">ontology file</obo:IAO_0000118>
+        <obo:IAO_0000232 xml:lang="en">This class and it&apos;s subclasses are applied to OWL ontologies. Using an rdf:type triple will result in problems with OWL-DL. I propose that dcterms:type is instead used to connect an ontology URI with a class from this hierarchy. The class hierarchy is not disjoint, so multiple assertions can be made about a single ontology.</obo:IAO_0000232>
+        <rdfs:label xml:lang="en">ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000001 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000001">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000000"/>
+        <obo:IAO_0000111 xml:lang="en">base ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An ontology module that comprises only of asserted axioms local to the ontology, excludes import directives, and excludes axioms or declarations from external ontologies.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">base ontology module</rdfs:label>
+        <rdfs:seeAlso rdf:resource="https://github.com/INCATools/ontology-starter-kit/issues/50"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000002 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000002">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000000"/>
+        <obo:IAO_0000111 xml:lang="en">editors ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An ontology module that is intended to be directly edited, typically managed in source control, and typically not intended for direct consumption by end-users.</obo:IAO_0000115>
+        <obo:IAO_0000118 xml:lang="en">source ontology module</obo:IAO_0000118>
+        <rdfs:label xml:lang="en">editors ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000003 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000003">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000000"/>
+        <obo:IAO_0000111 xml:lang="en">main release ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An ontology module that is intended to be the primary release product and the one consumed by the majority of tools.</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">TODO: Add logical axioms that state that a main release ontology module is derived from (directly or indirectly) an editors module</obo:IAO_0000116>
+        <rdfs:label xml:lang="en">main release ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000004 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000004">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000000"/>
+        <obo:IAO_0000111 xml:lang="en">bridge ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An ontology module that consists entirely of axioms that connect or bridge two distinct ontology modules. For example, the Uberon-to-ZFA bridge module.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">bridge ontology module</rdfs:label>
+        <rdfs:seeAlso rdf:resource="https://github.com/obophenotype/uberon/wiki/inter-anatomy-ontology-bridge-ontologies"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000005 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000005">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000006"/>
+        <obo:IAO_0000111 xml:lang="en">import ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A subset ontology module that is intended to be imported from another ontology.</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">TODO: add axioms that indicate this is the output of a module extraction process.</obo:IAO_0000116>
+        <obo:IAO_0000118 xml:lang="en">import file</obo:IAO_0000118>
+        <rdfs:label xml:lang="en">import ontology module</rdfs:label>
+        <rdfs:seeAlso rdf:resource="http://robot.obolibrary.org/extract"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000006 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000006">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000000"/>
+        <obo:IAO_0000111 xml:lang="en">subset ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An ontology module that is extracted from a main ontology module and includes only a subset of entities or axioms.</obo:IAO_0000115>
+        <obo:IAO_0000118 xml:lang="en">ontology slim</obo:IAO_0000118>
+        <obo:IAO_0000118 xml:lang="en">subset ontology</obo:IAO_0000118>
+        <rdfs:label xml:lang="en">subset ontology module</rdfs:label>
+        <rdfs:seeAlso rdf:resource="http://robot.obolibrary.org/filter"/>
+        <rdfs:seeAlso rdf:resource="http://www.geneontology.org/page/go-slim-and-subset-guide"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000007 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000007">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000006"/>
+        <obo:IAO_0000111 xml:lang="en">curation subset ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A subset ontology that is intended as a whitelist for curators using the ontology. Such a subset will exclude classes that curators should not use for curation.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">curation subset ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000008 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000008">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000006"/>
+        <obo:IAO_0000111 xml:lang="en">analysis ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An ontology module that is intended for usage in analysis or discovery applications.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">analysis subset ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000009 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000009">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000006"/>
+        <obo:IAO_0000111 xml:lang="en">single layer ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A subset ontology that is largely comprised of a single layer or strata in an ontology class hierarchy. The purpose is typically for rolling up for visualization. The classes in the layer need not be disjoint.</obo:IAO_0000115>
+        <obo:IAO_0000118 xml:lang="en">ribbon subset</obo:IAO_0000118>
+        <rdfs:label xml:lang="en">single layer subset ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000010 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000010">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000006"/>
+        <obo:IAO_0000111 xml:lang="en">exclusion subset ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A subset of an ontology that is intended to be excluded for some purpose. For example, a blacklist of classes.</obo:IAO_0000115>
+        <obo:IAO_0000118 xml:lang="en">antislim</obo:IAO_0000118>
+        <rdfs:label xml:lang="en">exclusion subset ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000011 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000011">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000005"/>
+        <obo:IAO_0000111 xml:lang="en">external import ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An imported ontology module that is derived from an external ontology. Derivation methods include the OWLAPI SLME approach.</obo:IAO_0000115>
+        <obo:IAO_0000118 xml:lang="en">external import</obo:IAO_0000118>
+        <rdfs:label xml:lang="en">external import ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000012 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000012">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000006"/>
+        <obo:IAO_0000111 xml:lang="en">species subset ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A subset ontology that is crafted to either include or exclude a taxonomic grouping of species.</obo:IAO_0000115>
+        <obo:IAO_0000118 xml:lang="en">taxon subset</obo:IAO_0000118>
+        <rdfs:label xml:lang="en">species subset ontology module</rdfs:label>
+        <rdfs:seeAlso rdf:resource="https://github.com/obophenotype/uberon/wiki/Taxon-constraints"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000013 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000013">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000000"/>
+        <obo:IAO_0000111 xml:lang="en">reasoned ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An ontology module that contains axioms generated by a reasoner. The generated axioms are typically direct SubClassOf axioms, but other possibilities are available.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">reasoned ontology module</rdfs:label>
+        <rdfs:seeAlso rdf:resource="http://robot.obolibrary.org/reason"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000014 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000014">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000000"/>
+        <obo:IAO_0000111 xml:lang="en">generated ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An ontology module that is automatically generated, for example via a SPARQL query or via template and a CSV.</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">TODO: Add axioms (using PROV-O?) that indicate this is the output-of some reasoning process</obo:IAO_0000116>
+        <rdfs:label xml:lang="en">generated ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000015 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000015">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000014"/>
+        <obo:IAO_0000111 xml:lang="en">template generated ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">An ontology module that is automatically generated from a template specification and fillers for slots in that template.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">template generated ontology module</rdfs:label>
+        <rdfs:seeAlso rdf:resource="http://robot.obolibrary.org/template"/>
+        <rdfs:seeAlso rdf:resource="https://doi.org/10.1186/s13326-017-0126-0"/>
+        <rdfs:seeAlso rdf:resource="https://github.com/dosumis/dead_simple_owl_design_patterns/"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000016 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000016">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000004"/>
+        <obo:IAO_0000111 xml:lang="en">taxonomic bridge ontology module</obo:IAO_0000111>
+        <rdfs:label xml:lang="en">taxonomic bridge ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000017 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000017">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000006"/>
+        <obo:IAO_0000111 xml:lang="en">ontology module subsetted by expressivity</obo:IAO_0000111>
+        <rdfs:label xml:lang="en">ontology module subsetted by expressivity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000018 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000018">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000017"/>
+        <obo:IAO_0000111 xml:lang="en">obo basic subset ontology module</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A subset ontology that is designed for basic applications to continue to make certain simplifying assumptions; many of these simplifying assumptions were based on the initial version of the Gene Ontology, and have become enshrined in many popular and useful tools such as term enrichment tools.
+
+Examples of such assumptions include: traversing the ontology graph ignoring relationship types using a naive algorithm will not lead to cycles (i.e. the ontology is a DAG); every referenced term is declared in the ontology (i.e. there are no dangling clauses).
+
+An ontology is OBO Basic if and only if it has the following characteristics:
+DAG
+Unidirectional
+No Dangling Clauses
+Fully Asserted
+Fully Labeled
+No equivalence axioms
+Singly labeled edges
+No qualifier lists
+No disjointness axioms
+No owl-axioms header
+No imports</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">obo basic subset ontology module</rdfs:label>
+        <rdfs:seeAlso rdf:resource="http://owlcollab.github.io/oboformat/doc/obo-syntax.html#6.2"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000019 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000019">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000017"/>
+        <obo:IAO_0000111 xml:lang="en">ontology module subsetted by OWL profile</obo:IAO_0000111>
+        <rdfs:label xml:lang="en">ontology module subsetted by OWL profile</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_8000020 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_8000020">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_8000019"/>
+        <obo:IAO_0000111 xml:lang="en">EL++ ontology module</obo:IAO_0000111>
+        <rdfs:label xml:lang="en">EL++ ontology module</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000002 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000002">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000078"/>
+        <obo:IAO_0000111 xml:lang="en">example to be eventually removed</obo:IAO_0000111>
+        <rdfs:label xml:lang="en">example to be eventually removed</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000103 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000103">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000225"/>
+        <obo:IAO_0000111 xml:lang="en">failed exploratory term</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">The term was used in an attempt to structure part of the ontology but in retrospect failed to do a good job</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Person:Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">failed exploratory term</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000120 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000120">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000078"/>
+        <obo:IAO_0000111 xml:lang="en">metadata complete</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Class has all its metadata, but is either not guaranteed to be in its final location in the asserted IS_A hierarchy or refers to another class that is not complete.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">metadata complete</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000121 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000121">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000078"/>
+        <obo:IAO_0000111 xml:lang="en">organizational term</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Term created to ease viewing/sort terms for development purpose, and will not be included in a release</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">organizational term</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000122 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000122">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000078"/>
+        <obo:IAO_0000111 xml:lang="en">ready for release</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Class has undergone final review, is ready for use, and will be included in the next release. Any class lacking &quot;ready_for_release&quot; should be considered likely to change place in hierarchy, have its definition refined, or be obsoleted in the next release.  Those classes deemed &quot;ready_for_release&quot; will also derived from a chain of ancestor classes that are also &quot;ready_for_release.&quot;</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">ready for release</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000123 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000123">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000078"/>
+        <obo:IAO_0000111 xml:lang="en">metadata incomplete</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Class is being worked on; however, the metadata (including definition) are not complete or sufficiently clear to the branch editors.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">metadata incomplete</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000124 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000124">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000078"/>
+        <obo:IAO_0000111 xml:lang="en">uncurated</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Nothing done yet beyond assigning a unique class ID and proposing a preferred term.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">uncurated</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000125 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000125">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000078"/>
+        <obo:IAO_0000111 xml:lang="en">pending final vetting</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">All definitions, placement in the asserted IS_A hierarchy and required minimal metadata are complete. The class is awaiting a final review by someone other than the term editor.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">pending final vetting</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000224 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000224">
+        <obo:IAO_0000115 xml:lang="en">Core is an instance of a grouping of terms from an ontology or ontologies. It is used by the ontology to identify main classes.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">PERSON: Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000117 xml:lang="en">PERSON: Melanie Courtot</obo:IAO_0000117>
+        <obo:IAO_0000231 rdf:resource="http://purl.obolibrary.org/obo/IAO_0000226"/>
+        <rdfs:label xml:lang="en">obsolete_core</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000226 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000226">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000225"/>
+        <obo:IAO_0000111 xml:lang="en">placeholder removed</obo:IAO_0000111>
+        <rdfs:label xml:lang="en">placeholder removed</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000227 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000227">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000225"/>
+        <obo:IAO_0000111 xml:lang="en">terms merged</obo:IAO_0000111>
+        <obo:IAO_0000116 xml:lang="en">An editor note should explain what were the merged terms and the reason for the merge.</obo:IAO_0000116>
+        <rdfs:label xml:lang="en">terms merged</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000228 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000228">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000225"/>
+        <obo:IAO_0000111 xml:lang="en">term imported</obo:IAO_0000111>
+        <obo:IAO_0000116 xml:lang="en">This is to be used when the original term has been replaced by a term imported from an other ontology. An editor note should indicate what is the URI of the new term to use.</obo:IAO_0000116>
+        <rdfs:label xml:lang="en">term imported</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000229 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000229">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000225"/>
+        <obo:IAO_0000111 xml:lang="en">term split</obo:IAO_0000111>
+        <obo:IAO_0000116 xml:lang="en">This is to be used when a term has been split in two or more new terms. An editor note should indicate the reason for the split and indicate the URIs of the new terms created.</obo:IAO_0000116>
+        <rdfs:label xml:lang="en">term split</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000410 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000410">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000409"/>
+        <obo:IAO_0000111 xml:lang="en">universal</obo:IAO_0000111>
+        <obo:IAO_0000116 xml:lang="en">Hard to give a definition for. Intuitively a &quot;natural kind&quot; rather than a collection of any old things, which a class is able to be, formally. At the meta level, universals are defined as positives, are disjoint with their siblings, have single asserted parents.</obo:IAO_0000116>
+        <obo:IAO_0000117 xml:lang="en">Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">A Formal Theory of Substances, Qualities, and Universals, http://ontology.buffalo.edu/bfo/SQU.pdf</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">universal</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000420 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000420">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000409"/>
+        <obo:IAO_0000111 xml:lang="en">defined class</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A defined class is a class that is defined by a set of logically necessary and sufficient conditions but is not a universal</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">&quot;definitions&quot;, in some readings, always are given by necessary and sufficient conditions. So one must be careful (and this is difficult sometimes) to distinguish between defined classes and universal.</obo:IAO_0000116>
+        <obo:IAO_0000117 xml:lang="en">Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">defined class</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000421 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000421">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000409"/>
+        <obo:IAO_0000111 xml:lang="en">named class expression</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A named class expression is a logical expression that is given a name. The name can be used in place of the expression.</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">named class expressions are used in order to have more concise logical definition but their extensions may not be interesting classes on their own. In languages such as OWL, with no provisions for macros, these show up as actuall classes. Tools may with to not show them as such, and to replace uses of the macros with their expansions</obo:IAO_0000116>
+        <obo:IAO_0000117 xml:lang="en">Alan Ruttenberg</obo:IAO_0000117>
+        <rdfs:label xml:lang="en">named class expression</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000423 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000423">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000078"/>
+        <obo:IAO_0000111 xml:lang="en">to be replaced with external ontology term</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">Terms with this status should eventually replaced with a term from another ontology.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">group:OBI</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">to be replaced with external ontology term</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000428 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/IAO_0000428">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000078"/>
+        <obo:IAO_0000111 xml:lang="en">requires discussion</obo:IAO_0000111>
+        <obo:IAO_0000115 xml:lang="en">A term that is metadata complete, has been reviewed, and problems have been identified that require discussion before release. Such a term requires editor note(s) to identify the outstanding issues.</obo:IAO_0000115>
+        <obo:IAO_0000117 xml:lang="en">Alan Ruttenberg</obo:IAO_0000117>
+        <obo:IAO_0000119 xml:lang="en">group:OBI</obo:IAO_0000119>
+        <rdfs:label xml:lang="en">requires discussion</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OMO_0001000 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/OMO_0001000">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000225"/>
+        <obo:IAO_0000115 xml:lang="en">The term was added to the ontology on the assumption it was in scope, but it turned out later that it was not.</obo:IAO_0000115>
+        <obo:IAO_0000116 xml:lang="en">This obsolesence reason should be used conservatively. Typical valid examples are: un-necessary grouping classes in disease ontologies, a phenotype term added on the assumption it was a disease.</obo:IAO_0000116>
+        <obo:IAO_0000117 rdf:resource="http://orcid.org/0000-0001-5208-3432"/>
+        <obo:IAO_0000233>https://github.com/information-artifact-ontology/ontology-metadata/issues/77</obo:IAO_0000233>
+        <obo:IAO_0000234>https://orcid.org/0000-0001-5208-3432</obo:IAO_0000234>
+        <rdfs:label>out of scope</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDifferent"/>
+        <owl:distinctMembers rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000120"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000121"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000122"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000123"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000124"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000125"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000423"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000428"/>
+        </owl:distinctMembers>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDifferent"/>
+        <owl:distinctMembers rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000226"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000227"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000228"/>
+            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000229"/>
+        </owl:distinctMembers>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.25) https://github.com/owlcs/owlapi -->
+

@@ -14,7 +14,9 @@ release_artefacts:
 import_group:
   products:
     - id: ro
-    - id: iao
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
+    - id: omo
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/omo.owl
 robot_report:
   release_reports: True
   fail_on : ERROR
