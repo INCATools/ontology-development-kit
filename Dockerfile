@@ -30,6 +30,7 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     dos2unix \
     sqlite3 \
     libjson-perl \
+    libbusiness-isbn-perl \
     pkg-config \
     xlsx2csv \
     gh \
