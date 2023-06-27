@@ -1,7 +1,11 @@
 #!/bin/bash
 
-REAL_USER_ID=${ODKUSER_USER_ID:-1000}
-REAL_GROUP_ID=${ODKUSER_GROUP_ID:-1000}
+if [ x$ODK_USER_ID = x0 ]; then
+    exec /bin/bash -c "$@"
+fi
+
+REAL_USER_ID=${ODK_USER_ID:-1000}
+REAL_GROUP_ID=${ODK_GROUP_ID:-1000}
 
 groupadd -o -g $REAL_GROUP_ID odkuser
 useradd -o -s /bin/bash -u $REAL_USER_ID -g $REAL_GROUP_ID -c "ODK User" -m odkuser
