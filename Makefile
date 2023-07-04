@@ -11,7 +11,7 @@ EMAIL_ARGS=
 
 CACHE=
 
-ARCH=$(shell uname -m | sed 's/x86_64/amd64/')
+ARCH=linux/$(shell uname -m | sed 's/x86_64/amd64/')
 PLATFORMS=linux/amd64,linux/arm64
 
 .PHONY: .FORCE

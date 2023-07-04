@@ -26,6 +26,7 @@ ontodev-cogs
 ontodev-gizmos
 mkdocs
 mkdocs-material
+mkdocs-table-reader-plugin
 funowl
 kgx
 linkml

@@ -22,6 +22,7 @@ import subprocess
 import shutil
 from shutil import copy, copymode
 import logging
+from hashlib import sha256
 
 logging.basicConfig(level=logging.INFO)
 TEMPLATE_SUFFIX = '.jinja2'
@@ -704,15 +705,22 @@ class Generator(object):
 
         Optionally injects additional values
         """
+        config_hash = None
         if config_file is None:
             project = OntologyProject()
         else:
             with open(config_file, 'r') as stream:
+                h = sha256()
+                h.update(stream.read().encode())
+                config_hash = h.hexdigest()
+                stream.seek(0)
                 try:
                     obj = yaml.load(stream, Loader=yaml.FullLoader)
                 except yaml.YAMLError as exc:
                     print(exc)
             project = from_dict(data_class=OntologyProject, data=obj)
+        if config_hash:
+            project.config_hash = config_hash
         if title:
             project.title = title
         if org:
