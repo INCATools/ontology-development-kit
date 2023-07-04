@@ -40,6 +40,9 @@ ODK_TAG=${ODK_TAG:-latest}
 ODK_JAVA_OPTS={% if project.robot_java_args is defined and project.robot_java_args|length %}${ODK_JAVA_OPTS:-{{ project.robot_java_args }}}{% else %}${ODK_JAVA_OPTS:--Xmx8G}{% endif %}
 ODK_DEBUG=${ODK_DEBUG:-no}
 
+ODK_USER_ID=${ODK_USER_ID:-$(id -u)}
+ODK_GROUP_ID=${ODK_GROUP_ID:-$(id -g)}
+
 # Convert OWLAPI_* environment variables to the OWLAPI as Java options
 # See http://owlcs.github.io/owlapi/apidocs_4/org/semanticweb/owlapi/model/parameters/ConfigurationOptions.html
 # for a list of allowed options
@@ -72,19 +75,21 @@ cat <<EOF > run.sh.env
 ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS
 JAVA_OPTS=$ODK_JAVA_OPTS
 GH_TOKEN=$GH_TOKEN
+ODK_USER_ID=$ODK_USER_ID
+ODK_GROUP_ID=$ODK_GROUP_ID
 EOF
 {% endif %}
 if [ -n "$USE_SINGULARITY" ]; then
     {% if project.use_external_date is sameas True %}export TODAY=$(date +%Y-%m-%d){% endif %}
     singularity exec --cleanenv $ODK_SINGULARITY_OPTIONS \
-        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}--env "ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS,JAVA_OPTS=$ODK_JAVA_OPTS" {% endif %}\
+        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}--env "ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS,JAVA_OPTS=$ODK_JAVA_OPTS,ODK_USER_ID=$ODK_USER_ID,ODK_GROUP_ID=$ODK_GROUP_ID" {% endif %}\
         --bind $VOLUME_BIND \
         -W $WORK_DIR \
         docker://obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 else
     BIND_OPTIONS="-v $(echo $VOLUME_BIND | sed 's/,/ -v /')"
     docker run $ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \
-        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}-e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}{% endif %}\
+        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}-e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" -e ODK_USER_ID=$ODK_USER_ID -e ODK_GROUP_ID=$ODK_GROUP_ID {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}{% endif %}\
         --rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 fi
 

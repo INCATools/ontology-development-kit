@@ -3,6 +3,7 @@
 A full record of all planned changes can be seen [here](https://github.com/INCATools/ontology-development-kit/milestone/7).
 
 - New [ROBOT version 1.9.4](https://github.com/ontodev/robot/releases/tag/v1.9.4)
+- All processes within the ODK container now runs under the identify of an unprivileged user by default. This fixes the issue of generated files being owned by the superuser, when the Docker daemon itself runs as the superuser (as is the case by default on most GNU/Linux systems). If you have a workflow that requires being run as a superuser (for example, if you need to install extra Debian/Ubuntu packages via `apt-get`), set the environment variable `ODK_USER_ID` to 0.
 
 ## Makefile workflows
 
