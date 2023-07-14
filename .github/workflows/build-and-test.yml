@@ -6,6 +6,7 @@ on:
       - master
     types:
       - opened
+      - synchronize
     paths-ignore:
       - '**.md'
       - 'CITATION.cff'

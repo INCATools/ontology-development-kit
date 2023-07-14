@@ -32,7 +32,8 @@ RUN apt-get update && \
         curl \
         jq \
         rsync \
-        time
+        time \
+        sudo
 
 # Install Python environment (copied over from the builder image).
 COPY --from=obolibrary/odkbuild:latest /staging/lite /
@@ -75,6 +76,14 @@ COPY scripts/check-rdfxml.sh /tools/check-rdfxml
 
 # Force Git to accept working on a repository owned by someone else
 RUN echo "[safe]\n    directory = /work" >> /etc/gitconfig
+
+# Make sure we run under an existing user account with UID/GID
+# matching the UID/GID of the calling user
+COPY scripts/entrypoint.sh /usr/local/sbin/odkuser-entrypoint.sh
+RUN chmod 755 /usr/local/sbin/odkuser-entrypoint.sh
+ENTRYPOINT ["/usr/local/sbin/odkuser-entrypoint.sh"]
+# secure_path is enabled by default in Debian/Ubuntu, disable it
+RUN sed -i '/secure_path/d' /etc/sudoers
 
 # Install the ODK itself.
 COPY odk/make-release-assets.py /tools
