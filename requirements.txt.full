@@ -1,3 +1,11 @@
+# Core dependencies
+sssom
+oaklib
+linkml
+dosdp
+semsql
+
+# Secondary dependencies
 click
 dacite
 dataclasses
@@ -21,7 +29,6 @@ seaborn
 upsetplot
 plotly
 networkx
-sssom
 ontodev-cogs
 ontodev-gizmos
 mkdocs
@@ -29,10 +36,6 @@ mkdocs-material
 mkdocs-table-reader-plugin
 funowl
 kgx
-linkml
-dosdp
-semsql
-oaklib
 tsvalid
 j2cli[yaml]
 j2cli
