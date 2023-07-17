@@ -13,7 +13,7 @@ backcall==0.2.0
 bcp47==0.0.4
 beautifulsoup4==4.12.2
 bidict==0.22.1
-bioregistry==0.9.75
+bioregistry==0.9.77
 black==21.12b0
 bleach==6.0.0
 bmt==1.1.0
@@ -44,7 +44,7 @@ defusedxml==0.7.1
 Deprecated==1.2.14
 deprecation==2.1.0
 diskcache==5.6.1
-distlib==0.3.6
+distlib==0.3.7
 docker==6.1.3
 docutils==0.16
 dosdp==0.1.10.dev1
@@ -103,7 +103,7 @@ jsonpickle==3.0.1
 jsonpointer==2.4
 jsonschema==4.18.3
 jsonschema-specifications==2023.6.1
-jsonschema2md==0.4.0
+jsonschema2md==0.9.0
 jsonstreams==0.6.0
 jupyter==1.0.0
 jupyter-console==6.6.3
@@ -124,7 +124,7 @@ lightrdf==0.3.1
 linkml==1.5.6
 linkml-dataops==0.1.0
 linkml-renderer==0.2.0
-linkml-runtime==1.5.4
+linkml-runtime==1.5.5
 lxml==4.9.3
 Markdown==3.3.7
 markdown-it-py==3.0.0
@@ -149,7 +149,7 @@ mypy==1.4.1
 mypy-extensions==1.0.0
 nbclassic==1.0.0
 nbclient==0.8.0
-nbconvert==7.6.0
+nbconvert==7.7.1
 nbformat==5.9.1
 ndex2==3.5.1
 neo4j==4.3.0
@@ -179,7 +179,7 @@ pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==10.0.0
 pkginfo==1.9.6
-platformdirs==3.8.1
+platformdirs==3.9.1
 plotly==5.15.0
 pluggy==1.2.0
 ply==3.11
@@ -241,7 +241,7 @@ rfc3986==2.0.0
 rfc3986-validator==0.1.1
 rfc3987==1.3.8
 rich==13.4.2
-rpds-py==0.8.10
+rpds-py==0.8.11
 rsa==4.9
 ruamel.yaml==0.17.32
 ruamel.yaml.clib==0.2.7
@@ -269,7 +269,7 @@ sphinxcontrib-jquery==4.1
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
-SQLAlchemy==2.0.18
+SQLAlchemy==2.0.19
 SQLAlchemy-Utils==0.38.3
 sssom==0.3.35
 sssom-schema==0.13.0
@@ -299,7 +299,7 @@ uritemplate==4.1.1
 url-normalize==1.4.3
 urllib3==1.26.16
 validators==0.20.0
-virtualenv==20.23.1
+virtualenv==20.24.0
 watchdog==3.0.0
 wcwidth==0.2.6
 webcolors==1.13
@@ -308,4 +308,4 @@ websocket-client==1.6.1
 widgetsnbextension==4.0.8
 wrapt==1.15.0
 yamldown==0.1.8
-zipp==3.16.1
+zipp==3.16.2
