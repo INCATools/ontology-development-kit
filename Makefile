@@ -69,6 +69,11 @@ ROB=obolibrary/robot
 ROBOT_JAR_ARGS=#--build-arg ROBOT_JAR=$(ROBOT_JAR)
 TAGS_OPTION=-t $(IM):$(VERSION) -t $(IM):latest
 
+build-testx:
+	docker build -f x.Dockerfile $(CACHE) --platform $(ARCH) \
+	    --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) \
+	    $(TAGS_OPTION) .
+
 build: build-odklite
 	docker build $(CACHE) --platform $(ARCH) \
 	    --build-arg ODK_VERSION=$(VERSION) $(ROBOT_JAR_ARGS) \
