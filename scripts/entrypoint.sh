@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ x$ODK_USER_ID = x0 ]; then
-    exec $@
+    exec "$@"
 fi
 
 REAL_USER_ID=${ODK_USER_ID:-1000}
