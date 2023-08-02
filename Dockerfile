@@ -9,6 +9,9 @@ ENV PATH "/tools/apache-jena/bin:/tools/sparqlprog/bin:$PATH"
 ARG ODK_VERSION 0.0.0
 ENV ODK_VERSION $ODK_VERSION
 
+# Software versions
+ENV JENA_VERSION=4.9.0
+
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
 ENV COURSIER_CACHE "/tools/.coursier-cache"
@@ -75,8 +78,8 @@ RUN test "x$TARGETARCH" = xamd64 && ( \
     )
 
 # Install Jena.
-RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-4.9.0.tar.gz -O- | tar xzC /tools && \
-    mv /tools/apache-jena-4.9.0 /tools/apache-jena
+RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERSION.tar.gz -O- | tar xzC /tools && \
+    mv /tools/apache-jena-$JENA_VERSION /tools/apache-jena
 
 # Install SPARQLProg.
 RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
