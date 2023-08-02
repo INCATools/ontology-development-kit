@@ -78,14 +78,14 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
     rm -rf souffle-2.4 souffle-2.4.tar.gz
 
 # Compile Fastobo-validator.
-RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v0.4.0.tar.gz \
-        -O /build/fastobo-validator-0.4.0.tar.gz && \
-    tar xf fastobo-validator-0.4.0.tar.gz && \
-    cd fastobo-validator-0.4.0 && \
+RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v0.4.6.tar.gz \
+        -O /build/fastobo-validator-0.4.6.tar.gz && \
+    tar xf fastobo-validator-0.4.6.tar.gz && \
+    cd fastobo-validator-0.4.6 && \
     cargo build --release && \
     install -D -m 755 target/release/fastobo-validator /staging/full/usr/bin/fastobo-validator && \
     cd /build && \
-    rm -rf fastobo-validator-0.4.0 fastobo-validator-0.4.0.tar.gz /root/.cargo
+    rm -rf fastobo-validator-0.4.6 fastobo-validator-0.4.6.tar.gz /root/.cargo
 
 # Compile rdftab.
 RUN wget -nv https://github.com/ontodev/rdftab.rs/archive/refs/tags/v$RDFTAB_VERSION.tar.gz \
