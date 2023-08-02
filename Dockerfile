@@ -75,8 +75,8 @@ RUN test "x$TARGETARCH" = xamd64 && ( \
     )
 
 # Install Jena.
-RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-4.6.1.tar.gz -O- | tar xzC /tools && \
-    mv /tools/apache-jena-4.6.1 /tools/apache-jena
+RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-4.9.0.tar.gz -O- | tar xzC /tools && \
+    mv /tools/apache-jena-4.9.0 /tools/apache-jena
 
 # Install SPARQLProg.
 RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
