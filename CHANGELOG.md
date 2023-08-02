@@ -1,8 +1,20 @@
+# v1.4.2
+
+- Apache Jena updated to version 4.9.0
+- Soufflé updated to version 2.4
+- Fastobo-validator updated to version 0.4.6
+- Ammonite updated to version 2.5.9
+- Several Python packages updated, including:
+  - oaklib 0.5.12
+  - sssom 0.3.36
+  - sssom-schema 0.14.0
+- /!\ Python package `funowl` *downgraded* from 0.1.13 to 0.1.12
+
 # v1.4.1
 
 - New [ROBOT version 1.9.4](https://github.com/ontodev/robot/releases/tag/v1.9.4)
 - Newer versions of several Python packages, including:
-  - oaklib 1.5.6
+  - oaklib 0.5.6
   - bioregistry 0.9.15
   - linkml 1.5.2
 
