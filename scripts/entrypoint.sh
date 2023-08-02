@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ x$ODK_USER_ID = x0 ]; then
+if [ -z "$ODK_USER_ID" -o "$ODK_USER_ID" = 0 ]; then
     exec "$@"
 fi
 
