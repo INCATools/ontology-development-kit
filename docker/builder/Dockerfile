@@ -68,14 +68,14 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
         mcpp \
         sqlite3 \
         zlib1g-dev && \
-    wget -nv https://github.com/souffle-lang/souffle/archive/refs/tags/2.1.tar.gz \
-        -O /build/souffle-2.1.tar.gz && \
-    tar xf souffle-2.1.tar.gz && \
-    cd souffle-2.1 && \
+    wget -nv https://github.com/souffle-lang/souffle/archive/refs/tags/2.4.tar.gz \
+        -O /build/souffle-2.4.tar.gz && \
+    tar xf souffle-2.4.tar.gz && \
+    cd souffle-2.4 && \
     cmake -S . -B build && \
     cmake --build build --target install DESTDIR=/staging/full && \
     cd /build && \
-    rm -rf souffle-2.1 souffle-2.1.tar.gz
+    rm -rf souffle-2.4 souffle-2.4.tar.gz
 
 # Compile Fastobo-validator.
 RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v0.4.0.tar.gz \
