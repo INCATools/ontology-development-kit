@@ -15,7 +15,7 @@ ENV PATH="/tools:/tools/dosdptools/bin:$PATH"
 ARG ODK_VERSION=0.0.0
 ENV ODK_VERSION=$ODK_VERSION
 
-ARG ROBOT_JAR=https://www.dropbox.com/scl/fi/5gtky9vdcmeni8lapz5lz/robot_110-2_snapshot.jar?rlkey=i3jnn2qqt58qnr8gjcwp79eux&dl=0
+ARG ROBOT_JAR=https://www.dropbox.com/scl/fi/5gtky9vdcmeni8lapz5lz/robot_110-3_snapshot.jar?rlkey=i3jnn2qqt58qnr8gjcwp79eux&dl=0
 ENV ROBOT_JAR=$ROBOT_JAR
 
 # Install base tools from Ubuntu.
