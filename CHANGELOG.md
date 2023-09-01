@@ -5,10 +5,11 @@
 - Fastobo-validator updated to version 0.4.6
 - Ammonite updated to version 2.5.9
 - Several Python packages updated, including:
-  - oaklib 0.5.12
-  - sssom 0.3.36
-  - sssom-schema 0.14.0
-- /!\ Python package `funowl` *downgraded* from 0.1.13 to 0.1.12
+  - oaklib 0.5.17
+  - sssom 0.3.40
+  - sssom-schema 0.15.0
+  - linkml 1.5.7
+- /!\ The `bioregistry` dependency is removed in favour of the `curies` package
 
 # v1.4.1
 
