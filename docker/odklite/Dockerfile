@@ -4,7 +4,7 @@ LABEL maintainer="obo-tools@googlegroups.com"
 ENV ROBOT_VERSION=1.9.4
 ENV DOSDP_VERSION=0.19.3
 ENV OWLTOOLS_VERSION=2020-04-06
-ENV AMMONITE_VERSION=2.0.3
+ENV AMMONITE_VERSION=2.5.9
 
 WORKDIR /tools
 ENV JAVA_HOME="/usr"
@@ -69,7 +69,7 @@ RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_V
 RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VERSION/2.13-$AMMONITE_VERSION \
         -O /tools/amm && \
     chmod 755 /tools/amm && \
-    /tools/amm /dev/null
+    java -cp /tools/amm ammonite.AmmoniteMain /dev/null
 
 # Install RDF/XML validation script
 COPY scripts/check-rdfxml.sh /tools/check-rdfxml
