@@ -3,7 +3,7 @@ LABEL maintainer="obo-tools@googlegroups.com"
 
 WORKDIR /tools
 
-ENV ROBOT v1.9.4
+ENV ROBOT v1.9.5
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
 ENV ROBOT_JAR ${ROBOT_JAR}
 

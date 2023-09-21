@@ -1,3 +1,7 @@
+# v1.4.3
+
+- New [ROBOT version 1.9.5](https://github.com/ontodev/robot/releases/tag/v1.9.5)
+
 # v1.4.2
 
 - Apache Jena updated to version 4.9.0
