@@ -1,6 +1,10 @@
 # v1.4.3
 
 - New [ROBOT version 1.9.5](https://github.com/ontodev/robot/releases/tag/v1.9.5)
+- Several Python packages updated, including:
+  - oaklib 0.5.20
+  - curies 0.6.4
+  - sssom 0.3.41
 
 # v1.4.2
 
