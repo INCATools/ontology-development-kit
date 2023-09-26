@@ -32,7 +32,7 @@ comm==0.1.4
 commonmark==0.9.1
 contourpy==1.1.1
 cryptography==41.0.4
-curies==0.6.3
+curies==0.6.4
 cycler==0.11.0
 dacite==1.8.1
 daff==1.3.46
@@ -63,8 +63,8 @@ fqdn==1.5.1
 funowl==0.2.3
 ghp-import==2.1.0
 google==3.0.0
-google-api-core==2.11.1
-google-api-python-client==2.100.0
+google-api-core==2.12.0
+google-api-python-client==2.101.0
 google-auth==2.23.0
 google-auth-httplib2==0.1.1
 google-auth-oauthlib==1.1.0
@@ -129,7 +129,7 @@ lightrdf==0.3.1
 linkml==1.5.7
 linkml-dataops==0.1.0
 linkml-renderer==0.3.0
-linkml-runtime==1.5.6
+linkml-runtime==1.5.7
 lxml==4.9.3
 Markdown==3.4.4
 markdown-it-py==3.0.0
@@ -143,7 +143,7 @@ mdurl==0.1.2
 mergedeep==1.3.4
 mistune==3.0.1
 mkdocs==1.5.3
-mkdocs-material==9.3.2
+mkdocs-material==9.4.2
 mkdocs-material-extensions==1.2
 mkdocs-mermaid2-plugin==0.6.0
 mkdocs-table-reader-plugin==2.0.1
@@ -162,7 +162,7 @@ nh3==0.2.14
 notebook==7.0.4
 notebook_shim==0.2.3
 numpy==1.26.0
-oaklib==0.5.19
+oaklib==0.5.20
 oauthlib==3.2.2
 ols-client==0.1.4
 ontobio==2.8.14
@@ -203,8 +203,8 @@ pyasn1==0.5.0
 pyasn1-modules==0.3.0
 pycodestyle==2.11.0
 pycparser==2.21
-pydantic==2.3.0
-pydantic_core==2.6.3
+pydantic==2.4.0
+pydantic_core==2.10.0
 pydotplus==2.0.2
 pyflakes==3.1.0
 PyGithub==1.59.1
@@ -237,7 +237,7 @@ rdflib-shim==1.0.3
 readme-renderer==42.0
 recommonmark==0.7.1
 referencing==0.30.2
-regex==2022.10.31
+regex==2023.8.8
 requests==2.31.0
 requests-cache==1.1.0
 requests-oauthlib==1.3.1
