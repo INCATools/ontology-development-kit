@@ -285,7 +285,7 @@ show_assets:
 	du -sh $(ASSETS)
 
 check_rdfxml_%: %
-	@check-rdfxml $<
+	@check-rdfxml {% if project.extra_rdfxml_checks %}--jena --rdflib{% endif %} $<
 
 .PHONY: check_rdfxml_assets
 check_rdfxml_assets: $(foreach product,$(MAIN_PRODUCTS),check_rdfxml_$(product).owl)
