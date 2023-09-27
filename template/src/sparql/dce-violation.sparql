@@ -1,9 +1,0 @@
-# The purpose of this violation is to make sure people update
-# from using the deprecated DC Elements 1.1 namespace (http://purl.org/dc/elements/1.1/)
-# to using the recommended DC Terms namespace (http://purl.org/dc/terms/)
-# See also discssion on https://github.com/oborel/obo-relations/pull/692
-
-SELECT ?predicate WHERE {
-  ?subject ?predicate ?value .
-  FILTER(STRSTARTS(str(?predicate), "http://purl.org/dc/elements/1.1/"))
-}
