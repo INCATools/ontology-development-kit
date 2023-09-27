@@ -612,6 +612,19 @@ SELECT DISTINCT ?term ?property ?value WHERE
 }
 {% endif %}
 
+{%- if project.robot_report.custom_sparql_checks is not defined or 'dc-properties' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/dc-violation.sparql
+# The purpose of this violation is to make sure people update
+# from using the deprecated DC Elements 1.1 namespace (http://purl.org/dc/elements/1.1/)
+# to using the recommended DC Terms namespace (http://purl.org/dc/terms/)
+# See also discussion on https://github.com/oborel/obo-relations/pull/692
+
+SELECT ?predicate WHERE {
+  ?subject ?predicate ?value .
+  FILTER(STRSTARTS(str(?predicate), "http://purl.org/dc/elements/1.1/"))
+}
+{% endif %}
+
 {%- if project.components is defined %}
 {%- for component in project.components.products %}
 ^^^ src/ontology/components/{{ component.filename }}
