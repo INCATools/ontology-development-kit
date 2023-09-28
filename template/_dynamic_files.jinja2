@@ -1724,6 +1724,7 @@ sh run.sh make update_repo
 
 Do not overwrite, contents will be generated automatically.
 {% endif %}
+{% if project.documentation is not none %}
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
 theme:
@@ -1796,4 +1797,5 @@ jobs:
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
           CONFIG_FILE: mkdocs.yaml
+{% endif -%}
 {% endif -%}
