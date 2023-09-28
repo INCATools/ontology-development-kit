@@ -13,9 +13,9 @@ release_artefacts:
   - basic
   - full
   - base
-  - editors
-  - baseplus
+  - baselite
 import_group:
   release_imports: TRUE
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl

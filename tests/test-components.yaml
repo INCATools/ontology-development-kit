@@ -17,8 +17,11 @@ export_formats:
 import_group:
   products: 
     - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: bfo
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/bfo.owl
 components:
   products:
     - filename: wbphenotype-equivalent-axioms-subq.owl

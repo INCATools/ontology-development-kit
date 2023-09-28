@@ -23,9 +23,13 @@
 {% if project.edit_format == "obo" %}
 format-version: 1.2
 {% if project.import_group is defined -%}
+{% if project.import_group.use_base_merging %}
+import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl
+{% else %}
 {% for imp in project.import_group.products %}
 import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl
 {% endfor %}
+{% endif %}
 {% endif %}
 {%- if project.use_dosdps %}
 import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/definitions.owl
@@ -70,9 +74,13 @@ Prefix(dcterms:=<http://purl.org/dc/terms/>)
 
 Ontology(<{{ project.uribase }}/{{ project.id }}.owl>
 {% if project.import_group is defined -%}
+{% if project.import_group.use_base_merging %}
+Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>)
+{% else %}
 {% for imp in project.import_group.products %}
 Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl>)
 {% endfor %}
+{% endif %}
 {% endif %}
 
 {%- if project.use_dosdps %}
@@ -180,6 +188,26 @@ imports/%_import.owl: mirror/%.owl
 	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && touch $@
 {% endif %}
 {%- endif %}
+{% if project.import_group.use_base_merging %}
+{#-
+
+  Single merged import file
+
+#}
+^^^ src/ontology/imports/merged_import.owl
+Prefix(:=<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>)
+Prefix(obo:=<http://purl.obolibrary.org/obo/>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+Prefix(oboInOwl:=<http://www.geneontology.org/formats/oboInOwl#>)
+
+Ontology(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>
+# This is a placeholder, it will be regenerated when makefile is first executed.
+)
+{% else %}
 {#-
 
   Imports files, one per import
@@ -187,20 +215,20 @@ imports/%_import.owl: mirror/%.owl
 #}
 {% for imp in project.import_group.products %}
 ^^^ src/ontology/imports/{{ imp.id }}_import.owl
-<?xml version="1.0"?>
-<rdf:RDF 
-     xml:base="{{ project.uribase }}/"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl"/>
+Prefix(:=<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl>)
+Prefix(obo:=<http://purl.obolibrary.org/obo/>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+Prefix(oboInOwl:=<http://www.geneontology.org/formats/oboInOwl#>)
 
-    <!-- This is a placeholder, it will be regenerated when makefile is first executed -->
-</rdf:RDF>
+Ontology(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl>
+# This is a placeholder, it will be regenerated when makefile is first executed.
+)
+{% endfor %}
+{% endif %}
 {#-
 
   Import Term files
@@ -212,6 +240,7 @@ imports/%_import.owl: mirror/%.owl
   TODO: Decide if we should either query ontobee for seed terms OR have the seed list provided in the project.yaml
 
 #}
+{% for imp in project.import_group.products %}
 ^^^ src/ontology/imports/{{ imp.id }}_terms.txt
 {% endfor %}
 {#-
@@ -1135,7 +1164,7 @@ WARNING: THE FIX BELOW IS NOT IDEAL, YOU SHOULD ALWAYS TRY TO FIX UPSTREAM IF PO
 
 ## Updating your ODK repository
 
-Your ODK repositories configuration is managed in `src/ontology/{{ project.id }}-odk.yaml`. Once you have made your changes, you can run the following to apply your changes to the repository:
+Your ODK repositories configuration is managed in `src/ontology/{{ project.id }}-odk.yaml`. The [ODK Project Configuration Schema](https://github.com/INCATools/ontology-development-kit/blob/master/docs/project-schema.md) defines all possible parameters that can be used in this config YAML. Once you have made your changes, you can run the following to apply your changes to the repository:
 
 
 ```
@@ -1714,6 +1743,7 @@ theme:
     - content.tabs.link
 plugins:
   - search
+  - table-reader
 markdown_extensions:
   - pymdownx.highlight:
   - pymdownx.inlinehilite

@@ -6,7 +6,7 @@ namespaces:
   - http://purl.obolibrary.org/obo/TONER_
   - http://purl.obolibrary.org/obo/PATO_
 release_artefacts: 
-  - editors
+  - baselite
   - base
 primary_release: base
 release_use_reasoner: FALSE
@@ -14,4 +14,6 @@ import_group:
   release_imports: TRUE
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl

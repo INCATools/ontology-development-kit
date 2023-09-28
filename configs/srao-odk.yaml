@@ -1,0 +1,19 @@
+id: SRAO
+title: Subject Resource Application Ontology
+github_org: allysonlister
+repo: SRAO
+license: CC-BY 4.0
+import_group:
+  mirror_max_time_download: 400
+  products:
+    - id: obi
+      module_type: filter
+    - id: po
+      module_type: filter
+    - id: edam
+      mirror_from: https://edamontology.org/EDAM.owl
+      module_type: custom
+    - id: ncit
+      module_type: filter
+uribase: http://www.fairsharing.org/ontology/subject
+robot_java_args: '-Xmx16G'
