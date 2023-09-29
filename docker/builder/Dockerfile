@@ -74,7 +74,7 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
         -O /build/souffle-$SOUFFLE_VERSION.tar.gz && \
     tar xf souffle-$SOUFFLE_VERSION.tar.gz && \
     cd souffle-$SOUFFLE_VERSION && \
-    cmake -S . -B build && \
+    cmake -S . -B build -DSOUFFLE_DOMAIN_64BIT=ON && \
     cmake --build build --target install DESTDIR=/staging/full && \
     cd /build && \
     rm -rf souffle-$SOUFFLE_VERSION souffle-$SOUFFLE_VERSION.tar.gz
