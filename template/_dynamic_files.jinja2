@@ -632,12 +632,14 @@ SELECT ?term ?term_tracker ?term_tracker_type WHERE {
 ^^^ src/sparql/illegal-date-violation.sparql
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
 
 SELECT DISTINCT ?term ?property ?value WHERE
 {
-  VALUES ?property {dct:date dct:issued dct:created}
+  VALUES ?property {dct:date dct:issued dct:created oboInOwl:creation_date}
   ?term ?property ?value .
   FILTER (datatype(?value) != xsd:date || !regex(str(?value), '^\\d{4}-\\d\\d-\\d\\d$'))
+  FILTER (datatype(?value) != xsd:dateTime || !regex(str(?value), '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z'))
 }
 {% endif %}
 
@@ -1722,6 +1724,7 @@ sh run.sh make update_repo
 
 Do not overwrite, contents will be generated automatically.
 {% endif %}
+{% if project.documentation is not none %}
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
 theme:
@@ -1794,4 +1797,5 @@ jobs:
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
           CONFIG_FILE: mkdocs.yaml
+{% endif -%}
 {% endif -%}
