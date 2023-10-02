@@ -13,10 +13,10 @@ import_group:
     - id: ro
       mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
 robot_report:
-  release_reports: True
+  release_reports: true
   fail_on : ERROR
-  use_labels : False
-  custom_profile : True
+  use_labels : false
+  custom_profile : true
   sparql_test_on:
     - edit
     - rrcs-base.owl

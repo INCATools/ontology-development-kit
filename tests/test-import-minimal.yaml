@@ -24,8 +24,8 @@ components:
 robot_java_args: '-Xmx8G'
 robot_report:
   fail_on : ERROR
-  use_labels : False
-  custom_profile : True
+  use_labels : false
+  custom_profile : true
   report_on :
     - edit
   custom_sparql_checks : []
