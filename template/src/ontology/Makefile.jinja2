@@ -552,7 +552,7 @@ component-download-{{ component.filename }}: | $(TMPDIR)
 
 $(COMPONENTSDIR)/{{ component.filename }}: component-download-{{ component.filename }}
 	if [ $(COMP) = true ]; then if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $@ ; then echo "Component identical."; \
-      else echo "Component is different, updating." && $(ROBOT) annotate -i $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@; fi; fi
+      else echo "Component is different, updating." && $(ROBOT) annotate -i $(TMPDIR)/component-download-{{ component.filename }}.owl --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@; fi; fi
 
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 {% elif component.use_template %}
