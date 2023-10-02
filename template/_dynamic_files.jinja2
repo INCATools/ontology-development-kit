@@ -648,9 +648,10 @@ SELECT DISTINCT ?term ?property ?value WHERE
 # to using the recommended DC Terms namespace (http://purl.org/dc/terms/)
 # See also discussion on https://github.com/oborel/obo-relations/pull/692
 
-SELECT ?predicate WHERE {
-  ?subject ?predicate ?value .
-  FILTER(STRSTARTS(str(?predicate), "http://purl.org/dc/elements/1.1/"))
+SELECT ?term ?predicate WHERE {
+  ?term ?predicate ?value .
+  FILTER(STRSTARTS(STR(?predicate), "http://purl.org/dc/elements/1.1/"))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
