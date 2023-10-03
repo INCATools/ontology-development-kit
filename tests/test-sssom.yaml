@@ -2,7 +2,7 @@ id: sssomo
 title: "Test Ontology for basic mapping management"
 github_org: INCATools
 repo: sssomo
-use_mappings: TRUE
+use_mappings: true
 export_formats:
   - owl
 import_group:
@@ -22,7 +22,7 @@ sssom_mappingset_group:
 components:
   products:
     - filename: test-with-sssom.owl
-      use_mappings: TRUE
+      use_mappings: true
       mappings:
         - modmini-onta.sssom.tsv
         - modmini-ontd.sssom.tsv
