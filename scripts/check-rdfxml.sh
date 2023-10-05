@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
-check_lightrdf=0
-check_rdflib=1
-check_jena=1
+check_lightrdf=1
+check_rdflib=0
+check_jena=0
 rdfxml_file=
 
 while [ -n "$1" ]; do
