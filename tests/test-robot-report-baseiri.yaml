@@ -12,11 +12,11 @@ import_group:
     - id: omo
       mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/omo.owl
 robot_report:
-  use_base_iris: True
-  release_reports: True
+  use_base_iris: true
+  release_reports: true
   fail_on : ERROR
-  use_labels : False
-  custom_profile : True
+  use_labels : false
+  custom_profile : true
   report_on :
     - edit
   custom_sparql_checks : []
