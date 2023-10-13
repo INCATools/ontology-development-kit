@@ -84,7 +84,7 @@ RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v$FA
         -O /build/fastobo-validator-$FASTOBO_VALIDATOR_VERSION.tar.gz && \
     tar xf fastobo-validator-$FASTOBO_VALIDATOR_VERSION.tar.gz && \
     cd fastobo-validator-$FASTOBO_VALIDATOR_VERSION && \
-    cargo build --release && \
+    cargo build --release -Z sparse-registry && \
     install -D -m 755 target/release/fastobo-validator /staging/full/usr/bin/fastobo-validator && \
     cd /build && \
     rm -rf fastobo-validator-$FASTOBO_VALIDATOR_VERSION fastobo-validator-$FASTOBO_VALIDATOR_VERSION.tar.gz /root/.cargo
@@ -94,7 +94,7 @@ RUN wget -nv https://github.com/ontodev/rdftab.rs/archive/refs/tags/v$RDFTAB_VER
         -O /build/rdftab.tar.gz && \
     tar xf rdftab.tar.gz && \
     cd rdftab.rs-$RDFTAB_VERSION && \
-    cargo build --release && \
+    cargo build --release -Z sparse-registry && \
     install -D -m 755 target/release/rdftab /staging/full/usr/bin/rdftab && \
     cd /build && \
     rm -rf rdftab.rs-$RDFTAB_VERSION rdftab.tar.gz /root/.cargo
