@@ -86,7 +86,7 @@ If you have never editted this ontology before, first follow a [general tutorial
 
 ### How to write great issues?
 
-Please refer to the [OBO Academy best practices](https://oboacademy.github.io/obook/lesson/term-request/).
+Please refer to the [OBO Academy term request guide](https://oboacademy.github.io/obook/howto/term-request/).
 
 <a id="great-pulls"></a>
 
