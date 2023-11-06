@@ -318,6 +318,12 @@ class ImportGroup(ProductGroup):
     
     directory : Directory = "imports/"
     """directory where imports are extracted into to"""
+    
+    annotate_defined_by : bool = False
+    """If set to true, the annotation rdfs:definedBy is added for each external class. 
+       In the case of use_base_merging is also true, this will be added to the imports/merged_import.owl file.
+       When imports are not merged, the annotation is added during the release process to the full release artefact.
+    """
 
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
