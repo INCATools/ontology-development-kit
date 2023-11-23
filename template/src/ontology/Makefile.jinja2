@@ -639,7 +639,7 @@ ALL_MIRRORS = $(patsubst %, $(MIRRORDIR)/%.owl, $(IMPORTS))
 MERGE_MIRRORS = true
 
 $(MIRRORDIR)/merged.owl: $(ALL_MIRRORS)
-	if [ $(IMP) = true ] && [ $(MERGE_MIRRORS) = true ]; then $(ROBOT) merge $(patsubst %, -i %, $^) {% if project.import_group.base_merge_drop_equivalent_class_axioms %}remove --axioms equivalent --preserve-structure false {% endif %}-o $@; fi
+	if [ $(IMP) = true ] && [ $(MERGE_MIRRORS) = true ]; then $(ROBOT) merge $(patsubst %, -i %, $^) {% if project.import_group.annotate_defined_by %}--annotate-defined-by true{% endif %} {% if project.import_group.base_merge_drop_equivalent_class_axioms %}remove --axioms equivalent --preserve-structure false {% endif %}-o $@; fi
 .PRECIOUS: $(MIRRORDIR)/merged.owl
 {% endif %}
 
@@ -920,7 +920,7 @@ $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
 {% endif -%}
 
 # ROBOT pipeline that merges imports, including components.
-ROBOT_RELEASE_IMPORT_MODE={% if project.use_edit_file_imports -%}$(ROBOT) merge --input $< {% else -%}
+ROBOT_RELEASE_IMPORT_MODE={% if project.use_edit_file_imports -%}$(ROBOT) merge --input $< {% if project.import_group is defined and project.import_group.use_base_merging is false and project.import_group.annotate_defined_by %}--annotate-defined-by true{% endif -%}{% else -%}
 $(ROBOT) remove --input $< --select imports --trim false {% if project.use_dosdps or project.components is defined -%}
 merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}{% if project.import_group is defined -%}
 merge $(patsubst %, -i %, $(IMPORT_FILES)){% endif %}{% endif %}
