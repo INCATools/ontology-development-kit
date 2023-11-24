@@ -318,6 +318,12 @@ class ImportGroup(ProductGroup):
     
     directory : Directory = "imports/"
     """directory where imports are extracted into to"""
+    
+    annotate_defined_by : bool = False
+    """If set to true, the annotation rdfs:definedBy is added for each external class. 
+       In the case of use_base_merging is also true, this will be added to the imports/merged_import.owl file.
+       When imports are not merged, the annotation is added during the release process to the full release artefact.
+    """
 
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
@@ -352,9 +358,9 @@ class ReportConfig(JsonSchemaMixin):
     release_reports : bool = False
     """ If true, release reports are added as assets to the release (top level directory, reports directory)"""
     
-    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by'])
+    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by', 'dc-properties'])
     """ Chose which additional sparql checks you want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory.
-        The custom sparql checks available are: 'owldef-self-reference', 'redundant-subClassOf', 'taxon-range', 'iri-range', 'iri-range-advanced', 'label-with-iri', 'multiple-replaced_by', 'term-tracker-uri', 'illegal-date'.
+        The custom sparql checks available are: 'owldef-self-reference', 'redundant-subClassOf', 'taxon-range', 'iri-range', 'iri-range-advanced', 'label-with-iri', 'multiple-replaced_by', 'term-tracker-uri', 'illegal-date', 'dc-properties'.
     """
 
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])

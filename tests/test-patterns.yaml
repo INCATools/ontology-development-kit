@@ -3,7 +3,7 @@ title: "Pattern Test Ontology"
 github_org: obophenotype
 repo: ptt
 report_fail_on: ERROR
-use_dosdps: TRUE
+use_dosdps: true
 export_formats:
   - owl
   - obo
