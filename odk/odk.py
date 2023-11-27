@@ -318,6 +318,12 @@ class ImportGroup(ProductGroup):
     
     directory : Directory = "imports/"
     """directory where imports are extracted into to"""
+    
+    annotate_defined_by : bool = False
+    """If set to true, the annotation rdfs:definedBy is added for each external class. 
+       In the case of use_base_merging is also true, this will be added to the imports/merged_import.owl file.
+       When imports are not merged, the annotation is added during the release process to the full release artefact.
+    """
 
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
@@ -622,8 +628,11 @@ class OntologyProject(JsonSchemaMixin):
     robot_report : Dict[str, Any] = field(default_factory=lambda: ReportConfig().to_dict())
     """Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated"""
 
-    ensure_valid_rdfxml : bool = False
+    ensure_valid_rdfxml : bool = True
     """When enabled, ensure that any RDF/XML product file is valid"""
+
+    extra_rdfxml_checks : bool = False
+    """When enabled, RDF/XML product files are checked against additional parsers"""
 
     # product groups
     import_group : Optional[ImportGroup] = None
