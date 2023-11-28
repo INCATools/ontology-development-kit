@@ -11,6 +11,7 @@ ENV ODK_VERSION $ODK_VERSION
 
 # Software versions
 ENV JENA_VERSION=4.9.0
+ENV SSSOM_JAVA_VERSION=0.6.2
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
@@ -106,3 +107,9 @@ RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/re
 && tar -zxvf relation-graph-cli-$RG.tgz \
 && mv relation-graph-cli-$RG /tools/relation-graph \
 && chmod +x /tools/relation-graph
+
+# Install SSSOM-Java
+RUN wget -nv -O /tools/sssom-cli https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-cli && \
+    chmod +x /tools/sssom-cli && \
+    mkdir -p /tools/robot-plugins && \
+    wget -nv -O /tools/robot-plugins/sssom.jar https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-robot-plugin-$SSSOM_JAVA_VERSION.jar
