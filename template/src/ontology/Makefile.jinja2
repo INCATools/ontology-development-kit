@@ -91,6 +91,11 @@ FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfo
 FORMATS_INCL_TSV = $(sort $(FORMATS) tsv)
 RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if release.startswith('custom-') %}{{ release | replace("custom-","")}}{% else %}$(ONT)-{{ release }}{% endif %} {% endfor %})
 
+ifeq ($(ODK_DEBUG),yes)
+ODK_DEBUG_FILE = $(TMPDIR)/debug.log
+SHELL = $(SCRIPTSDIR)/run-command.sh
+endif
+
 # ----------------------------------------
 # Top-level targets
 # ----------------------------------------
