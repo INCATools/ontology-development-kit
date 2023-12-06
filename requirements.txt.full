@@ -1,5 +1,5 @@
 # Core dependencies
-sssom
+sssom>=0.4.0
 oaklib
 linkml
 dosdp
