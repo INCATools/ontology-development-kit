@@ -22,6 +22,6 @@ components:
       base_iris:
         - http://purl.obolibrary.org/obo/PATO_
         - http://purl.obolibrary.org/obo/pato#
-      make_base: True
+      make_base: true
 robot_java_args: '-Xmx8G'
 allow_equivalents: asserted-only

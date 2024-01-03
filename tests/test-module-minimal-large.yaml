@@ -12,6 +12,6 @@ import_group:
     - id: ro
       mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: pato
-      is_large: TRUE
+      is_large: true
   module_type: minimal
 
