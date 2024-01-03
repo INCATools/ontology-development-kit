@@ -13,8 +13,11 @@ primary_release: simple
 import_group:
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
     - id: mpath
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/mpath.owl
 public_release: github_curl
 public_release_assets:
   - rtgh.owl

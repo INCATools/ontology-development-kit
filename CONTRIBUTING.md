@@ -122,6 +122,14 @@ preserving protected files. TBD how to determine protected
 files. Obviously the edit file should not be touched. Could use git
 log to determine if any modifications have been made?
 
+## Setting up a new machine for ODK development
+
+In order to build and publish ODK, you need the following:
+
+1. `docker` installed
+2. have `git` installed
+3. have a git user.name and user.email set
+
 ## General SOP for ODK release and publication
 
 * Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).
@@ -257,6 +265,20 @@ The examples folder serves for both unit test and documentation purposes.
 
 TODO
 
+## Pull request rules
+
+1. One PR per feature.
+2. Each PR must link to one or more existing issues.
+3. There should be one commit per logical change. This is important so we can be more effective at cherry picking for patch releases.
+4. Every commit should have an appropriate title and description.
+
+## Major minor system
+
+- Once a release is done, we work on the master branch towards the next major release
+- The minor release steward cherry picks certain kinds of changes for minor releases, including
+   - ROBOT updates
+   - Python tool version updates
+   - Critical bug fixes 
 
 ## Adding new programs or Python modules to the ODK
 
@@ -284,9 +306,8 @@ Java programs available as pre-built jars can be installed by adding new
 `RUN` commands at the end of either the main Dockerfile (for `odkfull`)
 or the Dockerfile for `odklite`.
 
-If the component needs to be built from source, do so in [the Dockerfile
-for odkbuild](docker/build/Dockerfile), and install the compiled file(s)
-in either the `/staging/full` tree or the `/staging/lite` tree, for
+If the component needs to be built from source, do so in [the Dockerfile for odkbuild](docker/builder/Dockerfile), 
+and install the compiled file(s) in either the `/staging/full` tree or the `/staging/lite` tree, for
 inclusion in `odkfull` or `odklite` respectively.
 
 If the component is a Python package, adds it to the `requirements.txt`

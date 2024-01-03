@@ -1,10 +1,10 @@
 FROM ubuntu:22.04
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV ROBOT_VERSION=1.9.1
+ENV ROBOT_VERSION=1.9.5
 ENV DOSDP_VERSION=0.19.3
 ENV OWLTOOLS_VERSION=2020-04-06
-ENV AMMONITE_VERSION=2.0.3
+ENV AMMONITE_VERSION=2.5.9
 
 WORKDIR /tools
 ENV JAVA_HOME="/usr"
@@ -32,7 +32,8 @@ RUN apt-get update && \
         curl \
         jq \
         rsync \
-        time
+        time \
+        sudo
 
 # Install Python environment (copied over from the builder image).
 COPY --from=obolibrary/odkbuild:latest /staging/lite /
@@ -68,13 +69,21 @@ RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_V
 RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VERSION/2.13-$AMMONITE_VERSION \
         -O /tools/amm && \
     chmod 755 /tools/amm && \
-    /tools/amm /dev/null
+    java -cp /tools/amm ammonite.AmmoniteMain /dev/null
 
 # Install RDF/XML validation script
 COPY scripts/check-rdfxml.sh /tools/check-rdfxml
 
 # Force Git to accept working on a repository owned by someone else
 RUN echo "[safe]\n    directory = /work" >> /etc/gitconfig
+
+# Make sure we run under an existing user account with UID/GID
+# matching the UID/GID of the calling user
+COPY scripts/entrypoint.sh /usr/local/sbin/odkuser-entrypoint.sh
+RUN chmod 755 /usr/local/sbin/odkuser-entrypoint.sh
+ENTRYPOINT ["/usr/local/sbin/odkuser-entrypoint.sh"]
+# secure_path is enabled by default in Debian/Ubuntu, disable it
+RUN sed -i '/secure_path/d' /etc/sudoers
 
 # Install the ODK itself.
 COPY odk/make-release-assets.py /tools

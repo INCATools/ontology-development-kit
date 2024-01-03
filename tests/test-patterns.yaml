@@ -3,7 +3,7 @@ title: "Pattern Test Ontology"
 github_org: obophenotype
 repo: ptt
 report_fail_on: ERROR
-use_dosdps: TRUE
+use_dosdps: true
 export_formats:
   - owl
   - obo
@@ -11,7 +11,9 @@ export_formats:
 import_group:
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
 pattern_pipelines_group:
   products:
     - id: manual

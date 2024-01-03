@@ -1,0 +1,28 @@
+id: sssomo
+title: "Test Ontology for basic mapping management"
+github_org: INCATools
+repo: sssomo
+use_mappings: true
+export_formats:
+  - owl
+import_group:
+  products:
+    - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
+sssom_mappingset_group:
+  products:
+    - id: modmini-onta
+    - id: modmini-ontb
+      maintenance: mirror
+      mirror_from: http://purl.obolibrary.org/obo/mondo/mappings/mondo.sssom.tsv
+    - id: modmini-ontc
+      maintenance: extract
+    - id: modmini-ontd
+      maintenance: manual
+components:
+  products:
+    - filename: test-with-sssom.owl
+      use_mappings: true
+      mappings:
+        - modmini-onta.sssom.tsv
+        - modmini-ontd.sssom.tsv

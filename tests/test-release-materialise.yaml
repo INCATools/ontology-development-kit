@@ -1,0 +1,23 @@
+id: rtma
+title: "Release Test with materialisation of object properties"
+github_org: obophenotype
+repo: rtma
+report_fail_on: ERROR
+namespaces: 
+  - http://purl.obolibrary.org/obo/PTT_
+  - http://purl.obolibrary.org/obo/PATO_
+release_materialize_object_properties:
+  - http://purl.obolibrary.org/obo/BFO_0000050
+release_artefacts: 
+  - full
+  - base
+primary_release: base
+import_group:
+  release_imports: true
+  products:
+    - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
+    - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
+    - id: mpath
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/mpath.owl

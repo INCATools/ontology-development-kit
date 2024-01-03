@@ -1,19 +1,54 @@
-# v1.3.2 (unpublished, target date 31 July 2022)
+# v1.5 (unpublished)
+
+A full record of all planned changes can be seen [here](https://github.com/INCATools/ontology-development-kit/milestone/7).
+
+- New [ROBOT version 1.9.5](https://github.com/ontodev/robot/releases/tag/v1.9.5)
+- All processes within the ODK container now runs under the identify of an unprivileged user by default. This fixes the issue of generated files being owned by the superuser, when the Docker daemon itself runs as the superuser (as is the case by default on most GNU/Linux systems). If you have a workflow that requires being run as a superuser (for example, if you need to install extra Debian/Ubuntu packages via `apt-get`), set the environment variable `ODK_USER_ID` to 0.
+
+## Makefile workflows
+
+- Added a `test_fast` goal that runs all ontology QC checks without refreshing imports or rebuilding components.
+
+# v1.4
+
+A full record of all changes can be seen [here](https://github.com/INCATools/ontology-development-kit/milestone/6?closed=1).
+
+## New and updated tooling
+
+- New [ROBOT Version 1.9.3](https://github.com/ontodev/robot/releases/tag/v1.9.3)
+- A lot of [updated python tools](https://github.com/INCATools/ontology-development-kit/blob/master/constraints.txt), including [OAK (0.1.71)](https://github.com/INCATools/ontology-access-kit), [SSSOM tools](https://github.com/mapping-commons/sssom-py) (0.3.22), [LinkML](https://linkml.io/) (1.4.4) and [curies](https://github.com/cthoyt/curies) (0.4.2).
+- `gh` is now installed in ODK, which means that GitHub workflows can be run directly through ODK. For example, try out the new `public_release` workflow which automatically creates a GitHub release for you.
+- A full list of all available python tools and there vesions is available [here](https://github.com/INCATools/ontology-development-kit/blob/master/constraints.txt)
 
 ## New configuration options 
 
 - Making the `uribase` configurable. You can now set the URI base in your `myont-odk.yaml` file to something different from http://purl.obolibrary.org/obo/, which enables developers from outside OBO to use ODK. Note that there is no guarantee that you can export your ontology to the OBO file format of you customise your `baseuri` this way!
+- `import_component_format`: You can now configure the format in which your imports and components are serialised. For example, rather than owl (RDFXML), which used to be the default, you can set this option to ofn. For a complete reference see https://robot.obolibrary.org/convert.
+- `mirror_type`: You can define the type of the mirror for each import. Supported: base, custom, no_mirror.
+- `release_use_reasoner`: If false, no reasoning is performed for generating release files. This is only relevant for building application ontologies, where all components are already fully classified.
+- `sparql_test_on`: You can define the list of input files to run the custom SPARQL queries. Supported: edit, and any release artefact, e.g myont-base.owl ([example](https://github.com/INCATools/ontology-development-kit/blob/master/tests/test-sparql-report.yaml)).
+- `use_edit_file_imports`: If TRUE, use whatever imports you have in the edit file to create the release (default). If FALSE,  components (and imports) are merged into the release independent of whether they are mentioned in the edit file or not. This can help for example in cases where import modules are so large, they cannot be checked into version control.
+- The `ci` option now takes `gitlab-ci` as a value, which sets your repo up with basic Continuous Integration Testing for GitLab.
 
 ## Makefile workflows
 
 - Adding new `make reason_test` command ([pull](https://github.com/INCATools/ontology-development-kit/pull/639), [issue](https://github.com/INCATools/ontology-development-kit/issues/645))
 - Adding intermediate artefact `$(TMPDIR)/$(ONT)-preprocess.owl` to the release workflow which enable the centralisation of preprocessing in a single make step. Basically, rather than creating release artefacts directly from the editors file (e.g. bfo-edit.owl), we add intermediate step from which all releases are derived. This intermediate can then be customised by the user ([pull](https://github.com/INCATools/ontology-development-kit/pull/639), [issue](https://github.com/INCATools/ontology-development-kit/issues/544))
+- Introduces an experimental new release called "base-plus", which includes the inferred and non-redundant classification of the ontology. This is highly experimental and may be removed in a future release of ODK. The new goal is much more rigorous in removing axioms from other ontologies as well. The old base file can now be exported as an  "editors release" instead ([pull](https://github.com/INCATools/ontology-development-kit/pull/643), [issue](https://github.com/INCATools/ontology-development-kit/issues/646)).
+- Introduces the option of skipping the use of reasoner during the release process (important for application ontologies), ([pull](https://github.com/INCATools/ontology-development-kit/pull/643), [issue](https://github.com/INCATools/ontology-development-kit/issues/644))
+- Introduces a new mode that enable the use of ODK entirely without owl:imports in the edit file (this is great in case we want to use the ODK workflows but not check in any files, imports or components, into version control, like huge application ontologies), ([pull](https://github.com/INCATools/ontology-development-kit/pull/643), [issue](https://github.com/INCATools/ontology-development-kit/issues/629)).
+- Adds a feature to directly support ROBOT templates in components ([example](https://github.com/INCATools/ontology-development-kit/blob/master/tests/test-templates.yaml)). Templates need to be activates with the project-level `use_templates: TRUE` option, and can then be used to define components, like in the example.
+- Adds an option to do a `public_release` on Github which creates a GitHub release, tags it, and uploads release artefacts.
+- Adds a `release_diff` workflow which creates a simple markdown report between the latest release and the current one.
+- Adds a feature to directly support SSSOM mapping files, both in components and as standalone ([example](https://github.com/INCATools/ontology-development-kit/blob/master/tests/test-sssom.yaml)). This allows to curate, for example, SSSOM mapping files in tables and them release them as part of the general release process. It also allows extracting mappings from inside the Ontology automatically using the SSSOM toolkit.
 - Changes in the `src/ontology/run.sh` wrapper script:
   - [It is now possible](https://github.com/INCATools/ontology-development-kit/pull/640) to execute the Docker image through [Singularity](https://apptainer.org).
   - The `IMAGE` variable, which can used to specify an alternative ODK image, [has been renamed](https://github.com/INCATools/ontology-development-kit/pull/655) to `ODK_IMAGE`.
   - A new variable `ODK_TAG` has been introduced, allowing to specify an alternative tag (default is `latest`). A tag may also be specified directly as part of the `ODK_IMAGE` variable (as in `ODK_IMAGE=odkfull:v1.3.1`).
   - A new variable `ODK_BINDS` has been introduced, allowing to specify extra bindings between a directory on the host computer and a directory inside the Docker container.
   - Variables used by the `run.sh` script can now be set in a `src/ontology/run.sh.conf` file, which will be sourced by the wrapper script.
+  - With the config file option `use_env_file_docker`, if true, you can pass your local environment to the docker container. It is _strongly advised_ to add `run.sh.env` to `.gitignore` before using this feature. Committing your environment to git may reveal passcodes and other private information!
+
 
 # v1.3.1
 
@@ -246,7 +281,7 @@ custom_makefile_header: |
 # v1.2.24 (6 November 2020)
 - Updated ROBOT to new version 1.7.1
 - Added the (highly experimental) ability to ODK to run OBO dashboard (see [instructions and examples](https://github.com/INCATools/ontology-development-kit#running-obo-dashboard-with-odk)).
-- Added more python packages to ODK, see [requirements.txt](requirements.txt).
+- Added more python packages to ODK, see [requirements.txt](requirements.txt.full).
 - Added a new set of configurations for ROBOT report. WARNING:
 `report_fail_on` option is now deprecated in favour of a new block of options:
 
@@ -387,7 +422,7 @@ import_group:
 
  * project.yaml files can be passed instead of command line settings
  * Docker container can now be executed anywhere, no checkout required
- * Added [README-developers.md](README-developers.md) for ODK developers
+ * Added [README-developers.md](CONTRIBUTING.md) for ODK developers
  * Docker container tracking ROBOT v1.2
  * Previously multiple dependencies: `-d ont1 ont2 ... ontN`, now `-d ont1 -id ont2 ... -d ontN`
  * New command line option `--source` to pass in an existing ontolgy-edit file

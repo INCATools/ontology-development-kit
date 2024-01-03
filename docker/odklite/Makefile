@@ -6,7 +6,7 @@ TAGS_OPTION=-t $(IM):$(VERSION) -t $(IM):latest
 
 CACHE=
 
-ARCH=$(shell uname -m | sed 's/x86_64/amd64/')
+ARCH=linux/$(shell uname -m | sed 's/x86_64/amd64/')
 PLATFORMS=linux/amd64,linux/arm64
 
 build:

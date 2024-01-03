@@ -36,11 +36,47 @@
         "ComponentProduct": {
             "description": "\n    Represents an individual component\n    Examples: a file external to the edit file that contains axioms that belong to this ontology\n    Components are usually maintained manually.\n    ",
             "properties": {
+                "base_iris": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "filename": {
                     "type": "string"
                 },
+                "make_base": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "mappings": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "source": {
                     "type": "string"
+                },
+                "sssom_tool_options": {
+                    "type": "string"
+                },
+                "template_options": {
+                    "type": "string"
+                },
+                "templates": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "use_mappings": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "use_template": {
+                    "default": false,
+                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -76,6 +112,24 @@
                             "default": "imports/",
                             "type": "string"
                         },
+                        "exclude_iri_patterns": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "export_obo": {
+                            "default": false,
+                            "type": "boolean"
+                        },
+                        "mirror_max_time_download": {
+                            "default": 200,
+                            "type": "integer"
+                        },
+                        "mirror_retry_download": {
+                            "default": 4,
+                            "type": "integer"
+                        },
                         "module_type": {
                             "default": "slme",
                             "type": "string"
@@ -97,6 +151,10 @@
                         "slme_individuals": {
                             "default": "include",
                             "type": "string"
+                        },
+                        "use_base_merging": {
+                            "default": false,
+                            "type": "boolean"
                         }
                     },
                     "type": "object"
@@ -131,7 +189,14 @@
                             "default": false,
                             "type": "boolean"
                         },
+                        "make_base": {
+                            "default": false,
+                            "type": "boolean"
+                        },
                         "mirror_from": {
+                            "type": "string"
+                        },
+                        "mirror_type": {
                             "type": "string"
                         },
                         "module_type": {
@@ -159,7 +224,7 @@
             ],
             "description": "\n    Represents an individual import\n    Examples: 'uberon' (in go)\n    Imports are typically built from an upstream source, but this can be configured\n    "
         },
-        "PatternGroup": {
+        "PatternPipelineGroup": {
             "allOf": [
                 {
                     "$ref": "#/definitions/ProductGroup"
@@ -170,25 +235,12 @@
                             "default": "../patterns/",
                             "type": "string"
                         },
-                        "products": {
+                        "matches": {
                             "items": {
-                                "$ref": "#/definitions/PatternProduct"
+                                "$ref": "#/definitions/PatternPipelineProduct"
                             },
                             "type": "array"
-                        }
-                    },
-                    "type": "object"
-                }
-            ],
-            "description": "\n    A configuration section that consists of a list of `PatternProduct` descriptions\n\n    "
-        },
-        "PatternPipelineGroup": {
-            "allOf": [
-                {
-                    "$ref": "#/definitions/ProductGroup"
-                },
-                {
-                    "properties": {
+                        },
                         "products": {
                             "items": {
                                 "$ref": "#/definitions/PatternPipelineProduct"
@@ -211,24 +263,16 @@
                         "dosdp_tools_options": {
                             "default": "--obo-prefixes=true",
                             "type": "string"
+                        },
+                        "ontology": {
+                            "default": "$(SRC)",
+                            "type": "string"
                         }
                     },
                     "type": "object"
                 }
             ],
             "description": "\n    Represents an individual pattern pipeline\n    Examples: manual curation pipeline, auto curation pipeline\n    Each pipeline gets their own specific directory\n    "
-        },
-        "PatternProduct": {
-            "allOf": [
-                {
-                    "$ref": "#/definitions/Product"
-                },
-                {
-                    "properties": {},
-                    "type": "object"
-                }
-            ],
-            "description": "Represents a DOSDP template product\n    \n    The products here can be manfested as CSVs (from 'parse'ing OWL)\n    or they may be OWL (from the dosdp 'generate' command)\n    "
         },
         "Product": {
             "description": "\n    abstract base class for all products.\n\n    Here, a product is something that is produced by an ontology workflow.\n    A product can be manifested in different formats.\n    \n    For example, goslim_prok is a subset (aka slim) product from GO,\n    this can be manifest as obo, owl, json\n    ",
@@ -237,6 +281,10 @@
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "maintenance": {
+                    "default": "manual",
                     "type": "string"
                 },
                 "rebuild_if_source_changes": {
@@ -272,33 +320,47 @@
             },
             "type": "object"
         },
-        "RobotTemplateGroup": {
-            "description": "\n    A configuration section that consists of a list of `RobotTemplateProduct` descriptions\n    ",
+        "SSSOMMappingSetGroup": {
+            "description": "\n    A configuration section that consists of a list of `SSSOMMappingSetProduct` descriptions\n    ",
             "properties": {
                 "directory": {
-                    "default": "../templates/",
+                    "default": "../mappings",
                     "type": "string"
                 },
                 "products": {
                     "items": {
-                        "$ref": "#/definitions/RobotTemplateProduct"
+                        "$ref": "#/definitions/SSSOMMappingSetProduct"
                     },
                     "type": "array"
+                },
+                "release_mappings": {
+                    "default": false,
+                    "type": "boolean"
                 }
             },
             "type": "object"
         },
-        "RobotTemplateProduct": {
+        "SSSOMMappingSetProduct": {
             "allOf": [
                 {
                     "$ref": "#/definitions/Product"
                 },
                 {
-                    "properties": {},
+                    "properties": {
+                        "mirror_from": {
+                            "type": "string"
+                        },
+                        "source_file": {
+                            "type": "string"
+                        },
+                        "sssom_tools_options": {
+                            "type": "string"
+                        }
+                    },
                     "type": "object"
                 }
             ],
-            "description": "\n    Represents a ROBOT template\n    "
+            "description": "\n    Represents an SSSOM Mapping template template\n    "
         },
         "SubsetGroup": {
             "allOf": [
@@ -346,7 +408,7 @@
     "description": "\n    A configuration for an ontology project/repository\n\n    This is divided into project-wide settings, plus\n    groups of products. Products are grouped into 4\n    categories (more may be added)\n    ",
     "properties": {
         "allow_equivalents": {
-            "default": "all",
+            "default": "asserted-only",
             "type": "string"
         },
         "catalog_file": {
@@ -403,6 +465,10 @@
             "default": "owl",
             "type": "string"
         },
+        "ensure_valid_rdfxml": {
+            "default": false,
+            "type": "boolean"
+        },
         "exclude_tautologies": {
             "default": "structural",
             "type": "string"
@@ -441,6 +507,10 @@
             "default": "",
             "type": "string"
         },
+        "import_component_format": {
+            "default": "ofn",
+            "type": "string"
+        },
         "import_group": {
             "$ref": "#/definitions/ImportGroup"
         },
@@ -462,8 +532,9 @@
             "default": "",
             "type": "string"
         },
-        "pattern_group": {
-            "$ref": "#/definitions/PatternGroup"
+        "owltools_memory": {
+            "default": "",
+            "type": "string"
         },
         "pattern_pipelines_group": {
             "$ref": "#/definitions/PatternPipelineGroup"
@@ -500,6 +571,14 @@
             "default": false,
             "type": "boolean"
         },
+        "release_diff": {
+            "default": false,
+            "type": "boolean"
+        },
+        "release_use_reasoner": {
+            "default": true,
+            "type": "boolean"
+        },
         "remove_owl_nothing": {
             "default": false,
             "type": "boolean"
@@ -516,8 +595,10 @@
             "default": {
                 "custom_profile": false,
                 "custom_sparql_checks": [
-                    "equivalent-classes",
-                    "owldef-self-reference"
+                    "owldef-self-reference",
+                    "iri-range",
+                    "label-with-iri",
+                    "multiple-replaced_by"
                 ],
                 "custom_sparql_exports": [
                     "basic-report",
@@ -527,12 +608,16 @@
                     "obsoletes",
                     "synonyms"
                 ],
-                "ensure_owl2dl_profile": false,
+                "ensure_owl2dl_profile": true,
                 "fail_on": null,
                 "release_reports": false,
                 "report_on": [
                     "edit"
                 ],
+                "sparql_test_on": [
+                    "edit"
+                ],
+                "use_base_iris": true,
                 "use_labels": true
             },
             "type": "object"
@@ -543,8 +628,8 @@
         "robot_version": {
             "type": "string"
         },
-        "robotemplate_group": {
-            "$ref": "#/definitions/RobotTemplateGroup"
+        "sssom_mappingset_group": {
+            "$ref": "#/definitions/SSSOMMappingSetGroup"
         },
         "subset_group": {
             "$ref": "#/definitions/SubsetGroup"
@@ -563,6 +648,13 @@
             "default": "http://purl.obolibrary.org/obo",
             "type": "string"
         },
+        "uribase_suffix": {
+            "type": "string"
+        },
+        "use_context": {
+            "default": false,
+            "type": "boolean"
+        },
         "use_custom_import_module": {
             "default": false,
             "type": "boolean"
@@ -571,9 +663,34 @@
             "default": false,
             "type": "boolean"
         },
+        "use_edit_file_imports": {
+            "default": true,
+            "type": "boolean"
+        },
+        "use_env_file_docker": {
+            "default": false,
+            "type": "boolean"
+        },
         "use_external_date": {
             "default": false,
             "type": "boolean"
+        },
+        "use_mappings": {
+            "default": false,
+            "type": "boolean"
+        },
+        "use_templates": {
+            "default": false,
+            "type": "boolean"
+        },
+        "workflows": {
+            "default": [
+                "docs"
+            ],
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
         }
     },
     "type": "object"
@@ -606,7 +723,14 @@
                     "default": false,
                     "type": "boolean"
                 },
+                "make_base": {
+                    "default": false,
+                    "type": "boolean"
+                },
                 "mirror_from": {
+                    "type": "string"
+                },
+                "mirror_type": {
                     "type": "string"
                 },
                 "module_type": {
@@ -651,6 +775,10 @@
                 "id": {
                     "type": "string"
                 },
+                "maintenance": {
+                    "default": "manual",
+                    "type": "string"
+                },
                 "rebuild_if_source_changes": {
                     "default": true,
                     "type": "boolean"
@@ -678,6 +806,10 @@
                 "dosdp_tools_options": {
                     "default": "--obo-prefixes=true",
                     "type": "string"
+                },
+                "ontology": {
+                    "default": "$(SRC)",
+                    "type": "string"
                 }
             },
             "type": "object"
@@ -700,6 +832,10 @@
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "maintenance": {
+                    "default": "manual",
                     "type": "string"
                 },
                 "rebuild_if_source_changes": {

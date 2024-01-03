@@ -3,6 +3,7 @@ title: "Release Test A Ontology"
 github_org: obophenotype
 repo: rta
 report_fail_on: ERROR
+release_diff: false
 namespaces: 
   - http://purl.obolibrary.org/obo/PTT_
   - http://purl.obolibrary.org/obo/PATO_
@@ -11,12 +12,16 @@ release_artefacts:
   - non-classified
   - simple-non-classified
   - basic
-  - base
   - full
+  - base
+  - baselite
 primary_release: simple
 import_group:
-  release_imports: TRUE
+  release_imports: true
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
     - id: mpath
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/mpath.owl
