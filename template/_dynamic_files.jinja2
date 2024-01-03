@@ -915,11 +915,11 @@ jobs:
 name: Post release diff
 
 on:
-  # Triggers the workflow on pull request events for the master branch
+  # Triggers the workflow on pull request events for the {{ project.git_main_branch }} branch
   pull_request:
-    branches: [ master ]
+    branches: [ {{ project.git_main_branch }} ]
     paths:
-      - 'src/ontology/diffs/release-diff.md'
+      - 'src/ontology/reports/release-diff.md'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -933,7 +933,7 @@ jobs:
       - name: Prepare release comment
         env:
             GITHUB_SHA: {% raw %}${{ github.sha }}{% endraw %}
-        run: "echo \"[Here's a diff of how this release impacts {{ project.id }}.owl](https://github.com/obophenotype/{{ project.repo }}/blob/${% raw %}${{ env.GITHUB_SHA }}{% endraw %}/src/ontology/diffs/release-diff.md)\" >comment.md"
+        run: "echo \"[Here's a diff of how this release impacts {{ project.id }}.owl](https://github.com/obophenotype/{{ project.repo }}/blob/${% raw %}${{ env.GITHUB_SHA }}{% endraw %}/src/ontology/reports/release-diff.md)\" >comment.md"
       - name: Post reasoned comment
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
