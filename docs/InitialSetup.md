@@ -1,1 +1,1 @@
-See [https://oboacademy.github.io/obook/pathways/ontology-curator-go-style/]
+See [https://oboacademy.github.io/obook/pathways/ontology-curator-go-style/](https://oboacademy.github.io/obook/pathways/ontology-curator-go-style/)
