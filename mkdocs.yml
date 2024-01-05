@@ -1,9 +1,28 @@
 site_name: Ontology Development Kit (ODK)
-theme: material
+
+theme:
+  name: material
+  icon:
+    edit: material/pencil 
+  features:
+    - content.action.edit
+
 markdown_extensions:
   - toc:
       permalink: true
-nav:
-  - Initial Setup: InitialSetup.md
-repo_url: https://github.com/INCATools/ontology-development-kit
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
 
+extra_javascript:
+  - https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js
+
+nav:
+  - Frontpage: index.md
+  - ODK Configuration Options: project-schema.md
+  
+repo_url: https://github.com/INCATools/ontology-development-kit/
+site_url: https://incatools.github.io/ontology-development-kit/
+edit_uri: edit/master/docs/

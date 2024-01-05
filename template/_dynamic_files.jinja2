@@ -910,6 +910,39 @@ jobs:
           file: "../../edit-comment.md"
           identifier: "UNREASONED"
 {% endif -%}
+{% if (('github_actions' in project.ci) and ('release-diff' in project.workflows)) %}
+^^^ .github/workflows/release-diff.yml
+name: Post release diff
+
+on:
+  # Triggers the workflow on pull request events for the {{ project.git_main_branch }} branch
+  pull_request:
+    branches: [ {{ project.git_main_branch }} ]
+    paths:
+      - 'src/ontology/reports/release-diff.md'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  post_diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare release comment
+        env:
+            GITHUB_SHA: {% raw %}${{ github.sha }}{% endraw %}
+        run: "echo \"[Here's a diff of how this release impacts {{ project.id }}.owl](https://github.com/obophenotype/{{ project.repo }}/blob/${% raw %}${{ env.GITHUB_SHA }}{% endraw %}/src/ontology/reports/release-diff.md)\" >comment.md"
+      - name: Post reasoned comment
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+        uses: NejcZdovc/comment-pr@v2.0.0
+        with:
+          github_token: {% raw %}${{ env.GITHUB_TOKEN }}{% endraw %}
+          file: "../../comment.md"
+          identifier: "RELEASE-DIFF"
+{% endif -%}
 {% if project.use_custom_import_module %}
 ^^^ src/templates/external_import.tsv
 ID	Entity Type
