@@ -70,10 +70,11 @@ def generate_plain_documentation(json_schema, descriptions):
             elif curr_indent <= prev_indent:
                 element_path.remove(element_path[-1])
                 element_path.remove(element_path[-1])
-            inner_element_name = get_element_name(False, line)
-            element_description = get_element_description(is_definition, inner_element_name, descriptions, element_name.replace(DEFINITION_PREFIX, ""))
-            line = insert_description(line, element_description)
-            element_path.append(inner_element_name)
+            if "**" in line:
+                inner_element_name = get_element_name(False, line)
+                element_description = get_element_description(is_definition, inner_element_name, descriptions, element_name.replace(DEFINITION_PREFIX, ""))
+                line = insert_description(line, element_description)
+                element_path.append(inner_element_name)
             element_lines.append(line)
 
     plain_documentation[element_name] = element_lines
