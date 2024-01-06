@@ -1,45 +1,17 @@
 
 ## ODK Project Configuration Schema
 
-- **`allow_equivalents`** *(string)*: can be all, none or asserted-only (see ROBOT documentation: http://robot.obolibrary.org/reason). Default: `asserted-only`.
+- **`allow_equivalents`** *(string)*: can be all, none or asserted-only (see ROBOT documentation: http://robot.obolibrary.org/reason). Default: `"asserted-only"`.
 
 
-- **`catalog_file`** *(string)*: Name of the catalog file to be used by the build. Default: `catalog-v001.xml`.
+- **`catalog_file`** *(string)*: Name of the catalog file to be used by the build. Default: `"catalog-v001.xml"`.
 
 
-- **`ci`** *(list)*: continuous integration defaults; currently available: travis, github_actions, gitlab-ci. Default: `['github_actions']`.
+- **`ci`** *(list)*: continuous integration defaults; currently available: travis, github_actions, gitlab-ci. Default: `["github_actions"]`.
   - **Items** *(string)*
 
 
-- **`components`**:
-    - **`base_iris`** *(list)* A list of URI prefixes used to identify terms belonging to the component.
-      - **Items** *(string)*
-    - **`filename`** *(string)* The filename of this component.
-    - **`make_base`** *(boolean)*: if make_base is true, the file is turned into a base (works with `source`). Default: `False`.
-    - **`mappings`** *(list)* A list of SSSOM template names. If set, these will be used to source this component.
-      - **Items** *(string)*
-    - **`source`** *(string)* The URL source for which the component should be obtained.
-    - **`sssom_tool_options`** *(string)* SSSOM toolkit options passed to the sssom command used to generate this product command.
-    - **`template_options`** *(string)* ROBOT options passed to the template command.
-    - **`templates`** *(list)* A list of ROBOT template names. If set, these will be used to source this component.
-      - **Items** *(string)*
-    - **`use_mappings`** *(boolean)*: If true, the component will be sourced from on or more SSSOM mapping files. Default: `False`.
-    - **`use_template`** *(boolean)*: If true, the component will be sourced by a template. Default: `False`.
-    - **`directory`** *(string)*: directory where components are maintained. Default: `components`.
-    - **`products`** *(list)*
-        - **`base_iris`** *(list)* A list of URI prefixes used to identify terms belonging to the component.
-          - **Items** *(string)*
-        - **`filename`** *(string)* The filename of this component.
-        - **`make_base`** *(boolean)*: if make_base is true, the file is turned into a base (works with `source`). Default: `False`.
-        - **`mappings`** *(list)* A list of SSSOM template names. If set, these will be used to source this component.
-          - **Items** *(string)*
-        - **`source`** *(string)* The URL source for which the component should be obtained.
-        - **`sssom_tool_options`** *(string)* SSSOM toolkit options passed to the sssom command used to generate this product command.
-        - **`template_options`** *(string)* ROBOT options passed to the template command.
-        - **`templates`** *(list)* A list of ROBOT template names. If set, these will be used to source this component.
-          - **Items** *(string)*
-        - **`use_mappings`** *(boolean)*: If true, the component will be sourced from on or more SSSOM mapping files. Default: `False`.
-        - **`use_template`** *(boolean)*: If true, the component will be sourced by a template. Default: `False`.
+- **`components`**: Refer to *[#/definitions/ComponentGroup](#definitions/ComponentGroup)*. Block that includes information on all ontology components to be generated.
 
 
 - **`contact`** *(string)* Single contact for ontology as required by OBO.
@@ -49,246 +21,294 @@
   - **Items** *(string)*
 
 
-- **`create_obo_metadata`** *(boolean)*: if true OBO Markdown and PURL configs are created. Default: `True`.
+- **`create_obo_metadata`** *(boolean)*: if true OBO Markdown and PURL configs are created. Default: `true`.
 
 
 - **`creators`** *(list)* List of ontology creators (currently setting this has no effect).
   - **Items** *(string)*
 
 
-- **`custom_makefile_header`** *(string)*: A multiline string that is added to the Makefile. Default: `# ----------------------------------------# More information: https://github.com/INCATools/ontology-development-kit/`.
+- **`custom_makefile_header`** *(string)*: A multiline string that is added to the Makefile. Default: `"\n# ----------------------------------------\n# More information: https://github.com/INCATools/ontology-development-kit/\n"`.
 
 
-- **`description`** *(string)*: Provide a short description of the ontology. Default: `None`.
+- **`description`** *(string)*: Provide a short description of the ontology. Default: `"None"`.
 
 
-- **`documentation`**:
-    - **`documentation_system`** *(string)*: Currently, only mkdocs is supported.  Default: `mkdocs`.
+- **`documentation`**: Refer to *[#/definitions/DocumentationGroup](#definitions/DocumentationGroup)*. Block that includes information on all ontology components to be generated.
 
 
-- **`dosdp_tools_options`** *(string)*: default parameters for dosdp-tools. Default: `--obo-prefixes=true`.
+- **`dosdp_tools_options`** *(string)*: default parameters for dosdp-tools. Default: `"--obo-prefixes=true"`.
 
 
-- **`edit_format`** *(string)*: Format in which the edit file is managed, either obo or owl. Default: `owl`.
+- **`edit_format`** *(string)*: Format in which the edit file is managed, either obo or owl. Default: `"owl"`.
 
 
-- **`ensure_valid_rdfxml`** *(boolean)*: When enabled, ensure that any RDF/XML product file is valid. Default: `False`.
+- **`ensure_valid_rdfxml`** *(boolean)*: When enabled, ensure that any RDF/XML product file is valid. Default: `true`.
 
 
-- **`exclude_tautologies`** *(string)*: Remove tautologies such as A SubClassOf: owl:Thing or owl:Nothing SubclassOf: A. For more information see http://robot.obolibrary.org/reason#excluding-tautologies. Default: `structural`.
+- **`exclude_tautologies`** *(string)*: Remove tautologies such as A SubClassOf: owl:Thing or owl:Nothing SubclassOf: A. For more information see http://robot.obolibrary.org/reason#excluding-tautologies. Default: `"structural"`.
 
 
-- **`export_formats`** *(list)*: A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl. Default: `['owl', 'obo']`.
+- **`export_formats`** *(list)*: A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl. Default: `["owl", "obo"]`.
   - **Items** *(string)*
 
 
-- **`export_project_yaml`** *(boolean)*: Flag to set if you want a full project.yaml to be exported, including all the default options. Default: `False`.
+- **`export_project_yaml`** *(boolean)*: Flag to set if you want a full project.yaml to be exported, including all the default options. Default: `false`.
 
 
-- **`git_main_branch`** *(string)*: The main branch for your repo, such as main, or (now discouraged) master. Default: `main`.
+- **`extra_rdfxml_checks`** *(boolean)*: When enabled, RDF/XML product files are checked against additional parsers. Default: `false`.
 
 
-- **`git_user`** *(string)*: GIT user name (necessary for generating releases). Default: ``.
+- **`git_main_branch`** *(string)*: The main branch for your repo, such as main, or (now discouraged) master. Default: `"main"`.
 
 
-- **`github_org`** *(string)*: Name of github org or username where repo will live. Examples: obophenotype, cmungall. Default: ``.
+- **`git_user`** *(string)*: GIT user name (necessary for generating releases). Default: `""`.
 
 
-- **`gzip_main`** *(boolean)*: if true add a gzipped version of the main artefact. Default: `False`.
+- **`github_org`** *(string)*: Name of github org or username where repo will live. Examples: obophenotype, cmungall. Default: `""`.
 
 
-- **`id`** *(string)*: OBO id for this ontology. Must be lowecase Examples: uberon, go, cl, envo, chebi. Default: ``.
+- **`gzip_main`** *(boolean)*: if true add a gzipped version of the main artefact. Default: `false`.
 
 
-- **`import_component_format`** *(string)*: The default serialisation for all components and imports. Default: `ofn`.
+- **`id`** *(string)*: OBO id for this ontology. Must be lowecase Examples: uberon, go, cl, envo, chebi. Default: `""`.
 
 
-- **`import_group`**:
-    - **`disabled`** *(boolean)*: if set then this is not used. Default: `False`.
-    - **`ids`** *(list)* potentially deprecated, specify explicit product list instead.
-      - **Items** *(string)*
-    - **`rebuild_if_source_changes`** *(boolean)*: if false then upstream ontology is re-downloaded any time edit file changes. Default: `True`.
-    - **`annotation_properties`** *(list)*: Define which annotation properties to pull in. Default: `['rdfs:label', 'IAO:0000115']`.
-    - **`directory`** *(string)*: directory where imports are extracted into to. Default: `imports/`.
-    - **`exclude_iri_patterns`** *(list)*: List of IRI patterns. If set, IRIs matching and IRI pattern will be removed from the import. Default: ``.
-    - **`export_obo`** *(boolean)*: If set to true, modules will not only be created in OWL, but also OBO format. Default: `False`.
-    - **`mirror_max_time_download`** *(integer)*: Corresponds to the cURL --max-time parameter (in seconds), see http://www.ipgp.fr/~arnaudl/NanoCD/software/win32/curl/docs/curl.html. Default: `200`.
-    - **`mirror_retry_download`** *(integer)*: Corresponds to the cURL --retry parameter, see http://www.ipgp.fr/~arnaudl/NanoCD/software/win32/curl/docs/curl.html. Default: `4`.
-    - **`module_type`** *(string)*: Module type. Supported: slme, minimal, custom. Default: `slme`.
-    - **`module_type_slme`** *(string)*: SLME module type. Supported: BOT, TOP, STAR. Default: `BOT`.
-    - **`products`** *(list)*
-        - **`description`** *(string)* A concise textual description of the product.
-        - **`id`** *(string)* ontology project identifier / shorthand; e.g. go, obi, envo.
-        - **`maintenance`** *(string)*: A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies. Default: `manual`.
-        - **`rebuild_if_source_changes`** *(boolean)*: If false then previously downloaded versions of external ontologies are used. Default: `True`.
-        - **`robot_settings`**:
-            - **`memory_gb`** *(integer)* Amount of memory in GB to provide for tool such as robot.
-        - **`annotation_properties`** *(list)*: Define which annotation properties to pull in. Default: `['rdfs:label', 'IAO:0000115']`.
-        - **`base_iris`** *(list)*: if specified this URL is used rather than the default OBO PURL for the main OWL product. Default: ``.
-        - **`is_large`** *(boolean)*: if large, ODK may take measures to reduce the memory footprint of the import. Default: `False`.
-        - **`make_base`** *(boolean)*: if make_base is true, try to extract a base file from the mirror. Default: `False`.
-        - **`mirror_from`** *(string)*: if specified this URL is used rather than the default OBO PURL for the main OWL product. Default: ``.
-        - **`mirror_type`** *(string)*: Define the type of the mirror for your import. Supported: base, custom, no_mirror. Default: ``.
-        - **`module_type`** *(string)*: Module type. Supported: slme, minimal, custom, mirror. Default: ``.
-        - **`module_type_slme`** *(string)*: SLME module type. Supported: BOT, TOP, STAR. Default: `BOT`.
-        - **`slme_individuals`** *(string)*: See http://robot.obolibrary.org/extract#syntactic-locality-module-extractor-slme. Default: `include`.
-        - **`use_base`** *(boolean)*: if use_base is true, try use the base IRI instead of normal one to mirror from. Default: `False`.
-        - **`use_gzipped`** *(boolean)*: if use_gzipped is true, try use the base IRI instead of normal one to mirror from. Default: `False`.
-    - **`release_imports`** *(boolean)*: If set to True, imports are copied to the release directory. Default: `False`.
-    - **`slme_individuals`** *(string)*: See http://robot.obolibrary.org/extract#syntactic-locality-module-extractor-slme. Default: `include`.
-    - **`use_base_merging`** *(boolean)*: If set to true, mirrors will be merged before determining a suitable seed. This can be a quite costly process. Default: `False`.
+- **`import_component_format`** *(string)*: The default serialisation for all components and imports. Default: `"ofn"`.
 
 
-- **`import_pattern_ontology`** *(boolean)*: if true import pattern.owl. Default: `False`.
+- **`import_group`**: Refer to *[#/definitions/ImportGroup](#definitions/ImportGroup)*. Block that includes information on all ontology imports to be generated.
 
 
-- **`license`** *(string)*: Which license is ontology supplied under - must be an IRI. Default: `https://creativecommons.org/licenses/unspecified`.
+- **`import_pattern_ontology`** *(boolean)*: if true import pattern.owl. Default: `false`.
+
+
+- **`license`** *(string)*: Which license is ontology supplied under - must be an IRI. Default: `"https://creativecommons.org/licenses/unspecified"`.
 
 
 - **`namespaces`** *(list)* A list of namespaces that are considered at home in this ontology. Used for certain filter commands.
   - **Items** *(string)*
 
 
-- **`obo_format_options`** *(string)*: Additional args to pass to robot when saving to obo. TODO consider changing to a boolean for checks. Default: ``.
+- **`obo_format_options`** *(string)*: Additional args to pass to robot when saving to obo. TODO consider changing to a boolean for checks. Default: `""`.
 
 
-- **`owltools_memory`** *(string)*: OWLTools memory, for example 4GB. Default: ``.
+- **`owltools_memory`** *(string)*: OWLTools memory, for example 4GB. Default: `""`.
 
 
-- **`pattern_pipelines_group`**:
-    - **`disabled`** *(boolean)*: if set then this is not used. Default: `False`.
-    - **`ids`** *(list)* potentially deprecated, specify explicit product list instead.
-      - **Items** *(string)*
-    - **`rebuild_if_source_changes`** *(boolean)*: if false then upstream ontology is re-downloaded any time edit file changes. Default: `True`.
-    - **`directory`** *(string)*: directory where pattern source lives, also where TSV exported to. Default: `../patterns/`.
-    - **`matches`** *(list)*
-        - **`description`** *(string)* A concise textual description of the product.
-        - **`id`** *(string)* ontology project identifier / shorthand; e.g. go, obi, envo.
-        - **`maintenance`** *(string)*: A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies. Default: `manual`.
-        - **`rebuild_if_source_changes`** *(boolean)*: If false then previously downloaded versions of external ontologies are used. Default: `True`.
-        - **`robot_settings`**:
-            - **`memory_gb`** *(integer)* Amount of memory in GB to provide for tool such as robot.
-        - **`dosdp_tools_options`** *(string)*: Default: `--obo-prefixes=true`.
-        - **`ontology`** *(string)*: Default: `$(SRC)`.
-    - **`products`** *(list)*
-      - ...
+- **`pattern_pipelines_group`**: Refer to *[#/definitions/PatternPipelineGroup](#definitions/PatternPipelineGroup)*. Block that includes information on all DOSDP templates used.
 
 
-- **`primary_release`** *(string)*: Which release file should be published as the primary release artefact, i.e. foo.owl. Default: `full`.
+- **`primary_release`** *(string)*: Which release file should be published as the primary release artefact, i.e. foo.owl. Default: `"full"`.
 
 
-- **`public_release`** *(string)*: if true add functions to run automated releases (experimental). Current options are: github_curl, github_python. Default: `none`.
+- **`public_release`** *(string)*: if true add functions to run automated releases (experimental). Current options are: github_curl, github_python. Default: `"none"`.
 
 
 - **`public_release_assets`** *(list)* A list of files that gets added to a github/gitlab/etc release (as assets). If this option is not set (None), the standard ODK assets will be deployed.
   - **Items** *(string)*
 
 
-- **`reasoner`** *(string)*: Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values. Default: `ELK`.
+- **`reasoner`** *(string)*: Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values. Default: `"ELK"`.
 
 
-- **`release_artefacts`** *(list)*: A list of release artefacts you wish to be exported. Default: `['full', 'base']`.
+- **`release_artefacts`** *(list)*: A list of release artefacts you wish to be exported. Supported: base, full, baselite, simple, non-classified, 
+    simple-non-classified, basic. Default: `["full", "base"]`.
   - **Items** *(string)*
 
 
-- **`release_date`** *(boolean)*: if true, releases will be tagged with a release date (oboInOwl:date). Default: `False`.
+- **`release_date`** *(boolean)*: if true, releases will be tagged with a release date (oboInOwl:date). Default: `false`.
 
 
-- **`release_diff`** *(boolean)*: When enabled, a diff is generated between the current release and the new one. Default: `False`.
+- **`release_diff`** *(boolean)*: When enabled, a diff is generated between the current release and the new one. Default: `false`.
 
 
-- **`release_use_reasoner`** *(boolean)*: If set to True, the reasoner will be used during the release process. Default: `True`.
+- **`release_materialize_object_properties`** *(list)* Define which object properties to materialise at release time.
+  - **Items** *(string)*
 
 
-- **`remove_owl_nothing`** *(boolean)*: Flag to set if you want odk to remove owl:Nothing from releases. Default: `False`.
+- **`release_use_reasoner`** *(boolean)*: If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
+    reason (the classification/subclassOf hierarchy computaton); materialize (the materialisation of simple existential/
+    object property restrictions); reduce (the removal of redundant subclassOf axioms). Default: `true`.
 
 
-- **`repo`** *(string)*: Name of repo (do not include org). E.g. cell-ontology. Default: ``.
+- **`remove_owl_nothing`** *(boolean)*: Flag to set if you want odk to remove owl:Nothing from releases. Default: `false`.
 
 
-- **`robot_java_args`** *(string)*: Java args to pass to ROBOT at runtime, such as -Xmx6G. Default: ``.
+- **`repo`** *(string)*: Name of repo (do not include org). E.g. cell-ontology. Default: `""`.
 
 
-- **`robot_report`** *(object)*: Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated. Default: `{'custom_profile': False, 'custom_sparql_checks': ['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by'], 'custom_sparql_exports': ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'], 'ensure_owl2dl_profile': True, 'fail_on': None, 'release_reports': False, 'report_on': ['edit'], 'sparql_test_on': ['edit'], 'use_base_iris': True, 'use_labels': True}`.
+- **`robot_java_args`** *(string)*: Java args to pass to ROBOT at runtime, such as -Xmx6G. Default: `""`.
 
 
-- **`robot_settings`**:
-    - **`memory_gb`** *(integer)* Amount of memory in GB to provide for tool such as robot.
+- **`robot_report`** *(object)*: Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated. Default: `{"custom_profile": false, "custom_sparql_checks": ["owldef-self-reference", "iri-range", "label-with-iri", "multiple-replaced_by", "dc-properties"], "custom_sparql_exports": ["basic-report", "class-count-by-prefix", "edges", "xrefs", "obsoletes", "synonyms"], "ensure_owl2dl_profile": true, "fail_on": null, "release_reports": false, "report_on": ["edit"], "sparql_test_on": ["edit"], "use_base_iris": true, "use_labels": true}`.
+
+
+- **`robot_settings`**: Refer to *[#/definitions/CommandSettings](#definitions/CommandSettings)*. Settings to pass to ROBOT such as amount of memory to be used.
 
 
 - **`robot_version`** *(string)* Only set this if you want to pin to a specific robot version.
 
 
-- **`sssom_mappingset_group`**:
-    - **`directory`** *(string)*: Default: `../mappings`.
-    - **`products`** *(list)*
-        - **`description`** *(string)* A concise textual description of the product.
-        - **`id`** *(string)* ontology project identifier / shorthand; e.g. go, obi, envo.
-        - **`maintenance`** *(string)*: A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies. Default: `manual`.
-        - **`rebuild_if_source_changes`** *(boolean)*: If false then previously downloaded versions of external ontologies are used. Default: `True`.
-        - **`robot_settings`**:
-          - **`memory_gb`** *(integer)* Amount of memory in GB to provide for tool such as robot.
-      - **`mirror_from`** *(string)*: if specified this URL is used to mirror the mapping set. Default: ``.
-      - **`source_file`** *(string)*: The name of the file from which the mappings should be extracted. Default: ``.
-      - **`sssom_tools_options`** *(string)*: Custom SSSOM toolkit options to be added to command. Default: ``.
-    - **`release_mappings`** *(boolean)*: If set to True, mappings are copied to the release directory. Default: `False`.
+- **`sssom_mappingset_group`**: Refer to *[#/definitions/SSSOMMappingSetGroup](#definitions/SSSOMMappingSetGroup)*. Block that includes information on all SSSOM mapping tables used.
 
 
-- **`subset_group`**:
-    - **`disabled`** *(boolean)*: if set then this is not used. Default: `False`.
-    - **`ids`** *(list)* potentially deprecated, specify explicit product list instead.
-      - **Items** *(string)*
-    - **`rebuild_if_source_changes`** *(boolean)*: if false then upstream ontology is re-downloaded any time edit file changes. Default: `True`.
-    - **`directory`** *(string)*: directory where subsets are placed after extraction from ontology. Default: `subsets/`.
-    - **`products`** *(list)*
-        - **`description`** *(string)* A concise textual description of the product.
-        - **`id`** *(string)* ontology project identifier / shorthand; e.g. go, obi, envo.
-        - **`maintenance`** *(string)*: A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies. Default: `manual`.
-        - **`rebuild_if_source_changes`** *(boolean)*: If false then previously downloaded versions of external ontologies are used. Default: `True`.
-        - **`robot_settings`**:
-            - **`memory_gb`** *(integer)* Amount of memory in GB to provide for tool such as robot.
-        - **`creators`** *(list)*: list of people that are credited as creators/maintainers of the subset. Default: ``.
+- **`subset_group`**: Refer to *[#/definitions/SubsetGroup](#definitions/SubsetGroup)*. Block that includes information on all subsets (aka slims) to be generated.
 
 
-- **`title`** *(string)*: Concise descriptive text about this ontology. Default: ``.
+- **`title`** *(string)*: Concise descriptive text about this ontology. Default: `""`.
 
 
 - **`travis_emails`** *(list)* Emails to use in travis configurations. 
   - **Items** *(string)*
 
 
-- **`uribase`** *(string)*: Base URI for PURLs. For an example see https://gitlab.c-path.org/c-pathontology/critical-path-ontology. Default: `http://purl.obolibrary.org/obo`.
+- **`uribase`** *(string)*: Base URI for PURLs. For an example see https://gitlab.c-path.org/c-pathontology/critical-path-ontology. Default: `"http://purl.obolibrary.org/obo"`.
 
 
 - **`uribase_suffix`** *(string)* Suffix for the uri base. If not set, the suffix will be the ontology id by default.
 
 
-- **`use_context`** *(boolean)*: If True, a context file is created that allows the user to specify prefixes used across the project. Default: `False`.
+- **`use_context`** *(boolean)*: If True, a context file is created that allows the user to specify prefixes used across the project. Default: `false`.
 
 
-- **`use_custom_import_module`** *(boolean)*: if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed. Default: `False`.
+- **`use_custom_import_module`** *(boolean)*: if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed. Default: `false`.
 
 
-- **`use_dosdps`** *(boolean)*: if true use dead simple owl design patterns. Default: `False`.
+- **`use_dosdps`** *(boolean)*: if true use dead simple owl design patterns. Default: `false`.
 
 
 - **`use_edit_file_imports`** *(boolean)*: If True, ODK will release the ontology with imports explicitly specified by owl:imports in the edit file.
-    If False, ODK will build and release the ontology with _all_ imports and _all_ components specified in the ODK config file. Default: `True`.
+    If False, ODK will build and release the ontology with _all_ imports and _all_ components specified in the ODK config file. Default: `true`.
 
 
-- **`use_env_file_docker`** *(boolean)*: if true environment variables are collected by the docker wrapper and passed into the container. Default: `False`.
+- **`use_env_file_docker`** *(boolean)*: if true environment variables are collected by the docker wrapper and passed into the container. Default: `false`.
 
 
-- **`use_external_date`** *(boolean)*: Flag to set if you want odk to use the host `date` rather than the docker internal `date`. Default: `False`.
+- **`use_external_date`** *(boolean)*: Flag to set if you want odk to use the host `date` rather than the docker internal `date`. Default: `false`.
 
 
-- **`use_mappings`** *(boolean)*: if true use SSSOM mapping files. Default: `False`.
+- **`use_mappings`** *(boolean)*: if true use SSSOM mapping files. Default: `false`.
 
 
-- **`use_templates`** *(boolean)*: if true use ROBOT templates. Default: `False`.
+- **`use_templates`** *(boolean)*: if true use ROBOT templates. Default: `false`.
 
 
-- **`workflows`** *(list)*: Workflows that are synced when updating the repo. Currently available: docs, diff, qc. Default: `['docs']`.
+- **`workflows`** *(list)*: Workflows that are synced when updating the repo. Currently available: docs, diff, qc, release-diff. Default: `["docs"]`.
   - **Items** *(string)*
+- <a id="definitions/CommandSettings"></a>**`CommandSettings`** *(object)*:     Settings to be provided to a tool like ROBOT    .
+  - **`memory_gb`** *(integer)*
+- <a id="definitions/ComponentGroup"></a>**`ComponentGroup`**:     A configuration section that consists of a list of `ComponentProduct` descriptions<br>      Controls extraction of import modules via robot extract into the "components/" directory    .
+  - **All of**
+    - : Refer to *[#/definitions/ComponentProduct](#definitions/ComponentProduct)*.
+    - *object*
+      - **`directory`** *(string)*: Default: `"components"`.
+      - **`products`** *(list)*
+        - **Items**: Refer to *[#/definitions/ComponentProduct](#definitions/ComponentProduct)*.
+- <a id="definitions/ComponentProduct"></a>**`ComponentProduct`** *(object)*:     Represents an individual component    Examples: a file external to the edit file that contains axioms that belong to this ontology    Components are usually maintained manually.    .
+  - **`base_iris`** *(list)*
+    - **Items** *(string)*
+  - **`filename`** *(string)*
+  - **`make_base`** *(boolean)*: Default: `false`.
+  - **`mappings`** *(list)*
+    - **Items** *(string)*
+  - **`source`** *(string)*
+  - **`sssom_tool_options`** *(string)*: Default: `""`.
+  - **`template_options`** *(string)*
+  - **`templates`** *(list)*
+    - **Items** *(string)*
+  - **`use_mappings`** *(boolean)*: Default: `false`.
+  - **`use_template`** *(boolean)*: Default: `false`.
+- <a id="definitions/DocumentationGroup"></a>**`DocumentationGroup`** *(object)*:     Setting for the repos documentation system    .
+  - **`documentation_system`** *(string)*: Default: `"mkdocs"`.
+- <a id="definitions/ImportGroup"></a>**`ImportGroup`**:     A configuration section that consists of a list of `ImportProduct` descriptions<br>      Controls extraction of import modules via robot extract into the "imports/" directory    .
+  - **All of**
+    - : Refer to *[#/definitions/ProductGroup](#definitions/ProductGroup)*.
+    - *object*
+      - **`annotate_defined_by`** *(boolean)*: Default: `false`.
+      - **`annotation_properties`** *(list)*: Default: `["rdfs:label", "IAO:0000115"]`.
+        - **Items** *(string)*
+      - **`base_merge_drop_equivalent_class_axioms`** *(boolean)*: Default: `true`.
+      - **`directory`** *(string)*: Default: `"imports/"`.
+      - **`exclude_iri_patterns`** *(list)*
+        - **Items** *(string)*
+      - **`export_obo`** *(boolean)*: Default: `false`.
+      - **`mirror_max_time_download`** *(integer)*: Default: `200`.
+      - **`mirror_retry_download`** *(integer)*: Default: `4`.
+      - **`module_type`** *(string)*: Default: `"slme"`.
+      - **`module_type_slme`** *(string)*: Default: `"BOT"`.
+      - **`products`** *(list)*
+        - **Items**: Refer to *[#/definitions/ImportProduct](#definitions/ImportProduct)*.
+      - **`release_imports`** *(boolean)*: Default: `false`.
+      - **`slme_individuals`** *(string)*: Default: `"include"`.
+      - **`use_base_merging`** *(boolean)*: Default: `false`.
+- <a id="definitions/ImportProduct"></a>**`ImportProduct`**:     Represents an individual import    Examples: 'uberon' (in go)    Imports are typically built from an upstream source, but this can be configured    .
+  - **All of**
+    - : Refer to *[#/definitions/Product](#definitions/Product)*.
+    - *object*
+      - **`annotation_properties`** *(list)*: Default: `["rdfs:label", "IAO:0000115"]`.
+        - **Items** *(string)*
+      - **`base_iris`** *(list)*
+        - **Items** *(string)*
+      - **`is_large`** *(boolean)*: Default: `false`.
+      - **`make_base`** *(boolean)*: Default: `false`.
+      - **`mirror_from`** *(string)*
+      - **`mirror_type`** *(string)*
+      - **`module_type`** *(string)*
+      - **`module_type_slme`** *(string)*: Default: `"BOT"`.
+      - **`slme_individuals`** *(string)*: Default: `"include"`.
+      - **`use_base`** *(boolean)*: Default: `false`.
+      - **`use_gzipped`** *(boolean)*: Default: `false`.
+- <a id="definitions/PatternPipelineGroup"></a>**`PatternPipelineGroup`**:     A configuration section that consists of a list of `PatternPipelineProduct` descriptions<br>      Controls the handling of patterns data in the "src/patterns/data" directory    .
+  - **All of**
+    - : Refer to *[#/definitions/ProductGroup](#definitions/ProductGroup)*.
+    - *object*
+      - **`directory`** *(string)*: Default: `"../patterns/"`.
+      - **`matches`** *(list)*
+        - **Items**: Refer to *[#/definitions/PatternPipelineProduct](#definitions/PatternPipelineProduct)*.
+      - **`products`** *(list)*
+        - **Items**: Refer to *[#/definitions/PatternPipelineProduct](#definitions/PatternPipelineProduct)*.
+- <a id="definitions/PatternPipelineProduct"></a>**`PatternPipelineProduct`**:     Represents an individual pattern pipeline    Examples: manual curation pipeline, auto curation pipeline    Each pipeline gets their own specific directory    .
+  - **All of**
+    - : Refer to *[#/definitions/Product](#definitions/Product)*.
+    - *object*
+      - **`dosdp_tools_options`** *(string)*: Default: `"--obo-prefixes=true"`.
+      - **`ontology`** *(string)*: Default: `"$(SRC)"`.
+- <a id="definitions/Product"></a>**`Product`** *(object)*:     abstract base class for all products.<br>      Here, a product is something that is produced by an ontology workflow.    A product can be manifested in different formats.        For example, goslim_prok is a subset (aka slim) product from GO,    this can be manifest as obo, owl, json    .
+  - **`description`** *(string)*
+  - **`id`** *(string, required)*
+  - **`maintenance`** *(string)*: Default: `"manual"`.
+  - **`rebuild_if_source_changes`** *(boolean)*: Default: `true`.
+  - **`robot_settings`**: Refer to *[#/definitions/CommandSettings](#definitions/CommandSettings)*.
+- <a id="definitions/ProductGroup"></a>**`ProductGroup`** *(object)*:     abstract base class for all product groups.<br>      A product group is a simple holder for a list of    groups, with the ability to set configurations that    hold by default for all within that group.<br>      Note: currently the configuration can specify    EITHER a list of ontology ids (e.g. uberon, cl)    OR a list of product objects    OR some mixture<br>      For example, in specifying upstream imports I can    be lazy and just list the ids, but if I need to    configure each one individually then I need to specify    the full product object.<br>      This buys some simplicity for the majority of projects    that don't do anything fancy, but at the price of overall    complexity    .
+  - **`disabled`** *(boolean)*: Default: `false`.
+  - **`ids`** *(list)*
+    - **Items** *(string)*
+  - **`rebuild_if_source_changes`** *(boolean)*: Default: `true`.
+- <a id="definitions/SSSOMMappingSetGroup"></a>**`SSSOMMappingSetGroup`** *(object)*:     A configuration section that consists of a list of `SSSOMMappingSetProduct` descriptions    .
+  - **`directory`** *(string)*: Default: `"../mappings"`.
+  - **`products`** *(list)*
+    - **Items**: Refer to *[#/definitions/SSSOMMappingSetProduct](#definitions/SSSOMMappingSetProduct)*.
+  - **`release_mappings`** *(boolean)*: Default: `false`.
+- <a id="definitions/SSSOMMappingSetProduct"></a>**`SSSOMMappingSetProduct`**:     Represents an SSSOM Mapping template template    .
+  - **All of**
+    - : Refer to *[#/definitions/Product](#definitions/Product)*.
+    - *object*
+      - **`mirror_from`** *(string)*
+      - **`source_file`** *(string)*
+      - **`sssom_tool_options`** *(string)*: Default: `""`.
+- <a id="definitions/SubsetGroup"></a>**`SubsetGroup`**:     A configuration section that consists of a list of `SubsetProduct` descriptions<br>      Controls export of subsets/slims into the "subsets/" directory    .
+  - **All of**
+    - : Refer to *[#/definitions/ProductGroup](#definitions/ProductGroup)*.
+    - *object*
+      - **`directory`** *(string)*: Default: `"subsets/"`.
+      - **`products`** *(list)*
+        - **Items**: Refer to *[#/definitions/SubsetProduct](#definitions/SubsetProduct)*.
+- <a id="definitions/SubsetProduct"></a>**`SubsetProduct`**:     Represents an individual subset.    Examples: goslim_prok (in go), eco_subset (in ro)    .
+  - **All of**
+    - : Refer to *[#/definitions/Product](#definitions/Product)*.
+    - *object*
+      - **`creators`** *(list)*
+        - **Items** *(string)*
 
 
