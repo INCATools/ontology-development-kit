@@ -453,6 +453,31 @@ class ExportGroup(ProductGroup):
     directory : Directory = "reports/"
     """directory where exports are placed"""
 
+
+@dataclass_json
+@dataclass
+class RobotPlugin(JsonSchemaMixin):
+    """
+    A configuration for a single ROBOT plugin
+    """
+
+    name : str = ""
+    """Basename for the plugin"""
+
+    mirror_from : Optional[str] = None
+    """Automatically download the plugin from this URL"""
+
+
+@dataclass_json
+@dataclass
+class PluginsGroup(JsonSchemaMixin):
+    """
+    A configuration section to list extra ROBOT plugins not provided by the ODK
+    """
+
+    plugins : Optional[List[RobotPlugin]] = None
+    """The list of plugins to use"""
+
     
 @dataclass_json
 @dataclass
@@ -633,6 +658,9 @@ class OntologyProject(JsonSchemaMixin):
 
     extra_rdfxml_checks : bool = False
     """When enabled, RDF/XML product files are checked against additional parsers"""
+
+    robot_plugins : Optional[PluginsGroup] = None
+    """Block that includes information on the extra ROBOT plugins used by this project"""
 
     # product groups
     import_group : Optional[ImportGroup] = None

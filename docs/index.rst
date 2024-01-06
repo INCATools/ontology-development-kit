@@ -20,6 +20,7 @@ instructions may still be too GO-specific.
    InitialSetup
    Configs
    Installgit
+   UsingRobotPlugins
    DailyWorkflow
    CreateNewTerm
    Synonyms
