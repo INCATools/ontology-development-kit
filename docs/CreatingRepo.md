@@ -1,1 +1,1 @@
-Please refer to https://oboacademy.github.io/obook/howto/odk-create-repo/
+Please refer to [https://oboacademy.github.io/obook/tutorial/setting-up-project-odk/](https://oboacademy.github.io/obook/tutorial/setting-up-project-odk/)

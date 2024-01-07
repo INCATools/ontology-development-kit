@@ -142,6 +142,47 @@ $(TMPDIR) $(REPORTDIR) $(MIRRORDIR) $(IMPORTDIR) $(COMPONENTSDIR) $(SUBSETDIR):
 	mkdir -p $@
 
 # ----------------------------------------
+# ODK-managed ROBOT plugins
+# ----------------------------------------
+
+# Make sure ROBOT knows where to find plugins
+export ROBOT_PLUGINS_DIRECTORY=$(TMPDIR)/plugins
+
+# Override this rule in {{ project.id }}.Makefile to install custom plugins
+.PHONY: custom_robot_plugins
+custom_robot_plugins:
+
+{% if project.robot_plugins is defined %}
+.PHONY: extra_robot_plugins
+extra_robot_plugins: {% for plugin in project.robot_plugins.plugins %} $(ROBOT_PLUGINS_DIRECTORY)/{{ plugin.name }}.jar {% endfor %}
+{% endif %}
+
+# Install all ROBOT plugins to the runtime plugins directory
+.PHONY: all_robot_plugins
+all_robot_plugins: $(foreach plugin,$(notdir $(wildcard /tools/robot-plugins/*.jar)),$(ROBOT_PLUGINS_DIRECTORY)/$(plugin)) \
+		   $(foreach plugin,$(notdir $(wildcard ../../plugins/*.jar)),$(ROBOT_PLUGINS_DIRECTORY)/$(plugin)) \
+		   custom_robot_plugins {% if project.robot_plugins is defined %}extra_robot_plugins {% endif %} \
+
+# Default rule to install plugins
+$(ROBOT_PLUGINS_DIRECTORY)/%.jar:
+	@mkdir -p $(ROBOT_PLUGINS_DIRECTORY)
+	@if [ -f ../../plugins/$*.jar ]; then        \
+		ln ../../plugins/$*.jar $@ ;         \
+	elif [ -f /tools/robot-plugins/$*.jar ]; then \
+		cp /tools/robot-plugins/$*.jar $@ ;  \
+	fi
+
+# Specific rules for supplementary plugins defined in configuration
+{% if project.robot_plugins is defined %}{% for plugin in project.robot_plugins.plugins %}
+$(ROBOT_PLUGINS_DIRECTORY)/{{ plugin.name }}.jar:
+{%- if plugin.mirror_from %}
+	curl -L -o $@ {{ plugin.mirror_from }}
+{%- else %}
+	echo "ERROR: No URL has been provided for this plugin; you must install it yourself by overwriting this rule in {{ project.id }}.Makefile!" && false
+{% endif %}
+{% endfor %}{% endif %}
+
+# ----------------------------------------
 # Release assets
 # ----------------------------------------
 
@@ -555,8 +596,11 @@ component-download-{{ component.filename }}: | $(TMPDIR)
 	remove {% if component.base_iris is not none %}{% for iri in component.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ project.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \{% endif %}
 	annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $(TMPDIR)/$@.owl; fi
 
-$(COMPONENTSDIR)/{{ component.filename }}:  component-download-{{ component.filename }}
-	if [ $(COMP) = true ] ; then if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $@ ; then echo "Component identical."; else echo "Component is different, updating." && cp $(TMPDIR)/component-download-{{ component.filename }}.owl $@; fi; fi
+$(COMPONENTSDIR)/{{ component.filename }}: component-download-{{ component.filename }}
+	if [ $(COMP) = true ]; then if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl ; then echo "Component identical."; \
+      else echo "Component is different, updating." &&\
+		cp $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl &&\
+		$(ROBOT) annotate -i $(TMPDIR)/component-download-{{ component.filename }}.owl --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@; fi; fi
 
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 {% elif component.use_template %}
