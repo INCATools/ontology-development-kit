@@ -1,5 +1,5 @@
 airium==0.2.6
-alabaster==0.7.13
+alabaster==0.7.15
 annotated-types==0.6.0
 antlr4-python3-runtime==4.9.3
 anyio==4.2.0
@@ -26,7 +26,7 @@ charset-normalizer==3.3.2
 class-resolver==0.4.2
 click==8.1.7
 colorama==0.4.6
-comm==0.2.0
+comm==0.2.1
 commonmark==0.9.1
 contourpy==1.2.0
 cryptography==41.0.7
@@ -61,8 +61,8 @@ funowl==0.2.3
 ghp-import==2.1.0
 google==3.0.0
 google-api-core==2.15.0
-google-api-python-client==2.111.0
-google-auth==2.25.2
+google-api-python-client==2.112.0
+google-auth==2.26.1
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.0
 googleapis-common-protos==1.62.0
@@ -79,7 +79,7 @@ importlib-metadata==7.0.1
 inflection==0.5.1
 iniconfig==2.0.0
 ipykernel==6.28.0
-ipython==8.19.0
+ipython==8.20.0
 ipywidgets==8.1.1
 isodate==0.6.1
 isoduration==20.11.0
@@ -109,8 +109,8 @@ jupyter-console==6.6.3
 jupyter-events==0.9.0
 jupyter-lsp==2.2.1
 jupyter_client==8.6.0
-jupyter_core==5.5.1
-jupyter_server==2.12.1
+jupyter_core==5.7.0
+jupyter_server==2.12.2
 jupyter_server_terminals==0.5.1
 jupyterlab==4.0.10
 jupyterlab-widgets==3.0.9
@@ -127,7 +127,7 @@ linkml==1.6.7
 linkml-dataops==0.1.0
 linkml-renderer==0.3.0
 linkml-runtime==1.6.3
-lxml==5.0.0
+lxml==5.1.0
 Markdown==3.5.1
 markdown-it-py==3.0.0
 MarkupSafe==2.1.3
@@ -148,16 +148,16 @@ more-itertools==10.1.0
 mypy==1.8.0
 mypy-extensions==1.0.0
 nbclient==0.9.0
-nbconvert==7.13.1
+nbconvert==7.14.0
 nbformat==5.9.2
-ndex2==3.6.0
+ndex2==3.7.0
 neo4j==4.4.11
 nest-asyncio==1.5.8
 networkx==3.2.1
 nh3==0.2.15
 notebook==7.0.6
 notebook_shim==0.2.3
-numpy==1.26.2
+numpy==1.26.3
 oaklib==0.5.25
 oauthlib==3.2.2
 ols-client==0.1.4
@@ -177,7 +177,7 @@ parse==1.20.0
 parso==0.8.3
 pathspec==0.12.1
 pexpect==4.9.0
-Pillow==10.1.0
+pillow==10.2.0
 pkginfo==1.9.6
 platformdirs==4.1.0
 plotly==5.18.0
@@ -229,7 +229,7 @@ rdflib-jsonld==0.6.1
 rdflib-shim==1.0.3
 readme-renderer==42.0
 recommonmark==0.7.1
-referencing==0.32.0
+referencing==0.32.1
 regex==2023.12.25
 requests==2.31.0
 requests-cache==1.1.1
@@ -265,7 +265,7 @@ sphinxcontrib-htmlhelp==2.0.4
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.6
 sphinxcontrib-serializinghtml==1.1.9
-SQLAlchemy==2.0.24
+SQLAlchemy==2.0.25
 SQLAlchemy-Utils==0.38.3
 sssom==0.4.2
 sssom-schema==0.15.0
@@ -281,10 +281,10 @@ tomli==2.0.1
 tornado==6.4
 tox==3.28.0
 tqdm==4.66.1
-traitlets==5.14.0
+traitlets==5.14.1
 tsvalid==0.0.3
 twine==4.0.2
-types-python-dateutil==2.8.19.14
+types-python-dateutil==2.8.19.20240106
 typing-inspect==0.9.0
 typing_extensions==4.9.0
 tzdata==2023.4
@@ -296,7 +296,7 @@ urllib3==2.1.0
 validators==0.20.0
 virtualenv==20.25.0
 watchdog==3.0.0
-wcwidth==0.2.12
+wcwidth==0.2.13
 webcolors==1.13
 webencodings==0.5.1
 websocket-client==1.7.0
