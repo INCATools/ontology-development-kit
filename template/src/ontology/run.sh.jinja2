@@ -14,6 +14,8 @@
 #
 # See README-editors.md for more details.
 
+set -e
+
 if [ -f run.sh.conf ]; then
     . ./run.sh.conf
 fi
