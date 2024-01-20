@@ -760,7 +760,7 @@ jobs:
   ontology_qc:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.25" }}{%- else %}v1.2.25{% endif %}
+    container: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -776,7 +776,7 @@ jobs:
 # Basic ODK workflow to run ontology QC checks
 ontology_qc:
   stage: test
-  image: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.25" }}{%- else %}v1.2.25{% endif %}
+  image: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
   # Controls when the job will run.
   rules:
     # Run on merge request pipelines when a merge request is open for the branch.
@@ -807,7 +807,7 @@ on:
 jobs:
   edit_file:
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
       - uses: actions/checkout@v3
       # Checks-out main branch under "main" directory
@@ -824,7 +824,7 @@ jobs:
           path: edit-diff.md
   classify_branch:
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
       - uses: actions/checkout@v3
       - name: Classify ontology
@@ -837,7 +837,7 @@ jobs:
           retention-days: 1
   classify_main:
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -855,7 +855,7 @@ jobs:
       - classify_branch
       - classify_main
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
       - uses: actions/checkout@v3
       - name: Download master classification
