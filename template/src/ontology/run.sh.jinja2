@@ -74,7 +74,7 @@ if [ x$ODK_DEBUG = xyes ]; then
     # If you wish to change the format string, take care of using
     # non-breaking spaces (U+00A0) instead of normal spaces, to
     # prevent the shell from tokenizing the format string.
-    echo "Running ${IMAGE} with ${ODK_JAVA_OPTS} of memory for ROBOT and Java-based pipeline steps."
+    echo "Running obolibrary/${ODK_IMAGE}:${ODK_TAG} with ${ODK_JAVA_OPTS} of memory for ROBOT and Java-based pipeline steps."
     TIMECMD="/usr/bin/time -f ### DEBUG STATS ###\nElapsed time: %E\nPeak memory: %M kb"
 fi
 rm -f tmp/debug.log
