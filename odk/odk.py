@@ -369,6 +369,40 @@ class ReportConfig(JsonSchemaMixin):
     sparql_test_on: List[str] = field(default_factory=lambda: ['edit'])
     """Chose which file to run the custom sparql checks. Supported 'edit', any release artefact."""
 
+
+@dataclass_json
+@dataclass
+class OAKProfile(JsonSchemaMixin):
+    id: str
+    """profile identifier."""
+
+    filename: Optional[str] = None
+    """Filename of the profile. """
+
+    description: Optional[str] = None
+    """Description of the profile. """
+
+    mirror_from: Optional[str] = None
+    """URL where the profile is located and will be downloaded"""
+
+
+@dataclass_json
+@dataclass
+class OAKValidationConfig(JsonSchemaMixin):
+    """
+    A configuration section that consists of list of `OAKProfile` descriptions
+    Run reports into "reports/" directory
+    """
+
+    profiles: Optional[List[OAKProfile]] = None
+    """all OAK profiles"""
+
+    def _add_stub(self, filename: str):
+        if self.profiles is None:
+            self.profiles = []
+        self.profiles.append(OAKProfile(id=id))
+
+
 @dataclass_json
 @dataclass
 class DocumentationGroup(JsonSchemaMixin):
@@ -683,6 +717,9 @@ class OntologyProject(JsonSchemaMixin):
 
     release_diff : bool = False
     """When enabled, a diff is generated between the current release and the new one"""
+    
+    oak_validation: Optional[OAKValidationConfig] = None
+    """Block that includes profiles to be used to validate the ontology"""
 
     def fill_missing(self):
         """
