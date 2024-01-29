@@ -1,0 +1,21 @@
+id: rtine
+title: "Release Test Non Edit Import Ontology"
+github_org: INCATools
+repo: rtine
+use_edit_file_imports: true
+namespaces: 
+  - http://purl.obolibrary.org/obo/PTT_
+  - http://purl.obolibrary.org/obo/PATO_
+release_artefacts: 
+  - simple
+  - non-classified
+  - simple-non-classified
+  - basic
+  - full
+  - base
+  - baselite
+import_group:
+  release_imports: true
+  products:
+    - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl

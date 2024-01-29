@@ -8,6 +8,8 @@ WORKDIR /build
 
 # Software versions
 ENV RDFTAB_VERSION=0.1.1
+ENV SOUFFLE_VERSION=2.4
+ENV FASTOBO_VALIDATOR_VERSION=0.4.6
 
 # Everything that we want to get into one of the final ODK images
 # should be installed into one of these directories.
@@ -68,49 +70,31 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends 
         mcpp \
         sqlite3 \
         zlib1g-dev && \
-    wget -nv https://github.com/souffle-lang/souffle/archive/refs/tags/2.1.tar.gz \
-        -O /build/souffle-2.1.tar.gz && \
-    tar xf souffle-2.1.tar.gz && \
-    cd souffle-2.1 && \
-    cmake -S . -B build && \
+    wget -nv https://github.com/souffle-lang/souffle/archive/refs/tags/$SOUFFLE_VERSION.tar.gz \
+        -O /build/souffle-$SOUFFLE_VERSION.tar.gz && \
+    tar xf souffle-$SOUFFLE_VERSION.tar.gz && \
+    cd souffle-$SOUFFLE_VERSION && \
+    cmake -S . -B build -DSOUFFLE_DOMAIN_64BIT=ON && \
     cmake --build build --target install DESTDIR=/staging/full && \
     cd /build && \
-    rm -rf souffle-2.1 souffle-2.1.tar.gz
+    rm -rf souffle-$SOUFFLE_VERSION souffle-$SOUFFLE_VERSION.tar.gz
 
 # Compile Fastobo-validator.
-RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v0.4.0.tar.gz \
-        -O /build/fastobo-validator-0.4.0.tar.gz && \
-    tar xf fastobo-validator-0.4.0.tar.gz && \
-    cd fastobo-validator-0.4.0 && \
-    cargo build --release && \
+RUN wget -nv https://github.com/fastobo/fastobo-validator/archive/refs/tags/v$FASTOBO_VALIDATOR_VERSION.tar.gz \
+        -O /build/fastobo-validator-$FASTOBO_VALIDATOR_VERSION.tar.gz && \
+    tar xf fastobo-validator-$FASTOBO_VALIDATOR_VERSION.tar.gz && \
+    cd fastobo-validator-$FASTOBO_VALIDATOR_VERSION && \
+    cargo build --release -Z sparse-registry && \
     install -D -m 755 target/release/fastobo-validator /staging/full/usr/bin/fastobo-validator && \
     cd /build && \
-    rm -rf fastobo-validator-0.4.0 fastobo-validator-0.4.0.tar.gz /root/.cargo
+    rm -rf fastobo-validator-$FASTOBO_VALIDATOR_VERSION fastobo-validator-$FASTOBO_VALIDATOR_VERSION.tar.gz /root/.cargo
 
 # Compile rdftab.
 RUN wget -nv https://github.com/ontodev/rdftab.rs/archive/refs/tags/v$RDFTAB_VERSION.tar.gz \
         -O /build/rdftab.tar.gz && \
     tar xf rdftab.tar.gz && \
     cd rdftab.rs-$RDFTAB_VERSION && \
-    cargo build --release && \
+    cargo build --release -Z sparse-registry && \
     install -D -m 755 target/release/rdftab /staging/full/usr/bin/rdftab && \
     cd /build && \
     rm -rf rdftab.rs-$RDFTAB_VERSION rdftab.tar.gz /root/.cargo
-
-# Compile Konclude if we are not on x86_64
-# (building Konclude is time-consuming, so we avoid it
-#  on x86_64 where a pre-compiled binary is available).
-ARG TARGETARCH
-RUN test "x$TARGETARCH" != xamd64 && (apt-get update && \
-        DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
-            qtbase5-dev qt5-qmake qtbase5-dev-tools wget && \
-        wget -nv https://github.com/konclude/Konclude/archive/refs/tags/v0.7.0-1138.tar.gz \
-            -O /build/Konclude-0.7.0.tar.gz && \
-        tar xf Konclude-0.7.0.tar.gz && \
-        cd Konclude-0.7.0-1138 && \
-        qmake -r CONFIG+=release CONFIG-=debug CONFIG+=static QT-=gui KoncludeWithoutRedland.pro && \
-        make && \
-        install -D -m 755 Release/Konclude /staging/full/usr/bin/Konclude && \
-        cd /build && \
-        rm -rf Konclude-0.7.0-1138 Konclude-0.7.0.tar.gz \
-    ) || true

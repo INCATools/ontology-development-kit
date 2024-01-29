@@ -17,6 +17,11 @@
 
 {{ project.custom_makefile_header }}
 
+{%- if project.config_hash %}
+# Fingerprint of the configuration file when this Makefile was last generated
+CONFIG_HASH=                {{ project.config_hash }}
+{% endif %}
+
 # ----------------------------------------
 # Standard Constants
 # ----------------------------------------
@@ -28,6 +33,7 @@ ONT=                        {{ project.id }}
 ONTBASE=                    {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}
 EDIT_FORMAT=                {{ project.edit_format|default('owl') }}
 SRC =                       $(ONT)-edit.$(EDIT_FORMAT)
+MAKE_FAST=                  $(MAKE) IMP=false PAT=false COMP=false MIR=false
 CATALOG=                    {{ project.catalog_file }}
 ROBOT=                      robot --catalog $(CATALOG)
 {% if project.owltools_memory|length %}OWLTOOLS_MEMORY=            {{ project.owltools_memory }}{% endif %}
@@ -40,6 +46,7 @@ MIRRORDIR=                  mirror
 IMPORTDIR=                  imports
 SUBSETDIR=                  subsets
 SCRIPTSDIR=                 ../scripts
+UPDATEREPODIR=              target
 SPARQLDIR =                 ../sparql
 COMPONENTSDIR =             {{ project.components.directory|default('components') }}
 {%- if project.robot_report.custom_profile %}
@@ -49,7 +56,7 @@ REPORT_FAIL_ON =            {{ project.robot_report.fail_on|default('None') }}
 REPORT_LABEL =              {% if project.robot_report.use_labels|default(true) %}-l true{% endif %}
 REPORT_PROFILE_OPTS =       {% if project.robot_report.custom_profile %}--profile $(ROBOT_PROFILE){% endif %}
 OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
-SPARQL_VALIDATION_CHECKS =  {% for x in project.robot_report.custom_sparql_checks|default(['owldef-self-reference', 'iri-range', 'label-with-iri']) %}{{ x }} {% endfor %}
+SPARQL_VALIDATION_CHECKS =  {% for x in project.robot_report.custom_sparql_checks|default(['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by']) %}{{ x }} {% endfor %}
 SPARQL_EXPORTS =            {% for x in project.robot_report.custom_sparql_exports|default(['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms']) %}{{ x }} {% endfor %}
 ODK_VERSION_MAKEFILE =      {% if env is defined %}{{env['ODK_VERSION'] or "Unknown" }}{% else %}"Unknown"{% endif %}
 
@@ -57,20 +64,37 @@ TODAY ?=                    $(shell date +%Y-%m-%d)
 OBODATE ?=                  $(shell date +'%d:%m:%Y %H:%M')
 VERSION=                    $(TODAY)
 ANNOTATE_ONTOLOGY_VERSION = annotate -V $(ONTBASE)/releases/$(VERSION)/$@ --annotation owl:versionInfo $(VERSION)
+ANNOTATE_CONVERT_FILE =     annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) convert -f {{ project.import_component_format|default('ofn') }} --output $@.tmp.owl && mv $@.tmp.owl $@
 OTHER_SRC =                 {% if project.use_dosdps -%}$(PATTERNDIR)/definitions.owl {% endif -%}{% if project.components is defined -%}{% for component in project.components.products -%}$(COMPONENTSDIR)/{{ component.filename }} {% endfor -%}{% endif %}
 ONTOLOGYTERMS =             $(TMPDIR)/ontologyterms.txt
-EDIT_PREPROCESSED = $(TMPDIR)/$(ONT)-preprocess.owl
+EDIT_PREPROCESSED =         $(TMPDIR)/$(ONT)-preprocess.owl
+{%- if project.use_context %}
+CONTEXT_FILE =              config/context.json
+{%- endif %}
 
 {%- if project.use_dosdps %}
 PATTERNDIR=                 ../patterns
-PATTERN_TESTER=              dosdp validate -i
-DOSDPT=                      dosdp-tools
-PATTERN_RELEASE_FILES=       $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
+PATTERN_TESTER=             dosdp validate -i
+DOSDPT=                     dosdp-tools
+PATTERN_RELEASE_FILES=      $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.owl
+{% endif %}
+
+{%- if project.use_mappings %}
+MAPPINGDIR=                 {% if project.sssom_mappingset_group is not none %}{{project.sssom_mappingset_group.directory|default("../mappings")}}{% endif %}
+MAPPING_TESTER=             sssom validate
+SSSOMPY=                    sssom
+MAPPINGS=                   {% if project.sssom_mappingset_group is not none %}{%- for mapping in project.sssom_mappingset_group.products %}{{ mapping.id }} {% endfor %}{% endif %}
+MAPPING_RELEASE_FILES=      $(foreach n,$(MAPPINGS), $(MAPPINGDIR)/$(n).sssom.tsv)
 {% endif %}
 
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
 FORMATS_INCL_TSV = $(sort $(FORMATS) tsv)
-RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if release.startswith('custom-') %}{{ release | replace("custom-","")}}{% else %}$(ONT)-{{ release }}{% endif %} {% endfor %}$(ONT)-base $(ONT)-full)
+RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if release.startswith('custom-') %}{{ release | replace("custom-","")}}{% else %}$(ONT)-{{ release }}{% endif %} {% endfor %})
+
+ifeq ($(ODK_DEBUG),yes)
+ODK_DEBUG_FILE = $(TMPDIR)/debug.log
+SHELL = $(SCRIPTSDIR)/run-command.sh
+endif
 
 # ----------------------------------------
 # Top-level targets
@@ -82,11 +106,18 @@ RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if r
 all: all_odk
 
 .PHONY: all_odk
-all_odk: odkversion test all_assets
+all_odk: odkversion{% if project.config_hash %} config_check{% endif %} test all_assets{% if project.release_diff %} release_diff{% endif %}
 
 .PHONY: test
 test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}reason_test sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile|default(true) %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
 	echo "Finished running all tests successfully."
+
+.PHONY: test
+test_fast:
+	$(MAKE_FAST) test
+
+.PHONY: release_diff
+release_diff: $(REPORTDIR)/release-diff.md
 
 .PHONY: reason_test
 reason_test: $(EDIT_PREPROCESSED)
@@ -99,8 +130,57 @@ odkversion:
         not the version of the ODK you are running)" &&\
 	echo "ROBOT version (ODK): " && $(ROBOT) --version
 
+{%- if project.config_hash %}
+.PHONY: config_check
+config_check:
+	@if [ "$$(sha256sum $(ONT)-odk.yaml | cut -c1-64)" = "$(CONFIG_HASH)" ]; then \
+		echo "Repository is up-to-date." ; else \
+		echo "Your ODK configuration has changed since this Makefile was generated. You may need to run 'make update_repo'." ; fi
+{% endif %}
+
 $(TMPDIR) $(REPORTDIR) $(MIRRORDIR) $(IMPORTDIR) $(COMPONENTSDIR) $(SUBSETDIR):
 	mkdir -p $@
+
+# ----------------------------------------
+# ODK-managed ROBOT plugins
+# ----------------------------------------
+
+# Make sure ROBOT knows where to find plugins
+export ROBOT_PLUGINS_DIRECTORY=$(TMPDIR)/plugins
+
+# Override this rule in {{ project.id }}.Makefile to install custom plugins
+.PHONY: custom_robot_plugins
+custom_robot_plugins:
+
+{% if project.robot_plugins is defined %}
+.PHONY: extra_robot_plugins
+extra_robot_plugins: {% for plugin in project.robot_plugins.plugins %} $(ROBOT_PLUGINS_DIRECTORY)/{{ plugin.name }}.jar {% endfor %}
+{% endif %}
+
+# Install all ROBOT plugins to the runtime plugins directory
+.PHONY: all_robot_plugins
+all_robot_plugins: $(foreach plugin,$(notdir $(wildcard /tools/robot-plugins/*.jar)),$(ROBOT_PLUGINS_DIRECTORY)/$(plugin)) \
+		   $(foreach plugin,$(notdir $(wildcard ../../plugins/*.jar)),$(ROBOT_PLUGINS_DIRECTORY)/$(plugin)) \
+		   custom_robot_plugins {% if project.robot_plugins is defined %}extra_robot_plugins {% endif %} \
+
+# Default rule to install plugins
+$(ROBOT_PLUGINS_DIRECTORY)/%.jar:
+	@mkdir -p $(ROBOT_PLUGINS_DIRECTORY)
+	@if [ -f ../../plugins/$*.jar ]; then        \
+		ln ../../plugins/$*.jar $@ ;         \
+	elif [ -f /tools/robot-plugins/$*.jar ]; then \
+		cp /tools/robot-plugins/$*.jar $@ ;  \
+	fi
+
+# Specific rules for supplementary plugins defined in configuration
+{% if project.robot_plugins is defined %}{% for plugin in project.robot_plugins.plugins %}
+$(ROBOT_PLUGINS_DIRECTORY)/{{ plugin.name }}.jar:
+{%- if plugin.mirror_from %}
+	curl -L -o $@ {{ plugin.mirror_from }}
+{%- else %}
+	echo "ERROR: No URL has been provided for this plugin; you must install it yourself by overwriting this rule in {{ project.id }}.Makefile!" && false
+{% endif %}
+{% endfor %}{% endif %}
 
 # ----------------------------------------
 # Release assets
@@ -152,6 +232,21 @@ SUBSET_FILES = $(foreach n,$(SUBSET_ROOTS), $(foreach f,$(FORMATS_INCL_TSV), $(n
 all_subsets: $(SUBSET_FILES)
 
 # ----------------------------------------
+# Mapping assets
+# ----------------------------------------
+
+{% if project.sssom_mappingset_group is defined %}
+MAPPINGS = {% for x in project.sssom_mappingset_group.products %} {{ x.id }}{% endfor %}
+{% else %}
+MAPPINGS =
+{% endif %}
+MAPPING_FILES = $(patsubst %, $(MAPPINGDIR)/%.sssom.tsv, $(MAPPINGS))
+
+.PHONY: all_mappings
+all_mappings: $(MAPPING_FILES)
+
+
+# ----------------------------------------
 # QC Reports & Utilities
 # ----------------------------------------
 
@@ -169,7 +264,7 @@ all_reports: custom_reports robot_reports
 # ROBOT OWL Profile checking
 # ----------------------------------------
 
-# The conversion to functional syntax is necessary to avoid undeclared entity violations.
+# The merge step is necessary to avoid undeclared entity violations.
 $(REPORTDIR)/validate_profile_owl2dl_%.txt: % | $(REPORTDIR) $(TMPDIR)
 	$(ROBOT) merge -i $< convert -f ofn -o $(TMPDIR)/validate.ofn
 	$(ROBOT) validate-profile --profile DL -i $(TMPDIR)/validate.ofn -o $@ || { cat $@ && exit 1; }
@@ -187,9 +282,16 @@ validate_profile_%: $(REPORTDIR)/validate_profile_owl2dl_%.txt
 
 SPARQL_VALIDATION_QUERIES = $(foreach V,$(SPARQL_VALIDATION_CHECKS),$(SPARQLDIR)/$(V)-violation.sparql)
 
-sparql_test: $(EDIT_PREPROCESSED) catalog-v001.xml | $(REPORTDIR)
+sparql_test: {% for x in project.robot_report.sparql_test_on|default(["edit"]) %} {% if x=="edit" %}$(EDIT_PREPROCESSED){% else %}{{ x }}{% endif %}{% endfor %} | $(REPORTDIR)
 ifneq ($(SPARQL_VALIDATION_QUERIES),)
-	$(ROBOT) verify  --catalog catalog-v001.xml -i $< --queries $(SPARQL_VALIDATION_QUERIES) -O $(REPORTDIR)
+  {% for x in project.robot_report.sparql_test_on|default(["edit"]) -%}
+  {%- if x=="edit" -%}
+  {% set input = "$(EDIT_PREPROCESSED)"%}
+  {%- else -%}
+  {% set input = x %}
+  {% endif %}
+	$(ROBOT) verify -i {{ input }} --queries $(SPARQL_VALIDATION_QUERIES) -O $(REPORTDIR)
+  {%- endfor %}
 endif
 
 # ----------------------------------------
@@ -211,12 +313,14 @@ ASSETS = \
   $(MAIN_FILES) \{% if project.use_dosdps %}
   $(PATTERN_RELEASE_FILES) \{% endif %}
   $(REPORT_FILES) \
-  $(SUBSET_FILES)
+  $(SUBSET_FILES) \
+  $(MAPPING_FILES)
 
 RELEASE_ASSETS = \
   $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}\
   $(SUBSET_FILES){% if project.robot_report.release_reports %} \
-  $(REPORT_FILES){% endif %}
+  $(REPORT_FILES){% endif %}{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.release_mappings %} \
+  $(MAPPING_FILES){% endif %}{% endif %}
 
 .PHONY: all_assets
 all_assets: $(ASSETS) {% if project.ensure_valid_rdfxml %}check_rdfxml_assets{% endif %}
@@ -227,7 +331,7 @@ show_assets:
 	du -sh $(ASSETS)
 
 check_rdfxml_%: %
-	@check-rdfxml {% if project.extra_rdfxml_checks %}--extra{% endif %} $<
+	@check-rdfxml {% if project.extra_rdfxml_checks %}--jena --rdflib{% endif %} $<
 
 .PHONY: check_rdfxml_assets
 check_rdfxml_assets: $(foreach product,$(MAIN_PRODUCTS),check_rdfxml_$(product).owl)
@@ -263,6 +367,14 @@ prepare_initial_release: all_assets
 prepare_release_fast:
 	$(MAKE) prepare_release IMP=false PAT=false MIR=false COMP=false
 
+CURRENT_RELEASE=$(ONTBASE).owl
+
+$(TMPDIR)/current-release.owl:
+	wget $(CURRENT_RELEASE) -O $@
+
+$(REPORTDIR)/release-diff.md: $(ONT).owl $(TMPDIR)/current-release.owl
+	$(ROBOT) diff --labels true --left $(TMPDIR)/current-release.owl --right $(ONT).owl -f markdown -o $@
+
 # ------------------------
 # Imports: Seeding system 
 # ------------------------
@@ -296,9 +408,10 @@ IMPORT_MODULE_TEMPLATE=$(TEMPLATEDIR)/external_import.tsv
 IMPORT_MODULE_SIGNATURE=$(TMPDIR)/external_import_terms.txt
 IMPORT_MODULE=$(IMPORTDIR)/external_import.owl
 $(IMPORT_MODULE): $(IMPORT_MODULE_TEMPLATE) | $(TMPDIR)
-	$(ROBOT) template --template $< \
-  --ontology-iri "$(ONTBASE)/external_import.owl" \
-  --output $@
+	$(ROBOT) template --template $< {% if project.use_context %}--add-prefixes $(CONTEXT_FILE) {% endif %}\
+ 		--ontology-iri "$(ONTBASE)/external_import.owl" \
+  		convert -f {{ project.import_component_format|default('ofn') }} \
+  		--output $@
 
 $(IMPORT_MODULE_SIGNATURE): $(IMPORT_MODULE) | $(TMPDIR)
 	$(ROBOT) query -f csv -i $< --query ../sparql/terms.sparql $@.tmp &&\
@@ -336,7 +449,7 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_term
 		{% for pattern in project.import_group.exclude_iri_patterns %}remove  --select "{{ pattern }}" {% endfor %} \{% endif %}
 		extract -T $(IMPORTDIR)/merged_terms_combined.txt --force true --copy-ontology-annotations true --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ANNOTATE_CONVERT_FILE); fi
 {% else %}
 $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_terms_combined.txt
 	echo "ERROR: You have configured your default module type to be {{project.import_group.module_type}}; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
@@ -348,7 +461,7 @@ $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRO
 	if [ $(IMP) = true ]; then $(ROBOT) query -i $< --update ../sparql/preprocess-module.ru \
 		extract -T $(IMPORTDIR)/$*_terms_combined.txt --force true --copy-ontology-annotations true --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ANNOTATE_CONVERT_FILE); fi
 {% elif 'minimal' == project.import_group.module_type %}
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %} $(IMPORTDIR)/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
@@ -356,11 +469,11 @@ $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRO
 		remove --base-iri $(OBOBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/$*_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ANNOTATE_CONVERT_FILE); fi
 {% elif 'mirror' == project.import_group.module_type %}
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %} $(IMPORTDIR)/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) merge -i $< query --update ../sparql/preprocess-module.ru --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ANNOTATE_CONVERT_FILE); fi
 {% elif 'filter' == project.import_group.module_type %}
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %} $(IMPORTDIR)/%_terms_combined.txt
 	if [ $(IMP) = true ]; then $(ROBOT) merge -i $< \
@@ -368,7 +481,7 @@ $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRO
 		remove --base-iri $(OBOBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/$*_terms_combined.txt --select complement \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ANNOTATE_CONVERT_FILE); fi
 {% elif 'custom' == project.import_group.module_type %}
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %}
 	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
@@ -389,35 +502,35 @@ $(IMPORTDIR)/%_import.obo: $(IMPORTDIR)/%_import.owl
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
 	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) extract -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --force true  --copy-ontology-annotations true --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ANNOTATE_CONVERT_FILE); fi
 {% elif ('slme' == ont.module_type) or (ont.module_type is none and 'slme' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
-	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) query  -i $< --update ../sparql/preprocess-module.ru \
+	if [ $(IMP) = true ]; then $(ROBOT) query -i $< --update ../sparql/preprocess-module.ru \
 		extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ANNOTATE_CONVERT_FILE); fi
 {% elif ('filter' == ont.module_type) or (ont.module_type is none and 'filter' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
-	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) merge -i $< \
-		query --update ../sparql/preprocess-module.ru \
-		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
+	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) {% if ont.is_large %}extract -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% else %}query -i $< --update ../sparql/preprocess-module.ru \
+    extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% endif %}
+    remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ANNOTATE_CONVERT_FILE); fi
 {% elif ('mirror' == ont.module_type) or (ont.module_type is none and 'mirror' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
-	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) merge -i $< \
-		query --update ../sparql/preprocess-module.ru --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) merge -i $< {% if not ont.is_large %}query --update ../sparql/preprocess-module.ru --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru {% endif %} \
+    $(ANNOTATE_CONVERT_FILE); fi
 {% elif ('minimal' == ont.module_type) or (ont.module_type is none and 'minimal' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt
-	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) extract  -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \
-		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
+	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) {% if ont.is_large %}extract -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% else %}query -i $< --update ../sparql/preprocess-module.ru \
+    extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% endif %}
+		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
-		annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) --output $@.tmp.owl && mv $@.tmp.owl $@; fi
+		$(ANNOTATE_CONVERT_FILE); fi
 {% elif ('custom' == ont.module_type) or (ont.module_type is none and 'custom' == project.import_group.module_type) %}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %}
+$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% elif 'no_mirror' != ont.mirror_type %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %}
 	echo "ERROR: You have configured your default module type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
 {%- endif %}
 {%- endif %}
@@ -471,9 +584,9 @@ recreate-%:
 no-mirror-recreate-%:
 	$(MAKE) COMP=true IMP=false IMP_LARGE=false MIR=false PAT=true $(COMPONENTSDIR)/$*.owl -B
 
-$(COMPONENTSDIR)/%: | $(COMPONENTSDIR)
-	touch $@
-.PRECIOUS: $(COMPONENTSDIR)/%
+$(COMPONENTSDIR)/%.owl: | $(COMPONENTSDIR)
+	test -f $@ || touch $@
+.PRECIOUS: $(COMPONENTSDIR)/%.owl
 
 {% for component in project.components.products %}
 {% if component.source is not none %}
@@ -483,8 +596,26 @@ component-download-{{ component.filename }}: | $(TMPDIR)
 	remove {% if component.base_iris is not none %}{% for iri in component.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ project.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \{% endif %}
 	annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $(TMPDIR)/$@.owl; fi
 
-$(COMPONENTSDIR)/{{ component.filename }}:  component-download-{{ component.filename }}
-	if [ $(COMP) = true ] ; then if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $@ ; then echo "Component identical."; else echo "Component is different, updating." && cp $(TMPDIR)/component-download-{{ component.filename }}.owl $@; fi; fi
+$(COMPONENTSDIR)/{{ component.filename }}: component-download-{{ component.filename }}
+	if [ $(COMP) = true ]; then if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl ; then echo "Component identical."; \
+      else echo "Component is different, updating." &&\
+		cp $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl &&\
+		$(ROBOT) annotate -i $(TMPDIR)/component-download-{{ component.filename }}.owl --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@; fi; fi
+
+.PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
+{% elif component.use_template %}
+$(COMPONENTSDIR)/{{ component.filename }}:{% if component.templates is not none %}{% for template in component.templates %} $(TEMPLATEDIR)/{{ template }}{% endfor %}{% else %} $(TEMPLATEDIR)/{{ component.filename.split('.') | first }}.tsv{% endif %}
+	if [ $(COMP) = true ] ; then $(ROBOT) template {% if component.template_options is not none %}{{ component.template_options }}{% endif %} \
+		$(patsubst %, --template %, $^) \
+		$(ANNOTATE_CONVERT_FILE); fi
+
+.PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
+{% elif component.use_mappings %}
+$(COMPONENTSDIR)/{{ component.filename }}:{% if component.mappings is not none %}{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %}{% else %} $(MAPPINGDIR)/{{ component.filename.split('.') | first }}sssom.tsv{% endif %}
+	if [ $(COMP) = true ] ; then $(SSSOMPY) merge $^ --output $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv &&\
+		$(SSSOMPY) convert $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv {{ component.sssom_tool_options }} --output $(TMPDIR)/{{ component.filename }}-converted.sssom.owl &&\
+		$(ROBOT) merge -i $(TMPDIR)/{{ component.filename }}-converted.sssom.owl \
+		$(ANNOTATE_CONVERT_FILE); fi
 
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 {% endif -%}
@@ -499,6 +630,7 @@ IMP=true # Global parameter to bypass import generation
 MIR=true # Global parameter to bypass mirror generation
 IMP_LARGE=true # Global parameter to bypass handling of large imports
 
+ifeq ($(strip $(MIR)),true)
 {% for ont in project.import_group.products %}
 
 ## ONTOLOGY: {{ ont.id }}
@@ -506,53 +638,69 @@ IMP_LARGE=true # Global parameter to bypass handling of large imports
 ## {{ ont.description }}
 {% endif -%}
 
+{%- if ont.mirror_type != 'no_mirror' -%}
 .PHONY: mirror-{{ ont.id }}
 .PRECIOUS: $(MIRRORDIR)/{{ ont.id }}.owl
+{%- endif -%}
 
+{%- if ont.is_large %}
+ifeq ($(strip $(IMP_LARGE)),true)
+{%- endif %}
 {%- if ont.mirror_from %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) convert -I {{ ont.mirror_from }} -o $@.tmp.owl{%- if ont.make_base %} && \
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
-		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
+	$(ROBOT) {% if ont.make_base or 'base' == ont.mirror_type %}remove -I {{ ont.mirror_from }} {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %} --axioms external --preserve-structure false --trim false{% else %}convert -I {{ ont.mirror_from }}{% endif %} -o $(TMPDIR)/$@.owl
 {%- elif ont.use_base %}
 {%- if ont.use_gzipped %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}-base.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}-base.owl.gz -o $@.tmp.owl{%- if ont.make_base %} &&\
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
- 		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- else %}
+	curl -L $(OBOBASE)/{{ ont.id }}/{{ ont.id }}-base.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}-base.owl.gz --retry {{project.import_group.mirror_retry_download}} --max-time {{ project.import_group.mirror_max_time_download }} && \
+	$(ROBOT) {% if ont.make_base or 'base' == ont.mirror_type %}remove -i $(MIRROR_DIR)/{{ ont.id }}-base.owl.gz {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{ else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %} --axioms external --preserve-structure false --trim false{% else %}convert -i $(MIRRORDIR)/{{ ont.id }}-base.owl.gz{% endif %} -o $(TMPDIR)/$@.owl
+{%- else %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}/{{ ont.id }}-base.owl --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl -o $@.tmp.owl && mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
+	curl -L $(OBOBASE)/{{ ont.id }}/{{ ont.id }}-base.owl --create-dirs -o $(TMPDIR)/{{ ont.id }}-download.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && \
+	$(ROBOT) convert -i $(TMPDIR)/{{ ont.id }}-download.owl -o $(TMPDIR)/$@.owl
 {%- endif %}
 {%- else %}
 {%- if ont.use_gzipped %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl.gz -o $@.tmp.owl{%- if ont.make_base %} && \
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
-		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi
+	curl -L $(OBOBASE)/{{ ont.id }}.owl.gz --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl.gz --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && \
+	$(ROBOT) {% if ont.make_base or 'base' == ont.mirror_type %}remove -i $(MIRRORDIR)/{{ ont.id }}.owl.gz {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false{% else %}convert -i $(MIRRORDIR)/{{ ont.id }}.owl.gz{% endif %} -o $(TMPDIR)/$@.owl
+{%- elif 'custom' == ont.mirror_type %}
+$(MIRRORDIR)/{{ ont.id }}.owl: 
+	echo "ERROR: You have configured your default mirror type to be custom; this behavior needs to be overwritten in {{ project.id }}.Makefile!" && false
+{%- elif 'no_mirror' == ont.mirror_type -%}
+## You have configured your default mirror type to no_mirror.
 {%- else %}
 mirror-{{ ont.id }}: | $(TMPDIR)
-	if [ $(MIR) = true ] && [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then curl -L $(OBOBASE)/{{ ont.id }}.owl --create-dirs -o $(MIRRORDIR)/{{ ont.id }}.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} &&\
-		$(ROBOT) convert -i $(MIRRORDIR)/{{ ont.id }}.owl -o $@.tmp.owl{%- if ont.make_base %} && \
-		$(ROBOT) remove -i $@.tmp.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false -o $@.tmp.owl{% endif %} &&\
-		mv $@.tmp.owl $(TMPDIR)/$@.owl; fi{%- endif %}
+	curl -L $(OBOBASE)/{{ ont.id }}.owl --create-dirs -o $(TMPDIR)/{{ ont.id }}-download.owl --retry {{ project.import_group.mirror_retry_download }} --max-time {{ project.import_group.mirror_max_time_download }} && \
+	$(ROBOT) {% if ont.make_base or 'base' == ont.mirror_type %}remove -i $(TMPDIR)/{{ ont.id }}-download.owl {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false{% else %}convert -i $(TMPDIR)/{{ ont.id }}-download.owl{% endif %} -o $(TMPDIR)/$@.owl
+{%- endif %}
+{%- endif %}
+{%- if ont.is_large %}
+else
+mirror-{{ ont.id }}:
+	@echo "Not refreshing {{ ont.id }} because refreshing large imports is disabled (IMP_LARGE=$(IMP_LARGE))."
+endif
 {%- endif %}
 {% endfor -%}
 {% if project.import_group.use_base_merging %}
 ALL_MIRRORS = $(patsubst %, $(MIRRORDIR)/%.owl, $(IMPORTS))
 MERGE_MIRRORS = true
 
+ifeq ($(strip $(MERGE_MIRRORS)),true)
 $(MIRRORDIR)/merged.owl: $(ALL_MIRRORS)
-	if [ $(IMP) = true ] && [ $(MERGE_MIRRORS) = true ]; then $(ROBOT) merge $(patsubst %, -i %, $^) -o $@; fi
+	$(ROBOT) merge $(patsubst %, -i %, $^) {% if project.import_group.annotate_defined_by %}--annotate-defined-by true{% endif %} {% if project.import_group.base_merge_drop_equivalent_class_axioms %}remove --axioms equivalent --preserve-structure false {% endif %}-o $@
 .PRECIOUS: $(MIRRORDIR)/merged.owl
+endif
 {% endif %}
 
 $(MIRRORDIR)/%.owl: mirror-% | $(MIRRORDIR)
-	if [ $(IMP) = true ] && [ $(MIR) = true ] && [ -f $(TMPDIR)/mirror-$*.owl ]; then if cmp -s $(TMPDIR)/mirror-$*.owl $@ ; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." &&\
+	if [ -f $(TMPDIR)/mirror-$*.owl ]; then if cmp -s $(TMPDIR)/mirror-$*.owl $@ ; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." &&\
 		cp $(TMPDIR)/mirror-$*.owl $@; fi; fi
 
+else # MIR=false
+$(MIRRORDIR)/%.owl:
+	@echo "Not refreshing $@ because the mirrorring pipeline is disabled (MIR=$(MIR))."
+endif
 {% endif %}
 
 {% if project.subset_group is defined %}
@@ -579,7 +727,7 @@ $(SUBSETDIR)/%.ttl: $(SUBSETDIR)/%.owl
 {% if 'json' in project.export_formats %}
 $(SUBSETDIR)/%.json: $(SUBSETDIR)/%.owl
 	$(ROBOT) convert --input $< --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
+	mv $@.tmp.json $@
 {% endif -%}
 
 {% endif %}
@@ -634,7 +782,7 @@ pattern_schema_checks dosdp_validation: $(TMPDIR)/pattern_schema_checks
 
 .PHONY: update_patterns
 update_patterns: download_patterns
-	cp -r $(TMPDIR)/dosdp/*.yaml $(PATTERNDIR)/dosdp-patterns
+	if [ -n "$$(find $(TMPDIR) -type f -path '$(TMPDIR)/dosdp/*.yaml')" ]; then cp -r $(TMPDIR)/dosdp/*.yaml $(PATTERNDIR)/dosdp-patterns; fi
 
 # This command is a workaround for the absence of -N and -i in wget of alpine (the one ODK depend on now).
 # It downloads all patterns specified in external.txt
@@ -660,7 +808,7 @@ DOSDP_TERM_FILES_DEFAULT = $(patsubst %.tsv, $(PATTERNDIR)/data/default/%.txt, $
 DOSDP_PATTERN_NAMES_DEFAULT = $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/default/*.tsv))))
 
 $(DOSDP_OWL_FILES_DEFAULT): $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_DEFAULT) $(ALL_PATTERN_FILES)
-	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_DEFAULT}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml \
+	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_DEFAULT}" ]; then $(DOSDPT) generate --catalog=$(CATALOG) \
     --infile=$(PATTERNDIR)/data/default/ --template=$(PATTERNDIR)/dosdp-patterns --batch-patterns="$(DOSDP_PATTERN_NAMES_DEFAULT)" \
     --ontology=$< {{ project.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/default; fi
 
@@ -674,7 +822,7 @@ DOSDP_TSV_FILES_{{ pipeline.id.upper() }} = $(wildcard $(PATTERNDIR)/data/{{ pip
 DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }} = $(strip $(patsubst %.tsv,%, $(notdir $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv))))
 
 $(DOSDP_OWL_FILES_{{ pipeline.id.upper() }}): $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_{{ pipeline.id.upper() }}) $(ALL_PATTERN_FILES)
-	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}}" ]; then $(DOSDPT) generate --catalog=catalog-v001.xml \
+	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}}" ]; then $(DOSDPT) generate --catalog=$(CATALOG) \
     --infile=$(PATTERNDIR)/data/{{ pipeline.id }} --template=$(PATTERNDIR)/dosdp-patterns/ --batch-patterns="$(DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }})" \
     --ontology=$< {{ pipeline.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/{{ pipeline.id }}; fi
 {% endfor -%}
@@ -693,7 +841,7 @@ $(PATTERNDIR)/data/{{ pipeline.id }}/%.txt: $(PATTERNDIR)/dosdp-patterns/%.yaml 
 {% endfor %}
 {% if project.pattern_pipelines_group.matches is iterable -%}{% for matches in project.pattern_pipelines_group.matches %}
 dosdp-matches-{{ matches.id }}: {{ matches.ontology }} $(ALL_PATTERN_FILES)
-	if [ $(PAT) = true ]; then $(DOSDPT) query --ontology=$< --catalog=catalog-v001.xml --reasoner=elk {{ matches.dosdp_tools_options }} \
+	if [ $(PAT) = true ]; then $(DOSDPT) query --ontology=$< --catalog=$(CATALOG) --reasoner=elk {{ matches.dosdp_tools_options }} \
     --batch-patterns="$(ALL_PATTERN_NAMES)" --template="$(PATTERNDIR)/dosdp-patterns" --outfile="$(PATTERNDIR)/data/{{ matches.id }}/"; fi
 {% endfor %}{% endif -%}
 {% endif -%}
@@ -719,6 +867,40 @@ $(PATTERNDIR)/definitions.owl: $(DOSDP_OWL_FILES_DEFAULT) {% if project.pattern_
       --annotation owl:versionInfo $(VERSION) -o definitions.ofn && mv definitions.ofn $@; fi
 
 {% endif %}
+{%- if project.use_mappings %}
+# ----------------------------------------
+# SSSOM Mapping Files
+# ----------------------------------------
+
+validate-sssom-%:
+	tsvalid $(MAPPINGDIR)/$*.sssom.tsv --comment "#"
+	sssom validate $(MAPPINGDIR)/$*.sssom.tsv
+
+{%- if project.sssom_mappingset_group is not none %}
+{%- for mapping in project.sssom_mappingset_group.products %}
+{% if mapping.maintenance == "extract" %}
+$(TMPDIR)/{{ mapping.id }}.obographs.json: {% if mapping.source_file is not none %}{{ mapping.source_file }}{% else %}$(EDIT_PREPROCESSED){% endif %}
+	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
+		convert --check false -f json -o $@.tmp.json &&\
+		mv $@.tmp.json $@
+
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: $(TMPDIR)/{{ mapping.id }}.obographs.json
+	sssom parse $< -I obographs-json {{ mapping.sssom_tool_options }} -o $@
+{%- elif mapping.maintenance == "manual" %}
+# This mappingset is manually curated, so we only check that the file actually exists.
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
+	test -f $@
+{%- elif mapping.maintenance == "mirror" %}
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
+	wget "{{ mapping.mirror_from }}" -O $@
+{%- endif %}
+{%- endfor %}
+{%- endif %}
+
+validate_mappings:
+	$(MAKE_FAST) $(foreach n,$(MAPPINGS), validate-sssom-$(n))
+
+{% endif %}
 
 # ----------------------------------------
 # Release artefacts: export formats
@@ -740,48 +922,9 @@ $(PATTERNDIR)/definitions.owl: $(DOSDP_OWL_FILES_DEFAULT) {% if project.pattern_
 {{ release }}.json: {{ release }}.owl
 	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
+		mv $@.tmp.json $@
 {% endif -%}
 {% endfor -%}
-
-{% if 'base' not in project.release_artefacts -%}
-# We always want a base - even if it is not explicitly configured..
-{% if 'obo' in project.export_formats -%}
-$(ONT)-base.obo: $(ONT)-base.owl
-	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
-{% endif -%}
-{% if 'ttl' in project.export_formats -%}
-$(ONT)-base.ttl: $(ONT)-base.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
-{% endif -%}
-{% if 'json' in project.export_formats -%}
-$(ONT)-base.json: $(ONT)-base.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
-{% endif -%}
-{% endif -%}
-
-
-{% if 'full' not in project.release_artefacts -%}
-# We always want a full release - even if it is not explicitly configured..
-{% if 'obo' in project.export_formats -%}
-$(ONT)-full.obo: $(ONT)-full.owl
-	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
-{% endif -%}
-{% if 'ttl' in project.export_formats -%}
-$(ONT)-full.ttl: $(ONT)-full.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
-{% endif -%}
-{% if 'json' in project.export_formats -%}
-$(ONT)-full.json: $(ONT)-full.owl
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f json -o $@.tmp.json &&\
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
-{% endif -%}
-{% endif -%}
 
 # ----------------------------------------
 # Release artefacts: main release artefacts
@@ -796,15 +939,15 @@ $(ONT).obo: $(ONT).owl
 	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
-$(ONT).ttl: $(ONT)-{{ project.primary_release }}.owl
+$(ONT).ttl: $(ONT).owl
 	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f ttl -o $@.tmp.ttl && mv $@.tmp.ttl $@
 {% endif -%}
 {% if 'json' in project.export_formats -%}
-$(ONT).json: $(ONT)-{{ project.primary_release }}.owl
+$(ONT).json: $(ONT).owl
 	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f json -o $@.tmp.json && \
-	jq -S 'walk(if type == "array" then sort else . end)' $@.tmp.json > $@ && rm $@.tmp.json
+		convert --check false -f json -o $@.tmp.json &&\
+		mv $@.tmp.json $@
 {% endif -%}
 
 # -----------------------------------------------------
@@ -830,26 +973,54 @@ $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
 	cp $< $@
 {% endif -%}
 
-# base: OTHER sources of interest, such as definitions owl
-$(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
-	$(ROBOT) remove --input $< --select imports --trim false \
-		{% if project.use_dosdps or project.components is defined %}merge $(patsubst %, -i %, $(OTHER_SRC)) \
-		{% endif %} $(SHARED_ROBOT_COMMANDS) annotate --link-annotation http://purl.org/dc/elements/1.1/type http://purl.obolibrary.org/obo/IAO_8000001 \
+# ROBOT pipeline that merges imports, including components.
+ROBOT_RELEASE_IMPORT_MODE={% if project.use_edit_file_imports -%}$(ROBOT) merge --input $< {% if project.import_group is defined and project.import_group.use_base_merging is false and project.import_group.annotate_defined_by %}--annotate-defined-by true{% endif -%}{% else -%}
+$(ROBOT) remove --input $< --select imports --trim false {% if project.use_dosdps or project.components is defined -%}
+merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}{% if project.import_group is defined -%}
+merge $(patsubst %, -i %, $(IMPORT_FILES)){% endif %}{% endif %}
+
+# ROBOT pipeline that removes imports, then merges components. This is for release artefacts that start from "base"
+ROBOT_RELEASE_IMPORT_MODE_BASE=$(ROBOT) remove --input $< --select imports --trim false {% if project.use_dosdps or project.components is defined -%}
+merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}
+
+{% if 'base' in project.release_artefacts or project.primary_release == 'base' -%}
+# base: A version of the ontology that does not include any externally imported axioms.
+$(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
+	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
+	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
+	materialize {% for iri in project.release_materialize_object_properties %}--term {{iri}} {% endfor %} \{% endif %}{% endif %}
+	relax \{% if project.release_use_reasoner %}
+	reduce -r {{ project.reasoner }} \{% endif %}
+	remove {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
+	$(SHARED_ROBOT_COMMANDS) \
+	annotate --link-annotation http://purl.org/dc/elements/1.1/type http://purl.obolibrary.org/obo/IAO_8000001 \
 		--ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		{% if project.release_date -%} --annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
+{% endif -%}
 
-# Full: The full artefacts with imports merged, reasoned
+{% if 'baselite' in project.release_artefacts or project.primary_release == 'baselite' -%}
+# baselite: All the axioms as they are editted by the editors, excluding reasoning. This is currently the same as "base". Only to be used experimentally (may disappear in future ODK releases).
+$(ONT)-baselite.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
+	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \
+		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
+		{% if project.release_date -%} --annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
+{% endif -%}
+
+{% if 'full' in project.release_artefacts or project.primary_release == 'full' -%}
+# Full: The full artefacts with imports merged, reasoned.
 $(ONT)-full.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
-	$(ROBOT) merge --input $< \
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
+	$(ROBOT_RELEASE_IMPORT_MODE) \
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
+		materialize {% for iri in project.release_materialize_object_properties %}--term {{iri}} {% endfor %} \{% endif %}
 		relax \
 		reduce -r {{ project.reasoner }} \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
+{% endif -%}
 
 {% if 'non-classified' in project.release_artefacts or project.primary_release == 'non-classified' -%}
 # foo-non-classified: (edit->imports-merged)
 $(ONT)-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
-	$(ROBOT) merge --input $< \
+	$(ROBOT_RELEASE_IMPORT_MODE) \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
@@ -858,13 +1029,13 @@ $(ONT)-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 # drop every axiom: filter --term-file keep_terms.txt --trim true
 #	remove --select imports --trim false
 $(ONT)-simple.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILES)
-	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
+	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% endif %}
 		relax \
 		remove --axioms equivalent \
 		relax \
-		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \
-		reduce -r {{ project.reasoner }} \
+		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \{% if project.release_use_reasoner %}
+		reduce -r {{ project.reasoner }} \{% endif %}
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
@@ -874,10 +1045,9 @@ $(ONT)-simple.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILE
 # Should this be the non-classified ontology with the drop foreign axiom filter?
 # Consider adding remove --term "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace"
 $(ONT)-simple-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILES)
-	$(ROBOT) remove --input $< --select imports --trim true \
-		merge  $(patsubst %, -i %, $(OTHER_SRC))  \
-		remove --axioms equivalent \
-		reduce -r {{ project.reasoner }} \
+	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \
+		remove --axioms equivalent \{% if project.release_use_reasoner %}
+		reduce -r {{ project.reasoner }} \{% endif %}
 		filter --select ontology --term-file $(SIMPLESEED) --trim false \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
@@ -887,8 +1057,8 @@ $(ONT)-simple-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED
 # See above (David comment) for explanation.
 # removes any axioms that contains one of the ops that not in the whitelist file
 $(ONT)-basic.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS) $(IMPORT_FILES)
-	$(ROBOT) merge --input $< $(patsubst %, -i %, $(OTHER_SRC)) \
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \
+	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% endif %}
 		relax \
 		remove --axioms equivalent \
 		remove --axioms disjoint \
@@ -964,6 +1134,17 @@ GITHUB_RELEASE_PYTHON=make-release-assets.py
 public_release:
 	ls -alt $(ASSETS)
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
+{% else  %}
+
+RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), ../../$(n))
+GHVERSION=v$(VERSION)
+
+.PHONY: public_release
+public_release:
+	@test $(GHVERSION)
+	ls -alt $(RELEASE_ASSETS_AFTER_RELEASE)
+	gh release create $(GHVERSION) --title "$(VERSION) Release" --draft $(RELEASE_ASSETS_AFTER_RELEASE) --generate-notes
+
 {%- endif %}
 
 # ----------------------------------------
@@ -1017,6 +1198,7 @@ clean:{% if project.use_dosdps %}
 	$(MAKE) pattern_clean{%- endif %}
 	[ -n "$(MIRRORDIR)" ] && [ $(MIRRORDIR) != "." ] && [ $(MIRRORDIR) != "/" ] && [ $(MIRRORDIR) != ".." ] && [ -d ./$(MIRRORDIR) ] && rm -rf ./$(MIRRORDIR)/*
 	[ -n "$(TMPDIR)" ] && [ $(TMPDIR) != "." ] && [ $(TMPDIR) != "/" ] && [ $(TMPDIR) != ".." ] && [ -d ./$(TMPDIR) ] && rm -rf ./$(TMPDIR)/*
+	[ -n "$(UPDATEREPODIR)" ] && [ $(UPDATEREPODIR) != "." ] && [ $(UPDATEREPODIR) != "/" ] && [ $(UPDATEREPODIR) != ".." ] && [ -d ./$(UPDATEREPODIR) ] && rm -rf ./$(UPDATEREPODIR)/*
 	rm -f $(CLEANFILES)
 
 .PHONY: help
@@ -1035,14 +1217,16 @@ Core commands:
 * prepare_release_fast:	Run the entire release pipeline without refreshing imports, recreating components or recompiling patterns.
 * update_repo:		Update the ODK repository setup using the config file {{ project.id }}-odk.yaml
 * test:			Running all validation tests
+* test_fast:		Runs the test suite, but without updating imports or components
 * odkversion:		Show the current version of the ODK Makefile and ROBOT.
 * clean:		Delete all temporary files
 * help:			Print ODK Usage information
+* public_release:	Uploads the release file to a release management system, such as GitHub releases. Must be configured.
 
 {% if project.import_group is defined %}
 Imports management:
 * refresh-imports:			Refresh all imports and mirrors.
-* refresh-components:			Refresh all components.
+* recreate-components:			Recreate all components.
 * no-mirror-refresh-imports:		Refresh all imports without downloading mirrors.
 * refresh-imports-excluding-large:	Refresh all imports and mirrors, but skipping the ones labelled as 'is_large'.
 * refresh-%:				Refresh a single import, i.e. refresh-go will refresh 'imports/go_import.owl'.
@@ -1060,11 +1244,12 @@ DOSDP templates
 {% endif %}
 Editor utilities:
 * validate_idranges:	Make sure your ID ranges file is formatted correctly
-* normalize_src:	Load and safe your {{ project.id }}-edit file after you to make sure its serialised correctly{% if 'obo' in project.edit_format %}
-* normalize_obo_src:	Load and safe your {{ project.id }}-edit.obo file after you to merge duplicate annotation assertions{% endif %}
+* normalize_src:	Load and save your {{ project.id }}-edit file after you to make sure its serialised correctly{% if 'obo' in project.edit_format %}
+* normalize_obo_src:	Load and save your {{ project.id }}-edit.obo file after you to merge duplicate annotation assertions{% endif %}
 * explain_unsat:	If you have unsatisfiable classes, this command will create a markdown file (tmp/explain_unsat.md) which will explain all your unsatisfiable classes
 * validate-all-tsv:	Check all your tsv files for possible problems in syntax. Use ALL_TSV_FILES variable to list files
 * validate-tsv:		Check a tsv file for syntactic problems with tsvalid. Use TSV variable to pass filepath, e.g. make TSV=../my.tsv validate-tsv.
+* release_diff:	Create a diff between the current release and the new release
 
 Additional build commands (advanced users)
 * all:			Run the entire pipeline (like prepare_release), but without copying the release files to the release directory.
@@ -1072,6 +1257,7 @@ Additional build commands (advanced users)
 * custom_reports:	Generate all custom sparql reports you have configured in your {{ project.id }}-odk.yaml file.
 * all_assets:		Build all assets
 * show_assets:		Print a list of all assets that would be build by the release pipeline
+* all_mappings:		Update all SSSOM mapping sets
 
 Additional QC commands (advanced users)
 * robot_reports:	Run all configured ROBOT reports

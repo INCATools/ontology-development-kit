@@ -3,7 +3,7 @@ title: "Test Components Ontology"
 github_org: obophenotype
 repo: components
 report_fail_on: ERROR
-use_dosdps: TRUE
+use_dosdps: true
 dosdp_tools_options: "--obo-prefixes=true --restrict-axioms-to=logical"
 release_artefacts: 
   - base
@@ -17,8 +17,11 @@ export_formats:
 import_group:
   products: 
     - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: bfo
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/bfo.owl
 components:
   products:
     - filename: wbphenotype-equivalent-axioms-subq.owl

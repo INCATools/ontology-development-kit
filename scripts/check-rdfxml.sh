@@ -1,31 +1,71 @@
 #!/usr/bin/bash
 
-extra_checks=0
-if [ "$1" = "--extra" ]; then
-    extra_checks=1
-    shift
-fi
+check_lightrdf=1
+check_rdflib=0
+check_jena=0
+rdfxml_file=
 
-if [ -z "$1" ]; then
-    echo "Usage: ${0##*/} [--extra] FILE"
+while [ -n "$1" ]; do
+    case "$1" in
+    --lightrdf)
+        check_lightrdf=1
+        shift
+        ;;
+
+    --no-lightrdf)
+        check_lightrdf=0
+        shift
+        ;;
+
+    --rdflib)
+        check_rdflib=1
+        shift
+        ;;
+
+    --no-rdflib)
+        check_rdflib=0
+        shift
+        ;;
+
+    --jena)
+        check_jena=1
+        shift
+        ;;
+
+    --no-jena)
+        check_jena=0
+        shift
+        ;;
+
+    *)
+        rdfxml_file=$1
+        shift
+        ;;
+    esac
+done
+
+if [ -z "$rdfxml_file" ]; then
+    echo "Usage: ${0##*/} [[--no-]lightrdf] [[--no-]rdflib] [[--no-]jena] FILE"
     exit 10
 fi
 
-if [ ! -f "$1" ]; then
-    echo "${0##*/}: $1: file not found"
+if [ ! -f "$rdfxml_file" ]; then
+    echo "${0##*/}: $rdfxml_file: file not found"
     exit 11
 fi
 
 errors=0
 
-echo "Checking RDF/XML file $1..."
-echo -n "  LightRDF: "
-python3 <<EOF
+echo "Checking RDF/XML file $rdfxml_file..."
+
+if [ $check_lightrdf -eq 1 ]; then
+    echo -n "  LightRDF: "
+    python3 <<EOF
 import sys
 from lightrdf import Parser
 parser = Parser()
 try:
-    for triple in parser.parse("$1"):
+    for triple in parser.parse("$rdfxml_file"):
         pass
 except Exception as e:
     print(e)
@@ -33,12 +73,13 @@ except Exception as e:
 
 print("OK")
 EOF
-test $? -eq 0 || errors=$(($errors + 1))
+    test $? -eq 0 || errors=$(($errors + 1))
+fi
 
-if [ $extra_checks -eq 1 ]; then
+if [ $check_rdflib -eq 1 ]; then
     echo -n "  RDFLib: "
     if type -p rdfpipe > /dev/null ; then
-        if rdfpipe --no-out $1 ; then
+        if rdfpipe --no-out $rdfxml_file ; then
             echo "OK"
         else
             errors=$((errors + 1))
@@ -46,17 +87,15 @@ if [ $extra_checks -eq 1 ]; then
     else
         echo "Not available"
     fi
+fi
 
+if [ $check_jena -eq 1 ]; then
     echo -n "  Jena: "
-    if type -p rdfparse > /dev/null ; then
-        # Jena does not return an error code, so we need to capture
-        # stderr to detect if an error occured.
-        jena_errors=$(rdfparse -s -t $1 2>&1)
-        if [ -n "$jena_errors" ]; then
-            echo "$jena_errors"
-            errors=$(($errors + 1))
-        else
+    if type -p riot > /dev/null ; then
+        if riot --validate $rdfxml_file ; then
             echo "OK"
+        else
+            errors=$((errors + 1))
         fi
     else
         echo "Not available"

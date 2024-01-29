@@ -11,13 +11,14 @@ jobs:
       max-parallel: 1
     steps:
       - name: Checkout main branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: work around permission issue
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Build constraints.txt
         run: sh update-constraints.sh
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
+        if: ${{ success() }}
         with:
           commit-message: Update constraints.txt
           title: 'Update constraints.txt'

@@ -11,7 +11,7 @@ EMAIL_ARGS=
 
 CACHE=
 
-ARCH=$(shell uname -m | sed 's/x86_64/amd64/')
+ARCH=linux/$(shell uname -m | sed 's/x86_64/amd64/')
 PLATFORMS=linux/amd64,linux/arm64
 
 .PHONY: .FORCE
@@ -54,16 +54,14 @@ test: $(TEST_FILES) custom_tests
 tests/*.yaml: .FORCE
 	$(CMD) -c -C $@
 
-schema/project-schema.json:
-	./odk/odk.py dump-schema > $@
 
-docs/project-schema.md: schema/project-schema.json
-	python odk/schema_documentation.py
-
-docs: docs/project-schema.md
+.PHONY: docs
+docs:
+	@ODK_IMAGE=odklite ./odk.sh ./odk/odk.py dump-schema > schema/project-schema.json
+	@ODK_IMAGE=odklite ./odk.sh python ./odk/schema_documentation.py
 
 # Building docker image
-VERSION = "v1.3.2"
+VERSION = "v1.5"
 IM=obolibrary/odkfull
 IMLITE=obolibrary/odklite
 ROB=obolibrary/robot
@@ -174,3 +172,14 @@ constraints.txt: requirements.txt.full
 
 clean-tests:
 	rm -rf target/*
+
+dev-test-publish:
+	git pull
+	docker buildx rm multiarch
+	docker buildx create --name multiarch --driver docker-container --use
+	$(MAKE) tests publish-multiarch-dev
+
+dev-test-publish-no-rm:
+	git pull
+	docker buildx create --name multiarch --driver docker-container --use
+	$(MAKE) tests publish-multiarch-dev

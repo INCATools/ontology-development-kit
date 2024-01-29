@@ -8,12 +8,13 @@ export_formats:
 import_group:
   products:
     - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
 robot_report:
-  release_reports: True
+  release_reports: true
   fail_on : ERROR
-  use_labels: False
-  custom_profile: True
-  ensure_owl2dl_profile: True
+  use_labels: false
+  custom_profile: true
+  ensure_owl2dl_profile: true
   report_on:
     - edit
   custom_sparql_checks : []

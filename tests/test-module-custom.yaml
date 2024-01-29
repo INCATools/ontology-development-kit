@@ -1,0 +1,18 @@
+id: modminic
+title: "Test generation of custom module type and custom mirror"
+github_org: INCATools
+repo: modminic
+edit_format: obo
+export_formats:
+  - owl
+  - obo
+  - json
+import_group:
+  products:
+    - id: ro
+      mirror_type: base
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
+    - id: wikidata
+      mirror_type: no_mirror
+  module_type: custom
+

@@ -1,0 +1,31 @@
+id: rrcs
+title: "Test ROBOT report sparql"
+github_org: INCATools
+repo: rrcs
+export_formats:
+  - owl
+release_artefacts: 
+  - base
+  - simple
+  - full
+import_group:
+  products:
+    - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
+robot_report:
+  release_reports: true
+  fail_on : ERROR
+  use_labels : false
+  custom_profile : true
+  sparql_test_on:
+    - edit
+    - rrcs-base.owl
+  report_on :
+    - edit
+    - rrcs-base.owl
+  custom_sparql_checks :
+    - owldef-self-reference
+    - iri-range
+  custom_sparql_exports : 
+    - basic-report
+  
