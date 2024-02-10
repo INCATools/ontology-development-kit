@@ -737,7 +737,7 @@ branches:
 notifications:
   email:
     - obo-ci-reports-all@groups.io
-{% endif -%}{% if 'github_actions' in project.ci %}
+{% endif -%}{% if (('github_actions' in project.ci) and ('qc' in project.workflows)) %}
 ^^^ .github/workflows/qc.yml
 # Basic ODK workflow
 
