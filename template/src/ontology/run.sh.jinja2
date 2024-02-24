@@ -14,6 +14,8 @@
 #
 # See README-editors.md for more details.
 
+set -e
+
 if [ -f run.sh.conf ]; then
     . ./run.sh.conf
 fi
@@ -72,9 +74,10 @@ if [ x$ODK_DEBUG = xyes ]; then
     # If you wish to change the format string, take care of using
     # non-breaking spaces (U+00A0) instead of normal spaces, to
     # prevent the shell from tokenizing the format string.
-    echo "Running ${IMAGE} with ${ODK_JAVA_OPTS} of memory for ROBOT and Java-based pipeline steps."
+    echo "Running obolibrary/${ODK_IMAGE}:${ODK_TAG} with '${ODK_JAVA_OPTS}' as options for ROBOT and other Java-based pipeline steps."
     TIMECMD="/usr/bin/time -f ### DEBUG STATS ###\nElapsed time: %E\nPeak memory: %M kb"
 fi
+rm -f tmp/debug.log
 
 VOLUME_BIND=$PWD/../../:/work$ODK_SSH_BIND
 WORK_DIR=/work/src/ontology
@@ -94,19 +97,20 @@ GH_TOKEN=$GH_TOKEN
 SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
 ODK_USER_ID=$ODK_USER_ID
 ODK_GROUP_ID=$ODK_GROUP_ID
+ODK_DEBUG=$ODK_DEBUG
 EOF
 {% endif %}
 if [ -n "$USE_SINGULARITY" ]; then
     {% if project.use_external_date is sameas True %}export TODAY=$(date +%Y-%m-%d){% endif %}
     singularity exec --cleanenv $ODK_SINGULARITY_OPTIONS \
-        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}--env "ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS,JAVA_OPTS=$ODK_JAVA_OPTS,SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock,ODK_USER_ID=$ODK_USER_ID,ODK_GROUP_ID=$ODK_GROUP_ID" {% endif %}\
+        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}--env "ROBOT_JAVA_ARGS=$ODK_JAVA_OPTS,JAVA_OPTS=$ODK_JAVA_OPTS,SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock,ODK_USER_ID=$ODK_USER_ID,ODK_GROUP_ID=$ODK_GROUP_ID,ODK_DEBUG=$ODK_DEBUG" {% endif %}\
         --bind $VOLUME_BIND \
         -W $WORK_DIR \
         docker://obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 else
     BIND_OPTIONS="-v $(echo $VOLUME_BIND | sed 's/,/ -v /')"
     docker run $ODK_DOCKER_OPTIONS $BIND_OPTIONS -w $WORK_DIR \
-        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}-e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" -e SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock -e ODK_USER_ID=$ODK_USER_ID -e ODK_GROUP_ID=$ODK_GROUP_ID {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}{% endif %}\
+        {% if project.use_env_file_docker is sameas True %}--env-file run.sh.env {% else %}-e ROBOT_JAVA_ARGS="$ODK_JAVA_OPTS" -e JAVA_OPTS="$ODK_JAVA_OPTS" -e SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock -e ODK_USER_ID=$ODK_USER_ID -e ODK_GROUP_ID=$ODK_GROUP_ID -e ODK_DEBUG=$ODK_DEBUG {% if project.use_external_date is sameas True %}-e TODAY=`date +%Y-%m-%d` {% endif %}{% endif %}\
         --rm -ti obolibrary/$ODK_IMAGE:$ODK_TAG $TIMECMD "$@"
 fi
 

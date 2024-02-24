@@ -9,9 +9,9 @@ release_artefacts:
   - baselite
   - base
 primary_release: base
-release_use_reasoner: FALSE
+release_use_reasoner: false
 import_group:
-  release_imports: TRUE
+  release_imports: true
   products:
     - id: ro
       mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
