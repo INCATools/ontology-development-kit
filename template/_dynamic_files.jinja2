@@ -1845,6 +1845,7 @@ jobs:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
           CONFIG_FILE: mkdocs.yaml
 {% endif -%}
+{% endif -%}
 {% if (('github_actions' in project.ci) and ('github' in project.workflows)) %}
 ^^^ .github/ISSUE_TEMPLATE/add-term.yml
 name: Add term- Request a New Ontology Term
