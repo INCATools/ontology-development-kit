@@ -363,7 +363,7 @@ class ReportConfig(JsonSchemaMixin):
         The custom sparql checks available are: 'owldef-self-reference', 'redundant-subClassOf', 'taxon-range', 'iri-range', 'iri-range-advanced', 'label-with-iri', 'multiple-replaced_by', 'term-tracker-uri', 'illegal-date', 'dc-properties'.
     """
 
-    custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
+    custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
     """Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory."""
 
     sparql_test_on: List[str] = field(default_factory=lambda: ['edit'])
