@@ -632,12 +632,28 @@ SELECT ?term ?term_tracker ?term_tracker_type WHERE {
 ^^^ src/sparql/illegal-date-violation.sparql
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
 
 SELECT DISTINCT ?term ?property ?value WHERE
 {
-  VALUES ?property {dct:date dct:issued dct:created}
+  VALUES ?property {dct:date dct:issued dct:created oboInOwl:creation_date}
   ?term ?property ?value .
   FILTER (datatype(?value) != xsd:date || !regex(str(?value), '^\\d{4}-\\d\\d-\\d\\d$'))
+  FILTER (datatype(?value) != xsd:dateTime || !regex(str(?value), '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z'))
+}
+{% endif %}
+
+{%- if project.robot_report.custom_sparql_checks is not defined or 'dc-properties' in project.robot_report.custom_sparql_checks %}
+^^^ src/sparql/dc-properties-violation.sparql
+# The purpose of this violation is to make sure people update
+# from using the deprecated DC Elements 1.1 namespace (http://purl.org/dc/elements/1.1/)
+# to using the recommended DC Terms namespace (http://purl.org/dc/terms/)
+# See also discussion on https://github.com/oborel/obo-relations/pull/692
+
+SELECT ?term ?predicate WHERE {
+  ?term ?predicate ?value .
+  FILTER(STRSTARTS(STR(?predicate), "http://purl.org/dc/elements/1.1/"))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif %}
 
@@ -721,7 +737,7 @@ branches:
 notifications:
   email:
     - obo-ci-reports-all@groups.io
-{% endif -%}{% if 'github_actions' in project.ci %}
+{% endif -%}{% if (('github_actions' in project.ci) and ('qc' in project.workflows)) %}
 ^^^ .github/workflows/qc.yml
 # Basic ODK workflow
 
@@ -744,7 +760,7 @@ jobs:
   ontology_qc:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.25" }}{%- else %}v1.2.25{% endif %}
+    container: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -760,7 +776,7 @@ jobs:
 # Basic ODK workflow to run ontology QC checks
 ontology_qc:
   stage: test
-  image: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.25" }}{%- else %}v1.2.25{% endif %}
+  image: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
   # Controls when the job will run.
   rules:
     # Run on merge request pipelines when a merge request is open for the branch.
@@ -791,7 +807,7 @@ on:
 jobs:
   edit_file:
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
       - uses: actions/checkout@v3
       # Checks-out main branch under "main" directory
@@ -808,7 +824,7 @@ jobs:
           path: edit-diff.md
   classify_branch:
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
       - uses: actions/checkout@v3
       - name: Classify ontology
@@ -821,7 +837,7 @@ jobs:
           retention-days: 1
   classify_main:
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -839,7 +855,7 @@ jobs:
       - classify_branch
       - classify_main
     runs-on: ubuntu-latest
-    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "v1.2.32" }}{%- else %}v1.2.32{% endif %}
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
       - uses: actions/checkout@v3
       - name: Download master classification
@@ -893,6 +909,39 @@ jobs:
         with:
           file: "../../edit-comment.md"
           identifier: "UNREASONED"
+{% endif -%}
+{% if (('github_actions' in project.ci) and ('release-diff' in project.workflows)) %}
+^^^ .github/workflows/release-diff.yml
+name: Post release diff
+
+on:
+  # Triggers the workflow on pull request events for the {{ project.git_main_branch }} branch
+  pull_request:
+    branches: [ {{ project.git_main_branch }} ]
+    paths:
+      - 'src/ontology/reports/release-diff.md'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  post_diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare release comment
+        env:
+            GITHUB_SHA: {% raw %}${{ github.sha }}{% endraw %}
+        run: "echo \"[Here's a diff of how this release impacts {{ project.id }}.owl](https://github.com/obophenotype/{{ project.repo }}/blob/${% raw %}${{ env.GITHUB_SHA }}{% endraw %}/src/ontology/reports/release-diff.md)\" >comment.md"
+      - name: Post reasoned comment
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+        uses: NejcZdovc/comment-pr@v2.0.0
+        with:
+          github_token: {% raw %}${{ env.GITHUB_TOKEN }}{% endraw %}
+          file: "../../comment.md"
+          identifier: "RELEASE-DIFF"
 {% endif -%}
 {% if project.use_custom_import_module %}
 ^^^ src/templates/external_import.tsv
@@ -1722,6 +1771,7 @@ sh run.sh make update_repo
 
 Do not overwrite, contents will be generated automatically.
 {% endif %}
+{% if project.documentation is not none %}
 ^^^ mkdocs.yaml
 site_name: {{ project.title }}
 theme:
@@ -1765,7 +1815,7 @@ nav:
       - Contributing: contributing.md{% if project.use_dosdps %}
   - Reference:
     - Design Patterns:
-      - Design Patterns Overview: dosdp.md{% endif %}{% endif %}
+      - Design Patterns Overview: templates/dosdp.md{% endif %}{% endif %}
 {% if (('github_actions' in project.ci) and ('docs' in project.workflows)) %}
 ^^^ .github/workflows/docs.yml
 # Basic ODK workflow

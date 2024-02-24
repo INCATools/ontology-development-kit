@@ -3,7 +3,7 @@ title: "Test Base"
 github_org: INCATools
 repo: ontology-development-kit
 import_group:
-  use_base_merging: TRUE
+  use_base_merging: true
   exclude_iri_patterns:
     - <http://purl.obolibrary.org/obo/GOCHE_*>
     - <http://purl.obolibrary.org/obo/OBA_*>
@@ -13,8 +13,8 @@ import_group:
     - id: ro
       mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
     - id: pato
-      use_base: TRUE
+      use_base: true
       # This test cannot be easily replaced, because use_base and custom URL dont mix
     - id: pr
-      make_base: TRUE
+      make_base: true
       mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pr_slim.owl

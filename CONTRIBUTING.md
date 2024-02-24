@@ -122,6 +122,14 @@ preserving protected files. TBD how to determine protected
 files. Obviously the edit file should not be touched. Could use git
 log to determine if any modifications have been made?
 
+## Setting up a new machine for ODK development
+
+In order to build and publish ODK, you need the following:
+
+1. `docker` installed
+2. have `git` installed
+3. have a git user.name and user.email set
+
 ## General SOP for ODK release and publication
 
 * Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).

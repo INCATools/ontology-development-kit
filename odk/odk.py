@@ -318,6 +318,12 @@ class ImportGroup(ProductGroup):
     
     directory : Directory = "imports/"
     """directory where imports are extracted into to"""
+    
+    annotate_defined_by : bool = False
+    """If set to true, the annotation rdfs:definedBy is added for each external class. 
+       In the case of use_base_merging is also true, this will be added to the imports/merged_import.owl file.
+       When imports are not merged, the annotation is added during the release process to the full release artefact.
+    """
 
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
@@ -352,9 +358,9 @@ class ReportConfig(JsonSchemaMixin):
     release_reports : bool = False
     """ If true, release reports are added as assets to the release (top level directory, reports directory)"""
     
-    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by'])
+    custom_sparql_checks : Optional[List[str]] = field(default_factory=lambda: ['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by', 'dc-properties'])
     """ Chose which additional sparql checks you want to run. The related sparql query must be named CHECKNAME-violation.sparql, and be placed in the src/sparql directory.
-        The custom sparql checks available are: 'owldef-self-reference', 'redundant-subClassOf', 'taxon-range', 'iri-range', 'iri-range-advanced', 'label-with-iri', 'multiple-replaced_by', 'term-tracker-uri', 'illegal-date'.
+        The custom sparql checks available are: 'owldef-self-reference', 'redundant-subClassOf', 'taxon-range', 'iri-range', 'iri-range-advanced', 'label-with-iri', 'multiple-replaced_by', 'term-tracker-uri', 'illegal-date', 'dc-properties'.
     """
 
     custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
@@ -446,6 +452,31 @@ class ExportGroup(ProductGroup):
 
     directory : Directory = "reports/"
     """directory where exports are placed"""
+
+
+@dataclass_json
+@dataclass
+class RobotPlugin(JsonSchemaMixin):
+    """
+    A configuration for a single ROBOT plugin
+    """
+
+    name : str = ""
+    """Basename for the plugin"""
+
+    mirror_from : Optional[str] = None
+    """Automatically download the plugin from this URL"""
+
+
+@dataclass_json
+@dataclass
+class PluginsGroup(JsonSchemaMixin):
+    """
+    A configuration section to list extra ROBOT plugins not provided by the ODK
+    """
+
+    plugins : Optional[List[RobotPlugin]] = None
+    """The list of plugins to use"""
 
     
 @dataclass_json
@@ -555,8 +586,8 @@ class OntologyProject(JsonSchemaMixin):
     ci : Optional[List[str]] = field(default_factory=lambda: ['github_actions'])
     """continuous integration defaults; currently available: travis, github_actions, gitlab-ci"""
     
-    workflows : Optional[List[str]] = field(default_factory=lambda: ['docs'])
-    """Workflows that are synced when updating the repo. Currently available: docs, diff, qc."""
+    workflows : Optional[List[str]] = field(default_factory=lambda: ['docs', 'qc'])
+    """Workflows that are synced when updating the repo. Currently available: docs, diff, qc, release-diff."""
     
     import_pattern_ontology : bool = False
     """if true import pattern.owl"""
@@ -622,8 +653,14 @@ class OntologyProject(JsonSchemaMixin):
     robot_report : Dict[str, Any] = field(default_factory=lambda: ReportConfig().to_dict())
     """Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated"""
 
-    ensure_valid_rdfxml : bool = False
+    ensure_valid_rdfxml : bool = True
     """When enabled, ensure that any RDF/XML product file is valid"""
+
+    extra_rdfxml_checks : bool = False
+    """When enabled, RDF/XML product files are checked against additional parsers"""
+
+    robot_plugins : Optional[PluginsGroup] = None
+    """Block that includes information on the extra ROBOT plugins used by this project"""
 
     # product groups
     import_group : Optional[ImportGroup] = None

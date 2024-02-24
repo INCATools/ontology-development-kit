@@ -30,8 +30,9 @@ cp -n target/$OID/.travis.yml $ROOTDIR/
 {%- endif -%}{% if 'github_actions' in project.ci %}
 mkdir -p $ROOTDIR/.github
 mkdir -p $ROOTDIR/.github/workflows
-cp {% if 'qc' not in project.workflows %}-n {% endif %}target/$OID/.github/workflows/qc.yml $ROOTDIR/.github/workflows/qc.yml
+{% if 'qc' in project.workflows %}cp target/$OID/.github/workflows/qc.yml $ROOTDIR/.github/workflows/qc.yml{% endif %}
 {% if 'diff' in project.workflows %}cp target/$OID/.github/workflows/diff.yml $ROOTDIR/.github/workflows/diff.yml{% endif %}
+{% if 'release-diff' in project.workflows %}cp target/$OID/.github/workflows/release-diff.yml $ROOTDIR/.github/workflows/release-diff.yml{% endif %}
 {% if project.documentation is not none %}
 {% if 'docs' in project.workflows %}cp target/$OID/.github/workflows/docs.yml $ROOTDIR/.github/workflows/docs.yml{% endif %}
 {% endif %}{% endif %}{% endif %}

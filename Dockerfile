@@ -9,6 +9,11 @@ ENV PATH "/tools/apache-jena/bin:/tools/sparqlprog/bin:$PATH"
 ARG ODK_VERSION 0.0.0
 ENV ODK_VERSION $ODK_VERSION
 
+# Software versions
+ENV JENA_VERSION=4.9.0
+ENV KGCL_JAVA_VERSION=0.3.2
+ENV SSSOM_JAVA_VERSION=0.7.5
+
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
 ENV COURSIER_CACHE "/tools/.coursier-cache"
@@ -75,8 +80,8 @@ RUN test "x$TARGETARCH" = xamd64 && ( \
     )
 
 # Install Jena.
-RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-4.6.1.tar.gz -O- | tar xzC /tools && \
-    mv /tools/apache-jena-4.6.1 /tools/apache-jena
+RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERSION.tar.gz -O- | tar xzC /tools && \
+    mv /tools/apache-jena-$JENA_VERSION /tools/apache-jena
 
 # Install SPARQLProg.
 RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
@@ -97,9 +102,16 @@ RUN chmod +x /tools/obodash && \
     echo "" >> Makefile
 
 # Install relation-graph
-ENV RG=2.3
+ENV RG=2.3.2
 ENV PATH "/tools/relation-graph/bin:$PATH"
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/relation-graph-cli-$RG.tgz \
 && tar -zxvf relation-graph-cli-$RG.tgz \
 && mv relation-graph-cli-$RG /tools/relation-graph \
 && chmod +x /tools/relation-graph
+
+# Install ROBOT plugins
+RUN wget -nv -O /tools/sssom-cli https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-cli && \
+    chmod +x /tools/sssom-cli && \
+    mkdir -p /tools/robot-plugins && \
+    wget -nv -O /tools/robot-plugins/sssom.jar https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-robot-plugin-$SSSOM_JAVA_VERSION.jar && \
+    wget -nv -O /tools/robot-plugins/kgcl.jar https://github.com/gouttegd/kgcl-java/releases/download/kgcl-java-$KGCL_JAVA_VERSION/kgcl-robot-plugin-$KGCL_JAVA_VERSION.jar
