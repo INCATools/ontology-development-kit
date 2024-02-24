@@ -43,7 +43,9 @@ RUN wget -nv $ROBOT_JAR \
         -O /tools/robot.jar && \
     wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/bin/robot \
         -O /tools/robot && \
-    chmod 755 /tools/robot
+    chmod 755 /tools/robot &&\
+    wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/src/main/resources/report_profile.txt \
+        -O /tools/robot_report_profile.txt
 
 # Install DOSDPTOOLS.
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_VERSION/dosdp-tools-$DOSDP_VERSION.tgz && \
