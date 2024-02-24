@@ -304,6 +304,30 @@ $(REPORTDIR)/$(SRC)-obo-report.tsv: $(SRCMERGED) | $(REPORTDIR)
 $(REPORTDIR)/%-obo-report.tsv: % | $(REPORTDIR)
 	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) {% if project.robot_report.use_base_iris %}{% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} {% endif %}{% endif -%} --print 5 -o $@
 
+{% if project. oak_validation %}
+# ----------------------------------------
+# OAK Validation
+# ----------------------------------------
+
+$(ONT)-simple.db: $(ONT)-simple.owl
+	semsql make $@
+	rm $(ONT)-simple-relation-graph.tsv.gz
+
+{% for profile in project.oak_validation.profiles %}
+$(TMPDIR)/{{ profile.id }}.yaml:
+	{% if profile.mirror_from %}wget {{ profile.mirror_from }} -O $@{% else %}cp {{ profile.filename }} $@
+{% endif %}
+
+$(REPORTDIR)/{{ profile.id }}.tsv: $(ONT)-simple.db $(TMPDIR)/{{ profile.id }}.yaml
+	runoak validate-multiple $< --schema $(TMPDIR)/{{ profile.id }}.yaml --output $@ --cutoff 5000
+	awk 'NR==1 {print} NR!=1 && $$2~/{{ project.id.upper() }}:/' $@ > $@.tmp.tsv && mv $@.tmp.tsv $@
+{% endfor%}
+
+.PHONY: oak_validation
+oak_validation: 
+	$(MAKE_FAST) {% for profile in project.oak_validation.profiles %} $(REPORTDIR)/{{ profile.id }}.tsv{% endfor %}
+{%- endif %}
+
 # ----------------------------------------
 # Release assets
 # ----------------------------------------
