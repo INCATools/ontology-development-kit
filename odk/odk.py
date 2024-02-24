@@ -609,6 +609,10 @@ class OntologyProject(JsonSchemaMixin):
     """If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
     reason (the classification/subclassOf hierarchy computaton); materialize (the materialisation of simple existential/
     object property restrictions); reduce (the removal of redundant subclassOf axioms)."""
+    
+    release_annotate_inferred_axioms : bool = False
+    """If set to True, axioms that are inferred during the reasoning process are annotated accordingly, 
+    see https://robot.obolibrary.org/reason."""
 
     release_materialize_object_properties : List[str] = None
     """Define which object properties to materialise at release time."""
