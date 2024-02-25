@@ -14,6 +14,7 @@ For more detailed changes see:
 - Allow refreshing the mirrors under IMP=false [PR](https://github.com/INCATools/ontology-development-kit/pull/973)
 - Make qc.yml ODK managed by default [PR](https://github.com/INCATools/ontology-development-kit/pull/990)
 - Generate custom_reports during release process [PR](https://github.com/INCATools/ontology-development-kit/pull/997)
+- Added the "International Edition" as a release product, including an entire workflow system for managing translations using the [Babelon format](https://github.com/monarch-initiative/babelon).
 
 ## New and updated tooling
 
@@ -28,8 +29,8 @@ For more detailed changes see:
 
 ## New configuration options 
 
-* Add option to include defined-by annotation in imports [PR](https://github.com/INCATools/ontology-development-kit/pull/929)
-* Add option `release_annotate_inferred_axioms` [PR](https://github.com/INCATools/ontology-development-kit/pull/996) to enable the annotation of inferred axioms during release.
+- Add option to include defined-by annotation in imports [PR](https://github.com/INCATools/ontology-development-kit/pull/929)
+- Add option `release_annotate_inferred_axioms` [PR](https://github.com/INCATools/ontology-development-kit/pull/996) to enable the annotation of inferred axioms during release.
 
 ## Makefile workflows
 
@@ -44,15 +45,15 @@ For more detailed changes see:
 
 - Allow passing configuration options to the OWL API. [PR](https://github.com/INCATools/ontology-development-kit/pull/807)
 - Automatically check whether the repository needs to be updated [PR](https://github.com/INCATools/ontology-development-kit/pull/873)
-* Forward the host SSH agent socket into the container [PR](https://github.com/INCATools/ontology-development-kit/pull/853)
+- Forward the host SSH agent socket into the container [PR](https://github.com/INCATools/ontology-development-kit/pull/853)
 
 ## Bugfixes
 
-* Fix import to use OBOBASE in base-iri, not URIBASE [PR](https://github.com/INCATools/ontology-development-kit/pull/823)
-* Do not create individual import modules when use_base_merging is enabled [PR](https://github.com/INCATools/ontology-development-kit/pull/829)
-* Make docs workflow configurable [PR](https://github.com/INCATools/ontology-development-kit/pull/889)
-* Update `illegal-date-violation.sparql` to accept `xsd:dateTime` [PR](https://github.com/INCATools/ontology-development-kit/pull/932)
-* Update URL to show CI status badge correctly [PR](https://github.com/INCATools/ontology-development-kit/pull/978)
+- Fix import to use OBOBASE in base-iri, not URIBASE [PR](https://github.com/INCATools/ontology-development-kit/pull/823)
+- Do not create individual import modules when use_base_merging is enabled [PR](https://github.com/INCATools/ontology-development-kit/pull/829)
+- Make docs workflow configurable [PR](https://github.com/INCATools/ontology-development-kit/pull/889)
+- Update `illegal-date-violation.sparql` to accept `xsd:dateTime` [PR](https://github.com/INCATools/ontology-development-kit/pull/932)
+- Update URL to show CI status badge correctly [PR](https://github.com/INCATools/ontology-development-kit/pull/978)
 
 # v1.4
 
