@@ -89,9 +89,9 @@ MAPPING_RELEASE_FILES=      $(foreach n,$(MAPPINGS), $(MAPPINGDIR)/$(n).sssom.ts
 
 {%- if project.use_translations %}
 TRANSLATIONSDIR=            {% if project.babelon_translation_group is not none %}{{project.babelon_translation_group.directory|default("../translations")}}{% endif %}
-BABELONPY=                  babelon
+BABELONPY=                  babelon -q
 TRANSLATIONS_OWL=           {%- for translation in project.babelon_translation_group.products %}$(TRANSLATIONSDIR)/{{ translation.id }}.babelon.owl {% if translation.include_robot_template_synonyms %} $(TRANSLATIONSDIR)/{{ translation.id }}.synonyms.owl {% endif %}{% endfor %}
-TRANSLATIONS_TSV=           {%- for translation in project.babelon_translation_group.products %}$(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv {% endfor %}
+TRANSLATIONS_TSV=           {%- for translation in project.babelon_translation_group.products %}$(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv {% endfor %}
 TRANSLATION_FILES=			{%- if project.babelon_translation_group is not none %}{% if project.babelon_translation_group.release_merged_translations %}$(TRANSLATIONSDIR)/$(ONT)-all.babelon.tsv $(TRANSLATIONSDIR)/$(ONT)-all.babelon.json{% endif %}{% endif %}
 {% endif %}
 
@@ -933,30 +933,28 @@ validate_mappings:
 
 TRANSLATIONS_ADAPTER={{ project.babelon_translation_group.default_adapter|default('pronto:$(ONT).obo')  }}
 TRANSLATIONS_ONTOLOGY={{ project.babelon_translation_group.update_ontology|default('$(ONT).obo')  }}
+TRANSLATE_PREDICATES={% for predicate_id in project.babelon_translation_group.predicates|default(['IAO:0000115', 'rdfs:label'], true) %}{{ predicate_id }} {% endfor %}
 
 {% for translation in project.babelon_translation_group.products %}
-{%- if translation.maintenance == "mirror" %}
+{% if translation.maintenance == "mirror" %}
 $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv:
 	wget "{{ translation.mirror_babelon_from }}" -O $@
-{%- if translation.include_robot_template_synonyms %}
-{% else %}
-# This mappingset is manually curated, so we only check that the file actually exists.
+{% if translation.include_robot_template_synonyms %}
 $(TRANSLATIONSDIR)/{{ translation.id }}.synonyms.tsv:
 	wget "{{ translation.mirror_synonyms_from }}" -O $@
-{%- endif %}
+{% endif %}
 {% else %}
 # This mappingset is manually curated, so we only check that the file actually exists.
 $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv:
 	test -f $@
-{%- if translation.include_robot_template_synonyms %}
-{% else %}
+{% if translation.include_robot_template_synonyms %}
 $(TRANSLATIONSDIR)/{{ translation.id }}.synonyms.tsv:
 	test -f $@
-{%- endif %}
-TRANSLATE_PREDICATES={% for predicate_id in project.babelon_translation_group.predicates|default(['IAO:0000115', 'rdfs:label'], true) %}{{ predicate_id }}{% endfor %}
+{% endif %}
+{% endif %}
 
-translation-preprocess-%: $(TRANSLATIONS_ONTOLOGY) $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv
-	poetry run babelon -q prepare-translation $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv \
+$(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv: $(TRANSLATIONS_ONTOLOGY) $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv
+	$(BABELONPY) prepare-translation $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv \
 		--oak-adapter $(TRANSLATIONS_ADAPTER) \
 		--language-code {{ translation.language|default('en') }} \
 		$(foreach n,$(TRANSLATE_PREDICATES), --field $(n)) \
@@ -964,10 +962,13 @@ translation-preprocess-%: $(TRANSLATIONS_ONTOLOGY) $(TRANSLATIONSDIR)/{{ transla
 		--output-not-translated $(TRANSLATIONSDIR)/{{ translation.id }}-not-translated.babelon.tsv \
 		--include-not-translated {{ translation.include_not_translated|default('false') }} \
 		--update-translation-status {{ translation.update_translation_status|default('true') }} \
-		-o $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv
+		-o $@{% if translation.auto_translate %}
+	export OPENAI_API_KEY="$(OPENAI_API_KEY)" &&\
+	$(BABELONPY) translate $(TRANSLATIONSDIR)/{{ translation.id }}-not-translated.babelon.tsv -o $(TRANSLATIONSDIR)/{{ translation.id }}-translated.babelon.tsv \
+	$(BABELONPY) merge $(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv $(TRANSLATIONSDIR)/{{ translation.id }}-translated.babelon.tsv -o $@
+	{%- endif %}
 
-{%- endif %}
-{%- endfor %}
+{% endfor %}
 {%- endif %}
 
 $(TRANSLATIONSDIR)/%.synonyms.owl: $(TRANSLATIONSDIR)/%.synonyms.tsv
@@ -979,8 +980,7 @@ $(TRANSLATIONSDIR)/%.synonyms.owl: $(TRANSLATIONSDIR)/%.synonyms.tsv
 		convert -f owl --output $@
 .PRECIOUS: $(TRANSLATIONSDIR)/%.synonyms.owl
 
-$(TRANSLATIONSDIR)/%.babelon.owl: $(TRANSLATIONSDIR)/%.babelon.tsv
-	grep -v NOT_TRANSLATED $< > $(TMPDIR)/$*.babelon.tsv || cp $< $(TMPDIR)/$*.babelon.tsv
+$(TRANSLATIONSDIR)/%.babelon.owl: $(TRANSLATIONSDIR)/%-preprocessed.babelon.tsv
 	$(BABELONPY) convert $(TMPDIR)/$*.babelon.tsv --output-format owl -o $@.tmp
 	$(ROBOT) merge -i $@.tmp \
 		annotate \
@@ -995,7 +995,7 @@ $(TRANSLATIONSDIR)/$(ONT)-all.babelon.tsv: $(TRANSLATIONS_TSV)
 	$(BABELONPY) merge $^ -o $@
 
 $(TRANSLATIONSDIR)/%.babelon.json: $(TRANSLATIONSDIR)/%.babelon.tsv
-	babelon convert $< --output-format json -o $@
+	$(BABELONPY) convert $< --output-format json -o $@
 {% endif %}
 
 # ----------------------------------------

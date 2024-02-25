@@ -210,11 +210,15 @@ class BabelonTranslationProduct(Product):
     language: str = "en"
     """Language tag (IANA/ISO), e.g 'en', 'fr'."""
     
-    include_not_translated: bool = False
+    include_not_translated: str = "false"
     """if include_not_translated is 'false' NOT_TRANSLATED values are removed during preprocessing."""
     
-    update_translation_status: bool = False
+    update_translation_status: str = "false"
     """if update_translation_status is 'true', translations where the source_value has changed are relegated to CANDIDATE status."""
+    
+    auto_translate: bool = False
+    """if auto_translate is true, missing values are being translated during preprocessing."""
+
     
 
 @dataclass_json
