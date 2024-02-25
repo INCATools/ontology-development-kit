@@ -1,13 +1,58 @@
-# v1.5 (unpublished)
+# v1.5
 
-A full record of all planned changes can be seen [here](https://github.com/INCATools/ontology-development-kit/milestone/7).
+For more detailed changes see:
 
-- New [ROBOT version 1.9.5](https://github.com/ontodev/robot/releases/tag/v1.9.5)
-- All processes within the ODK container now runs under the identify of an unprivileged user by default. This fixes the issue of generated files being owned by the superuser, when the Docker daemon itself runs as the superuser (as is the case by default on most GNU/Linux systems). If you have a workflow that requires being run as a superuser (for example, if you need to install extra Debian/Ubuntu packages via `apt-get`), set the environment variable `ODK_USER_ID` to 0.
+- [Milestone definition](https://github.com/INCATools/ontology-development-kit/milestone/7)
+- [All changes since the last major release](https://github.com/INCATools/ontology-development-kit/compare/v1.4...v1.5)
+
+## Highlights (Read this)
+
+- All processes within the ODK container now runs under the identify of an unprivileged user by default. This fixes the issue of generated files being owned by the superuser, when the Docker daemon itself runs as the superuser (as is the case by default on most GNU/Linux systems). If you have a workflow that requires being run as a superuser (for example, if you need to install extra Debian/Ubuntu packages via `apt-get`), set the environment variable `ODK_USER_ID` to 0. See [PR1](https://github.com/INCATools/ontology-development-kit/pull/769), [PR2](https://github.com/INCATools/ontology-development-kit/pull/900), [PR3](https://github.com/INCATools/ontology-development-kit/pull/905).
+- Change the definition of "base release".[PR](https://github.com/INCATools/ontology-development-kit/pull/810).
+- Make it possible to collect per-command resource usage data [PR](https://github.com/INCATools/ontology-development-kit/pull/940). This allows us to see which goals consume how much memory, and how long they take, to identify performance bottlenecks.
+- Enable custom ROBOT plugins in ODK [PR](https://github.com/INCATools/ontology-development-kit/pull/968)
+- Allow refreshing the mirrors under IMP=false [PR](https://github.com/INCATools/ontology-development-kit/pull/973)
+- Make qc.yml ODK managed by default [PR](https://github.com/INCATools/ontology-development-kit/pull/990)
+- Generate custom_reports during release process [PR](https://github.com/INCATools/ontology-development-kit/pull/997)
+
+## New and updated tooling
+
+- New [ROBOT Version 1.9.5](https://github.com/ontodev/robot/releases/tag/v1.9.5)
+- A lot of [updated python tools](https://github.com/INCATools/ontology-development-kit/blob/master/constraints.txt), including [OAK (0.5.25)](https://github.com/INCATools/ontology-access-kit), [SSSOM tools](https://github.com/mapping-commons/sssom-py) (0.4.4), [LinkML](https://linkml.io/) (1.7.4) and [curies](https://github.com/cthoyt/curies) (0.7.7). 
+- The [Babelon Toolkit](https://github.com/monarch-initiative/babelon) for managing multilingual ontologies has beed added as well.
+- A full list of all available python tools and there vesions is available [here](https://github.com/INCATools/ontology-development-kit/blob/v1.5/constraints.txt)
+- Added table-reader plugin for mkdocs [PR](https://github.com/INCATools/ontology-development-kit/pull/861)
+- Added Perl module Business::ISBN. [PR](https://github.com/INCATools/ontology-development-kit/pull/886)
+- Updated Apache Jena, Soufflé, Fastobo-validator, Ammonite
+- Added SSSOM-Java to odkfull [PR](https://github.com/INCATools/ontology-development-kit/pull/958)
+
+## New configuration options 
+
+* Add option to include defined-by annotation in imports [PR](https://github.com/INCATools/ontology-development-kit/pull/929)
+* Add option `release_annotate_inferred_axioms` [PR](https://github.com/INCATools/ontology-development-kit/pull/996) to enable the annotation of inferred axioms during release.
 
 ## Makefile workflows
 
-- Added a `test_fast` goal that runs all ontology QC checks without refreshing imports or rebuilding components.
+- Add a `test_fast` goal to allow running tests without refreshing dependencies [PR](https://github.com/INCATools/ontology-development-kit/pull/803)
+- Re-integrate LightRDF RDF/XML validation [PR1](https://github.com/INCATools/ontology-development-kit/pull/850), [PR2](https://github.com/INCATools/ontology-development-kit/pull/928)
+- Add SPARQL Check to find uses of deprecated DC [PR](https://github.com/INCATools/ontology-development-kit/pull/817)
+- Add release diff action [PR](https://github.com/INCATools/ontology-development-kit/pull/737)
+- Add convenience check if customised ROBOT report config is out of date [PR](https://github.com/INCATools/ontology-development-kit/pull/998)
+
+
+## Runner and Infrastructure
+
+- Allow passing configuration options to the OWL API. [PR](https://github.com/INCATools/ontology-development-kit/pull/807)
+- Automatically check whether the repository needs to be updated [PR](https://github.com/INCATools/ontology-development-kit/pull/873)
+* Forward the host SSH agent socket into the container [PR](https://github.com/INCATools/ontology-development-kit/pull/853)
+
+## Bugfixes
+
+* Fix import to use OBOBASE in base-iri, not URIBASE [PR](https://github.com/INCATools/ontology-development-kit/pull/823)
+* Do not create individual import modules when use_base_merging is enabled [PR](https://github.com/INCATools/ontology-development-kit/pull/829)
+* Make docs workflow configurable [PR](https://github.com/INCATools/ontology-development-kit/pull/889)
+* Update `illegal-date-violation.sparql` to accept `xsd:dateTime` [PR](https://github.com/INCATools/ontology-development-kit/pull/932)
+* Update URL to show CI status badge correctly [PR](https://github.com/INCATools/ontology-development-kit/pull/978)
 
 # v1.4
 
