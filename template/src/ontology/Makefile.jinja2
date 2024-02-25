@@ -954,7 +954,7 @@ $(TRANSLATIONSDIR)/{{ translation.id }}.synonyms.tsv:
 {%- endif %}
 TRANSLATE_PREDICATES={% for predicate_id in project.babelon_translation_group.predicates|default(['IAO:0000115', 'rdfs:label'], true) %}{{ predicate_id }}{% endfor %}
 
-translation-preprocess-%: $(TRANSLATIONS_ONTOLOGY) $(TRANSLATIONSDIR)/{%- endfor %}.babelon.tsv
+translation-preprocess-%: $(TRANSLATIONS_ONTOLOGY) $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv
 	poetry run babelon -q prepare-translation $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv \
 		--oak-adapter $(TRANSLATIONS_ADAPTER) \
 		--language-code {{ translation.language|default('en') }} \
