@@ -393,6 +393,22 @@ subject_id	predicate_id	object_id	mapping_justification
 {%- endif %}
 
 {%- endif %}
+{%- if project.use_translations %}
+^^^ src/translations/README.md
+# Directory for managing translation files
+
+{%- if project.babelon_translation_group is not none %}
+{%- for translation in project.babelon_translation_group.products %}
+^^^ src/translations/{{ translation.id }}.babelon.tsv
+source_language	translation_language	subject_id	predicate_id	source_value	translation_value	translation_status
+{%- if translation.include_robot_template_synonyms %}
+^^^ src/translations/{{ translation.id }}.synonyms.tsv
+subject_id	translation_value	comment
+ID	AL oboInOwl:hasExactSynonym@en	
+{%- endif %}
+{%- endfor %}
+{%- endif %}
+{%- endif %}
 {#-
     Example pattern implementation TSV
 #}
