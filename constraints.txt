@@ -11,7 +11,7 @@ asttokens==2.4.1
 async-lru==2.0.4
 attrs==23.2.0
 Babel==2.14.0
-babelon==0.2.2
+babelon==0.2.3
 bcp47==0.0.4
 beautifulsoup4==4.12.3
 bidict==0.23.1
