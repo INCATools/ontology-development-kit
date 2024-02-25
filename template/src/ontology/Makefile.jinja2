@@ -106,7 +106,7 @@ endif
 all: all_odk
 
 .PHONY: all_odk
-all_odk: odkversion{% if project.config_hash %} config_check{% endif %} test all_assets{% if project.release_diff %} release_diff{% endif %}
+all_odk: odkversion{% if project.config_hash %} config_check{% endif %} test custom_reports all_assets{% if project.release_diff %} release_diff{% endif %}
 
 .PHONY: test
 test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}reason_test sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile|default(true) %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
