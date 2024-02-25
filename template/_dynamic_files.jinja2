@@ -404,7 +404,7 @@ source_language	translation_language	subject_id	predicate_id	source_value	transl
 {%- if translation.include_robot_template_synonyms %}
 ^^^ src/translations/{{ translation.id }}.synonyms.tsv
 subject_id	translation_value	comment
-ID	AL oboInOwl:hasExactSynonym@en	
+ID	AL oboInOwl:hasExactSynonym@{{ translation.language }}	
 {%- endif %}
 {%- endfor %}
 {%- endif %}
