@@ -363,7 +363,7 @@ class ReportConfig(JsonSchemaMixin):
         The custom sparql checks available are: 'owldef-self-reference', 'redundant-subClassOf', 'taxon-range', 'iri-range', 'iri-range-advanced', 'label-with-iri', 'multiple-replaced_by', 'term-tracker-uri', 'illegal-date', 'dc-properties'.
     """
 
-    custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
+    custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
     """Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory."""
 
     sparql_test_on: List[str] = field(default_factory=lambda: ['edit'])
@@ -609,6 +609,10 @@ class OntologyProject(JsonSchemaMixin):
     """If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
     reason (the classification/subclassOf hierarchy computaton); materialize (the materialisation of simple existential/
     object property restrictions); reduce (the removal of redundant subclassOf axioms)."""
+    
+    release_annotate_inferred_axioms : bool = False
+    """If set to True, axioms that are inferred during the reasoning process are annotated accordingly, 
+    see https://robot.obolibrary.org/reason."""
 
     release_materialize_object_properties : List[str] = None
     """Define which object properties to materialise at release time."""

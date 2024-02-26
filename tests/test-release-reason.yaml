@@ -1,0 +1,19 @@
+id: rtrai
+title: "Release Test with reasoning and annotating inferred axioms."
+github_org: obophenotype
+repo: rtrai
+report_fail_on: ERROR
+namespaces: 
+  - http://purl.obolibrary.org/obo/RTRAI_
+  - http://purl.obolibrary.org/obo/PATO_
+release_artefacts: 
+  - full
+  - base
+primary_release: full
+release_annotate_inferred_axioms: true
+import_group:
+  products:
+    - id: ro
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/ro.owl
+    - id: pato
+      mirror_from: https://raw.githubusercontent.com/INCATools/ontology-development-kit/master/tests/ontologies/pato.owl
