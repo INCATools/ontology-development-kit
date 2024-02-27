@@ -10,20 +10,20 @@ Before you can use plugins in a custom workflow, the ODK must be aware of those 
 
 Add a new `robot_plugins` section to your ODK configuration file (`src/ontology/ONT-odk.yaml`). That section should contain a single `plugins` key, which itself should contain the list of the plugins you want to use. Each entry in the list must contain at least a `name` key, which is the name under which the plugin will be available, and optionally a `mirror_from` key, pointing to an online location from which the plugin can be downloaded.
 
-For example, to use the [KGCL](https://github.com/gouttegd/kgcl-java/) plugin:
+For example, to use the [Uberon plugin](https://github.com/gouttegd/uberon-robot-plugin):
 
 ```yaml
 robot_plugins:
   plugins:
-    - name: kgcl
-      mirror_from: https://github.com/gouttegd/kgcl-java/releases/download/kgcl-0.2.0/kgcl-robot-plugin-0.2.0.jar
+    - name: uberon
+      mirror_from: https://github.com/gouttegd/uberon-robot-plugin/releases/download/uberon-robot-plugin-0.2.0/uberon.jar
 ```
 
-If you do not specify a download location with the `mirror_from` key, a dummy rule `${ROBOT_PLUGINS_DIRECTORY}/kgcl.jar` will be generated in the standard Makefile. You will need to override that rule in your ontology-specific Makefile:
+If you do not specify a download location with the `mirror_from` key, a dummy rule `${ROBOT_PLUGINS_DIRECTORY}/uberon.jar` will be generated in the standard Makefile. You will need to override that rule in your ontology-specific Makefile:
 
 ```Make
-${ROBOT_PLUGINS_DIRECTORY}/kgcl.jar:
-    curl -L -o $@ https://github.com/gouttegd/kgcl-java/releases/download/kgcl-0.2.0/kgcl-robot-plugin-0.2.0.jar
+${ROBOT_PLUGINS_DIRECTORY}/uberon.jar:
+    curl -L -o $@ https://github.com/gouttegd/uberon-robot-plugin/releases/download/uberon-robot-plugin-0.2.0/uberon.jar
 ```
 
 
@@ -32,10 +32,10 @@ ${ROBOT_PLUGINS_DIRECTORY}/kgcl.jar:
 If for whatever reason you do not want to modify your ODK configuration, you can still set up a plugin by adding a rule such as the one above in the custom Makefile, and listing the plugin in the `custom_robot_plugins` variable. For example, again with the KGCL lplugin:
 
 ```Make
-${ROBOT_PLUGINS_DIRECTORY}/kgcl.jar:
-    curl -L -o $@ https://github.com/gouttegd/kgcl-java/releases/download/kgcl-0.2.0/kgcl-robot-plugin-0.2.0.jar
+${ROBOT_PLUGINS_DIRECTORY}/uberon.jar:
+    curl -L -o $@ https://github.com/gouttegd/uberon-robot-plugin/releases/download/uberon-robot-plugin-0.2.0/uberon.jar
 
-custom_robot_plugins: $(ROBOT_PLUGINS_DIRECTORY)/kgcl.jar
+custom_robot_plugins: $(ROBOT_PLUGINS_DIRECTORY)/uberon.jar
 ```
 
 
@@ -46,7 +46,12 @@ Any Jar file found in the repository’s top-level `plugins` directory (if such 
 
 ### ODK-provided plugins
 
-Some plugins are already bundled with the ODK and don’t need to be declared or downloaded from somewhere else. For now, there is only one such plugin: the [SSSOM plugin](https://github.com/gouttegd/sssom-java/). More default plugins may be added in future ODK versions.
+Some plugins are already bundled with the ODK and don’t need to be declared or downloaded from somewhere else. For now, there are only two such plugins:
+
+* the [SSSOM plugin](https://github.com/gouttegd/sssom-java/);
+* the [KGCL plugin](https://github.com/gouttegd/kgcl-java/).
+
+More default plugins may be added in future ODK versions.
 
 
 ## Using a plugin a custom workflow
