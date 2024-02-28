@@ -1,9 +1,7 @@
 target/
 bin/
 semantic.cache
-tmp/*
-!tmp/.gitkeep
-!tmp/README.md
+tmp/
 venv/
 .DS_Store
 template/src/patterns/catalog-v001.xml
