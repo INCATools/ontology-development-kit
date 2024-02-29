@@ -952,7 +952,8 @@ $(TRANSLATIONSDIR)/{{ translation.id }}.synonyms.tsv:
 {% endif %}
 {% endif %}
 
-$(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv: $(TRANSLATIONS_ONTOLOGY) $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv
+$(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv: $(TRANSLATIONS_ONTOLOGY) $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv{% if translation.auto_translate %}
+	@if [ -z "$(OPENAI_API_KEY)" ]; then echo "OPENAI_API_KEY must be set as as part of the make command, e.g. sh run.sh make OPENAI_API_KEY=\"sk-123\" my_command" && exit 1; fi{% endif %}
 	$(BABELONPY) prepare-translation $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv \
 		--oak-adapter $(TRANSLATIONS_ADAPTER) \
 		--language-code {{ translation.language|default('en') }} \
@@ -962,8 +963,10 @@ $(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv: $(TRANSLATIONS
 		--include-not-translated {{ translation.include_not_translated|default('false') }} \
 		--update-translation-status {{ translation.update_translation_status|default('true') }} \
 		-o $@{% if translation.auto_translate %}
+	echo "Warning: By default, the toolkit employs LLM-mediated translations using the OpenAI API. This default may change at any time"
+	echo "Warning: Never store API keys or other secrets in Makefiles or scripts you have in version control."
 	export OPENAI_API_KEY="$(OPENAI_API_KEY)" &&\
-	$(BABELONPY) translate $(TRANSLATIONSDIR)/{{ translation.id }}-not-translated.babelon.tsv -o $(TRANSLATIONSDIR)/{{ translation.id }}-translated.babelon.tsv \
+	$(BABELONPY) translate $(TRANSLATIONSDIR)/{{ translation.id }}-not-translated.babelon.tsv -o $(TRANSLATIONSDIR)/{{ translation.id }}-translated.babelon.tsv
 	$(BABELONPY) merge $(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv $(TRANSLATIONSDIR)/{{ translation.id }}-translated.babelon.tsv -o $@
 	{%- endif %}
 
