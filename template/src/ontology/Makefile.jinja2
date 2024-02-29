@@ -126,9 +126,8 @@ reason_test: $(EDIT_PREPROCESSED)
 
 .PHONY: odkversion
 odkversion:
-	echo "ODK Makefile version: $(ODK_VERSION_MAKEFILE) (this is the version of the ODK with which this Makefile was generated, \
-        not the version of the ODK you are running)" &&\
-	echo "ROBOT version (ODK): " && $(ROBOT) --version
+	@echo "ODK Makefile $(ODK_VERSION_MAKEFILE)"
+	@odk-info --tools
 
 {%- if project.config_hash %}
 .PHONY: config_check
