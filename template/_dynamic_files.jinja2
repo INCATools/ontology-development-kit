@@ -688,6 +688,8 @@ WARN	duplicate_label_synonym
 ERROR	duplicate_label
 WARN	duplicate_scoped_synonym
 WARN	equivalent_pair
+WARN	equivalent_class_axiom_no_genus
+ERROR	illegal_use_of_built_in_vocabulary
 WARN	invalid_xref
 ERROR	label_formatting
 ERROR	label_whitespace
@@ -698,11 +700,16 @@ WARN	missing_obsolete_label
 ERROR	missing_ontology_description
 ERROR	missing_ontology_license
 ERROR	missing_ontology_title
+WARN	missing_subset_declaration
 INFO	missing_superclass
+WARN	missing_synonymtype_declaration
 ERROR	misused_obsolete_label
+ERROR	misused_replaced_by
 ERROR	multiple_definitions
 ERROR	multiple_equivalent_classes
+ERROR	multiple_equivalent_class_definitions
 ERROR	multiple_labels
+WARN	invalid_entity_uri
 {%- endif %}
 {%- if 'basic' in project.release_artefacts or project.primary_release == 'basic' %}
 ^^^ src/ontology/keeprelations.txt
