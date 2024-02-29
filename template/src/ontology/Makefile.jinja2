@@ -87,6 +87,14 @@ MAPPINGS=                   {% if project.sssom_mappingset_group is not none %}{
 MAPPING_RELEASE_FILES=      $(foreach n,$(MAPPINGS), $(MAPPINGDIR)/$(n).sssom.tsv)
 {% endif %}
 
+{%- if project.use_translations %}
+TRANSLATIONSDIR=            {% if project.babelon_translation_group is not none %}{{project.babelon_translation_group.directory|default("../translations")}}{% endif %}
+BABELONPY=                  babelon -q
+TRANSLATIONS_OWL=           {%- for translation in project.babelon_translation_group.products %}$(TRANSLATIONSDIR)/{{ translation.id }}.babelon.owl {% if translation.include_robot_template_synonyms %} $(TRANSLATIONSDIR)/{{ translation.id }}.synonyms.owl {% endif %}{% endfor %}
+TRANSLATIONS_TSV=           {%- for translation in project.babelon_translation_group.products %}$(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv {% endfor %}
+TRANSLATION_FILES=			{%- if project.babelon_translation_group is not none %}{% if project.babelon_translation_group.release_merged_translations %}$(TRANSLATIONSDIR)/$(ONT)-all.babelon.tsv $(TRANSLATIONSDIR)/$(ONT)-all.babelon.json{% endif %}{% endif %}
+{% endif %}
+
 FORMATS = $(sort {% for format in project.export_formats %} {{ format }}{% endfor %} owl)
 FORMATS_INCL_TSV = $(sort $(FORMATS) tsv)
 RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if release.startswith('custom-') %}{{ release | replace("custom-","")}}{% else %}$(ONT)-{{ release }}{% endif %} {% endfor %})
@@ -322,7 +330,8 @@ check_for_robot_updates:
 ASSETS = \
   $(IMPORT_FILES) \
   $(MAIN_FILES) \{% if project.use_dosdps %}
-  $(PATTERN_RELEASE_FILES) \{% endif %}
+  $(PATTERN_RELEASE_FILES) \{% endif %}{% if project.use_translations %}
+  $(TRANSLATION_FILES) \{% endif %}
   $(REPORT_FILES) \
   $(SUBSET_FILES) \
   $(MAPPING_FILES)
@@ -913,6 +922,83 @@ validate_mappings:
 
 {% endif %}
 
+{%- if project.use_translations %}
+# ----------------------------------------
+# Babelon Translation Files
+# ----------------------------------------
+
+{%- if project.babelon_translation_group is not none %}
+
+TRANSLATIONS_ADAPTER={{ project.babelon_translation_group.oak_adapter|default('pronto:$(ONT).obo')  }}
+TRANSLATIONS_ONTOLOGY={{ project.babelon_translation_group.translate_ontology|default('$(ONT).obo')  }}
+TRANSLATE_PREDICATES={% for predicate_id in project.babelon_translation_group.predicates|default(['IAO:0000115', 'rdfs:label'], true) %}{{ predicate_id }} {% endfor %}
+
+{% for translation in project.babelon_translation_group.products %}
+{% if translation.maintenance == "mirror" %}
+$(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv:
+	wget "{{ translation.mirror_babelon_from }}" -O $@
+{% if translation.include_robot_template_synonyms %}
+$(TRANSLATIONSDIR)/{{ translation.id }}.synonyms.tsv:
+	wget "{{ translation.mirror_synonyms_from }}" -O $@
+{% endif %}
+{% else %}
+# This mappingset is manually curated, so we only check that the file actually exists.
+$(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv:
+	test -f $@
+{% if translation.include_robot_template_synonyms %}
+$(TRANSLATIONSDIR)/{{ translation.id }}.synonyms.tsv:
+	test -f $@
+{% endif %}
+{% endif %}
+
+$(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv: $(TRANSLATIONS_ONTOLOGY) $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv{% if translation.auto_translate %}
+	@if [ -z "$(OPENAI_API_KEY)" ]; then echo "OPENAI_API_KEY must be set as as part of the make command, e.g. sh run.sh make OPENAI_API_KEY=\"sk-123\" my_command" && exit 1; fi{% endif %}
+	$(BABELONPY) prepare-translation $(TRANSLATIONSDIR)/{{ translation.id }}.babelon.tsv \
+		--oak-adapter $(TRANSLATIONS_ADAPTER) \
+		--language-code {{ translation.language|default('en') }} \
+		$(foreach n,$(TRANSLATE_PREDICATES), --field $(n)) \
+		--output-source-changed $(TRANSLATIONSDIR)/{{ translation.id }}-changed.babelon.tsv  \
+		--output-not-translated $(TRANSLATIONSDIR)/{{ translation.id }}-not-translated.babelon.tsv \
+		--include-not-translated {{ translation.include_not_translated|default('false') }} \
+		--update-translation-status {{ translation.update_translation_status|default('true') }} \
+		-o $@{% if translation.auto_translate %}
+	echo "Warning: By default, the toolkit employs LLM-mediated translations using the OpenAI API. This default may change at any time"
+	echo "Warning: Never store API keys or other secrets in Makefiles or scripts you have in version control."
+	export OPENAI_API_KEY="$(OPENAI_API_KEY)" &&\
+	$(BABELONPY) translate $(TRANSLATIONSDIR)/{{ translation.id }}-not-translated.babelon.tsv -o $(TRANSLATIONSDIR)/{{ translation.id }}-translated.babelon.tsv
+	$(BABELONPY) merge $(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv $(TRANSLATIONSDIR)/{{ translation.id }}-translated.babelon.tsv -o $@
+	{%- endif %}
+
+{% endfor %}
+{%- endif %}
+
+$(TRANSLATIONSDIR)/%.synonyms.owl: $(TRANSLATIONSDIR)/%.synonyms.tsv
+	$(ROBOT) template --template $< \
+		annotate \
+			--ontology-iri $(ONTBASE)/translations/$*.synonyms.owl \
+			-V $(ONTBASE)/releases/$(VERSION)/translations/$*.synonyms.owl \
+			--annotation owl:versionInfo $(VERSION) \
+		convert -f owl --output $@
+.PRECIOUS: $(TRANSLATIONSDIR)/%.synonyms.owl
+
+$(TRANSLATIONSDIR)/%.babelon.owl: $(TRANSLATIONSDIR)/%-preprocessed.babelon.tsv
+	$(BABELONPY) convert $(TMPDIR)/$*.babelon.tsv --output-format owl -o $@.tmp
+	$(ROBOT) merge -i $@.tmp \
+		annotate \
+			--ontology-iri $(ONTBASE)/translations/$*.babelon.owl \
+			-V $(ONTBASE)/releases/$(VERSION)/translations/$*.babelon.owl \
+			--annotation owl:versionInfo $(VERSION) \
+		convert -f owl --output $@
+	@rm $@.tmp
+.PRECIOUS: $(TRANSLATIONSDIR)/%.babelon.owl
+
+$(TRANSLATIONSDIR)/$(ONT)-all.babelon.tsv: $(TRANSLATIONS_TSV)
+	$(BABELONPY) merge $^ -o $@
+
+$(TRANSLATIONSDIR)/%.babelon.json: $(TRANSLATIONSDIR)/%.babelon.tsv
+	$(BABELONPY) convert $< --output-format json -o $@
+{% endif %}
+
 # ----------------------------------------
 # Release artefacts: export formats
 # ----------------------------------------
@@ -1061,6 +1147,14 @@ $(ONT)-simple-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED
 		reduce -r {{ project.reasoner }} \{% endif %}
 		filter --select ontology --term-file $(SIMPLESEED) --trim false \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
+{% endif -%}
+
+{% if 'international' in project.release_artefacts or project.primary_release == 'international' -%}
+# international: A variant of the primary_release, but with multi-language support.
+$(ONT)-international.owl: $(ONT).owl $(TRANSLATIONS_OWL)
+	$(ROBOT) merge $(patsubst %, -i %, $^) \
+		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
+		{% if project.release_date -%} --annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
 {% if 'basic' in project.release_artefacts or project.primary_release == 'basic' %}

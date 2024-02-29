@@ -189,7 +189,38 @@ class SSSOMMappingSetProduct(Product):
     sssom_tool_options: Optional[str] = ""
     """SSSOM toolkit options passed to the sssom command used to generate this product command"""
 
+@dataclass_json
+@dataclass
+class BabelonTranslationProduct(Product):
+    """
+    Represents a Babelon Translation
+    """
+    mirror_babelon_from: Optional[Url] = None
+    """if specified this URL is used to mirror the translation."""
     
+    mirror_synonyms_from: Optional[Url] = None
+    """if specified this URL is used to mirror the synonym template from."""
+    
+    include_robot_template_synonyms: bool = False
+    """if include_robot_template_synonyms is true, a ROBOT template synonym table is added in addition to the babelon translation table."""
+
+    babelon_tool_options: Optional[str] = ""
+    """Babelon toolkit options passed to the command used to generate this product command"""
+    
+    language: str = "en"
+    """Language tag (IANA/ISO), e.g 'en', 'fr'."""
+    
+    include_not_translated: str = "false"
+    """if include_not_translated is 'false' NOT_TRANSLATED values are removed during preprocessing."""
+    
+    update_translation_status: str = "false"
+    """if update_translation_status is 'true', translations where the source_value has changed are relegated to CANDIDATE status."""
+    
+    auto_translate: bool = False
+    """if auto_translate is true, missing values are being translated using the babelon toolkit during preprocessing. By default, the toolkit employs LLM-mediated translations using the OpenAI API. This default may change at any time."""
+
+    
+
 @dataclass_json
 @dataclass
 class ExportProduct(Product):
@@ -440,6 +471,30 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
 
 @dataclass_json
 @dataclass
+class BabelonTranslationSetGroup(JsonSchemaMixin):
+    """
+    A configuration section that consists of a list of `BabelonTranslationProduct` descriptions
+    """
+    
+    directory : Directory = "../translations"
+
+    release_merged_translations : bool = False
+    """If true, a big table and JSON file is created which contains all translations."""
+    
+    predicates : Optional[List[str]] = field(default_factory=lambda: ['IAO:0000115', 'rdfs:label'])
+    """The list of predicates that are considered during translation preparation."""
+    
+    oak_adapter: str = "pronto:$(ONT).obo"
+    """The oak adapter that should be used to process the translation tables. Should match the 'translate_ontology' field."""
+        
+    translate_ontology : str = "$(ONT).obo"
+    """The name of the ontology that should be translated. Should match the 'oak_adapter' field."""
+    
+    products : Optional[List[BabelonTranslationProduct]] = None
+
+
+@dataclass_json
+@dataclass
 class ExportGroup(ProductGroup):
     """
     A configuration section that consists of a list of `ExportProduct` descriptions
@@ -558,6 +613,9 @@ class OntologyProject(JsonSchemaMixin):
     
     use_mappings : bool = False
     """if true use SSSOM mapping files."""
+    
+    use_translations : bool = False
+    """if true enable babelon multilingual support."""
 
     use_env_file_docker : bool = False
     """if true environment variables are collected by the docker wrapper and passed into the container."""
@@ -687,6 +745,9 @@ class OntologyProject(JsonSchemaMixin):
     
     sssom_mappingset_group : Optional[SSSOMMappingSetGroup] = None
     """Block that includes information on all SSSOM mapping tables used"""
+    
+    babelon_translation_group : Optional[BabelonTranslationSetGroup] = None
+    """Block that includes information on all babelon tables used"""
 
     release_diff : bool = False
     """When enabled, a diff is generated between the current release and the new one"""
