@@ -18,7 +18,7 @@ NESTED_REFERENCE_LIMIT = 3
 
 INLINE_POSTFIX = "_inline"
 DEFINITION_PREFIX = "def_"
-CROSS_REF_TERM = "Refer to *#/definitions/"
+CROSS_REF_TERM = "Refer to *[#/definitions/"
 CROSS_REF_TERM_ALT = "Values from *"
 
 logging.basicConfig(level=logging.INFO)
@@ -36,6 +36,8 @@ def generate_plain_documentation(json_schema, descriptions):
     parser = jsonschema2md.Parser()
 
     md_lines = parser.parse_schema(json_schema)
+    # with open('out.md', 'w') as f:
+    #     f.writelines(md_lines)
 
     plain_documentation = dict()
     element_lines = []
@@ -53,7 +55,7 @@ def generate_plain_documentation(json_schema, descriptions):
 
         line = line.replace("\n", "")
 
-        if line.startswith("- **`"):
+        if line.startswith("- **`") or line.startswith("- <a id=\"definitions/"):
             if element_name:
                 plain_documentation[element_name] = element_lines
             element_name = get_element_name(is_definition, line)
@@ -70,10 +72,12 @@ def generate_plain_documentation(json_schema, descriptions):
             elif curr_indent <= prev_indent:
                 element_path.remove(element_path[-1])
                 element_path.remove(element_path[-1])
+
             inner_element_name = get_element_name(False, line)
             element_description = get_element_description(is_definition, inner_element_name, descriptions, element_name.replace(DEFINITION_PREFIX, ""))
             line = insert_description(line, element_description)
             element_path.append(inner_element_name)
+
             element_lines.append(line)
 
     plain_documentation[element_name] = element_lines
@@ -129,9 +133,11 @@ def get_element_name(is_definition, line):
     """
     Extract element name from jsonschema2md generated documentation line.
     """
-    first_occur = line.index("**")
-    second_occur = line.index("**", first_occur + 1)
-    element_name = line[first_occur + 2:second_occur]
+    element_name = ""
+    if "**" in line:
+        first_occur = line.index("**")
+        second_occur = line.index("**", first_occur + 1)
+        element_name = line[first_occur + 2:second_occur]
     if "`" in element_name:
         element_name = element_name.replace("`", "").strip()
     if is_definition:
@@ -151,7 +157,7 @@ def handle_one_of_definitions(content, plain_documentation):
             if "$ref" in one_of_defs[0]:
                 element_lines = ["- **`annotations`** *(array)*: One of the followings:"]
                 for one_of_item in one_of_defs:
-                    element_lines.append("  - **Items**: Refer to *" + one_of_item["$ref"] + "*.")
+                    element_lines.append("  - **Items**: Refer to *[" + one_of_item["$ref"] + "]*.")
                 plain_documentation[DEFINITION_PREFIX + key] = element_lines
 
 
@@ -167,14 +173,14 @@ def handle_all_of_definitions(content, plain_documentation, descriptions):
             for all_of_item in all_of_defs:
                 if "$ref" in all_of_item:
                     pass
-                    element_lines.append("  - **Items**: Refer to *" + all_of_item["$ref"] + INLINE_POSTFIX + "*.")
+                    element_lines.append("  - **Items**: Refer to *[" + all_of_item["$ref"] + INLINE_POSTFIX + "]*.")
                 elif "properties" in all_of_item:
                     for prop in all_of_item["properties"]:
                         prop_obj = all_of_item["properties"][prop]
                         if "items" in prop_obj:
                             if "$ref" in prop_obj["items"]:
                                 element_lines.append("  - **`" + prop + "`** *(" + prop_obj["type"] + ")*")
-                                element_lines.append("  - **Items**: Refer to *" + prop_obj["items"]["$ref"] + "*.")
+                                element_lines.append("  - **Items**: Refer to *[" + prop_obj["items"]["$ref"] + "]*.")
                             else:
                                 if "default" in prop_obj:
                                     default = str(prop_obj["default"])
@@ -218,6 +224,9 @@ def print_element(element, md_out, plain_doc, prefix="", nesting_list=None, in_r
             nesting_list.append(element)
             ref_term_start = line.index(CROSS_REF_TERM_ALT) + len(CROSS_REF_TERM_ALT)
             referred_element = line[ref_term_start:len(line) - 2]
+            if "]" in referred_element:
+                referred_element = referred_element.split("]")[0]
+
             if "- **Items**" not in line:
                 md_out.write("%s\n" % (indentation + line.split(CROSS_REF_TERM_ALT)[0].rstrip()))
                 # md_out.write("%s\n" % (indentation + line))
