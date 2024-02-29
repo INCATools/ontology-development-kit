@@ -21,6 +21,11 @@ case $1 in
     show_all_python_packages=1
     shift
     ;;
+
+*)
+    echo "Usage: odkinfo [--tools|--all-python|--all]"
+    exit
+    ;;
 esac
 done
 
