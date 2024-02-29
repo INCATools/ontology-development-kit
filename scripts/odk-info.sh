@@ -36,15 +36,15 @@ fi
 if [ $show_tools_version -eq 1 ]; then
     robot --version
     amm --version
-    echo "DOSDP-Tools v$(dosdp-tools --version | sed -ne 's/^.*version: //p')"
+    echo "DOSDP-Tools v$(dosdp-tools --version | sed -ne 's/^.*version: //;s/,.*$//p')"
     if type -p Konclude > /dev/null ; then
-        echo "Konclude $(Konclude -h | sed -ne 's/^.*Version //p')"
+        echo "Konclude $(Konclude -h | sed -nre 's/^.*Version (.*) - .*$/\1/p')"
     fi
     if type -p jena.version > /dev/null ; then
         echo "Jena v$(jena.version)"
     fi
     if type -p relation-graph > /dev/null ; then
-        echo "Relation-Graph v$(relation-graph --version | sed -ne 's/^.*version: //p')"
+        echo "Relation-Graph v$(relation-graph --version | sed -ne 's/^.*version: //;s/,.*$//p')"
     fi
     if type -p runoak > /dev/null ; then
         echo "Ontology Access Kit v$(python3 -m pip show oaklib | sed -ne 's/^Version: //p')"
