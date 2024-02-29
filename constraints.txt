@@ -17,7 +17,7 @@ beautifulsoup4==4.12.3
 bidict==0.23.1
 bleach==6.1.0
 bmt==1.1.4
-cachetools==5.3.2
+cachetools==5.3.3
 cattrs==23.2.3
 certifi==2024.2.2
 cffi==1.16.0
@@ -85,7 +85,7 @@ importlib-metadata==7.0.1
 importlib_resources==6.1.2
 inflection==0.5.1
 iniconfig==2.0.0
-ipykernel==6.29.2
+ipykernel==6.29.3
 ipython==8.22.1
 ipywidgets==8.1.2
 isodate==0.6.1
@@ -114,7 +114,7 @@ jsonstreams==0.6.0
 jupyter==1.0.0
 jupyter-console==6.6.3
 jupyter-events==0.9.0
-jupyter-lsp==2.2.2
+jupyter-lsp==2.2.3
 jupyter_client==8.6.0
 jupyter_core==5.7.1
 jupyter_server==2.12.5
@@ -123,14 +123,14 @@ jupyterlab==4.1.2
 jupyterlab_pygments==0.3.0
 jupyterlab_server==2.25.3
 jupyterlab_widgets==3.0.10
-keyring==24.3.0
+keyring==24.3.1
 kgcl-rdflib==0.5.0
 kgcl_schema==0.6.4
 kgx==2.2.5
 kiwisolver==1.4.5
 lark==1.1.9
 lightrdf==0.4.0
-linkml==1.7.4
+linkml==1.7.5
 linkml-dataops==0.1.0
 linkml-renderer==0.3.0
 linkml-runtime==1.7.2
@@ -139,7 +139,7 @@ lxml==5.1.0
 Markdown==3.5.2
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
-marshmallow==3.20.2
+marshmallow==3.21.0
 matplotlib==3.8.3
 matplotlib-inline==0.1.6
 matplotlib-venn==0.11.10
@@ -147,7 +147,7 @@ mdurl==0.1.2
 mergedeep==1.3.4
 mistune==3.0.2
 mkdocs==1.5.3
-mkdocs-material==9.5.11
+mkdocs-material==9.5.12
 mkdocs-material-extensions==1.3.1
 mkdocs-mermaid2-plugin==0.6.0
 mkdocs-table-reader-plugin==2.1.0
@@ -163,7 +163,7 @@ neo4j==4.4.11
 nest-asyncio==1.6.0
 networkx==3.2.1
 nh3==0.2.15
-notebook==7.1.0
+notebook==7.1.1
 notebook_shim==0.2.4
 numpy==1.26.4
 oaklib==0.5.25
@@ -173,7 +173,7 @@ ontobio==2.8.22
 ontodev-cogs==0.3.3
 ontodev-gizmos==0.3.2
 ontoportal-client==0.0.4
-openai==1.12.0
+openai==1.13.3
 openpyxl==3.1.2
 ordered-set==4.1.0
 overrides==7.7.0
@@ -206,7 +206,7 @@ py==1.11.0
 pyasn1==0.5.1
 pyasn1-modules==0.3.0
 pycparser==2.21
-pydantic==2.6.2
+pydantic==2.6.3
 pydantic_core==2.16.3
 pydotplus==2.0.2
 PyGithub==2.2.0
@@ -238,7 +238,7 @@ ratelimit==2.2.1
 rdflib==7.0.0
 rdflib-jsonld==0.6.1
 rdflib-shim==1.0.3
-readme-renderer==42.0
+readme_renderer==43.0
 recommonmark==0.7.1
 referencing==0.33.0
 regex==2023.12.25
@@ -250,7 +250,7 @@ rfc3339-validator==0.1.4
 rfc3986==2.0.0
 rfc3986-validator==0.1.1
 rfc3987==1.3.8
-rich==13.7.0
+rich==13.7.1
 rpds-py==0.18.0
 rsa==4.9
 ruamel.yaml==0.18.6
