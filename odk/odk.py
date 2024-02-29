@@ -484,6 +484,12 @@ class BabelonTranslationSetGroup(JsonSchemaMixin):
     predicates : Optional[List[str]] = field(default_factory=lambda: ['IAO:0000115', 'rdfs:label'])
     """The list of predicates that are considered during translation preparation."""
     
+    oak_adapter: str = "pronto:$(ONT).obo"
+    """The oak adapter that should be used to process the translation tables. Should match the 'translate_ontology' field."""
+        
+    translate_ontology : str = "$(ONT).obo"
+    """The name of the ontology that should be translated. Should match the 'oak_adapter' field."""
+    
     products : Optional[List[BabelonTranslationProduct]] = None
 
 

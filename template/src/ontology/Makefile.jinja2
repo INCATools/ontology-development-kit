@@ -930,8 +930,8 @@ validate_mappings:
 
 {%- if project.babelon_translation_group is not none %}
 
-TRANSLATIONS_ADAPTER={{ project.babelon_translation_group.default_adapter|default('pronto:$(ONT).obo')  }}
-TRANSLATIONS_ONTOLOGY={{ project.babelon_translation_group.update_ontology|default('$(ONT).obo')  }}
+TRANSLATIONS_ADAPTER={{ project.babelon_translation_group.oak_adapter|default('pronto:$(ONT).obo')  }}
+TRANSLATIONS_ONTOLOGY={{ project.babelon_translation_group.translate_ontology|default('$(ONT).obo')  }}
 TRANSLATE_PREDICATES={% for predicate_id in project.babelon_translation_group.predicates|default(['IAO:0000115', 'rdfs:label'], true) %}{{ predicate_id }} {% endfor %}
 
 {% for translation in project.babelon_translation_group.products %}
