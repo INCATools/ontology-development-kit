@@ -92,7 +92,7 @@ FORMATS_INCL_TSV = $(sort $(FORMATS) tsv)
 RELEASE_ARTEFACTS = $(sort {% for release in project.release_artefacts %}{% if release.startswith('custom-') %}{{ release | replace("custom-","")}}{% else %}$(ONT)-{{ release }}{% endif %} {% endfor %})
 
 ifeq ($(ODK_DEBUG),yes)
-ODK_DEBUG_FILE = $(TMPDIR)/debug.log
+ODK_DEBUG_FILE = debug.log
 SHELL = $(SCRIPTSDIR)/run-command.sh
 endif
 
@@ -106,7 +106,7 @@ endif
 all: all_odk
 
 .PHONY: all_odk
-all_odk: odkversion{% if project.config_hash %} config_check{% endif %} test all_assets{% if project.release_diff %} release_diff{% endif %}
+all_odk: odkversion{% if project.config_hash %} config_check{% endif %} test custom_reports all_assets{% if project.release_diff %} release_diff{% endif %}
 
 .PHONY: test
 test: odkversion {% if project.use_dosdps %}dosdp_validation {% endif %}reason_test sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile|default(true) %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
@@ -303,6 +303,18 @@ $(REPORTDIR)/$(SRC)-obo-report.tsv: $(SRCMERGED) | $(REPORTDIR)
 
 $(REPORTDIR)/%-obo-report.tsv: % | $(REPORTDIR)
 	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) {% if project.robot_report.use_base_iris %}{% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} {% endif %}{% endif -%} --print 5 -o $@
+
+check_for_robot_updates:
+{%- if project.robot_report.custom_profile %}	
+	@cut -f2 "/tools/robot_report_profile.txt" | sort > $(TMPDIR)/sorted_tsv2.txt
+	@cut -f2 "$(ROBOT_PROFILE)" | sort > $(TMPDIR)/sorted_tsv1.txt
+	@comm -23 $(TMPDIR)/sorted_tsv2.txt $(TMPDIR)/sorted_tsv1.txt > $(TMPDIR)/missing.txt
+	@echo "Missing tests:"
+	@cat $(TMPDIR)/missing.txt
+	@rm $(TMPDIR)/sorted_tsv1.txt $(TMPDIR)/sorted_tsv2.txt $(TMPDIR)/missing.txt $(TMPDIR)/report_profile_robot.txt
+{%- else %}
+	echo "You are not using a custom profile, so you are getting the joy of the latest ROBOT report!"
+{% endif %}
 
 # ----------------------------------------
 # Release assets
@@ -515,7 +527,7 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 	if [ $(IMP) = true ]{% if ont.is_large %} && [ $(IMP_LARGE) = true ]{% endif %}; then $(ROBOT) {% if ont.is_large %}extract -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% else %}query -i $< --update ../sparql/preprocess-module.ru \
     extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% endif %}
     remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
-		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement \
+		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) {% if ont.annotation_properties is defined %}{% for p in ont.annotation_properties %}--term {{ p }} {% endfor %}{% endif %} -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru --update ../sparql/postprocess-module.ru \
 		$(ANNOTATE_CONVERT_FILE); fi
 {% elif ('mirror' == ont.module_type) or (ont.module_type is none and 'mirror' == project.import_group.module_type) %}
@@ -528,7 +540,7 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
     extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \{% endif %}
 		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru \
-		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
+		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) {% if ont.annotation_properties is defined %}{% for p in ont.annotation_properties %}--term {{ p }} {% endfor %}{% endif %} -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
 		$(ANNOTATE_CONVERT_FILE); fi
 {% elif ('custom' == ont.module_type) or (ont.module_type is none and 'custom' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% elif 'no_mirror' != ont.mirror_type %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %}
@@ -988,7 +1000,7 @@ merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}
 # base: A version of the ontology that does not include any externally imported axioms.
 $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
-	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
+	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
 	materialize {% for iri in project.release_materialize_object_properties %}--term {{iri}} {% endfor %} \{% endif %}{% endif %}
 	relax \{% if project.release_use_reasoner %}
 	reduce -r {{ project.reasoner }} \{% endif %}
@@ -1031,7 +1043,7 @@ $(ONT)-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 #	remove --select imports --trim false
 $(ONT)-simple.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% endif %}
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms }} \{% endif %}
 		relax \
 		remove --axioms equivalent \
 		relax \
@@ -1059,7 +1071,7 @@ $(ONT)-simple-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED
 # removes any axioms that contains one of the ops that not in the whitelist file
 $(ONT)-basic.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% endif %}
+		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms }} \{% endif %}
 		relax \
 		remove --axioms equivalent \
 		remove --axioms disjoint \
@@ -1192,14 +1204,17 @@ update_docs:
 	mkdocs gh-deploy --config-file ../../mkdocs.yaml
 {%- endif %}
 
-# Note to future generations: prepending ./ is a safety measure to ensure that 
-# the environment does not malicously set `CLEANFILES` to `\`.
+# Note to future generations: computing the real path relative to the
+# current directory is a way to ensure we only clean up directories that
+# are located below the current directory, regardless of the contents of
+# the *DIR variables.
 .PHONY: clean
 clean:{% if project.use_dosdps %}
 	$(MAKE) pattern_clean{%- endif %}
-	[ -n "$(MIRRORDIR)" ] && [ $(MIRRORDIR) != "." ] && [ $(MIRRORDIR) != "/" ] && [ $(MIRRORDIR) != ".." ] && [ -d ./$(MIRRORDIR) ] && rm -rf ./$(MIRRORDIR)/*
-	[ -n "$(TMPDIR)" ] && [ $(TMPDIR) != "." ] && [ $(TMPDIR) != "/" ] && [ $(TMPDIR) != ".." ] && [ -d ./$(TMPDIR) ] && rm -rf ./$(TMPDIR)/*
-	[ -n "$(UPDATEREPODIR)" ] && [ $(UPDATEREPODIR) != "." ] && [ $(UPDATEREPODIR) != "/" ] && [ $(UPDATEREPODIR) != ".." ] && [ -d ./$(UPDATEREPODIR) ] && rm -rf ./$(UPDATEREPODIR)/*
+	for dir in $(MIRRORDIR) $(TMPDIR) $(UPDATEREPODIR) ; do      \
+		reldir=$$(realpath --relative-to=$$(pwd) $$dir) ;    \
+		case $$reldir in .*|"") ;; *) rm -rf $$reldir/* ;; esac \
+	done
 	rm -f $(CLEANFILES)
 
 .PHONY: help

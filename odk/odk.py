@@ -363,7 +363,7 @@ class ReportConfig(JsonSchemaMixin):
         The custom sparql checks available are: 'owldef-self-reference', 'redundant-subClassOf', 'taxon-range', 'iri-range', 'iri-range-advanced', 'label-with-iri', 'multiple-replaced_by', 'term-tracker-uri', 'illegal-date', 'dc-properties'.
     """
 
-    custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
+    custom_sparql_exports : Optional[List[str]] = field(default_factory=lambda: ['basic-report', 'edges', 'xrefs', 'obsoletes', 'synonyms'])
     """Chose which custom reports to generate. The related sparql query must be named CHECKNAME.sparql, and be placed in the src/sparql directory."""
 
     sparql_test_on: List[str] = field(default_factory=lambda: ['edit'])
@@ -609,6 +609,10 @@ class OntologyProject(JsonSchemaMixin):
     """If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
     reason (the classification/subclassOf hierarchy computaton); materialize (the materialisation of simple existential/
     object property restrictions); reduce (the removal of redundant subclassOf axioms)."""
+    
+    release_annotate_inferred_axioms : bool = False
+    """If set to True, axioms that are inferred during the reasoning process are annotated accordingly, 
+    see https://robot.obolibrary.org/reason."""
 
     release_materialize_object_properties : List[str] = None
     """Define which object properties to materialise at release time."""
@@ -866,16 +870,27 @@ def export_project(config, output):
     save_project_yaml(project, output)
     
 @cli.command()
-def dump_schema():
+@click.option('-c', '--class_name', type=str, default="OntologyProject")
+def dump_schema(class_name):
     """
     Dumps the python schema as json schema.
 
     Note: this is intended primarily at odk developers
     """
     import json
-    print(json.dumps(OntologyProject.json_schema(), sort_keys=True, indent=4))
-    print(json.dumps(ImportProduct.json_schema(), sort_keys=True, indent=4))
-    print(json.dumps(PatternPipelineProduct.json_schema(), sort_keys=True, indent=4))
+    if class_name=="all":
+        # This allows us to dump all schemas at once, but the result is not legal JSON and only
+        # useful for generating docs
+        classes = ['OntologyProject', 'ImportProduct', 'PatternPipelineGroup']
+        #classes = ['OntologyProject', 'ImportGroup', 'ImportProduct', 'SubsetGroup', 
+        #           'SubsetProduct', 'ReportConfig', 'ExportGroup', 'ExportProduct', 
+        #           'ProductGroup', 'Product', 'ComponentGroup', 'ComponentProduct', 
+        #           'PatternPipelineGroup', 'PatternPipelineProduct', 'SSSOMMappingSetGroup', 'SSSOMMappingSetProduct']
+        for k in classes:
+            print(json.dumps(globals()[k].json_schema(), sort_keys=True, indent=4))
+    else:
+        clazz = globals()[class_name]  # Get the class object from the globals dictionary
+        print(json.dumps(clazz.json_schema(), sort_keys=True, indent=4))
 
 
 @cli.command()
