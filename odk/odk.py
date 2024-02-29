@@ -217,7 +217,7 @@ class BabelonTranslationProduct(Product):
     """if update_translation_status is 'true', translations where the source_value has changed are relegated to CANDIDATE status."""
     
     auto_translate: bool = False
-    """if auto_translate is true, missing values are being translated during preprocessing."""
+    """if auto_translate is true, missing values are being translated using the babelon toolkit during preprocessing. By default, the toolkit employs LLM-mediated translations using the OpenAI API. This default may change at any time."""
 
     
 
@@ -484,6 +484,12 @@ class BabelonTranslationSetGroup(JsonSchemaMixin):
     predicates : Optional[List[str]] = field(default_factory=lambda: ['IAO:0000115', 'rdfs:label'])
     """The list of predicates that are considered during translation preparation."""
     
+    oak_adapter: str = "pronto:$(ONT).obo"
+    """The oak adapter that should be used to process the translation tables. Should match the 'translate_ontology' field."""
+        
+    translate_ontology : str = "$(ONT).obo"
+    """The name of the ontology that should be translated. Should match the 'oak_adapter' field."""
+    
     products : Optional[List[BabelonTranslationProduct]] = None
 
 
@@ -559,6 +565,9 @@ class OntologyProject(JsonSchemaMixin):
 
     edit_format : str = "owl"
     """Format in which the edit file is managed, either obo or owl"""
+
+    run_as_root: bool = False
+    """if true, all commands will be executed into the container under the identity of the super-user. Use this if you have custom workflows that require admin rights (e.g. to install Debian packages not provided in the ODK)."""
     
     robot_version: Optional[str] = None
     """Only set this if you want to pin to a specific robot version"""

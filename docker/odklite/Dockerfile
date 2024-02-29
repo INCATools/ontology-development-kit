@@ -88,6 +88,11 @@ ENTRYPOINT ["/usr/local/sbin/odkuser-entrypoint.sh"]
 # secure_path is enabled by default in Debian/Ubuntu, disable it
 RUN sed -i '/secure_path/d' /etc/sudoers
 
+# Install a script that provides information about the ODK and its tools
+COPY scripts/odk-info.sh /tools/odk-info
+RUN chmod 755 /tools/odk-info
+RUN sed -i s/@@ODK_IMAGE_VERSION@@/$ODK_VERSION/ /tools/odk-info
+
 # Install the ODK itself.
 COPY odk/make-release-assets.py /tools
 COPY odk/odk.py /tools
