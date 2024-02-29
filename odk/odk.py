@@ -870,16 +870,27 @@ def export_project(config, output):
     save_project_yaml(project, output)
     
 @cli.command()
-def dump_schema():
+@click.option('-c', '--class_name', type=str, default="OntologyProject")
+def dump_schema(class_name):
     """
     Dumps the python schema as json schema.
 
     Note: this is intended primarily at odk developers
     """
     import json
-    print(json.dumps(OntologyProject.json_schema(), sort_keys=True, indent=4))
-    print(json.dumps(ImportProduct.json_schema(), sort_keys=True, indent=4))
-    print(json.dumps(PatternPipelineProduct.json_schema(), sort_keys=True, indent=4))
+    if class_name=="all":
+        # This allows us to dump all schemas at once, but the result is not legal JSON and only
+        # useful for generating docs
+        classes = ['OntologyProject', 'ImportProduct', 'PatternPipelineGroup']
+        #classes = ['OntologyProject', 'ImportGroup', 'ImportProduct', 'SubsetGroup', 
+        #           'SubsetProduct', 'ReportConfig', 'ExportGroup', 'ExportProduct', 
+        #           'ProductGroup', 'Product', 'ComponentGroup', 'ComponentProduct', 
+        #           'PatternPipelineGroup', 'PatternPipelineProduct', 'SSSOMMappingSetGroup', 'SSSOMMappingSetProduct']
+        for k in classes:
+            print(json.dumps(globals()[k].json_schema(), sort_keys=True, indent=4))
+    else:
+        clazz = globals()[class_name]  # Get the class object from the globals dictionary
+        print(json.dumps(clazz.json_schema(), sort_keys=True, indent=4))
 
 
 @cli.command()
