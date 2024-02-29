@@ -510,6 +510,9 @@ class OntologyProject(JsonSchemaMixin):
 
     edit_format : str = "owl"
     """Format in which the edit file is managed, either obo or owl"""
+
+    run_as_root: bool = False
+    """if true, all commands will be executed into the container under the identity of the super-user. Use this if you have custom workflows that require admin rights (e.g. to install Debian packages not provided in the ODK)."""
     
     robot_version: Optional[str] = None
     """Only set this if you want to pin to a specific robot version"""
