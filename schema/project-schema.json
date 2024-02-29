@@ -59,6 +59,7 @@
                     "type": "string"
                 },
                 "sssom_tool_options": {
+                    "default": "",
                     "type": "string"
                 },
                 "template_options": {
@@ -98,6 +99,10 @@
                 },
                 {
                     "properties": {
+                        "annotate_defined_by": {
+                            "default": false,
+                            "type": "boolean"
+                        },
                         "annotation_properties": {
                             "default": [
                                 "rdfs:label",
@@ -107,6 +112,10 @@
                                 "type": "string"
                             },
                             "type": "array"
+                        },
+                        "base_merge_drop_equivalent_class_axioms": {
+                            "default": true,
+                            "type": "boolean"
                         },
                         "directory": {
                             "default": "imports/",
@@ -353,7 +362,8 @@
                         "source_file": {
                             "type": "string"
                         },
-                        "sssom_tools_options": {
+                        "sssom_tool_options": {
+                            "default": "",
                             "type": "string"
                         }
                     },
@@ -466,7 +476,7 @@
             "type": "string"
         },
         "ensure_valid_rdfxml": {
-            "default": false,
+            "default": true,
             "type": "boolean"
         },
         "exclude_tautologies": {
@@ -484,6 +494,10 @@
             "type": "array"
         },
         "export_project_yaml": {
+            "default": false,
+            "type": "boolean"
+        },
+        "extra_rdfxml_checks": {
             "default": false,
             "type": "boolean"
         },
@@ -575,6 +589,12 @@
             "default": false,
             "type": "boolean"
         },
+        "release_materialize_object_properties": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
         "release_use_reasoner": {
             "default": true,
             "type": "boolean"
@@ -598,7 +618,8 @@
                     "owldef-self-reference",
                     "iri-range",
                     "label-with-iri",
-                    "multiple-replaced_by"
+                    "multiple-replaced_by",
+                    "dc-properties"
                 ],
                 "custom_sparql_exports": [
                     "basic-report",
@@ -694,163 +715,4 @@
         }
     },
     "type": "object"
-}
-{
-    "$schema": "http://json-schema.org/draft-06/schema#",
-    "allOf": [
-        {
-            "$ref": "#/definitions/Product"
-        },
-        {
-            "properties": {
-                "annotation_properties": {
-                    "default": [
-                        "rdfs:label",
-                        "IAO:0000115"
-                    ],
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "base_iris": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "is_large": {
-                    "default": false,
-                    "type": "boolean"
-                },
-                "make_base": {
-                    "default": false,
-                    "type": "boolean"
-                },
-                "mirror_from": {
-                    "type": "string"
-                },
-                "mirror_type": {
-                    "type": "string"
-                },
-                "module_type": {
-                    "type": "string"
-                },
-                "module_type_slme": {
-                    "default": "BOT",
-                    "type": "string"
-                },
-                "slme_individuals": {
-                    "default": "include",
-                    "type": "string"
-                },
-                "use_base": {
-                    "default": false,
-                    "type": "boolean"
-                },
-                "use_gzipped": {
-                    "default": false,
-                    "type": "boolean"
-                }
-            },
-            "type": "object"
-        }
-    ],
-    "definitions": {
-        "CommandSettings": {
-            "description": "\n    Settings to be provided to a tool like ROBOT\n    ",
-            "properties": {
-                "memory_gb": {
-                    "type": "integer"
-                }
-            },
-            "type": "object"
-        },
-        "Product": {
-            "description": "\n    abstract base class for all products.\n\n    Here, a product is something that is produced by an ontology workflow.\n    A product can be manifested in different formats.\n    \n    For example, goslim_prok is a subset (aka slim) product from GO,\n    this can be manifest as obo, owl, json\n    ",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "maintenance": {
-                    "default": "manual",
-                    "type": "string"
-                },
-                "rebuild_if_source_changes": {
-                    "default": true,
-                    "type": "boolean"
-                },
-                "robot_settings": {
-                    "$ref": "#/definitions/CommandSettings"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "type": "object"
-        }
-    },
-    "description": "\n    Represents an individual import\n    Examples: 'uberon' (in go)\n    Imports are typically built from an upstream source, but this can be configured\n    "
-}
-{
-    "$schema": "http://json-schema.org/draft-06/schema#",
-    "allOf": [
-        {
-            "$ref": "#/definitions/Product"
-        },
-        {
-            "properties": {
-                "dosdp_tools_options": {
-                    "default": "--obo-prefixes=true",
-                    "type": "string"
-                },
-                "ontology": {
-                    "default": "$(SRC)",
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        }
-    ],
-    "definitions": {
-        "CommandSettings": {
-            "description": "\n    Settings to be provided to a tool like ROBOT\n    ",
-            "properties": {
-                "memory_gb": {
-                    "type": "integer"
-                }
-            },
-            "type": "object"
-        },
-        "Product": {
-            "description": "\n    abstract base class for all products.\n\n    Here, a product is something that is produced by an ontology workflow.\n    A product can be manifested in different formats.\n    \n    For example, goslim_prok is a subset (aka slim) product from GO,\n    this can be manifest as obo, owl, json\n    ",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "maintenance": {
-                    "default": "manual",
-                    "type": "string"
-                },
-                "rebuild_if_source_changes": {
-                    "default": true,
-                    "type": "boolean"
-                },
-                "robot_settings": {
-                    "$ref": "#/definitions/CommandSettings"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "type": "object"
-        }
-    },
-    "description": "\n    Represents an individual pattern pipeline\n    Examples: manual curation pipeline, auto curation pipeline\n    Each pipeline gets their own specific directory\n    "
 }
