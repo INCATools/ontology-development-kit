@@ -217,7 +217,7 @@ class BabelonTranslationProduct(Product):
     """if update_translation_status is 'true', translations where the source_value has changed are relegated to CANDIDATE status."""
     
     auto_translate: bool = False
-    """if auto_translate is true, missing values are being translated during preprocessing."""
+    """if auto_translate is true, missing values are being translated using the babelon toolkit during preprocessing. By default, the toolkit employs LLM-mediated translations using the OpenAI API. This default may change at any time."""
 
     
 
