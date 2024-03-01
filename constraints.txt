@@ -11,7 +11,7 @@ asttokens==2.4.1
 async-lru==2.0.4
 attrs==23.2.0
 Babel==2.14.0
-babelon==0.2.4
+babelon==0.2.5
 bcp47==0.0.4
 beautifulsoup4==4.12.3
 bidict==0.23.1
@@ -64,7 +64,7 @@ funowl==0.2.3
 ghp-import==2.1.0
 google==3.0.0
 google-api-core==2.17.1
-google-api-python-client==2.119.0
+google-api-python-client==2.120.0
 google-auth==2.28.1
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.0
@@ -223,7 +223,7 @@ pyspellchecker==0.8.1
 pystow==0.5.3
 pytest==8.0.2
 pytest-logging==2015.11.4
-python-dateutil==2.8.2
+python-dateutil==2.9.0
 python-dotenv==1.0.1
 python-json-logger==2.0.7
 python-ulid==2.2.0
