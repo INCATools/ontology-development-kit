@@ -9,7 +9,7 @@ For more detailed changes see:
 
 - All processes within the ODK container now **runs under the identity of an (unprivileged) user by default**. This fixes the issue of generated files being owned by the superuser, when the Docker daemon itself runs as the superuser (as is the case by default on most GNU/Linux systems). See [PR1](https://github.com/INCATools/ontology-development-kit/pull/769), [PR2](https://github.com/INCATools/ontology-development-kit/pull/900), [PR3](https://github.com/INCATools/ontology-development-kit/pull/905)
     - **Consequences:** Some workflows that require superuser rights may not work anymore as expected.
-    - **Mitigation:** If you have a workflow that requires being run as a superuser (for example, if you need to install extra Debian/Ubuntu packages via `apt-get`), set the environment variable `ODK_USER_ID` to 0.
+    - **Mitigation:** If you have a workflow that requires being run as a superuser (for example, if you need to install extra Debian/Ubuntu packages via `apt-get`), set the environment variable `ODK_USER_ID` to 0 when running that workflow or, to always run all workflows as a superuser (as was the case in previous ODK versions), set the configuration parameter `run_as_root` to `True` before updating your repository.
 - Change the definition of "base release" [PR](https://github.com/INCATools/ontology-development-kit/pull/810).
     - **Consequence:** The base file now does not only contain the editors axioms in their raw form, but the axioms "as intended by the ontology developer", for example, including inferences. For the base-specification see [here](https://oboacademy.github.io/obook/reference/base-specification/).
     - **Mitigation:** If you want a release that corresponds exactly to the old base file, use `baselite` instead.
@@ -32,7 +32,7 @@ For more detailed changes see:
 - Added table-reader plugin for mkdocs [PR](https://github.com/INCATools/ontology-development-kit/pull/861)
 - Added Perl module Business::ISBN. [PR](https://github.com/INCATools/ontology-development-kit/pull/886)
 - Updated Apache Jena, Soufflé, Fastobo-validator, Ammonite
-- Added SSSOM-Java to `odkfull` [PR](https://github.com/INCATools/ontology-development-kit/pull/958)
+- Added SSSOM-Java ([PR](https://github.com/INCATools/ontology-development-kit/pull/958)) and KGCL-Java ([PR](https://github.com/INCATools/ontology-development-kit/pull/995)) to `odkfull`.
 
 ## New configuration options
 
