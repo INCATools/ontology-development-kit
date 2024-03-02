@@ -793,7 +793,7 @@ jobs:
       - name: Run ontology QC checks
         env:
           DEFAULT_BRANCH: {{ project.git_main_branch }}
-        run: cd src/ontology && make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false
+        run: cd src/ontology && make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false MIR=false
 {% endif -%}{% if 'gitlab-ci' in project.ci %}
 ^^^ .gitlab-ci.yml
 # Basic ODK workflow to run ontology QC checks
