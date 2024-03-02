@@ -32,7 +32,7 @@ For more detailed changes see:
 - Added table-reader plugin for mkdocs [PR](https://github.com/INCATools/ontology-development-kit/pull/861)
 - Added Perl module Business::ISBN. [PR](https://github.com/INCATools/ontology-development-kit/pull/886)
 - Updated Apache Jena, Soufflé, Fastobo-validator, Ammonite
-- Added SSSOM-Java to `odkfull` [PR](https://github.com/INCATools/ontology-development-kit/pull/958)
+- Added SSSOM-Java ([PR](https://github.com/INCATools/ontology-development-kit/pull/958)) and KGCL-Java ([PR](https://github.com/INCATools/ontology-development-kit/pull/995)) to `odkfull`.
 
 ## New configuration options
 
