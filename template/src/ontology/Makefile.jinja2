@@ -960,9 +960,9 @@ $(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv: $(TRANSLATIONS
 		$(foreach n,$(TRANSLATE_PREDICATES), --field $(n)) \
 		--output-source-changed $(TRANSLATIONSDIR)/{{ translation.id }}-changed.babelon.tsv  \
 		--output-not-translated $(TRANSLATIONSDIR)/{{ translation.id }}-not-translated.babelon.tsv \
-		--include-not-translated {{ translation.include_not_translated|default('false') }} \
-		--update-translation-status {{ translation.update_translation_status|default('true') }} \
-		--drop-unknown-columns {{ translation.drop_unknown_columns|default('true') }} \
+		--include-not-translated {{ translation.include_not_translated|default('false')|lower }} \
+		--update-translation-status {{ translation.update_translation_status|default('true')|lower }} \
+		--drop-unknown-columns {{ translation.drop_unknown_columns|default('true')|lower }} \
 		-o $@{% if translation.auto_translate %}
 	echo "Warning: By default, the toolkit employs LLM-mediated translations using the OpenAI API. This default may change at any time"
 	echo "Warning: Never store API keys or other secrets in Makefiles or scripts you have in version control."
