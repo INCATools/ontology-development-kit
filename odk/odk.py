@@ -210,11 +210,14 @@ class BabelonTranslationProduct(Product):
     language: str = "en"
     """Language tag (IANA/ISO), e.g 'en', 'fr'."""
     
-    include_not_translated: str = "false"
+    include_not_translated: bool = False
     """if include_not_translated is 'false' NOT_TRANSLATED values are removed during preprocessing."""
     
-    update_translation_status: str = "false"
+    update_translation_status: bool = True
     """if update_translation_status is 'true', translations where the source_value has changed are relegated to CANDIDATE status."""
+    
+    drop_unknown_columns: bool = True
+    """if drop_unknown_columns is 'true' columns that are not part of the babelon standard are removed during preprocessing."""
     
     auto_translate: bool = False
     """if auto_translate is true, missing values are being translated using the babelon toolkit during preprocessing. By default, the toolkit employs LLM-mediated translations using the OpenAI API. This default may change at any time."""
