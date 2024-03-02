@@ -338,8 +338,8 @@ class ImportGroup(ProductGroup):
     use_base_merging: bool = False
     """If set to true, mirrors will be merged before determining a suitable seed. This can be a quite costly process."""
     
-    base_merge_drop_equivalent_class_axioms: bool = True
-    """If set to true, equivalent class axioms will be removed before extracting a module with the base-merging process."""
+    base_merge_drop_equivalent_class_axioms: bool = False
+    """If set to true, equivalent class axioms will be removed before extracting a module with the base-merging process. Do not activate this feature unless you are positive that your base merging process only leverages true base files, with asserted subclass axioms."""
 
     exclude_iri_patterns: Optional[List[str]] = None
     """List of IRI patterns. If set, IRIs matching and IRI pattern will be removed from the import."""
