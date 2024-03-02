@@ -7,15 +7,15 @@ For more detailed changes see:
 
 ## Highlights (Read this!)
 
-- All processes within the ODK container now **runs under the identity of an (unprivileged) user by default**. This fixes the issue of generated files being owned by the superuser, when the Docker daemon itself runs as the superuser (as is the case by default on most GNU/Linux systems). See [PR1](https://github.com/INCATools/ontology-development-kit/pull/769), [PR2](https://github.com/INCATools/ontology-development-kit/pull/900), [PR3](https://github.com/INCATools/ontology-development-kit/pull/905)
+- All processes within the ODK container now **runs under the identity of an (unprivileged) user by default**. This fixes the issue of generated files being owned by the superuser, when the Docker daemon itself runs as the superuser (as is the case by default on most GNU/Linux systems). See [PR1](https://github.com/INCATools/ontology-development-kit/pull/769), [PR2](https://github.com/INCATools/ontology-development-kit/pull/900), [PR3](https://github.com/INCATools/ontology-development-kit/pull/905).
     - **Consequences:** Some workflows that require superuser rights may not work anymore as expected.
     - **Mitigation:** If you have a workflow that requires being run as a superuser (for example, if you need to install extra Debian/Ubuntu packages via `apt-get`), set the environment variable `ODK_USER_ID` to 0 when running that workflow or, to always run all workflows as a superuser (as was the case in previous ODK versions), set the configuration parameter `run_as_root` to `True` before updating your repository.
-- Change the definition of "base release" [PR](https://github.com/INCATools/ontology-development-kit/pull/810).
+- Change the definition of **"base release"**. See [PR](https://github.com/INCATools/ontology-development-kit/pull/810).
     - **Consequence:** The base file now does not only contain the editors axioms in their raw form, but the axioms "as intended by the ontology developer", for example, including inferences. For the base-specification see [here](https://oboacademy.github.io/obook/reference/base-specification/).
     - **Mitigation:** If you want a release that corresponds exactly to the old base file, use `baselite` instead.
-- Allow refreshing the mirrors (externally downloaded ontologies) under IMP=false [PR](https://github.com/INCATools/ontology-development-kit/pull/973). 
+- Allow refreshing the mirrors (externally downloaded ontologies) under `IMP=false`. See [PR](https://github.com/INCATools/ontology-development-kit/pull/973).
     - **Consequence**: you now _cannot rely on `IMP=false` anymore_ if you want to avoid refreshing mirrors as well - you need to use `IMP=false MIR=false` instead!
-- Make qc.yml ODK managed by default, so it is actually being updated along with the rest of the files [PR](https://github.com/INCATools/ontology-development-kit/pull/990).
+- Make qc.yml ODK managed by default, so it is actually being updated along with the rest of the files. See [PR](https://github.com/INCATools/ontology-development-kit/pull/990).
     - **Consequence:** If you have overwritten that workflow with custom content, you have to follow the mitigation strategies.
     - **Mitigation:** (1) migrate the custom content to a differently named workflow or (2) deactivate syncning of that workflow manually by adding a `workflows` section to your ODK config.
 - Generate `custom_reports` during release process [PR](https://github.com/INCATools/ontology-development-kit/pull/997).
