@@ -5,6 +5,7 @@ linkml
 babelon
 dosdp
 semsql
+semsimian
 
 # Secondary dependencies
 click
