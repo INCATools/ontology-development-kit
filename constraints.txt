@@ -261,6 +261,7 @@ ruamel.yaml.clib==0.2.8
 scipy==1.12.0
 seaborn==0.13.2
 SecretStorage==3.3.3
+semsimian==0.2.15
 semsql==0.3.3
 Send2Trash==1.8.2
 ShExJSG==0.8.2
