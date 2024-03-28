@@ -71,11 +71,11 @@ google-auth-oauthlib==1.2.0
 googleapis-common-protos==1.63.0
 graphviz==0.20.3
 greenlet==3.0.3
-gspread==6.0.2
+gspread==6.1.0
 gspread-formatting==1.1.2
 h11==0.14.0
 hbreader==0.9.1
-httpcore==1.0.4
+httpcore==1.0.5
 httplib2==0.22.0
 httpx==0.27.0
 idna==3.6
@@ -85,7 +85,7 @@ importlib_metadata==7.1.0
 importlib_resources==6.4.0
 inflection==0.5.1
 iniconfig==2.0.0
-ipykernel==6.29.3
+ipykernel==6.29.4
 ipython==8.22.2
 ipywidgets==8.1.2
 isodate==0.6.1
@@ -132,10 +132,10 @@ kgx==2.3.1
 kiwisolver==1.4.5
 lark==1.1.9
 lightrdf==0.4.0
-linkml==1.7.6
+linkml==1.7.7
 linkml-dataops==0.1.0
 linkml-renderer==0.3.0
-linkml-runtime==1.7.4
+linkml-runtime==1.7.5
 llm==0.13.1
 lxml==5.1.0
 Markdown==3.6
@@ -168,7 +168,7 @@ nh3==0.2.17
 notebook==7.1.2
 notebook_shim==0.2.4
 numpy==1.26.4
-oaklib==0.5.32
+oaklib==0.5.33
 oauthlib==3.2.2
 ols-client==0.1.4
 ontobio==2.8.22
@@ -205,8 +205,8 @@ protobuf==4.25.3
 psutil==5.9.8
 ptyprocess==0.7.0
 pure-eval==0.2.2
-pyasn1==0.5.1
-pyasn1-modules==0.3.0
+pyasn1==0.6.0
+pyasn1_modules==0.4.0
 pycparser==2.21
 pydantic==2.6.4
 pydantic_core==2.16.3
