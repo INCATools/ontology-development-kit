@@ -35,6 +35,7 @@ ontodev-cogs
 ontodev-gizmos
 mkdocs
 mkdocs-material
+mkdocs-mermaid2-plugin
 mkdocs-table-reader-plugin
 funowl
 kgx
