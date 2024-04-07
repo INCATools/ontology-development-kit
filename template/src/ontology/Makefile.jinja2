@@ -182,6 +182,7 @@ $(ROBOT_PLUGINS_DIRECTORY)/%.jar:
 # Specific rules for supplementary plugins defined in configuration
 {% if project.robot_plugins is defined %}{% for plugin in project.robot_plugins.plugins %}
 $(ROBOT_PLUGINS_DIRECTORY)/{{ plugin.name }}.jar:
+	@mkdir -p $(ROBOT_PLUGINS_DIRECTORY)
 {%- if plugin.mirror_from %}
 	curl -L -o $@ {{ plugin.mirror_from }}
 {%- else %}
