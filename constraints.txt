@@ -196,7 +196,7 @@ plotly==5.20.0
 pluggy==1.4.0
 ply==3.11
 prefixcommons==0.1.12
-prefixmaps==0.2.3
+prefixmaps==0.2.4
 prologterms==0.0.6
 prometheus_client==0.20.0
 prompt-toolkit==3.0.43
@@ -236,7 +236,7 @@ PyTrie==0.4.0
 pytz==2024.1
 PyYAML==6.0.1
 pyyaml_env_tag==0.1
-pyzmq==25.1.2
+pyzmq==26.0.0
 qtconsole==5.5.1
 QtPy==2.4.1
 ratelimit==2.2.1
