@@ -11,8 +11,8 @@ ENV ODK_VERSION $ODK_VERSION
 
 # Software versions
 ENV JENA_VERSION=4.9.0
-ENV KGCL_JAVA_VERSION=0.3.2
-ENV SSSOM_JAVA_VERSION=0.7.5
+ENV KGCL_JAVA_VERSION=0.4.0
+ENV SSSOM_JAVA_VERSION=0.7.7
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
