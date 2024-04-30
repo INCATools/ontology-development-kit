@@ -1,6 +1,6 @@
 
 # Building docker image
-VERSION = "v1.2.30"
+VERSION = "v1.5.1"
 IM=obolibrary/odklite
 TAGS_OPTION=-t $(IM):$(VERSION) -t $(IM):latest
 

@@ -1,3 +1,14 @@
+# v1.5.1
+
+- KGCL plugin for ROBOT updated to version 0.4.0
+- SSSOM command-line tool and plugin for ROBOT updated to version 0.7.7
+- Several Python packages updated, including:
+    - `oaklib` (OAK) 0.6.5
+    - `sssom` 0.4.8 and `sssom-schema` 0.15.2
+- Bufgixes:
+    - Added back `class-count-by-prefix.sparql` ([https://github.com/INCATools/ontology-development-kit/issues/1030](#1030))
+    - Disabled `table-reader` mkdocs plygin ([https://github.com/INCATools/ontology-development-kit/issues/1028](#1028))
+
 # v1.5
 
 For more detailed changes see:
