@@ -17,7 +17,7 @@ bcp47==0.1.0
 beautifulsoup4==4.12.3
 bidict==0.23.1
 bleach==6.1.0
-bmt==1.4.0
+bmt==1.4.1
 cachetools==5.3.3
 cattrs==23.2.3
 certifi==2024.2.2
@@ -72,7 +72,7 @@ google-auth-oauthlib==1.2.0
 googleapis-common-protos==1.63.0
 graphviz==0.20.3
 greenlet==3.0.3
-gspread==6.1.0
+gspread==6.1.2
 gspread-formatting==1.1.2
 h11==0.14.0
 hbreader==0.9.1
@@ -122,11 +122,11 @@ jupyter_client==8.6.1
 jupyter_core==5.7.2
 jupyter_server==2.14.0
 jupyter_server_terminals==0.5.3
-jupyterlab==4.1.8
+jupyterlab==4.2.0
 jupyterlab_pygments==0.3.0
 jupyterlab_server==2.27.1
 jupyterlab_widgets==3.0.10
-keyring==25.2.0
+keyring==25.2.1
 kgcl-rdflib==0.5.0
 kgcl_schema==0.6.8
 kgx==2.4.0
@@ -143,7 +143,7 @@ Markdown==3.6
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 marshmallow==3.21.2
-matplotlib==3.8.4
+matplotlib==3.9.0
 matplotlib-inline==0.1.7
 matplotlib-venn==0.11.10
 mdurl==0.1.2
@@ -151,10 +151,10 @@ mergedeep==1.3.4
 mistune==3.0.2
 mkdocs==1.6.0
 mkdocs-get-deps==0.2.0
-mkdocs-material==9.5.22
+mkdocs-material==9.5.24
 mkdocs-material-extensions==1.3.1
 mkdocs-mermaid2-plugin==1.1.1
-mkdocs-table-reader-plugin==2.2.1
+mkdocs-table-reader-plugin==2.2.2
 more-click==0.1.2
 more-itertools==10.2.0
 mypy==1.10.0
@@ -167,17 +167,17 @@ neo4j==4.4.12
 nest-asyncio==1.6.0
 networkx==3.3
 nh3==0.2.17
-notebook==7.1.3
+notebook==7.2.0
 notebook_shim==0.2.4
 numpy==1.26.4
 oaklib==0.6.6
 oauthlib==3.2.2
 ols-client==0.1.4
-ontobio==2.8.24
+ontobio==2.9.0
 ontodev-cogs==0.3.3
 ontodev-gizmos==0.3.2
 ontoportal-client==0.0.4
-openai==1.28.1
+openai==1.30.1
 openpyxl==3.1.2
 ordered-set==4.1.0
 overrides==7.7.0
@@ -192,7 +192,7 @@ pathspec==0.12.1
 pexpect==4.9.0
 pillow==10.3.0
 pkginfo==1.10.0
-platformdirs==4.2.1
+platformdirs==4.2.2
 plotly==5.22.0
 pluggy==1.5.0
 ply==3.11
@@ -227,7 +227,7 @@ PyShExC==0.9.1
 pysolr==3.9.0
 pyspellchecker==0.8.1
 pystow==0.5.4
-pytest==8.2.0
+pytest==8.2.1
 pytest-logging==2015.11.4
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
@@ -247,7 +247,7 @@ rdflib-shim==1.0.3
 readme_renderer==43.0
 recommonmark==0.7.1
 referencing==0.35.1
-regex==2024.5.10
+regex==2024.5.15
 requests==2.31.0
 requests-cache==1.2.0
 requests-oauthlib==2.0.0
@@ -287,10 +287,9 @@ SQLAlchemy-Utils==0.38.3
 sqlite-fts4==1.0.3
 sqlite-migrate==0.1b0
 sqlite-utils==3.36
-sssom==0.4.8
+sssom==0.4.9
 sssom-schema==0.15.2
 stack-data==0.6.3
-StrEnum==0.4.15
 stringcase==1.2.0
 tabulate==0.9.0
 tenacity==8.3.0
@@ -304,7 +303,7 @@ tox==4.15.0
 tqdm==4.66.4
 traitlets==5.14.3
 tsvalid==0.0.3
-twine==5.0.0
+twine==5.1.0
 types-python-dateutil==2.9.0.20240316
 typing-inspect==0.9.0
 typing_extensions==4.11.0
@@ -315,7 +314,7 @@ uritemplate==4.1.1
 url-normalize==1.4.3
 urllib3==2.2.1
 validators==0.20.0
-virtualenv==20.26.1
+virtualenv==20.26.2
 watchdog==4.0.0
 wcwidth==0.2.13
 webcolors==1.13
@@ -325,4 +324,4 @@ widgetsnbextension==4.0.10
 wrapt==1.16.0
 xmltodict==0.13.0
 yamldown==0.1.8
-zipp==3.18.1
+zipp==3.18.2
