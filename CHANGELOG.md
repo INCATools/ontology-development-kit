@@ -1,3 +1,35 @@
+# v1.6 (Planned)
+
+For more detailed changes see:
+
+- [Milestone definition](https://github.com/INCATools/ontology-development-kit/milestone/8)
+- [All changes since the last major release](https://github.com/INCATools/ontology-development-kit/compare/v1.5...v1.6)
+
+## Highlights (Read this!)
+
+- TBD
+
+## New and updated tooling
+
+- New [ROBOT Version 1.9.6](https://github.com/ontodev/robot/releases/tag/v1.9.6). This came with a great number of updates and upgrades, see release notes.
+
+## New configuration options
+
+- TBD
+
+## Makefile workflows
+
+- TBD
+
+## Runner and Infrastructure
+
+- TBD
+
+## Bugfixes
+
+- Added back `class-count-by-prefix.sparql` ([https://github.com/INCATools/ontology-development-kit/issues/1030](#1030))
+- Disabled `table-reader` mkdocs plygin ([https://github.com/INCATools/ontology-development-kit/issues/1028](#1028))
+
 # v1.5
 
 For more detailed changes see:
