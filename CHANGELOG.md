@@ -1,5 +1,6 @@
 # v1.5.1
 
+- ROBOT updated to version 1.9.6
 - KGCL plugin for ROBOT updated to version 0.4.0
 - SSSOM command-line tool and plugin for ROBOT updated to version 0.7.7
 - Several Python packages updated, including:
