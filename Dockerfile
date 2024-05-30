@@ -40,6 +40,7 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     xlsx2csv \
     gh \
     nodejs \
+    npm \
     graphviz \
     python3-psycopg2 \
     swi-prolog
