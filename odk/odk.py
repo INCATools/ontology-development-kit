@@ -778,7 +778,7 @@ class ExecutionContext(JsonSchemaMixin):
     project : Optional[OntologyProject] = None
     meta : str = ""
 
-    
+
 @dataclass
 class Generator(object):
     """
@@ -787,7 +787,7 @@ class Generator(object):
     """
 
     ## TODO: consider merging Generator and ExecutionContext?
-    context : ExecutionContext = ExecutionContext()
+    context : ExecutionContext = field(default_factory=ExecutionContext)
 
     def generate(self, input : str) -> str:
         """
@@ -1088,7 +1088,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         print(" 5. See the section under '…or push an existing repository from the command line'")
         print("    E.g.:")
         print("cd {}".format(outdir))
-        print("git remote add origin git\@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
+        print("git remote add origin git@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
         print("git branch -M {branch}\n".format(branch=project.git_main_branch))
         print("git push -u origin {branch}\n".format(branch=project.git_main_branch))
         print("BE BOLD: you can always delete your repo and start again\n")
