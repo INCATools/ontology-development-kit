@@ -27,8 +27,7 @@ RUN apt-get update && \
         rustc \
         cargo \
         python3-dev \
-        python3-pip \
-        python3-virtualenv
+        python3-pip
 
 # Build the Python packages.
 # On x86_64, most if not all of these packages should be available as
