@@ -3,7 +3,7 @@
 # (typically because pre-compiled binaries don't exist for arm64) and
 # we don't want to build directly on the final image (to avoid
 # cluttering the image with build-time dependencies).
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 WORKDIR /build
 
 # Software versions
