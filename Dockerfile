@@ -97,7 +97,7 @@ COPY scripts/obodash /tools
 RUN chmod +x /tools/obodash && \
     git clone --depth 1 https://github.com/OBOFoundry/OBO-Dashboard.git && \
     cd OBO-Dashboard && \
-    python3 -m pip install -r requirements.txt && \
+    python3 -m pip install -r requirements.txt --break-system-packages && \
     echo " " >> Makefile && \
     echo "build/robot.jar:" >> Makefile && \
     echo "	echo 'skipped ROBOT jar download.....' && touch \$@" >> Makefile && \
