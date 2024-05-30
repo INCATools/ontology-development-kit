@@ -43,7 +43,8 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     npm \
     graphviz \
     python3-psycopg2 \
-    swi-prolog
+    swi-prolog \
+    libpcre3
 
 # Install run-time dependencies for Soufflé.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
