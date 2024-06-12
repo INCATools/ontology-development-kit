@@ -1,3 +1,12 @@
+# v1.5.2
+
+This version updates some software packages to improve compatibility with
+the OWLAPI version 4.5.29 used in ROBOT 1.9.6:
+
+- OWLTools updated to version 2024-06-12
+- Ontology Access Kit updated to version 0.6.9
+
+
 # v1.5.1
 
 - ROBOT updated to version 1.9.6
