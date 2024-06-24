@@ -45,6 +45,7 @@ COPY constraints.txt /build/constraints.txt
 RUN python3 -m pip install \
         -r /build/requirements.txt.lite \
         -c /build/constraints.txt \
+        --no-warn-script-location \
         --root /staging/lite
 # Then those needed by the odkfull image.
 # After installing those packages, we forcibly remove from the odkfull
@@ -54,6 +55,7 @@ RUN python3 -m pip install \
 RUN python3 -m pip install \
         -c /build/constraints.txt \
         -r /build/requirements.txt \
+        --no-warn-script-location \
         --root /staging/full && \
         cd /staging/lite && \
         find . -type f | while read f ; do rm -f /staging/full/$f ; done && \
