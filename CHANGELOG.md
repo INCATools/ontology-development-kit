@@ -1,3 +1,9 @@
+# v1.5.2
+
+This version updates the Ontology Access Kit (`oaklib`) to improve
+compatibility with the OWLAPI version 4.5.29 used in ROBOT 1.9.6.
+
+
 # v1.5.1
 
 - ROBOT updated to version 1.9.6
