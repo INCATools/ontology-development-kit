@@ -61,7 +61,7 @@ docs:
 	@ODK_IMAGE=odklite ./odk.sh python ./odk/schema_documentation.py
 
 # Building docker image
-VERSION = "v1.5"
+VERSION = "v1.6"
 IM=obolibrary/odkfull
 IMLITE=obolibrary/odklite
 ROB=obolibrary/robot
@@ -168,7 +168,7 @@ publish-multiarch-dev:
 		.
 
 constraints.txt: requirements.txt.full
-	docker run -v $$PWD:/work -w /work --rm -ti obolibrary/odkbuild:latest /work/update-constraints.sh
+	docker run -v $$PWD:/work -w /work --rm -ti obolibrary/odkbuild:latest /work/update-constraints.sh --install-virtualenv
 
 clean-tests:
 	rm -rf target/*

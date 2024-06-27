@@ -3,7 +3,7 @@
 # (typically because pre-compiled binaries don't exist for arm64) and
 # we don't want to build directly on the final image (to avoid
 # cluttering the image with build-time dependencies).
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 WORKDIR /build
 
 # Software versions
@@ -27,8 +27,7 @@ RUN apt-get update && \
         rustc \
         cargo \
         python3-dev \
-        python3-pip \
-        python3-virtualenv
+        python3-pip
 
 # Build the Python packages.
 # On x86_64, most if not all of these packages should be available as
@@ -45,6 +44,7 @@ COPY constraints.txt /build/constraints.txt
 RUN python3 -m pip install \
         -r /build/requirements.txt.lite \
         -c /build/constraints.txt \
+        --no-warn-script-location \
         --root /staging/lite
 # Then those needed by the odkfull image.
 # After installing those packages, we forcibly remove from the odkfull
@@ -54,6 +54,7 @@ RUN python3 -m pip install \
 RUN python3 -m pip install \
         -c /build/constraints.txt \
         -r /build/requirements.txt \
+        --no-warn-script-location \
         --root /staging/full && \
         cd /staging/lite && \
         find . -type f | while read f ; do rm -f /staging/full/$f ; done && \

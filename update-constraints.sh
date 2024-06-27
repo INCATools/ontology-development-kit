@@ -2,6 +2,11 @@
 
 set -e
 
+if [ "x$1" = x--install-virtualenv ]; then
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3-virtualenv
+fi
+
 virtualenv tmpdir
 . tmpdir/bin/activate
 python3 -m pip install -U pip
