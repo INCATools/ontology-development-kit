@@ -16,6 +16,14 @@
 
 set -e
 
+# Check for spaces in the current directory path
+for item in $PWD ; do
+    if [ "$item" != "$PWD" ]; then
+        echo "${0##*/}: error: repository path must not contain whitespace characters" >&2
+        exit 1
+    fi
+done
+
 if [ -f run.sh.conf ]; then
     . ./run.sh.conf
 fi
