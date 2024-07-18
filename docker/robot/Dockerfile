@@ -3,9 +3,9 @@ LABEL maintainer="obo-tools@googlegroups.com"
 
 WORKDIR /tools
 
-ENV ROBOT v1.9.6
+ENV ROBOT=v1.9.6
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
-ENV ROBOT_JAR ${ROBOT_JAR}
+ENV ROBOT_JAR=${ROBOT_JAR}
 
 RUN apt-get update &&\
   apt-get upgrade -y &&\
@@ -20,6 +20,6 @@ RUN curl -L $ROBOT_JAR -o /tools/robot.jar &&\
     chmod +x /tools/robot && \
     chmod +x /tools/robot.jar
   
-ENV PATH "/tools/:$PATH"
+ENV PATH="/tools/:$PATH"
 RUN echo "Keep me in sync with obolibrary/odkfull!"
 CMD robot -h
