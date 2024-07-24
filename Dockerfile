@@ -4,10 +4,10 @@ ARG ODKLITE_TAG=latest
 FROM obolibrary/odklite:${ODKLITE_TAG}
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV PATH "/tools/apache-jena/bin:/tools/sparqlprog/bin:$PATH"
+ENV PATH="/tools/apache-jena/bin:/tools/sparqlprog/bin:$PATH"
 
 ARG ODK_VERSION 0.0.0
-ENV ODK_VERSION $ODK_VERSION
+ENV ODK_VERSION=$ODK_VERSION
 
 # Software versions
 ENV JENA_VERSION=4.9.0
@@ -16,7 +16,7 @@ ENV SSSOM_JAVA_VERSION=0.7.7
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
-ENV COURSIER_CACHE "/tools/.coursier-cache"
+ENV COURSIER_CACHE="/tools/.coursier-cache"
 
 # Add NodeSource package repository (needed to get recent versions of Node)
 COPY thirdpartykeys/nodesource.gpg /usr/share/keyrings/nodesource.gpg
@@ -105,7 +105,7 @@ RUN chmod +x /tools/obodash && \
 
 # Install relation-graph
 ENV RG=2.3.2
-ENV PATH "/tools/relation-graph/bin:$PATH"
+ENV PATH="/tools/relation-graph/bin:$PATH"
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/relation-graph-cli-$RG.tgz \
 && tar -zxvf relation-graph-cli-$RG.tgz \
 && mv relation-graph-cli-$RG /tools/relation-graph \
