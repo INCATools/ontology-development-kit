@@ -172,12 +172,36 @@ More details below.
 
 ### Minor releases
 
+Minor releases are normally releases that contain only changes about the _tools_ provided by the ODK, and no changes about the _workflows_. As such, they do not require users to update their repositories. All users need to do to start using a new minor release is to pull the latest Docker image of the ODK (`pull obolibrary/odkfull:latest`).
+
+Minor releases are only provided for the current major branch of the ODK. For example, if the latest major release is v1.5, we will provide (as needed) minor releases v1.5.1, v1.5.2, etc, but we will _not_ provide minor releases for any version prior to 1.5; once v1.6 is released, we will likewise stop providing v1.5.x minor releases. In other words, only one major branch is actively supported at any time.
+
+#### SOP for creating a minor release
+
+* As soon as a major branch (v1.X) has been released, create a `BRANCH-1.X-MAINTENANCE` branch forked from the `v1.X` release tag.
+* As development of the next major branch (v1.X+1) is ongoing, routinely backport tools-related changes to the `BRANCH-1.X-MAINTENANCE` branch.
+* By convention, changes to the next major branch that are introduced by a PR tagged with a `hotfix` label should also be backported to the maintenance branch.
+* To avoid cluttering the maintenance branch with multiple “Python constraints update” backport commits, it is recommended to backport all Python constraints at once, shortly before a minor release.
+* There are no strict guidelines about when a minor release should happen. The availability of a new version of ROBOT is usually reason enough to make such a release, but upgrades to other tools can also occasionally justify a minor release.
+
+Once the decision to make a minor release has been made:
+
+* Make sure all tools-related updates (including Python tools) have been backported.
 * Do any amount of testing as needed to be confident we are ready for release. For minor releases, it makes sense to test the ODK on at least 5 ontologies. In 2024 we typically test:
   - [Mondo](https://github.com/monarch-initiative/mondo) ([docs](https://mondo.readthedocs.io/en/latest/developer-guide/release/)) (a lot of use of old tools, like owltools, interleaved with ROBOT, heavy dependencies on serialisations, perl scripts)
   - [Mondo Ingest](https://github.com/monarch-initiative/mondo-ingest) (a lot of use of sssom-py and OAK, interleaved with heavyweight ROBOT pipelines)
   - [Uberon](https://github.com/obophenotype/uberon) (ROBOT plugins, old tools like owltools)
   - [Human Phenotype Ontology](https://github.com/obophenotype/human-phenotype-ontology) (uses of ontology translation system (babelon), otherwise pretty standard ODK, high impact ontology)
   - [Cell Ontology](https://github.com/obophenotype/cell-ontology) (Relatively standard, high impact ODK setup)
+* Update the CHANGELOG.md file.
+* Bump the version number to `v1.X.Y` in
+  - the top-level `Makefile`,
+  - the `Makefile` in the `docker/odklite` directory.
+* If the minor release includes a newer version of ROBOT, and if that has not already been done when ROBOT itself was updated, update the version number in `docker/robot/Makefile` so it matches the version of ROBOT that is used.
+* Push all last-minute changes (CHANGELOG and version number updates) to the `BRANCH-1.X-MAINTENANCE` branch.
+* Build and publish the images from the tip of the `BRANCH-1.X-MAINTENANCE` branch (same procedure as above to build and publish a major release).
+* Create a GitHub release from the tip of the `BRANCH-1.X-MAINTENANCE` branch, with a `v1.X.Y` tag.
+* Resume backporting changes to the `BRANCH-1.X-MAINTENANCE` until the time comes for the next minor release.
 
 ### Development snapshot releases
 
