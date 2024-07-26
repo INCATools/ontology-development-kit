@@ -141,7 +141,7 @@ In order to build and publish ODK, you need the following:
 ### Major releases
 
 Major releases contain changes to the workflow system of the ODK, e.g. changes to the `Makefile` and various supporting scripts (e.g. run.sh, update_repo.sh).
-They require users to update there repository light with `make update_repo`
+They require users to update their repository with `make update_repo`
 Major releases are typically incremented (a bit confusingly) on the "minor" version number of ODK, i.e. 1.4, 1.5, 1.6 etc.
 There are currently (2024) no plans to increment on the major version - this will likely be reserved to fundamental changes like switching from `make` to another workflow system or dropping `docker` (both are unlikely to happen in the midterm).
 There should be no more than 2 such version updates per year (ideally 1), to reduce the burden on users to maintain their repositories.
