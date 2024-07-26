@@ -132,24 +132,54 @@ In order to build and publish ODK, you need the following:
 
 ## General SOP for ODK release and publication
 
+- There are three types of releases: major, minor and development snapshot.
+  - Major versions include changes to the workflow system.
+  - Minor versions include changes to tools, such as ROBOT our python dependencies.
+  - Development snapshots reflect the current state of the `main` (`master`).
+- They all have slightly different procedures which we will detail below.
+
+### Major releases
+
+Major releases contain changes to the workflow system of the ODK, e.g. changes to the `Makefile` and various supporting scripts (e.g. run.sh, update_repo.sh).
+They require users to update there repository light with `make update_repo`
+Major releases are typically incremented (a bit confusingly) on the "minor" version number of ODK, i.e. 1.4, 1.5, 1.6 etc.
+There are currently (2024) no plans to increment on the major version - this will likely be reserved to fundamental changes like switching from `make` to another workflow system or dropping `docker` (both are unlikely to happen in the midterm).
+There should be no more than 2 such version updates per year (ideally 1), to reduce the burden on users to maintain their repositories.
+
+#### SOP for creating a major release
+
 * Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).
-* Update the [constraints.txt file](https://github.com/INCATools/ontology-development-kit/pull/476#issuecomment-924050937), with `make constraints.txt`.
-* Do any amount of testing as needed to be confident we are ready for release (at the very least, do a local build with `make build` and run the test suite with `make tests`; possibly run some mock releases on known ontologies such as `FBbt`, etc.).
-* Tag the release and push the tag to GitHub and create a formal release from the newly pushed tag.
+* Ensure your local `master` branch is up-to-date (`git pull`) and run a basic build (`make build tests`). This _should_ not result in any surprises as this exact command is run every time we merge a change into the `master` branch by our CI system. However, as various dependencies of the system are still variable (in particular unix package versions), there are occassionally situations where the build fails or, less likely, the subsequent tests.
+* Do any amount of testing as needed to be confident we are ready for release. For major releases, it makes sense to test the ODK on at least 10 ontologies. In 2024 we typically test:
+  * All ontologies we test for _minor_ releases (see below)
+  * Flybase ontologies ([fbbt](https://github.com/FlyBase/drosophila-anatomy-developmental-ontology), [fbcv](https://github.com/FlyBase/drosophila-developmental-ontology), [dpo](https://github.com/FlyBase/drosophila-phenotype-ontology))
+  * [NCBITaxon](https://github.com/obophenotype/ncbitaxon)
+  * [Zebrafish Phenotype Ontology](https://github.com/obophenotype/zebrafish-phenotype-ontology) (should only be done in collaboration with a ZP core developer, too many points of failure)
+* We suggest to have at least 1 other ODK core team member run 3 release pipelines to reduce the risk of operating system related differences.
 * Run `docker login` to ensure you are logged in. You must have access rights to `obolibrary` organisation to run the following.
-* Run `docker buildx create --name multiarch --driver docker-container --use` if you have not done so in the past. This command needs to be run only once, see below.
-* Run `make publish-multiarch` to publish the ODK in the `obolibrary` dockerhub organisation.
+* Run `docker buildx create --name multiarch --driver docker-container --use` _if you have not done so in the past_. NOTE: This command needs to be run only once. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.
+* Run `make publish-multiarch` to publish the ODK in the `obolibrary` dockerhub organisation (see [below](#multi-arch-images) for details).
+* OPTIONAL: If you want publish the multi-arch images under the `obotools/` organisation, you need to run locally:
+  ```sh
+  $ docker buildx create --name multiarch --driver docker-container --use
+  $ make publish-multiarch IM=obotools/odkfull IMLITE=obotools/odklite DEV=obotools/odkdev
+  ```  
+* Imediately when you the release is finished, create and publish a GitHub release (check last major release on how to format correctly).
+* After the release is _published_, create a new PR updating the `VERSION = "v1.X"` variable in the `Makefile` to the next major version number.
 
-If you want publish the multi-arch images under the `obotools/` organisation, you need to run locally:
-
-```sh
-$ docker buildx create --name multiarch --driver docker-container --use
-$ make publish-multiarch IM=obotools/odkfull IMLITE=obotools/odklite DEV=obotools/odkdev
-```
-
-Same as before, the first command (`docker buildx create..`) only being needed when you attempt a multi-arch build for the first time. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.
 
 More details below.
+
+### Minor releases
+
+* Do any amount of testing as needed to be confident we are ready for release. For minor releases, it makes sense to test the ODK on at least 5 ontologies. In 2024 we typically test:
+  - [Mondo](https://github.com/monarch-initiative/mondo) ([docs](https://mondo.readthedocs.io/en/latest/developer-guide/release/)) (a lot of use of old tools, like owltools, interleaved with ROBOT, heavy dependencies on serialisations, perl scripts)
+  - [Mondo Ingest](https://github.com/monarch-initiative/mondo-ingest) (a lot of use of sssom-py and OAK, interleaved with heavyweight ROBOT pipelines)
+  - [Uberon](https://github.com/obophenotype/uberon) (ROBOT plugins, old tools like owltools)
+  - [Human Phenotype Ontology](https://github.com/obophenotype/human-phenotype-ontology) (uses of ontology translation system (babelon), otherwise pretty standard ODK, high impact ontology)
+  - [Cell Ontology](https://github.com/obophenotype/cell-ontology) (Relatively standard, high impact ODK setup)
+
+### Development snapshot releases
 
 ## Docker
 
@@ -180,6 +210,8 @@ To publish on Dockerhub:
 ```
 make publish
 ```
+
+<a id="multi-arch-images"></a>
 
 ### Multi-arch images
 
