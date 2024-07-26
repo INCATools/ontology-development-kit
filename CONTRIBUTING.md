@@ -134,7 +134,7 @@ In order to build and publish ODK, you need the following:
 
 - There are three types of releases: major, minor and development snapshot.
   - Major versions include changes to the workflow system.
-  - Minor versions include changes to tools, such as ROBOT our python dependencies.
+  - Minor versions include changes to tools, such as ROBOT or Python dependencies.
   - Development snapshots reflect the current state of the `main` (`master`).
 - They all have slightly different procedures which we will detail below.
 
