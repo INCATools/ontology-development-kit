@@ -40,8 +40,9 @@ RUN apt-get update && \
 COPY requirements.txt.full /build/requirements.txt
 COPY requirements.txt.lite /build/requirements.txt.lite
 COPY constraints.txt /build/constraints.txt
+RUN echo "setuptools<72" > /build/pip-constraints.txt
 # First the packages needed by the odklite image.
-RUN python3 -m pip install \
+RUN PIP_CONSTRAINT=/build/pip-constraints.txt python3 -m pip install \
         -r /build/requirements.txt.lite \
         -c /build/constraints.txt \
         --no-warn-script-location \
@@ -51,7 +52,7 @@ RUN python3 -m pip install \
 # staging tree any file already present in the odklite staging tree
 # (caused by packages installed in both trees) to avoid needlessly
 # increasing the size of the odkfull image.
-RUN python3 -m pip install \
+RUN PIP_CONSTRAINT=/build/pip-constraints.txt python3 -m pip install \
         -c /build/constraints.txt \
         -r /build/requirements.txt \
         --no-warn-script-location \
