@@ -35,6 +35,7 @@ test_odklite_programs:
 	@./tests/test-program.sh DOSDP-TOOLS dosdp-tools -v
 	@./tests/test-program.sh OWLTOOLS owltools --version
 	@./tests/test-program.sh AMMONITE sh amm --help
+	@./tests/test-program.sh JINJANATOR jinjanate --version
 	@./tests/test-program.sh ODK odk.py
 
 test_odkfull_programs: test_odklite_programs
@@ -168,7 +169,7 @@ publish-multiarch-dev:
 		.
 
 constraints.txt: requirements.txt.full
-	docker run -v $$PWD:/work -w /work --rm -ti obolibrary/odkbuild:latest /work/update-constraints.sh
+	docker run -v $$PWD:/work -w /work --rm -ti obolibrary/odkbuild:latest /work/update-constraints.sh --install-virtualenv
 
 clean-tests:
 	rm -rf target/*
