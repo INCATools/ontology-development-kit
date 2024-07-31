@@ -135,13 +135,13 @@ In order to build and publish ODK, you need the following:
 - There are three types of releases: major, minor and development snapshot.
   - Major versions include changes to the workflow system.
   - Minor versions include changes to tools, such as ROBOT or Python dependencies.
-  - Development snapshots reflect the current state of the `main` (`master`).
+  - Development snapshots reflect the current state of the `main` (`master`) branch.
 - They all have slightly different procedures which we will detail below.
 
 ### Major releases
 
 Major releases contain changes to the workflow system of the ODK, e.g. changes to the `Makefile` and various supporting scripts (e.g. run.sh, update_repo.sh).
-They require users to update their repository with `make update_repo`
+They require users to update their repository with `sh run.sh make update_repo`
 Major releases are typically incremented (a bit confusingly) on the "minor" version number of ODK, i.e. 1.4, 1.5, 1.6 etc.
 There are currently (2024) no plans to increment on the major version - this will likely be reserved to fundamental changes like switching from `make` to another workflow system or dropping `docker` (both are unlikely to happen in the midterm).
 There should be no more than 2 such version updates per year (ideally 1), to reduce the burden on users to maintain their repositories.
@@ -164,11 +164,8 @@ There should be no more than 2 such version updates per year (ideally 1), to red
   $ docker buildx create --name multiarch --driver docker-container --use
   $ make publish-multiarch IM=obotools/odkfull IMLITE=obotools/odklite DEV=obotools/odkdev
   ```  
-* Imediately when you the release is finished, create and publish a GitHub release (check last major release on how to format correctly).
+* Immediately when the release is finished, create and publish a GitHub release (check last major release on how to format correctly).
 * After the release is _published_, create a new PR updating the `VERSION = "v1.X"` variable in the `Makefile` to the next major version number.
-
-
-More details below.
 
 ### Minor releases
 
@@ -204,6 +201,23 @@ Once the decision to make a minor release has been made:
 * Resume backporting changes to the `BRANCH-1.X-MAINTENANCE` until the time comes for the next minor release.
 
 ### Development snapshot releases
+
+Development snapshot releases reflect the current state of the `main` (`master`) branch. They are routine releases where we do not do a lot of testing, and anyone using these
+do so at their own risk.
+The ODK team is not accountable for pipelines that fail because of changes to the development snapshot.
+
+Development snapshots are tagged with the `dev` tag on docker, and with the `-dev` suffix in the `Makefile` pipeline (e.g. `v1.6-dev` to indicate that this is a snapshot of the ODK on the way towards a 1.6 release). Development snapshots can happen any time, but typically happen once every 1 to 4 weeks.
+
+#### SOP for creating a development snapshot
+
+* Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).
+* Ensure your local `master` branch is up-to-date (`git pull`) and run a basic build (`make build tests`) (see comments in Major release section for details about the rationale).
+* We do not typically do any additional testing for the development snapshot.
+* Run `docker login` to ensure you are logged in. You must have access rights to `obolibrary` organisation to run the following.
+* Run `docker buildx create --name multiarch --driver docker-container --use` _if you have not done so in the past_. NOTE: This command needs to be run only once. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.
+* Run `make publish-multiarch-dev` to publish the ODK in the `obolibrary` dockerhub organisation (see [below](#multi-arch-images) for details).
+* Do NOT create a GitHub release!
+* Your build has been successful when the `dev` image appears as updated [on Dockerhub](https://hub.docker.com/r/obolibrary/odkfull/tags).
 
 ## Docker
 
