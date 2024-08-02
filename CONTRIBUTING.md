@@ -200,11 +200,11 @@ Once the decision to make a minor release has been made:
 * Create a GitHub release from the tip of the `BRANCH-1.X-MAINTENANCE` branch, with a `v1.X.Y` tag.
 * Resume backporting changes to the `BRANCH-1.X-MAINTENANCE` until the time comes for the next minor release.
 
-### Development snapshot releases
+### Development snapshot
 
-Development snapshot releases reflect the current state of the `main` (`master`) branch. They are routine releases where we do not do a lot of testing, and anyone using these
-do so at their own risk.
-The ODK team is not accountable for pipelines that fail because of changes to the development snapshot.
+Development snapshots reflect the current state of the main (`master`) branch. They do not undergo the same level of testing (or any testing at all) as the normal releases, and are intended to help trialing and debugging the changes that happen in the `master` branch.
+
+Development snapshots should _not_ be used in a production environment. Feel free to use them if you want to help us developing the next major release, but if you use them in your production pipelines, understand that you’re doing so at your own risk.
 
 Development snapshots are tagged with the `dev` tag on docker, and with the `-dev` suffix in the `Makefile` pipeline (e.g. `v1.6-dev` to indicate that this is a snapshot of the ODK on the way towards a 1.6 release). Development snapshots can happen any time, but typically happen once every 1 to 4 weeks.
 
