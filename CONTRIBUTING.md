@@ -132,24 +132,92 @@ In order to build and publish ODK, you need the following:
 
 ## General SOP for ODK release and publication
 
+- There are three types of releases: major, minor and development snapshot.
+  - Major versions include changes to the workflow system.
+  - Minor versions include changes to tools, such as ROBOT or Python dependencies.
+  - Development snapshots reflect the current state of the `main` (`master`) branch.
+- They all have slightly different procedures which we will detail below.
+
+### Major releases
+
+Major releases contain changes to the workflow system of the ODK, e.g. changes to the `Makefile` and various supporting scripts (e.g. run.sh, update_repo.sh).
+They require users to update their repository with `sh run.sh make update_repo`
+Major releases are typically incremented (a bit confusingly) on the "minor" version number of ODK, i.e. 1.4, 1.5, 1.6 etc.
+There are currently (2024) no plans to increment on the major version - this will likely be reserved to fundamental changes like switching from `make` to another workflow system or dropping `docker` (both are unlikely to happen in the midterm).
+There should be no more than 2 such version updates per year (ideally 1), to reduce the burden on users to maintain their repositories.
+
+#### SOP for creating a major release
+
 * Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).
-* Update the [constraints.txt file](https://github.com/INCATools/ontology-development-kit/pull/476#issuecomment-924050937), with `make constraints.txt`.
-* Do any amount of testing as needed to be confident we are ready for release (at the very least, do a local build with `make build` and run the test suite with `make tests`; possibly run some mock releases on known ontologies such as `FBbt`, etc.).
-* Tag the release and push the tag to GitHub and create a formal release from the newly pushed tag.
+* Ensure your local `master` branch is up-to-date (`git pull`) and run a basic build (`make build tests`). This _should_ not result in any surprises as this exact command is run every time we merge a change into the `master` branch by our CI system. However, as various dependencies of the system are still variable (in particular unix package versions), there are occassionally situations where the build fails or, less likely, the subsequent tests.
+* Do any amount of testing as needed to be confident we are ready for release. For major releases, it makes sense to test the ODK on at least 10 ontologies. In 2024 we typically test:
+  * All ontologies we test for _minor_ releases (see below)
+  * Flybase ontologies ([fbbt](https://github.com/FlyBase/drosophila-anatomy-developmental-ontology), [fbcv](https://github.com/FlyBase/drosophila-developmental-ontology), [dpo](https://github.com/FlyBase/drosophila-phenotype-ontology))
+  * [NCBITaxon](https://github.com/obophenotype/ncbitaxon)
+  * [Zebrafish Phenotype Ontology](https://github.com/obophenotype/zebrafish-phenotype-ontology) (should only be done in collaboration with a ZP core developer, too many points of failure)
+* We suggest to have at least 1 other ODK core team member run 3 release pipelines to reduce the risk of operating system related differences.
 * Run `docker login` to ensure you are logged in. You must have access rights to `obolibrary` organisation to run the following.
-* Run `docker buildx create --name multiarch --driver docker-container --use` if you have not done so in the past. This command needs to be run only once, see below.
-* Run `make publish-multiarch` to publish the ODK in the `obolibrary` dockerhub organisation.
+* Run `docker buildx create --name multiarch --driver docker-container --use` _if you have not done so in the past_. NOTE: This command needs to be run only once. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.
+* Run `make publish-multiarch` to publish the ODK in the `obolibrary` dockerhub organisation (see [below](#multi-arch-images) for details).
+* OPTIONAL: If you want publish the multi-arch images under the `obotools/` organisation, you need to run locally:
+  ```sh
+  $ docker buildx create --name multiarch --driver docker-container --use
+  $ make publish-multiarch IM=obotools/odkfull IMLITE=obotools/odklite DEV=obotools/odkdev
+  ```  
+* Immediately when the release is finished, create and publish a GitHub release (check last major release on how to format correctly).
+* After the release is _published_, create a new PR updating the `VERSION = "v1.X"` variable in the `Makefile` to the next major version number.
 
-If you want publish the multi-arch images under the `obotools/` organisation, you need to run locally:
+### Minor releases
 
-```sh
-$ docker buildx create --name multiarch --driver docker-container --use
-$ make publish-multiarch IM=obotools/odkfull IMLITE=obotools/odklite DEV=obotools/odkdev
-```
+Minor releases are normally releases that contain only changes about the _tools_ provided by the ODK, and no changes about the _workflows_. As such, they do not require users to update their repositories. All users need to do to start using a new minor release is to pull the latest Docker image of the ODK (`pull obolibrary/odkfull:latest`).
 
-Same as before, the first command (`docker buildx create..`) only being needed when you attempt a multi-arch build for the first time. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.
+Minor releases are only provided for the current major branch of the ODK. For example, if the latest major release is v1.5, we will provide (as needed) minor releases v1.5.1, v1.5.2, etc, but we will _not_ provide minor releases for any version prior to 1.5; once v1.6 is released, we will likewise stop providing v1.5.x minor releases. In other words, only one major branch is actively supported at any time.
 
-More details below.
+#### SOP for creating a minor release
+
+* As soon as a major branch (v1.X) has been released, create a `BRANCH-1.X-MAINTENANCE` branch forked from the `v1.X` release tag.
+* As development of the next major branch (v1.X+1) is ongoing, routinely backport tools-related changes to the `BRANCH-1.X-MAINTENANCE` branch.
+* By convention, changes to the next major branch that are introduced by a PR tagged with a `hotfix` label should also be backported to the maintenance branch.
+* To avoid cluttering the maintenance branch with multiple “Python constraints update” backport commits, it is recommended to backport all Python constraints at once, shortly before a minor release.
+* There are no strict guidelines about when a minor release should happen. The availability of a new version of ROBOT is usually reason enough to make such a release, but upgrades to other tools can also occasionally justify a minor release.
+
+Once the decision to make a minor release has been made:
+
+* Make sure all tools-related updates (including Python tools) have been backported.
+* Do any amount of testing as needed to be confident we are ready for release. For minor releases, it makes sense to test the ODK on at least 5 ontologies. In 2024 we typically test:
+  - [Mondo](https://github.com/monarch-initiative/mondo) ([docs](https://mondo.readthedocs.io/en/latest/developer-guide/release/)) (a lot of use of old tools, like owltools, interleaved with ROBOT, heavy dependencies on serialisations, perl scripts)
+  - [Mondo Ingest](https://github.com/monarch-initiative/mondo-ingest) (a lot of use of sssom-py and OAK, interleaved with heavyweight ROBOT pipelines)
+  - [Uberon](https://github.com/obophenotype/uberon) (ROBOT plugins, old tools like owltools)
+  - [Human Phenotype Ontology](https://github.com/obophenotype/human-phenotype-ontology) (uses of ontology translation system (babelon), otherwise pretty standard ODK, high impact ontology)
+  - [Cell Ontology](https://github.com/obophenotype/cell-ontology) (Relatively standard, high impact ODK setup)
+* Update the CHANGELOG.md file.
+* Bump the version number to `v1.X.Y` in
+  - the top-level `Makefile`,
+  - the `Makefile` in the `docker/odklite` directory.
+* If the minor release includes a newer version of ROBOT, and if that has not already been done when ROBOT itself was updated, update the version number in `docker/robot/Makefile` so it matches the version of ROBOT that is used.
+* Push all last-minute changes (CHANGELOG and version number updates) to the `BRANCH-1.X-MAINTENANCE` branch.
+* Build and publish the images from the tip of the `BRANCH-1.X-MAINTENANCE` branch (same procedure as above to build and publish a major release).
+* Create a GitHub release from the tip of the `BRANCH-1.X-MAINTENANCE` branch, with a `v1.X.Y` tag.
+* Resume backporting changes to the `BRANCH-1.X-MAINTENANCE` until the time comes for the next minor release.
+
+### Development snapshot
+
+Development snapshots reflect the current state of the main (`master`) branch. They do not undergo the same level of testing (or any testing at all) as the normal releases, and are intended to help trialing and debugging the changes that happen in the `master` branch.
+
+Development snapshots should _not_ be used in a production environment. Feel free to use them if you want to help us developing the next major release, but if you use them in your production pipelines, understand that you’re doing so at your own risk.
+
+Development snapshots are tagged with the `dev` tag on docker, and with the `-dev` suffix in the `Makefile` pipeline (e.g. `v1.6-dev` to indicate that this is a snapshot of the ODK on the way towards a 1.6 release). Development snapshots can happen any time, but typically happen once every 1 to 4 weeks.
+
+#### SOP for creating a development snapshot
+
+* Put the `master` branch in the state we want for release (i.e. merge any approved PR that we want included in that release, etc.).
+* Ensure your local `master` branch is up-to-date (`git pull`) and run a basic build (`make build tests`) (see comments in Major release section for details about the rationale).
+* We do not typically do any additional testing for the development snapshot.
+* Run `docker login` to ensure you are logged in. You must have access rights to `obolibrary` organisation to run the following.
+* Run `docker buildx create --name multiarch --driver docker-container --use` _if you have not done so in the past_. NOTE: This command needs to be run only once. Its effects are persistent, so it will never be needed again for any subsequent release — unless you completely reset your Docker installation in the meantime.
+* Run `make publish-multiarch-dev` to publish the ODK in the `obolibrary` dockerhub organisation (see [below](#multi-arch-images) for details).
+* Do NOT create a GitHub release!
+* Your build has been successful when the `dev` image appears as updated [on Dockerhub](https://hub.docker.com/r/obolibrary/odkfull/tags).
 
 ## Docker
 
@@ -180,6 +248,8 @@ To publish on Dockerhub:
 ```
 make publish
 ```
+
+<a id="multi-arch-images"></a>
 
 ### Multi-arch images
 
