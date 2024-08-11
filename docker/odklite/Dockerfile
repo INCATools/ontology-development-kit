@@ -76,27 +76,24 @@ RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VER
 # Install RDF/XML validation script
 COPY scripts/check-rdfxml.sh /tools/check-rdfxml
 
-# Force Git to accept working on a repository owned by someone else
-RUN echo "[safe]\n    directory = /work" >> /etc/gitconfig
-
 # Make sure we run under an existing user account with UID/GID
 # matching the UID/GID of the calling user
-COPY scripts/entrypoint.sh /usr/local/sbin/odkuser-entrypoint.sh
-RUN chmod 755 /usr/local/sbin/odkuser-entrypoint.sh
+COPY --chmod=755 scripts/entrypoint.sh /usr/local/sbin/odkuser-entrypoint.sh
 ENTRYPOINT ["/usr/local/sbin/odkuser-entrypoint.sh"]
-# secure_path is enabled by default in Debian/Ubuntu, disable it
-RUN sed -i '/secure_path/d' /etc/sudoers
-# Remove default user account
-RUN userdel -r ubuntu
+
+# Misc tweaks:
+# - disable secure_path (we want to be able to use sudo with our custom PATH)
+# - remove default user account (we create our own)
+# - force Git to accept working on a repository owned by someone else
+RUN sed -i '/secure_path/d' /etc/sudoers && \
+    userdel -r ubuntu && \
+    echo "[safe]\n    directory = /work" >> /etc/gitconfig
 
 # Install a script that provides information about the ODK and its tools
-COPY scripts/odk-info.sh /tools/odk-info
-RUN chmod 755 /tools/odk-info
+COPY --chmod=755 scripts/odk-info.sh /tools/odk-info
 RUN sed -i s/@@ODK_IMAGE_VERSION@@/$ODK_VERSION/ /tools/odk-info
 
 # Install the ODK itself.
-COPY odk/make-release-assets.py /tools
-COPY odk/odk.py /tools
+COPY --chmod=755 odk/make-release-assets.py odk/odk.py /tools
 COPY template/ /tools/templates/
-RUN chmod 755 /tools/*.py /tools/check-rdfxml
 CMD python3 /tools/odk.py
