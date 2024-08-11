@@ -86,6 +86,8 @@ RUN chmod 755 /usr/local/sbin/odkuser-entrypoint.sh
 ENTRYPOINT ["/usr/local/sbin/odkuser-entrypoint.sh"]
 # secure_path is enabled by default in Debian/Ubuntu, disable it
 RUN sed -i '/secure_path/d' /etc/sudoers
+# Remove default user account
+RUN userdel -r ubuntu
 
 # Install a script that provides information about the ODK and its tools
 COPY scripts/odk-info.sh /tools/odk-info
