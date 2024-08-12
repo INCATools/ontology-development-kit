@@ -326,4 +326,4 @@ widgetsnbextension==4.0.11
 wrapt==1.16.0
 xmltodict==0.13.0
 yamldown==0.1.8
-zipp==3.19.2
+zipp==3.20.0
