@@ -74,7 +74,7 @@ RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VER
     java -cp /tools/amm ammonite.AmmoniteMain /dev/null
 
 # Install RDF/XML validation script
-COPY scripts/check-rdfxml.sh /tools/check-rdfxml
+COPY --chmod=755 scripts/check-rdfxml.sh /tools/check-rdfxml
 
 # Make sure we run under an existing user account with UID/GID
 # matching the UID/GID of the calling user
