@@ -996,7 +996,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
             raise Exception('max one repo; current={}'.format(repo))
         repo = repo[0]
     else:
-        repo = None
+        repo = "noname"
     mg.load_config(config,
                    imports=dependencies,
                    title=title,
