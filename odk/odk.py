@@ -993,7 +993,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     mg = Generator()
     if len(repo) > 0:
         if len(repo) > 1:
-            raise Exception('max one repo; current={}'.format(repo))
+            raise click.ClickException('max one repo; current={}'.format(repo))
         repo = repo[0]
     else:
         repo = "noname"
