@@ -14,5 +14,6 @@ chown odkuser:odkuser /home/odkuser
 [ -d /home/odkuser/.data ] && chown odkuser:odkuser /home/odkuser/.data
 [ -d /home/odkuser/.data/oaklib ] && chown odkuser:odkuser /home/odkuser/.data/oaklib
 PATH=$PATH:/home/odkuser/.local/bin
+[ -S /run/host-services/ssh-auth.sock ] && chown odkuser /run/host-services/ssh-auth.sock
 
 exec sudo -H -E -u odkuser "$@"
