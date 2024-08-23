@@ -993,10 +993,10 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     mg = Generator()
     if len(repo) > 0:
         if len(repo) > 1:
-            raise Exception('max one repo; current={}'.format(repo))
+            raise click.ClickException('max one repo; current={}'.format(repo))
         repo = repo[0]
     else:
-        repo = None
+        repo = "noname"
     mg.load_config(config,
                    imports=dependencies,
                    title=title,
@@ -1007,6 +1007,11 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         project.id = repo
     if outdir is None:
         outdir = "target/{}".format(project.id)
+    if not skipgit:
+        if not "GIT_AUTHOR_NAME" in os.environ and not gitname:
+            raise click.ClickException("missing Git username; set GIT_AUTHOR_NAME or use --gitname")
+        if not "GIT_AUTHOR_EMAIL" in os.environ and not gitemail:
+            raise click.ClickException("missing Git email; set GIT_AUTHOR_EMAIL or use --gitemail")
     if clean:
         if os.path.exists(outdir):
             shutil.rmtree(outdir)
