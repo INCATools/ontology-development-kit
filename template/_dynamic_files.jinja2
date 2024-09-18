@@ -1869,3 +1869,91 @@ jobs:
           CONFIG_FILE: mkdocs.yaml
 {% endif -%}
 {% endif -%}
+{% if (('github_actions' in project.ci) and ('github' in project.workflows)) %}
+^^^ .github/ISSUE_TEMPLATE/add-term.yml
+name: Add term- Request a New Ontology Term
+description: Request a new term to be added to the {{ project.title }}.
+title: Request for new term [ADD NAME HERE]
+labels: [ New term request ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to request a new ontology term be added to {{ project.id | upper }}.
+  - type: input
+    id: Label
+    attributes:
+      label: Label
+      description: Preferred term label. Please add the label in lowercase, unless it is a proper name.
+      placeholder: ex. spindle cell rhabdomyosarcoma
+    validations:
+      required: true
+  - type: input
+    id: synonyms
+    attributes:
+      label: Synonyms
+      description: Alternative term(s) or acroynymm for the preferred label. Separate by a comma.
+      placeholder:  ex. SCRMS, SC rhabdomyosarcoma
+    validations:
+      required: false
+  - type: dropdown
+    id: synonym_type
+    attributes:
+      label: Synonym type
+      description: Please indicate if the synonym is exact, broad, narrow or related. See [here for more explanation of synonym scope](https://mondo.readthedocs.io/en/latest/editors-guide/f-entities/#synonym-scope).
+      options:
+        - exact
+        - broad
+        - narrow
+        - related
+    validations:
+      required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: Definition
+      description: |
+        Please provide a definition of the term and a reference, such as a PubMed ID, if applicable, in format PMID:#######. 
+    validations:
+      required: true
+  - type: input
+    id: parent
+    attributes:
+      label: Parent term
+      description: Provide a parent term or superclass, i.e. the class this new term should be classified under. Provide the ID and label.
+      placeholder: BFO:0000001
+    validations:
+      required: true
+  - type: input
+    id: children
+    attributes:
+      label: Children term(s)
+      description: List any existing terms that should be classified underneath this new proposed term, if applicable. Provide the ID and label.
+      placeholder: ex. MONDO:0100067 childhood spindle cell rhabdomyosarcoma
+    validations:
+      required: false
+  - type: input
+    id: orcid
+    attributes:
+      label: ORCID Identifier
+      description: What is the ORCID identifier of the person requesting this term? ORCID identifiers can be made at https://orcid.org.
+      placeholder: e.g. https://orcid.org/0000-0001-5208-3432
+    validations:
+      required: false
+  - type: input
+    id: website
+    attributes:
+      label: Website URL
+      description: Provide a website URL that you'd like to be associated with this new term.
+      placeholder: e.g. https://clinicalgenome.org/affiliation/40005/
+    validations:
+      required: false
+  - type: textarea
+    id: comments
+    attributes:
+      label: Additional comments
+      description: |
+        Please provide any additional comments here. 
+    validations:
+      required: false
+{% endif -%}
