@@ -87,7 +87,7 @@ ENTRYPOINT ["/usr/local/sbin/odkuser-entrypoint.sh"]
 # - force Git to accept working on a repository owned by someone else
 RUN sed -i '/secure_path/d' /etc/sudoers && \
     userdel -r ubuntu && \
-    echo "[safe]\n    directory = /work" >> /etc/gitconfig
+    echo "[safe]\n    directory = *" >> /etc/gitconfig
 
 # Install a script that provides information about the ODK and its tools
 COPY --chmod=755 scripts/odk-info.sh /tools/odk-info
