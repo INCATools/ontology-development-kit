@@ -76,16 +76,19 @@ RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VER
 # Install RDF/XML validation script
 COPY scripts/check-rdfxml.sh /tools/check-rdfxml
 
-# Force Git to accept working on a repository owned by someone else
-RUN echo "[safe]\n    directory = /work" >> /etc/gitconfig
-
 # Make sure we run under an existing user account with UID/GID
 # matching the UID/GID of the calling user
 COPY scripts/entrypoint.sh /usr/local/sbin/odkuser-entrypoint.sh
 RUN chmod 755 /usr/local/sbin/odkuser-entrypoint.sh
 ENTRYPOINT ["/usr/local/sbin/odkuser-entrypoint.sh"]
-# secure_path is enabled by default in Debian/Ubuntu, disable it
-RUN sed -i '/secure_path/d' /etc/sudoers
+
+# Misc tweaks:
+# - disable secure_path (we want to be able to use sudo with our custom PATH)
+# - remove default user account (we create our own)
+# - force Git to accept working on a repository owned by someone else
+RUN sed -i '/secure_path/d' /etc/sudoers && \
+    userdel -r ubuntu && \
+    echo "[safe]\n    directory = *" >> /etc/gitconfig
 
 # Install a script that provides information about the ODK and its tools
 COPY scripts/odk-info.sh /tools/odk-info
