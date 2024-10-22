@@ -90,6 +90,22 @@ rm -f tmp/debug.log
 VOLUME_BIND=$PWD/../../:/work$ODK_SSH_BIND
 WORK_DIR=/work/src/ontology
 
+# Support for OAK cache sharing
+if [ -n "$ODK_SHARE_OAK_CACHE" ]; then
+    case "$ODK_SHARE_OAK_CACHE" in
+    user)
+        # We assume the cache is in its default location; if it is not,
+        # ODK_SHARE_OAK_CACHE must point to the actual location.
+        ODK_SHARE_OAK_CACHE="$HOME/.data/oaklib"
+        ;;
+    repo)
+        ODK_SHARE_OAK_CACHE="$PWD/tmp/oaklib"
+        ;;
+    esac
+    [ $ODK_USER_ID -eq 0 ] && OAK_DEST=/root/.data/oaklib || OAK_DEST=/home/odkuser/.data/oaklib
+    VOLUME_BIND="$VOLUME_BIND,$ODK_SHARE_OAK_CACHE:$OAK_DEST"
+fi
+
 if [ -n "$ODK_BINDS" ]; then
     VOLUME_BIND="$VOLUME_BIND,$ODK_BINDS"
 fi
