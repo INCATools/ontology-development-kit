@@ -68,6 +68,8 @@ ODK_JAVA_OPTS=${ODK_JAVA_OPTS:-{{ project.robot_java_args }}}
 {% else %}
 if [ -z "$USE_SINGULARITY" ]; then
     {% raw %}DEFAULT_MAX_MEM=$(bc <<<"($(docker info --format={{.MemTotal}}) * .9) / (1024*1024*1024)")G{% endraw %}
+else
+    DEFAULT_MAX_MEM=8G
 fi
 ODK_JAVA_OPTS=${ODK_JAVA_OPTS:--Xmx$DEFAULT_MAX_MEM}
 {% endif %}
