@@ -11,7 +11,7 @@ ENV ODK_VERSION=$ODK_VERSION
 
 # Software versions
 ENV JENA_VERSION=4.9.0
-ENV KGCL_JAVA_VERSION=0.4.0
+ENV KGCL_JAVA_VERSION=0.5.0
 ENV SSSOM_JAVA_VERSION=0.9.0
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
