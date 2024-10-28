@@ -1,3 +1,22 @@
+# v1.5.3
+
+- Updates:
+    - Base image updated to Ubuntu 24.04
+    - Python updated to version 3.12
+    - Several Python packages updated, including:
+        - `oaklib` (OAK) 0.6.18
+        - `linkml` 1.8.5 and `linkml-runtime` 1.8.3
+        - `sssom-schema` 1.0.0 and `sssom` 0.4.12
+    - KGCL plugin for ROBOT updated to version 0.5.0
+    - SSSOM command-line tool and plugin
+- Bugfixes:
+    - Fix permission issue on macOS when seeding ([#1105](https://github.com/INCATools/ontology-development-kit/issues/1105))
+    - Fix permission on the SSH socket ([#1096](https://github.com/INCATools/ontology-development-kit/issues/1096))
+    - Fix lack of robustness of the odk.py script ([#1097](https://github.com/INCATools/ontology-development-kit/issues/1097))
+
+BREAKING CHANGE: [J2cli](https://github.com/kolypto/j2cli), which is no longer maintained, has been removed and replaced with [Jinjanator](https://github.com/kpfleming/jinjanator). Standard ODK-generated workflows never used that tool, but if you have custom workflows that are using the `j2` command, you will need to update them to make them use `jinjanate` instead.
+
+
 # v1.5.2
 
 This version updates the Ontology Access Kit (`oaklib`) to improve
@@ -15,6 +34,7 @@ compatibility with the OWLAPI version 4.5.29 used in ROBOT 1.9.6.
 - Bufgixes:
     - Added back `class-count-by-prefix.sparql` ([https://github.com/INCATools/ontology-development-kit/issues/1030](#1030))
     - Disabled `table-reader` mkdocs plygin ([https://github.com/INCATools/ontology-development-kit/issues/1028](#1028))
+
 
 # v1.5
 

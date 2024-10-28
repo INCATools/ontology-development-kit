@@ -11,8 +11,8 @@ ENV ODK_VERSION $ODK_VERSION
 
 # Software versions
 ENV JENA_VERSION=4.9.0
-ENV KGCL_JAVA_VERSION=0.4.0
-ENV SSSOM_JAVA_VERSION=0.7.7
+ENV KGCL_JAVA_VERSION=0.5.0
+ENV SSSOM_JAVA_VERSION=0.9.0
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
@@ -40,9 +40,11 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     xlsx2csv \
     gh \
     nodejs \
+    npm \
     graphviz \
     python3-psycopg2 \
-    swi-prolog
+    swi-prolog \
+    libpcre3
 
 # Install run-time dependencies for Soufflé.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
@@ -95,7 +97,7 @@ COPY scripts/obodash /tools
 RUN chmod +x /tools/obodash && \
     git clone --depth 1 https://github.com/OBOFoundry/OBO-Dashboard.git && \
     cd OBO-Dashboard && \
-    python3 -m pip install -r requirements.txt && \
+    python3 -m pip install -r requirements.txt --break-system-packages && \
     echo " " >> Makefile && \
     echo "build/robot.jar:" >> Makefile && \
     echo "	echo 'skipped ROBOT jar download.....' && touch \$@" >> Makefile && \
