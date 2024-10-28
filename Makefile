@@ -62,7 +62,7 @@ docs:
 	@ODK_IMAGE=odklite ./odk.sh python ./odk/schema_documentation.py
 
 # Building docker image
-VERSION = "v1.5.2"
+VERSION = "v1.5.3"
 IM=obolibrary/odkfull
 IMLITE=obolibrary/odklite
 ROB=obolibrary/robot
