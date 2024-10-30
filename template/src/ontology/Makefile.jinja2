@@ -59,6 +59,7 @@ OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
 SPARQL_VALIDATION_CHECKS =  {% for x in project.robot_report.custom_sparql_checks|default(['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by']) %}{{ x }} {% endfor %}
 SPARQL_EXPORTS =            {% for x in project.robot_report.custom_sparql_exports|default(['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms']) %}{{ x }} {% endfor %}
 ODK_VERSION_MAKEFILE =      {% if env is defined %}{{env['ODK_VERSION'] or "Unknown" }}{% else %}"Unknown"{% endif %}
+RELAX_OPTIONS =             --include-subclass-of true
 
 TODAY ?=                    $(shell date +%Y-%m-%d)
 OBODATE ?=                  $(shell date +'%d:%m:%Y %H:%M')
@@ -1088,7 +1089,7 @@ $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
 	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms|default('false')|lower }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
 	materialize {% for iri in project.release_materialize_object_properties %}--term {{iri}} {% endfor %} \{% endif %}{% endif %}
-	relax \{% if project.release_use_reasoner %}
+	relax $(RELAX_OPTIONS) \{% if project.release_use_reasoner %}
 	reduce -r {{ project.reasoner }} \{% endif %}
 	remove {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 	$(SHARED_ROBOT_COMMANDS) \
@@ -1111,7 +1112,7 @@ $(ONT)-full.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
 		materialize {% for iri in project.release_materialize_object_properties %}--term {{iri}} {% endfor %} \{% endif %}
-		relax \
+		relax $(RELAX_OPTIONS) \
 		reduce -r {{ project.reasoner }} \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
@@ -1130,7 +1131,7 @@ $(ONT)-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 $(ONT)-simple.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms|default('false')|lower }} \{% endif %}
-		relax \
+		relax $(RELAX_OPTIONS) \
 		remove --axioms equivalent \
 		relax \
 		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \{% if project.release_use_reasoner %}
@@ -1166,7 +1167,7 @@ $(ONT)-international.owl: $(ONT).owl $(TRANSLATIONS_OWL)
 $(ONT)-basic.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
 		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms|default('false')|lower }} \{% endif %}
-		relax \
+		relax $(RELAX_OPTIONS) \
 		remove --axioms equivalent \
 		remove --axioms disjoint \
 		remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
