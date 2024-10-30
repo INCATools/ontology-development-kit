@@ -340,8 +340,7 @@ ASSETS = \
 RELEASE_ASSETS = \
   $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}\
   $(SUBSET_FILES){% if project.robot_report.release_reports %} \
-  $(REPORT_FILES){% endif %}{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.release_mappings %} \
-  $(MAPPING_FILES){% endif %}{% endif %}
+  $(REPORT_FILES){% endif %}
 
 .PHONY: all_assets
 all_assets: $(ASSETS) {% if project.ensure_valid_rdfxml %}check_rdfxml_assets{% endif %}
@@ -371,7 +370,8 @@ CLEANFILES=$(MAIN_FILES) $(SRCMERGED) $(EDIT_PREPROCESSED)
 
 .PHONY: prepare_release
 prepare_release: all_odk
-	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.use_dosdps %}
+	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.release_mappings %}
+	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
 	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
 	rm -f $(CLEANFILES) &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
@@ -379,7 +379,8 @@ prepare_release: all_odk
 
 .PHONY: prepare_initial_release
 prepare_initial_release: all_assets
-	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.use_dosdps %}
+	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.release_mappings %}
+	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
 	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
 	rm -f $(patsubst %, ./%, $(CLEANFILES)) &&\
 	cd $(RELEASEDIR) && git add $(RELEASE_ASSETS)
@@ -1244,7 +1245,7 @@ public_release:
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {% else  %}
 
-RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), ../../$(n))
+RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), ../../$(n)){% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.release_mappings %} $(foreach n,$(MAPPING_FILES), ../$(n)){% endif %}{% endif %}
 GHVERSION=v$(VERSION)
 
 .PHONY: public_release
