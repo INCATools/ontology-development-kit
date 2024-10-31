@@ -89,15 +89,15 @@ done
 # Proxy settings for Java applications
 [ -z "$HTTP_PROXY" ] && [ -n "$http_proxy" ] && HTTP_PROXY=$http_proxy
 if [ -n "$HTTP_PROXY" ]; then
-    proxy_host=$(echo $HTTP_PROXY | sed 's,^https\?://,,; s,:[0-9]\+$,,')
-    proxy_port=$(echo $HTTP_PROXY | sed 's,^.*:\([0-9]\+\)$,\1,')
+    proxy_host=$(echo $HTTP_PROXY | sed -E 's,^https?://,,; s,:[0-9]+$,,')
+    proxy_port=$(echo $HTTP_PROXY | sed -E 's,^.*:([0-9]+)$,\1,')
     ODK_JAVA_OPTS="$ODK_JAVA_OPTS -Dhttp.proxyHost=$proxy_host"
     [ "$proxy_port" != "$proxy_host" ] && ODK_JAVA_OPTS="$ODK_JAVA_OPTS -Dhttp.proxyPort=$proxy_port"
 fi
 [ -z "$HTTPS_PROXY" ] && [ -n "$https_proxy" ] && HTTPS_PROXY=$https_proxy
 if [ -n "$HTTPS_PROXY" ]; then
-    proxy_host=$(echo $HTTPS_PROXY | sed 's,^https\?://,,; s,:[0-9]\+$,,')
-    proxy_port=$(echo $HTTPS_PROXY | sed 's,^.*:\([0-9]\+\)$,\1,')
+    proxy_host=$(echo $HTTPS_PROXY | sed -E 's,^https?://,,; s,:[0-9]+$,,')
+    proxy_port=$(echo $HTTPS_PROXY | sed -E 's,^.*:([0-9]+)$,\1,')
     ODK_JAVA_OPTS="$ODK_JAVA_OPTS -Dhttps.proxyHost=$proxy_host"
     [ "$proxy_port" != "$proxy_host" ] && ODK_JAVA_OPTS="$ODK_JAVA_OPTS -Dhttps.proxyPort=$proxy_port"
 fi
