@@ -1246,7 +1246,7 @@ public_release:
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {% else  %}
 
-RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), ../../$(n)) $(foreach n,$(RELEASED_MAPPING_FILES), ../$(n))
+RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), $(RELEASEDIR)/$(n)) $(foreach n,$(RELEASED_MAPPINGS), $(RELEASEDIR)/mappings/$(n).sssom.tsv)
 GHVERSION=v$(VERSION)
 
 .PHONY: public_release
