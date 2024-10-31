@@ -189,6 +189,9 @@ class SSSOMMappingSetProduct(Product):
     sssom_tool_options: Optional[str] = ""
     """SSSOM toolkit options passed to the sssom command used to generate this product command"""
 
+    release_mappings: bool = False
+    """If set to True, this mapping set is treated as an artifact to be released."""
+
 @dataclass_json
 @dataclass
 class BabelonTranslationProduct(Product):
@@ -471,6 +474,16 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
     """If set to True, mappings are copied to the release directory."""
     
     products : Optional[List[SSSOMMappingSetProduct]] = None
+
+    def fill_missing(self):
+        if self.products is None:   # Huh? Ignore.
+            return
+        if self.release_mappings:   # All sets are released
+            released_products = [p for p in self.products]
+        else:   # Only some selected sets are released
+            released_products = [p for p in self.products if p.release_mappings]
+        if len(released_products) > 0:
+            self.released_products = released_products
 
 @dataclass_json
 @dataclass
@@ -769,6 +782,8 @@ class OntologyProject(JsonSchemaMixin):
             self.subset_group.fill_missing()
         if self.pattern_pipelines_group is not None:
             self.pattern_pipelines_group.fill_missing()
+        if self.sssom_mappingset_group is not None:
+            self.sssom_mappingset_group.fill_missing()
 
 @dataclass
 class ExecutionContext(JsonSchemaMixin):

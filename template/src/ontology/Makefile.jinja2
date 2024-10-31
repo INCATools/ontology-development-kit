@@ -245,10 +245,13 @@ all_subsets: $(SUBSET_FILES)
 
 {% if project.sssom_mappingset_group is defined %}
 MAPPINGS = {% for x in project.sssom_mappingset_group.products %} {{ x.id }}{% endfor %}
+{% if project.sssom_mappingset_group.released_products is defined %}
+RELEASED_MAPPINGS = {% for x in project.sssom_mappingset_group.released_products %} {{ x.id }}{% endfor %}{% endif %}
 {% else %}
 MAPPINGS =
 {% endif %}
-MAPPING_FILES = $(patsubst %, $(MAPPINGDIR)/%.sssom.tsv, $(MAPPINGS))
+MAPPING_FILES = $(foreach p, $(MAPPINGS), $(MAPPINGDIR)/$(p).sssom.tsv)
+RELEASED_MAPPING_FILES = $(foreach p, $(RELEASED_MAPPINGS), $(MAPPINGDIR)/$(p).sssom.tsv)
 
 .PHONY: all_mappings
 all_mappings: $(MAPPING_FILES)
@@ -370,8 +373,8 @@ CLEANFILES=$(MAIN_FILES) $(SRCMERGED) $(EDIT_PREPROCESSED)
 
 .PHONY: prepare_release
 prepare_release: all_odk
-	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.release_mappings %}
-	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
+	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %}
+	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(RELEASED_MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
 	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
 	rm -f $(CLEANFILES) &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
@@ -379,8 +382,8 @@ prepare_release: all_odk
 
 .PHONY: prepare_initial_release
 prepare_initial_release: all_assets
-	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.release_mappings %}
-	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
+	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %}
+	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(RELEASED_MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
 	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
 	rm -f $(patsubst %, ./%, $(CLEANFILES)) &&\
 	cd $(RELEASEDIR) && git add $(RELEASE_ASSETS)
@@ -1243,7 +1246,7 @@ public_release:
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {% else  %}
 
-RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), ../../$(n)){% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.release_mappings %} $(foreach n,$(MAPPING_FILES), ../$(n)){% endif %}{% endif %}
+RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), ../../$(n)) $(foreach n,$(RELEASED_MAPPING_FILES), ../$(n))
 GHVERSION=v$(VERSION)
 
 .PHONY: public_release
