@@ -39,6 +39,7 @@ ROBOT=                      robot --catalog $(CATALOG)
 {% if project.owltools_memory|length %}OWLTOOLS_MEMORY=            {{ project.owltools_memory }}{% endif %}
 OWLTOOLS=                   {% if project.owltools_memory|length %}OWLTOOLS_MEMORY=$(OWLTOOLS_MEMORY) {% endif %}owltools --use-catalog
 RELEASEDIR=                 ../..
+DOCSDIR=                    ../../docs
 REPORTDIR=                  reports
 TEMPLATEDIR=                ../templates
 TMPDIR=                     tmp
@@ -832,25 +833,49 @@ DOSDP_TSV_FILES_DEFAULT = $(wildcard $(PATTERNDIR)/data/default/*.tsv)
 DOSDP_PATTERN_NAMES_DEFAULT = $(strip $(patsubst %.tsv, %, $(notdir $(DOSDP_TSV_FILES_DEFAULT))))
 DOSDP_OWL_FILES_DEFAULT = $(foreach name, $(DOSDP_PATTERN_NAMES_DEFAULT), $(PATTERNDIR)/data/default/$(name).ofn)
 DOSDP_TERM_FILES_DEFAULT = $(foreach name, $(DOSDP_PATTERN_NAMES_DEFAULT), $(PATTERNDIR)/data/default/$(name).txt)
+DOSDP_YAML_FILES_DEFAULT = $(foreach name, $(DOSDP_PATTERN_NAMES_DEFAULT), $(PATTERNDIR)/dosdp-patterns/$(name).yaml)
 
 $(DOSDP_OWL_FILES_DEFAULT): $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_DEFAULT) $(ALL_PATTERN_FILES)
 	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_DEFAULT}" ]; then $(DOSDPT) generate --catalog=$(CATALOG) \
     --infile=$(PATTERNDIR)/data/default/ --template=$(PATTERNDIR)/dosdp-patterns --batch-patterns="$(DOSDP_PATTERN_NAMES_DEFAULT)" \
     --ontology=$< {{ project.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/default; fi
 
+.PHONY: dosdp-docs-default
+dosdp-docs-default: $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_DEFAULT) $(DOSDP_YAML_FILES_DEFAULT)
+	mkdir -p $(DOCSDIR)/patterns/default
+	$(DOSDPT) docs {{ project.dosdp_tools_options }} --catalog=$(CATALOG) \
+		       --ontology=$< \
+		       --infile=$(PATTERNDIR)/data/default \
+		       --template=$(PATTERNDIR)/dosdp-patterns \
+		       --batch-patterns="$(DOSDP_PATTERN_NAMES_DEFAULT)" \
+		       --outfile=$(DOCSDIR)/patterns/default{% if project.github_org and project.repo %} \
+		       --data-location-prefix=https://github.com/{{ project.github_org }}/{{ project.repo }}/tree/{{ project.git_main_branch }}/src/patterns/data/default{% endif %}
+
 {% if project.pattern_pipelines_group is defined %}
 {% for pipeline in project.pattern_pipelines_group.products %}
 # DOSDP {{ pipeline.id }} pipeline
 
 DOSDP_TSV_FILES_{{ pipeline.id.upper() }} = $(wildcard $(PATTERNDIR)/data/{{ pipeline.id }}/*.tsv)
-DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }} = $(strip $(patsubst %.tsv, %, $(notdir $(DOSDP_TSV_FILES {{ pipeline.id.upper() }}))))
+DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }} = $(strip $(patsubst %.tsv, %, $(notdir $(DOSDP_TSV_FILES_{{ pipeline.id.upper() }}))))
 DOSDP_OWL_FILES_{{ pipeline.id.upper() }} = $(foreach name, $(DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}), $(PATTERNDIR)/data/{{ pipeline.id }}/$(name).ofn)
 DOSDP_TERM_FILES_{{ pipeline.id.upper() }} = $(foreach name, $(DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}), $(PATTERNDIR)/data/{{ pipeline.id }}/$(name).txt)
+DOSDP_YAML_FILES_{{ pipeline.id.upper() }} = $(foreach name, $(DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}), $(PATTERNDIR)/dosdp-patterns/$(name).yaml)
 
 $(DOSDP_OWL_FILES_{{ pipeline.id.upper() }}): $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_{{ pipeline.id.upper() }}) $(ALL_PATTERN_FILES)
 	if [ $(PAT) = true ] && [ "${DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }}}" ]; then $(DOSDPT) generate --catalog=$(CATALOG) \
     --infile=$(PATTERNDIR)/data/{{ pipeline.id }} --template=$(PATTERNDIR)/dosdp-patterns/ --batch-patterns="$(DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }})" \
     --ontology=$< {{ pipeline.dosdp_tools_options }} --outfile=$(PATTERNDIR)/data/{{ pipeline.id }}; fi
+
+.PHONY: dosdp-docs-{{ pipeline.id }}
+dosdp-docs-{{ pipeline.id }}: $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_{{ pipeline.id.upper() }}) $(DOSDP_YAML_FILES_{{ pipeline.id.upper() }})
+	mkdir -p $(DOCSDIR)/patterns/{{ pipeline.id }}
+	$(DOSDPT) docs {{ pipeline.dosdp_tools_options }} --catalog=$(CATALOG) \
+		       --ontology=$< \
+		       --infile=$(PATTERNDIR)/data/{{ pipeline.id }} \
+		       --template=$(PATTERNDIR)/dosdp-patterns \
+		       --batch-patterns="$(DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }})" \
+		       --outfile=$(DOCSDIR)/patterns/{{ pipeline.id }}{% if project.github_org and project.repo %} \
+		       --data-location-prefix=https://github.com/{{ project.github_org }}/{{ project.repo }}/tree/{{ project.git_main_branch }}/src/patterns/data/{{ pipeline.id }}{% endif %}
 {% endfor -%}
 {% endif -%}
 
@@ -1354,6 +1379,7 @@ DOSDP templates
 * pattern_schema_checks:	Alias of the 'dosdp_validation' command
 * update_patterns:		Pull updated patterns listed in dosdp-patterns/external.txt
 * dosdp-matches-%:		Run the DOSDP matches/query pipeline as configured in your {{ project.id }}-odk.yaml file.
+* dosdp-docs-%:                 Generate the documentation for a given DOSDP pipeline.
 {% endif %}
 Editor utilities:
 * validate_idranges:	Make sure your ID ranges file is formatted correctly
