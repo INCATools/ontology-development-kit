@@ -570,7 +570,7 @@ class OntologyProject(JsonSchemaMixin):
     git_user : str = ""
     """GIT user name (necessary for generating releases)"""
 
-    repo : str = ""
+    repo : str = "noname"
     """Name of repo (do not include org). E.g. cell-ontology"""
     
     github_org : str = ""
@@ -1010,8 +1010,6 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         if len(repo) > 1:
             raise click.ClickException('max one repo; current={}'.format(repo))
         repo = repo[0]
-    else:
-        repo = "noname"
     mg.load_config(config,
                    imports=dependencies,
                    title=title,
