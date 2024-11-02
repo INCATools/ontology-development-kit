@@ -572,10 +572,13 @@ class OntologyProject(JsonSchemaMixin):
 
     repo : str = "noname"
     """Name of repo (do not include org). E.g. cell-ontology"""
-    
+
+    repo_url : str = ""
+    """URL of the online repository. If set, this must point to a browsable version of the repository root."""
+
     github_org : str = ""
     """Name of github org or username where repo will live. Examples: obophenotype, cmungall"""
-    
+
     git_main_branch : str = "main"
     """The main branch for your repo, such as main, or (now discouraged) master."""
 

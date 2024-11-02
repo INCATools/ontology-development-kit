@@ -848,7 +848,8 @@ dosdp-docs-default: $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_DEFAULT) $(DOSDP_YAML
 		       --infile=$(PATTERNDIR)/data/default \
 		       --template=$(PATTERNDIR)/dosdp-patterns \
 		       --batch-patterns="$(DOSDP_PATTERN_NAMES_DEFAULT)" \
-		       --outfile=$(DOCSDIR)/patterns/default{% if project.github_org and project.repo %} \
+		       --outfile=$(DOCSDIR)/patterns/default{% if project.repo_url %} \
+		       --data-location-prefix={{ project.repo_url }}/src/patterns/data/default{% elif project.github_org and project.repo %} \
 		       --data-location-prefix=https://github.com/{{ project.github_org }}/{{ project.repo }}/tree/{{ project.git_main_branch }}/src/patterns/data/default{% endif %}
 
 {% if project.pattern_pipelines_group is defined %}
@@ -874,7 +875,8 @@ dosdp-docs-{{ pipeline.id }}: $(EDIT_PREPROCESSED) $(DOSDP_TSV_FILES_{{ pipeline
 		       --infile=$(PATTERNDIR)/data/{{ pipeline.id }} \
 		       --template=$(PATTERNDIR)/dosdp-patterns \
 		       --batch-patterns="$(DOSDP_PATTERN_NAMES_{{ pipeline.id.upper() }})" \
-		       --outfile=$(DOCSDIR)/patterns/{{ pipeline.id }}{% if project.github_org and project.repo %} \
+		       --outfile=$(DOCSDIR)/patterns/{{ pipeline.id }}{% if project.repo_url %} \
+		       --data-location-prefix={{ project.repo_url }}/src/patterns/data/{{ pipeline.id }}{% elif project.github_org and project.repo %} \
 		       --data-location-prefix=https://github.com/{{ project.github_org }}/{{ project.repo }}/tree/{{ project.git_main_branch }}/src/patterns/data/{{ pipeline.id }}{% endif %}
 {% endfor -%}
 {% endif -%}
