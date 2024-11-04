@@ -40,7 +40,14 @@ RUN apt-get update && \
 COPY requirements.txt.full /build/requirements.txt
 COPY requirements.txt.lite /build/requirements.txt.lite
 COPY constraints.txt /build/constraints.txt
-RUN echo "setuptools<72" > /build/pip-constraints.txt
+COPY pip-constraints.txt /build/pip-constraints.txt
+RUN find /usr/lib/python3/dist-packages -type d -name '*-info' | \
+        sed -E 's,/usr/lib/python3/dist-packages/(.+)-([^-]+)\.(egg|dist)-info,\1==\2,' | \
+        sort > pip-constraints.txt.new && \
+        if ! cmp -s pip-constraints.txt pip-constraints.txt.new ; then \
+             echo "WARNING: Locally derived PIP constraints differ from pre-built constraints!" ;\
+             cat pip-constraints.txt.new ;\
+        fi
 # First the packages needed by the odklite image.
 RUN PIP_CONSTRAINT=/build/pip-constraints.txt python3 -m pip install \
         -r /build/requirements.txt.lite \
