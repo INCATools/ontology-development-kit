@@ -40,7 +40,7 @@ RUN apt-get update && \
 COPY requirements.txt.full /build/requirements.txt
 COPY requirements.txt.lite /build/requirements.txt.lite
 COPY constraints.txt /build/constraints.txt
-RUN echo "setuptools<72" > /build/pip-constraints.txt
+COPY pip-constraints.txt /build/pip-constraints.txt
 # First the packages needed by the odklite image.
 RUN PIP_CONSTRAINT=/build/pip-constraints.txt python3 -m pip install \
         -r /build/requirements.txt.lite \
