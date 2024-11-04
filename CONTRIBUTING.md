@@ -310,12 +310,15 @@ If the component needs to be built from source, do so in [the Dockerfile for odk
 and install the compiled file(s) in either the `/staging/full` tree or the `/staging/lite` tree, for
 inclusion in `odkfull` or `odklite` respectively.
 
-If the component is a Python package, adds it to the `requirements.txt`
+If the component is a Python package, add it to the `requirements.txt.full`
 file, and *also* in the `requirements.txt.lite` file if it is to be part
 of `odklite`. Please try to avoid version constraints unless you can
 explain why you need one.
 
-Python packages are "frozen" before a release by installing all the
-packages listed in `requirements.txt` into a virtual environment and
-running `python -m pip freeze > constraints.txt` from within that
-environment.
+Python packages are "frozen" so that any subsequent build of the ODK
+will always include the exact same version of every single package. To
+update the frozen list, run `make constraints.txt` in the top-level
+directory. This should be done at least (1) whenever a new package is
+added to `requirements.txt.full`, (2) whenever the base image is
+updated. It can also be done at any time during the development cycle to
+ensure that we pick regular updates of any package we use.
