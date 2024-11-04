@@ -265,7 +265,7 @@ SecretStorage==3.3.3
 semsimian==0.2.19
 semsql==0.3.3
 Send2Trash==1.8.3
-setuptools==75.3.0
+setuptools==68.1.2
 ShExJSG==0.8.2
 six==1.16.0
 sniffio==1.3.1
@@ -318,7 +318,7 @@ wcwidth==0.2.13
 webcolors==24.8.0
 webencodings==0.5.1
 websocket-client==1.8.0
-wheel==0.44.0
+wheel==0.42.0
 widgetsnbextension==4.0.13
 wrapt==1.16.0
 xmltodict==0.13.0
