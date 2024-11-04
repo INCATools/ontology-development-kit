@@ -177,7 +177,7 @@ ontobio==2.9.10
 ontodev-cogs==0.3.3
 ontodev-gizmos==0.3.2
 ontoportal-client==0.0.4
-openai==1.53.0
+openai==1.53.1
 openpyxl==3.1.5
 ordered-set==4.1.0
 overrides==7.7.0
