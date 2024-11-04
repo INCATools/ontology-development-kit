@@ -20,6 +20,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         if: ${{ success() }}
         with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
           commit-message: Update constraints.txt
           title: 'Update constraints.txt'
           body: |
