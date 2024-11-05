@@ -6,7 +6,8 @@ on:
 jobs:
   constraints:
     runs-on: ubuntu-latest
-    container: obolibrary/odkfull:latest
+    # This must be the same image as the one the ODK is built on.
+    container: ubuntu:24.04
     strategy:
       max-parallel: 1
     steps:
@@ -15,7 +16,7 @@ jobs:
       - name: work around permission issue
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Build constraints.txt
-        run: sh update-constraints.sh
+        run: sh update-constraints.sh --in-docker
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         if: ${{ success() }}
