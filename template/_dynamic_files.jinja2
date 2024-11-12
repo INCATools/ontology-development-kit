@@ -788,7 +788,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Run ontology QC checks
         env:
@@ -832,16 +832,16 @@ jobs:
     runs-on: ubuntu-latest
     container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # Checks-out main branch under "main" directory
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: master
           path: master
       - name: Diff classification
         run: export ROBOT_JAVA_ARGS=-Xmx6G; robot diff --labels True --left master/src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --left-catalog master/src/ontology/catalog-v001.xml --right src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --right-catalog src/ontology/catalog-v001.xml -f markdown -o edit-diff.md
       - name: Upload diff
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: edit-diff.md
           path: edit-diff.md
@@ -849,11 +849,11 @@ jobs:
     runs-on: ubuntu-latest
     container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Classify ontology
         run: cd src/ontology; make IMP=FALSE PAT=FALSE MIR=FALSE {{ project.id }}.owl
       - name: Upload PR {{ project.id }}.owl
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: {{ project.id }}-pr.owl
           path: src/ontology/{{ project.id }}.owl
@@ -862,13 +862,13 @@ jobs:
     runs-on: ubuntu-latest
     container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: master
       - name: Classify ontology
         run: cd src/ontology; make IMP=FALSE PAT=FALSE MIR=FALSE {{ project.id }}.owl
       - name: Upload master {{ project.id }}.owl
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: {{ project.id }}-master.owl
           path: src/ontology/{{ project.id }}.owl
@@ -880,21 +880,21 @@ jobs:
     runs-on: ubuntu-latest
     container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download master classification
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: {{ project.id }}-master.owl
           path: src/ontology/{{ project.id }}-master.owl
       - name: Download PR classification
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: {{ project.id }}-pr.owl
           path: src/ontology/{{ project.id }}-pr.owl
       - name: Diff classification
         run: export ROBOT_JAVA_ARGS=-Xmx6G; cd src/ontology; robot diff --labels True --left {{ project.id }}-master.owl/{{ project.id }}.owl --left-catalog catalog-v001.xml --right {{ project.id }}-pr.owl/{{ project.id }}.owl --right-catalog catalog-v001.xml -f markdown -o classification-diff.md
       - name: Upload diff
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: classification-diff.md
           path: src/ontology/classification-diff.md
@@ -902,9 +902,9 @@ jobs:
     needs: [diff_classification, edit_file]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download reasoned diff
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: classification-diff.md
           path: classification-diff.md
@@ -917,9 +917,9 @@ jobs:
         with:
           file: "../../comment.md"
           identifier: "REASONED"
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download edit diff
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: edit-diff.md
           path: edit-diff.md
@@ -952,7 +952,7 @@ jobs:
   post_diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Prepare release comment
         env:
             GITHUB_SHA: {% raw %}${{ github.sha }}{% endraw %}
@@ -1859,7 +1859,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
