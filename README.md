@@ -33,14 +33,17 @@ For more details, see
   -  If you have issues, file them here: https://github.com/INCATools/ontology-development-kit/issues
   -  We also have an active community on Slack; you can request access by making a ticket [here](https://github.com/INCATools/ontology-development-kit/issues) as well
 
+# Steering Committee
+
+* @gouttegd Damien Goutte-Gattat (ODK Lead, Flybase)
+* @matentzn Nicolas Matentzoglu (ODK Deputy, Semanticly)
+* @cmungall Chris Mungall (ODK Founder, LBNL)
+
 # Core team
 
-* @matentzn Nicolas Matentzoglu (Semanticly Ltd)
-* @gouttegd Damien Goutte-Gattat (Flybase)
-* @anitacaron Anita Caron (EMBL-EBI)
+* @anitacaron Anita Caron (Novo Nordisk)
 * @balhoff Jim Balhoff (RENCI)
-* @cmungall Chris Mungall (LBNL)
-* @dosumis David Osumi-Sutherland (EMBL-EBI)
+* @dosumis David Osumi-Sutherland (Sanger)
 * @ehartley Emily Hartley (Critical Path Institute)
 * @hkir-dev Huseyin Kir (EMBL-EBI)
 * @shawntanzk Shawn Tan (Novo Nordisk)
