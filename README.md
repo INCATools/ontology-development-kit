@@ -35,7 +35,7 @@ For more details, see
 
 # Steering Committee
 
-* @gouttegd Damien Goutte-Gattat (ODK Lead, Flybase)
+* @gouttegd Damien Goutte-Gattat (ODK Lead, FlyBase)
 * @matentzn Nicolas Matentzoglu (ODK Deputy, Semanticly)
 * @cmungall Chris Mungall (ODK Founder, LBNL)
 
