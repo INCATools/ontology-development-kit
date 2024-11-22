@@ -4,7 +4,7 @@ ARG ODKLITE_TAG=latest
 FROM obolibrary/odklite:${ODKLITE_TAG}
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV PATH="/tools/apache-jena/bin:/tools/sparqlprog/bin:$PATH"
+ENV PATH "/tools/apache-jena/bin:/usr/local/share/swi-prolog/pack/sparqlprog/bin:$PATH"
 
 ARG ODK_VERSION 0.0.0
 ENV ODK_VERSION=$ODK_VERSION
@@ -86,8 +86,7 @@ RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERS
     mv /tools/apache-jena-$JENA_VERSION /tools/apache-jena
 
 # Install SPARQLProg.
-RUN swipl -g "pack_install(sparqlprog, [interactive(false)])" -g halt && \
-    ln -sf /root/.local/share/swi-prolog/pack/sparqlprog /tools/
+RUN swipl -g "pack_install(sparqlprog, [interactive(false),global(true)])" -g halt
 
 # Install obographviz
 RUN npm install -g obographviz
