@@ -34,6 +34,7 @@ test_odklite_programs:
 	@./tests/test-program.sh ROBOT robot --version
 	@./tests/test-program.sh DOSDP-TOOLS dosdp-tools -v
 	@./tests/test-program.sh OWLTOOLS owltools --version
+	@./tests/test-program.sh OORT ontology-release-runner --help
 	@./tests/test-program.sh AMMONITE sh amm --help
 	@./tests/test-program.sh JINJANATOR jinjanate --version
 	@./tests/test-program.sh ODK odk.py
@@ -44,6 +45,11 @@ test_odkfull_programs: test_odklite_programs
 	@./tests/test-program.sh JENA jena
 	@./tests/test-program.sh SPARQL sparql --version
 	@./tests/test-program.sh SPARQLPROG pl2sparql -g halt
+	@./tests/test-program.sh OBO-DASHBOARD obodash --help
+	@./tests/test-program.sh RELATION-GRAPH relation-graph --version
+	@./tests/test-program.sh SSSOM-CLI sssom-cli --version
+	@./tests/test-program.sh OAKLIB runoak --help
+	@./tests/test-program.sh SSSOM-PY sssom --version
 
 test_odkdev_programs: test_odkfull_programs
 
