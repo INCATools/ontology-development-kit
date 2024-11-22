@@ -43,6 +43,7 @@ test_odkfull_programs: test_odklite_programs
 	@./tests/test-program.sh SOUFFLE souffle --version
 	@./tests/test-program.sh JENA jena
 	@./tests/test-program.sh SPARQL sparql --version
+	@./tests/test-program.sh SPARQLPROG pl2sparql -g halt
 
 test_odkdev_programs: test_odkfull_programs
 
