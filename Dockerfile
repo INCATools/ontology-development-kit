@@ -4,7 +4,7 @@ ARG ODKLITE_TAG=latest
 FROM obolibrary/odklite:${ODKLITE_TAG}
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV PATH "/tools/apache-jena/bin:/usr/local/share/swi-prolog/pack/sparqlprog/bin:$PATH"
+ENV PATH="/tools/apache-jena/bin:/usr/local/share/swi-prolog/pack/sparqlprog/bin:$PATH"
 
 ARG ODK_VERSION 0.0.0
 ENV ODK_VERSION=$ODK_VERSION
