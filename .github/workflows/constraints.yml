@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v4
-      - name: work around permission issue
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Build constraints.txt
         run: sh update-constraints.sh --in-docker
       - name: Create Pull Request
