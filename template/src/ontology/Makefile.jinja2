@@ -36,6 +36,7 @@ SRC =                       $(ONT)-edit.$(EDIT_FORMAT)
 MAKE_FAST=                  $(MAKE) IMP=false PAT=false COMP=false MIR=false
 CATALOG=                    {{ project.catalog_file }}
 ROBOT=                      robot --catalog $(CATALOG)
+REASONER=                   {{ project.reasoner }}
 {% if project.owltools_memory|length %}OWLTOOLS_MEMORY=            {{ project.owltools_memory }}{% endif %}
 OWLTOOLS=                   {% if project.owltools_memory|length %}OWLTOOLS_MEMORY=$(OWLTOOLS_MEMORY) {% endif %}owltools --use-catalog
 RELEASEDIR=                 ../..
@@ -131,7 +132,7 @@ release_diff: $(REPORTDIR)/release-diff.md
 
 .PHONY: reason_test
 reason_test: $(EDIT_PREPROCESSED)
-	$(ROBOT) reason --input $< --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} \
+	$(ROBOT) reason --input $< --reasoner $(REASONER) --equivalent-classes-allowed {{ project.allow_equivalents }} \
 		--exclude-tautologies {{ project.exclude_tautologies }} --output test.owl && rm test.owl
 
 .PHONY: odkversion
@@ -1118,10 +1119,10 @@ merge $(patsubst %, -i %, $(OTHER_SRC)) {% endif %}
 # base: A version of the ontology that does not include any externally imported axioms.
 $(ONT)-base.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
-	reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms|default('false')|lower }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
+	reason --reasoner $(REASONER) --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms|default('false')|lower }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
 	materialize {% for iri in project.release_materialize_object_properties %}--term {{iri}} {% endfor %} \{% endif %}{% endif %}
 	relax $(RELAX_OPTIONS) \{% if project.release_use_reasoner %}
-	reduce -r {{ project.reasoner }} \{% endif %}
+	reduce -r $(REASONER) \{% endif %}
 	remove {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 	$(SHARED_ROBOT_COMMANDS) \
 	annotate --link-annotation http://purl.org/dc/elements/1.1/type http://purl.obolibrary.org/obo/IAO_8000001 \
@@ -1141,10 +1142,10 @@ $(ONT)-baselite.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC)
 # Full: The full artefacts with imports merged, reasoned.
 $(ONT)-full.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
+		reason --reasoner $(REASONER) --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} \{% if project.release_materialize_object_properties is defined and project.release_materialize_object_properties %}
 		materialize {% for iri in project.release_materialize_object_properties %}--term {{iri}} {% endfor %} \{% endif %}
 		relax $(RELAX_OPTIONS) \
-		reduce -r {{ project.reasoner }} \
+		reduce -r $(REASONER) \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
@@ -1161,11 +1162,11 @@ $(ONT)-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(IMPORT_FILES)
 #	remove --select imports --trim false
 $(ONT)-simple.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms|default('false')|lower }} \{% endif %}
+		reason --reasoner $(REASONER) --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms|default('false')|lower }} \{% endif %}
 		relax $(RELAX_OPTIONS) \
 		remove --axioms equivalent \
 		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \{% if project.release_use_reasoner %}
-		reduce -r {{ project.reasoner }} \{% endif %}
+		reduce -r $(REASONER) \{% endif %}
 		query --update ../sparql/inject-subset-declaration.ru --update ../sparql/inject-synonymtype-declaration.ru \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
@@ -1177,7 +1178,7 @@ $(ONT)-simple.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILE
 $(ONT)-simple-non-classified.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE_BASE) \
 		remove --axioms equivalent \{% if project.release_use_reasoner %}
-		reduce -r {{ project.reasoner }} \{% endif %}
+		reduce -r $(REASONER) \{% endif %}
 		filter --select ontology --term-file $(SIMPLESEED) --trim false \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
@@ -1196,13 +1197,13 @@ $(ONT)-international.owl: $(ONT).owl $(TRANSLATIONS_OWL)
 # removes any axioms that contains one of the ops that not in the whitelist file
 $(ONT)-basic.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATIONS) $(IMPORT_FILES)
 	$(ROBOT_RELEASE_IMPORT_MODE) \{% if project.release_use_reasoner %}
-		reason --reasoner {{ project.reasoner }} --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms|default('false')|lower }} \{% endif %}
+		reason --reasoner $(REASONER) --equivalent-classes-allowed {{ project.allow_equivalents }} --exclude-tautologies {{ project.exclude_tautologies }} --annotate-inferred-axioms {{ project.release_annotate_inferred_axioms|default('false')|lower }} \{% endif %}
 		relax $(RELAX_OPTIONS) \
 		remove --axioms equivalent \
 		remove --axioms disjoint \
 		remove --term-file $(KEEPRELATIONS) --select complement --select object-properties --trim true \
 		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \
-		reduce -r {{ project.reasoner }} \
+		reduce -r $(REASONER) \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 {% for r in project.release_artefacts %}
