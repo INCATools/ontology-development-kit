@@ -5,12 +5,13 @@ ENV ROBOT_VERSION=1.9.7
 ENV DOSDP_VERSION=0.19.3
 ENV OWLTOOLS_VERSION=2020-04-06
 ENV AMMONITE_VERSION=2.5.9
+ENV RELATION_GRAPH=2.3.2
 
 WORKDIR /tools
 ENV JAVA_HOME="/usr"
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-ENV PATH="/tools:/tools/dosdptools/bin:$PATH"
+ENV PATH="/tools:/tools/dosdptools/bin:/tools/relation-graph/bin:$PATH"
 
 ARG ODK_VERSION=0.0.0
 ENV ODK_VERSION=$ODK_VERSION
@@ -33,7 +34,8 @@ RUN apt-get update && \
         jq \
         rsync \
         time \
-        sudo
+        sudo \
+        sqlite3
 
 # Install Python environment (copied over from the builder image).
 COPY --from=obolibrary/odkbuild:latest /staging/lite /
@@ -72,6 +74,12 @@ RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VER
         -O /tools/amm && \
     chmod 755 /tools/amm && \
     java -cp /tools/amm ammonite.AmmoniteMain /dev/null
+
+# Install relation-graph
+RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELATION_GRAPH/relation-graph-cli-$RELATION_GRAPH.tgz && \
+    tar -zxvf relation-graph-cli-$RELATION_GRAPH.tgz && \
+    mv relation-graph-cli-$RELATION_GRAPH /tools/relation-graph && \
+    chmod +x /tools/relation-graph
 
 # Install RDF/XML validation script
 COPY --chmod=755 scripts/check-rdfxml.sh /tools/check-rdfxml

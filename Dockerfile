@@ -33,7 +33,6 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     automake \
     aha \
     dos2unix \
-    sqlite3 \
     libjson-perl \
     libbusiness-isbn-perl \
     pkg-config \
@@ -101,14 +100,6 @@ RUN chmod +x /tools/obodash && \
     echo "build/robot.jar:" >> Makefile && \
     echo "	echo 'skipped ROBOT jar download.....' && touch \$@" >> Makefile && \
     echo "" >> Makefile
-
-# Install relation-graph
-ENV RG=2.3.2
-ENV PATH="/tools/relation-graph/bin:$PATH"
-RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RG/relation-graph-cli-$RG.tgz \
-&& tar -zxvf relation-graph-cli-$RG.tgz \
-&& mv relation-graph-cli-$RG /tools/relation-graph \
-&& chmod +x /tools/relation-graph
 
 # Install ROBOT plugins
 RUN wget -nv -O /tools/sssom-cli https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-cli && \
