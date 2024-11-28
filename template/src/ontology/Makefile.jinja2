@@ -73,6 +73,9 @@ ONTOLOGYTERMS =             $(TMPDIR)/ontologyterms.txt
 EDIT_PREPROCESSED =         $(TMPDIR)/$(ONT)-preprocess.owl
 {%- if project.use_context %}
 CONTEXT_FILE =              config/context.json
+{%- if 'db' in project.export_formats %}
+CONTEXT_FILE_CSV =          config/context.csv
+{%- endif %}
 {%- endif %}
 
 {%- if project.use_dosdps %}
@@ -1057,6 +1060,19 @@ $(TRANSLATIONSDIR)/%.babelon.json: $(TRANSLATIONSDIR)/%.babelon.tsv
 		mv $@.tmp.json $@
 {% endif -%}
 {% endfor -%}
+
+{% if 'db' in project.export_formats -%}
+{% if project.use_context -%}
+$(CONTEXT_FILE_CSV): $(CONTEXT_FILE)
+	context2csv < $< > $@
+{% endif -%}
+
+%.db: %.owl $(CONTEXT_FILE_CSV)
+	@rm -f $*.db $*-relation-graph.tsv.gz .template.db .template.db.tmp
+	semsql make $*.db{% if project.use_context %} -P $(CONTEXT_FILE_CSV){% endif %}
+	@rm -f $*-relation-graph.tsv.gz .template.db .template.db.tmp
+	@test -f $*.db || (echo "SQLite/SemSQL generation failed" && exit 1)
+{% endif -%}
 
 # ----------------------------------------
 # Release artefacts: main release artefacts

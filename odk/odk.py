@@ -698,7 +698,7 @@ class OntologyProject(JsonSchemaMixin):
     """Define which object properties to materialise at release time."""
     
     export_formats : List[str] = field(default_factory=lambda: ['owl', 'obo'])
-    """A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl."""
+    """A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl, db."""
     
     namespaces : Optional[List[str]] = None
     """A list of namespaces that are considered at home in this ontology. Used for certain filter commands."""
