@@ -11,10 +11,10 @@ jobs:
     strategy:
       max-parallel: 1
     steps:
-      - name: Install Git
+      - name: Install Required Packages
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends git
+          apt-get install -y --no-install-recommends git ca-certificates
       - name: Checkout main branch
         uses: actions/checkout@v4
       - name: Build constraints.txt
