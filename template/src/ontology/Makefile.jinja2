@@ -757,6 +757,10 @@ $(SUBSETDIR)/%.json: $(SUBSETDIR)/%.owl
 	$(ROBOT) convert --input $< --check false -f json -o $@.tmp.json &&\
 	mv $@.tmp.json $@
 {% endif -%}
+{% if 'db' in project.export_formats -%}
+$(SUBSETDIR)/%.db: $(SUBSETDIR)/%.owl
+	semsql make $(SUBSETDIR)/$*.db && rm -f $(SUBSETDIR)/$*-relation-graph.tsv.gz
+{% endif -%}
 
 {% endif %}
 
@@ -1056,6 +1060,10 @@ $(TRANSLATIONSDIR)/%.babelon.json: $(TRANSLATIONSDIR)/%.babelon.tsv
 		convert --check false -f json -o $@.tmp.json &&\
 		mv $@.tmp.json $@
 {% endif -%}
+{% if 'db' in project.export_formats -%}
+{{ release }}.db: {{ release }}.owl
+	semsql make {{ release }}.db && rm -f {{ release }}-relation-graph.tsv.gz
+{% endif -%}
 {% endfor -%}
 
 # ----------------------------------------
@@ -1080,6 +1088,10 @@ $(ONT).json: $(ONT).owl
 	$(ROBOT) annotate --input $< --ontology-iri $(URIBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f json -o $@.tmp.json &&\
 		mv $@.tmp.json $@
+{% endif -%}
+{% if 'db' in project.export_formats -%}
+$(ONT).db: $(ONT).owl
+	semsql make $(ONT).db && rm -f $(ONT)-relation-graph.tsv.gz
 {% endif -%}
 
 # -----------------------------------------------------

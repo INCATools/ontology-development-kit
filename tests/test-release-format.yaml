@@ -19,6 +19,7 @@ export_formats:
   - obo
   - json
   - ttl
+  - semsql
 import_group:
   products:
     - id: ro
