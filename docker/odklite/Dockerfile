@@ -84,6 +84,9 @@ RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELAT
 # Install RDF/XML validation script
 COPY --chmod=755 scripts/check-rdfxml.sh /tools/check-rdfxml
 
+# Install script to convert JSON context prefix map to CSV prefix map
+COPY --chmod=755 scripts/context2csv.py /tools/context2csv
+
 # Make sure we run under an existing user account with UID/GID
 # matching the UID/GID of the calling user
 COPY --chmod=755 scripts/entrypoint.sh /usr/local/sbin/odkuser-entrypoint.sh

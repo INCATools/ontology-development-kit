@@ -6,6 +6,8 @@ bin/
 *.tmp.obo
 *.tmp.owl
 *.tmp.json
+*-relation-graph.tsv.gz
+.template.db
 
 .github/token.txt
 
@@ -16,11 +18,13 @@ src/ontology/reports/*
 src/ontology/{{ project.id }}.owl
 src/ontology/{{ project.id }}.obo
 src/ontology/{{ project.id }}.json
+src/ontology/{{ project.id }}.db
 src/ontology/{{ project.id }}-base.*
 src/ontology/{{ project.id }}-basic.*
 src/ontology/{{ project.id }}-full.*
 src/ontology/{{ project.id }}-simple.*
 src/ontology/{{ project.id }}-simple-non-classified.*
+src/ontology/config/context.csv
 
 src/ontology/seed.txt
 src/ontology/dosdp-tools.log
