@@ -104,6 +104,6 @@ RUN wget -nv https://github.com/ontodev/rdftab.rs/archive/refs/tags/v$RDFTAB_VER
     tar xf rdftab.tar.gz && \
     cd rdftab.rs-$RDFTAB_VERSION && \
     cargo build --release -Z sparse-registry && \
-    install -D -m 755 target/release/rdftab /staging/full/usr/bin/rdftab && \
+    install -D -m 755 target/release/rdftab /staging/lite/usr/bin/rdftab && \
     cd /build && \
     rm -rf rdftab.rs-$RDFTAB_VERSION rdftab.tar.gz /root/.cargo
