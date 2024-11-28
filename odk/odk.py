@@ -697,7 +697,7 @@ class OntologyProject(JsonSchemaMixin):
     release_materialize_object_properties : List[str] = None
     """Define which object properties to materialise at release time."""
     
-    export_formats : List[str] = field(default_factory=lambda: ['owl', 'obo'])
+    export_formats : List[str] = field(default_factory=lambda: ['owl', 'obo', 'db'])
     """A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl, db."""
     
     namespaces : Optional[List[str]] = None
