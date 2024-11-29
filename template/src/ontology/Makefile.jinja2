@@ -74,7 +74,7 @@ EDIT_PREPROCESSED =         $(TMPDIR)/$(ONT)-preprocess.owl
 {%- if project.use_context %}
 CONTEXT_FILE =              config/context.json
 {%- if 'db' in project.export_formats %}
-CONTEXT_FILE_CSV =          config/context.csv
+CONTEXT_FILE_CSV =          $(TMPDIR)/context.csv
 {%- endif %}
 {%- endif %}
 
@@ -1063,7 +1063,7 @@ $(TRANSLATIONSDIR)/%.babelon.json: $(TRANSLATIONSDIR)/%.babelon.tsv
 
 {% if 'db' in project.export_formats -%}
 {% if project.use_context -%}
-$(CONTEXT_FILE_CSV): $(CONTEXT_FILE)
+$(CONTEXT_FILE_CSV): $(CONTEXT_FILE) | $(TMPDIR)
 	context2csv < $< > $@
 {% endif -%}
 
