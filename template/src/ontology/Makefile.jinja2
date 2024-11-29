@@ -1067,7 +1067,7 @@ $(CONTEXT_FILE_CSV): $(CONTEXT_FILE) | $(TMPDIR)
 	context2csv < $< > $@
 {% endif -%}
 
-%.db: %.owl $(CONTEXT_FILE_CSV)
+%.db: %.owl{% if project.use_context %} $(CONTEXT_FILE_CSV){% endif %}
 	@rm -f $*.db $*-relation-graph.tsv.gz .template.db .template.db.tmp
 	semsql make $*.db{% if project.use_context %} -P $(CONTEXT_FILE_CSV){% endif %}
 	@rm -f $*-relation-graph.tsv.gz .template.db .template.db.tmp
