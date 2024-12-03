@@ -1,3 +1,12 @@
+# v1.5.4
+- Updates:
+    - ROBOT updated to version 1.9.7
+    - SSSOM-Java command-line tool and ROBOT plugin updated to version 1.0.0
+- Bugfixes:
+    - Fix installation of SPARQLProg tools ([#1134](https://github.com/INCATools/ontology-development-kit/pull/1135))
+    - Fix bug that the repository name set forth in the config file was ignored ([#1122](https://github.com/INCATools/ontology-development-kit/pull/1122))
+
+
 # v1.5.3
 
 - Updates:
