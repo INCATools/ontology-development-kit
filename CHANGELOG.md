@@ -29,7 +29,7 @@ For more detailed changes see:
 ## Bugfixes
 
 - Added back `class-count-by-prefix.sparql` ([#1030](https://github.com/INCATools/ontology-development-kit/issues/1030)).
-- Disabled `table-reader` mkdocs plygin ([#1028](https://github.com/INCATools/ontology-development-kit/issues/1028)).
+- Disabled `table-reader` mkdocs plugin ([#1028](https://github.com/INCATools/ontology-development-kit/issues/1028)).
 - SPARQL-based tests on the `-edit` file now also cover any component included in the ontology, as well as any pattern-derived contents ([#1154](https://github.com/INCATools/ontology-development-kit/issues/1154)).
 
 # v1.5
