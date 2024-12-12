@@ -88,7 +88,8 @@ RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERS
 RUN swipl -g "pack_install(sparqlprog, [interactive(false),global(true)])" -g halt
 
 # Install obographviz
-RUN npm install -g obographviz
+RUN npm install -g obographviz && \
+    chown -R root:root /usr/local/lib/node_modules
 
 # Install OBO-Dashboard.
 COPY scripts/obodash /tools
