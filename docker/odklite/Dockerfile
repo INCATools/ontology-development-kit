@@ -4,7 +4,6 @@ LABEL maintainer="obo-tools@googlegroups.com"
 ENV ROBOT_VERSION=1.9.7
 ENV DOSDP_VERSION=0.19.3
 ENV OWLTOOLS_VERSION=2020-04-06
-ENV AMMONITE_VERSION=2.5.9
 ENV RELATION_GRAPH=2.3.2
 ENV DICER_VERSION=0.1.0
 
@@ -69,12 +68,6 @@ RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_V
     chmod +x /tools/owltools && \
     chmod +x /tools/ontology-release-runner && \
     chmod +x /tools/owltools-oort-all.jar
-
-# Install Ammonite.
-RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VERSION/2.13-$AMMONITE_VERSION \
-        -O /tools/amm && \
-    chmod 755 /tools/amm && \
-    java -cp /tools/amm ammonite.AmmoniteMain /dev/null
 
 # Install relation-graph
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELATION_GRAPH/relation-graph-cli-$RELATION_GRAPH.tgz && \
