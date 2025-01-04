@@ -1333,8 +1333,8 @@ normalize_src: $(SRC)
 	$(ROBOT) convert -i $< -f {% if 'obo' == project.edit_format %}obo --check false{% else %}ofn{% endif %} -o $(TMPDIR)/normalise && mv $(TMPDIR)/normalise $<
 
 .PHONY: validate_idranges
-validate_idranges: | $(TMPDIR)
-	COURSIER_CACHE=$(TMPDIR)/coursier-cache amm $(SCRIPTSDIR)/validate_id_ranges.sc {{ project.id }}-idranges.owl
+validate_idranges:
+	dicer-cli {{ project.id }}-idranges.owl
 
 .PHONY: update_repo
 update_repo:
