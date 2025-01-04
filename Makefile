@@ -37,6 +37,7 @@ test_odklite_programs:
 	@./tests/test-program.sh OORT ontology-release-runner --help
 	@./tests/test-program.sh AMMONITE sh amm --help
 	@./tests/test-program.sh JINJANATOR jinjanate --version
+	@./tests/test-program.sh DICER-CLI dicer-cli --version
 	@./tests/test-program.sh ODK odk.py
 
 test_odkfull_programs: test_odklite_programs

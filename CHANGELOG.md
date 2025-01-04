@@ -13,6 +13,7 @@ For more detailed changes see:
 
 - New [ROBOT Version 1.9.6](https://github.com/ontodev/robot/releases/tag/v1.9.6). This came with a great number of updates and upgrades, see release notes.
 - J2cli, a command-line tool to process Jinja2 templates, has been replaced by [Jinjanator](https://github.com/kpfleming/jinjanator). If your custom workflows invoke the `j2` tool, you will need to update them to use `jinjanate` instead.
+- New program `dicer-cli` to manage the ID range file.
 
 ## New configuration options
 

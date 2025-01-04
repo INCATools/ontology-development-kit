@@ -6,6 +6,7 @@ ENV DOSDP_VERSION=0.19.3
 ENV OWLTOOLS_VERSION=2020-04-06
 ENV AMMONITE_VERSION=2.5.9
 ENV RELATION_GRAPH=2.3.2
+ENV DICER_VERSION=0.1.0
 
 WORKDIR /tools
 ENV JAVA_HOME="/usr"
@@ -80,6 +81,11 @@ RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELAT
     tar -zxvf relation-graph-cli-$RELATION_GRAPH.tgz && \
     mv relation-graph-cli-$RELATION_GRAPH /tools/relation-graph && \
     chmod +x /tools/relation-graph
+
+# Install the Dicer CLI tool
+RUN wget -nv https://github.com/gouttegd/dicer/releases/download/dicer-$DICER_VERSION/dicer-cli \
+        -O /tools/dicer-cli && \
+    chmod +x /tools/dicer-cli
 
 # Install RDF/XML validation script
 COPY --chmod=755 scripts/check-rdfxml.sh /tools/check-rdfxml
