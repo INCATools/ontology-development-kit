@@ -8,7 +8,7 @@ WORKDIR /build
 
 # Software versions
 ENV RDFTAB_VERSION=0.1.1
-ENV SOUFFLE_VERSION=2.4
+ENV SOUFFLE_VERSION=2.4.1
 ENV FASTOBO_VALIDATOR_VERSION=0.4.6
 
 # Everything that we want to get into one of the final ODK images

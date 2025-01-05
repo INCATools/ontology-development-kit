@@ -10,9 +10,10 @@ ARG ODK_VERSION 0.0.0
 ENV ODK_VERSION=$ODK_VERSION
 
 # Software versions
+# Jena 5.x requires Java 17, so for now we are stuck with Jena 4.x
 ENV JENA_VERSION=4.9.0
-ENV KGCL_JAVA_VERSION=0.5.0
-ENV SSSOM_JAVA_VERSION=1.0.0
+ENV KGCL_JAVA_VERSION=0.5.1
+ENV SSSOM_JAVA_VERSION=1.1.1
 ENV AMMONITE_VERSION=2.5.9
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
