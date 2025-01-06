@@ -14,7 +14,6 @@ ENV ODK_VERSION=$ODK_VERSION
 ENV JENA_VERSION=4.9.0
 ENV KGCL_JAVA_VERSION=0.5.1
 ENV SSSOM_JAVA_VERSION=1.1.1
-ENV AMMONITE_VERSION=2.5.9
 ENV SCALA_CLI_VERSION=1.5.4
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
@@ -86,12 +85,6 @@ RUN test "x$TARGETARCH" = xamd64 && ( \
 # Install Jena.
 RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERSION.tar.gz -O- | tar xzC /tools && \
     mv /tools/apache-jena-$JENA_VERSION /tools/apache-jena
-
-# Install Ammonite
-RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VERSION/2.13-$AMMONITE_VERSION \
-        -O /tools/amm && \
-    chmod 755 /tools/amm && \
-    java -cp /tools/amm ammonite.AmmoniteMain /dev/null
 
 # Install Scala-CLI
 RUN wget -nv https://github.com/VirtusLab/scala-cli/releases/download/v$SCALA_CLI_VERSION/scala-cli.jar \
