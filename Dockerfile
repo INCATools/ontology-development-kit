@@ -15,6 +15,7 @@ ENV JENA_VERSION=4.9.0
 ENV KGCL_JAVA_VERSION=0.5.1
 ENV SSSOM_JAVA_VERSION=1.1.1
 ENV AMMONITE_VERSION=2.5.9
+ENV SCALA_CLI_VERSION=1.5.4
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
@@ -91,6 +92,13 @@ RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VER
         -O /tools/amm && \
     chmod 755 /tools/amm && \
     java -cp /tools/amm ammonite.AmmoniteMain /dev/null
+
+# Install Scala-CLI
+RUN wget -nv https://github.com/VirtusLab/scala-cli/releases/download/v$SCALA_CLI_VERSION/scala-cli.jar \
+        -O /tools/scala-cli.jar && \
+    echo "#!/bin/bash" > /tools/scala-cli && \
+    echo "java -jar /tools/scala-cli.jar \"\$@\"" >> /tools/scala-cli && \
+    chmod 0755 /tools/scala-cli
 
 # Install SPARQLProg.
 RUN swipl -g "pack_install(sparqlprog, [interactive(false),global(true)])" -g halt
