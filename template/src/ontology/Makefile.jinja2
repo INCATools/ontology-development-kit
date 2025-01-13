@@ -966,8 +966,10 @@ $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: $(TMPDIR)/{{ mapping.id }}.obographs.j
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
 	test -f $@
 {%- elif mapping.maintenance == "mirror" %}
+ifeq ($(MIR),true)
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
 	wget "{{ mapping.mirror_from }}" -O $@
+endif
 {%- endif %}
 {%- endfor %}
 {%- endif %}
