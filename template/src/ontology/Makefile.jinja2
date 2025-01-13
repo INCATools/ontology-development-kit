@@ -725,9 +725,6 @@ mirror-{{ ont.id }}: | $(TMPDIR)
 {%- endif %}
 {%- endif %}
 {%- if ont.is_large %}
-else
-mirror-{{ ont.id }}:
-	@echo "Not refreshing {{ ont.id }} because refreshing large imports is disabled (IMP_LARGE=$(IMP_LARGE))."
 endif
 {%- endif %}
 {% endfor -%}
@@ -746,10 +743,7 @@ $(MIRRORDIR)/%.owl: mirror-% | $(MIRRORDIR)
 	if [ -f $(TMPDIR)/mirror-$*.owl ]; then if cmp -s $(TMPDIR)/mirror-$*.owl $@ ; then echo "Mirror identical, ignoring."; else echo "Mirrors different, updating." &&\
 		cp $(TMPDIR)/mirror-$*.owl $@; fi; fi
 
-else # MIR=false
-$(MIRRORDIR)/%.owl:
-	@echo "Not refreshing $@ because the mirrorring pipeline is disabled (MIR=$(MIR))."
-endif
+endif # MIR=true
 {% endif %}
 
 {% if project.subset_group is defined %}
