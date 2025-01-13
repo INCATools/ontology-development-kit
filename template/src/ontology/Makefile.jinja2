@@ -919,10 +919,9 @@ dosdp-matches-{{ matches.id }}: {{ matches.ontology }} $(ALL_PATTERN_FILES)
 {% endfor %}{% endif -%}
 {% endif -%}
 
-# Generating the seed file from all the TSVs. If Pattern generation is deactivated, we still extract a seed from definitions.owl
+# Generating the seed file from all the TSVs.
 $(TMPDIR)/all_pattern_terms.txt: $(DOSDP_TERM_FILES_DEFAULT) {% if project.pattern_pipelines_group is defined %} {% for pipeline in project.pattern_pipelines_group.products %} $(DOSDP_TERM_FILES_{{ pipeline.id.upper() }}){% endfor %}{% endif %} $(TMPDIR)/pattern_owl_seed.txt
-	cat $^ | sort | uniq > $@; else $(ROBOT) query --use-graphs true -f csv -i $(PATTERNDIR)/definitions.owl \
-    --query ../sparql/terms.sparql $@
+	cat $^ | sort | uniq > $@
 
 $(TMPDIR)/pattern_owl_seed.txt: $(PATTERNDIR)/pattern.owl
 	$(ROBOT) query --use-graphs true -f csv -i $< --query ../sparql/terms.sparql $@
@@ -939,7 +938,11 @@ $(PATTERNDIR)/definitions.owl: $(DOSDP_OWL_FILES_DEFAULT) {% if project.pattern_
 		annotate --ontology-iri $(ONTBASE)/patterns/definitions.owl  --version-iri $(ONTBASE)/releases/$(TODAY)/patterns/definitions.owl \
       --annotation owl:versionInfo $(VERSION) -o definitions.ofn && mv definitions.ofn $@; fi
 
-endif # PAT=true
+else # PAT=false
+# Even if pattern generation is disabled, we still extract a seed from definitions.owl
+$(TMPDIR)/all_pattern_terms.txt: $(PATTERNDIR)/definitions.owl
+	$(ROBOT) query --use-graphs true -f csv -i $< --query $(SPARQLDIR)/terms.sparql $@
+endif
 {% endif %}
 {%- if project.use_mappings %}
 # ----------------------------------------
