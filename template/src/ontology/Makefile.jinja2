@@ -674,7 +674,7 @@ $(COMPONENTSDIR)/{{ component.filename }}:{% if component.mappings is not none %
 # Set to false to bypass all code to create/refresh mirrors
 MIR=true
 
-ifeq ($(strip $(MIR)),true)
+ifeq ($(MIR),true)
 {% for ont in project.import_group.products %}
 
 ## ONTOLOGY: {{ ont.id }}
@@ -688,7 +688,7 @@ ifeq ($(strip $(MIR)),true)
 {%- endif -%}
 
 {%- if ont.is_large %}
-ifeq ($(strip $(IMP_LARGE)),true)
+ifeq ($(IMP_LARGE),true)
 {%- endif %}
 {%- if ont.mirror_from %}
 mirror-{{ ont.id }}: | $(TMPDIR)
@@ -730,7 +730,7 @@ endif
 ALL_MIRRORS = $(patsubst %, $(MIRRORDIR)/%.owl, $(IMPORTS))
 MERGE_MIRRORS = true
 
-ifeq ($(strip $(MERGE_MIRRORS)),true)
+ifeq ($(MERGE_MIRRORS),true)
 $(MIRRORDIR)/merged.owl: $(ALL_MIRRORS)
 	$(ROBOT) merge $(patsubst %, -i %, $^) {% if project.import_group.annotate_defined_by %}--annotate-defined-by true{% endif %} {% if project.import_group.base_merge_drop_equivalent_class_axioms %}remove --axioms equivalent --preserve-structure false {% endif %}-o $@
 .PRECIOUS: $(MIRRORDIR)/merged.owl
