@@ -111,6 +111,29 @@ SHELL = $(SCRIPTSDIR)/run-command.sh
 endif
 
 # ----------------------------------------
+# Workflow control
+# ----------------------------------------
+# Set any of the following variables to false to completely disable the
+# corresponding workflows.
+
+# Refresh of mirrors (and all remote resources more generally)
+MIR = true
+
+# Re-generation of import modules
+IMP = true
+
+# Re-generation of "large" import modules
+# Note that IMP=false takes precedence over IMP_LARGE=true, that is,
+# IMP=false disables the generation of all import modules, large or not.
+IMP_LARGE = true
+
+# Re-generation of component modules
+COMP = true
+
+# Re-generation of pattern-derived files
+PAT = true
+
+# ----------------------------------------
 # Top-level targets
 # ----------------------------------------
 
@@ -464,12 +487,6 @@ ANNOTATION_PROPERTIES={% for p in project.import_group.annotation_properties %}{
 # These live in the imports/ folder
 # This pattern uses ROBOT to generate an import module
 
-# Set to false to bypass all code to generate/refresh import modules
-IMP = true
-
-# Likewise, but for "large" modules only
-IMP_LARGE = true
-
 ifeq ($(IMP),true)
 # Should be able to drop this if robot can just take a big messy list of terms as input.
 $(IMPORTDIR)/%_terms_combined.txt: $(IMPORTSEED) $(IMPORTDIR)/%_terms.txt
@@ -608,9 +625,6 @@ no-mirror-refresh-%:
 # ----------------------------------------
 # Some ontologies contain external and internal components. A component is included in the ontology in its entirety.
 
-# Set to false to bypass all code to generate/refresh components
-COMP=true
-
 ifeq ($(COMP),true)
 .PHONY: all_components
 all_components: $(OTHER_SRC)
@@ -675,9 +689,6 @@ endif # COMP=true
 # ----------------------------------------
 # Mirroring upstream ontologies
 # ----------------------------------------
-
-# Set to false to bypass all code to create/refresh mirrors
-MIR=true
 
 ifeq ($(MIR),true)
 {% for ont in project.import_group.products %}
@@ -792,9 +803,6 @@ endif
 # ----------------------------------------
 # DOSDP Templates/Patterns
 # ----------------------------------------
-
-# Set to false to bypass all code to generate/refresh patterns
-PAT = true
 
 ifeq ($(PAT),true)
 
