@@ -169,7 +169,7 @@ odkversion:
 {%- if project.config_hash %}
 .PHONY: config_check
 config_check:
-	@if [ "$$(sha256sum $(ONT)-odk.yaml | cut -c1-64)" = "$(CONFIG_HASH)" ]; then \
+	@if [ "$$(tr -d '\r' < $(ONT)-odk.yaml | sha256sum | cut -c1-64)" = "$(CONFIG_HASH)" ]; then \
 		echo "Repository is up-to-date." ; else \
 		echo "Your ODK configuration has changed since this Makefile was generated. You may need to run 'make update_repo'." ; fi
 {% endif %}
