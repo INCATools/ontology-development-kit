@@ -37,8 +37,6 @@ MAKE_FAST=                  $(MAKE) IMP=false PAT=false COMP=false MIR=false
 CATALOG=                    {{ project.catalog_file }}
 ROBOT=                      robot --catalog $(CATALOG)
 REASONER=                   {{ project.reasoner }}
-{% if project.owltools_memory|length %}OWLTOOLS_MEMORY=            {{ project.owltools_memory }}{% endif %}
-OWLTOOLS=                   {% if project.owltools_memory|length %}OWLTOOLS_MEMORY=$(OWLTOOLS_MEMORY) {% endif %}owltools --use-catalog
 RELEASEDIR=                 ../..
 DOCSDIR=                    ../../docs
 REPORTDIR=                  reports
