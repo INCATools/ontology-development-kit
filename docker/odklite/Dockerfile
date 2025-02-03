@@ -3,7 +3,6 @@ LABEL maintainer="obo-tools@googlegroups.com"
 
 ENV ROBOT_VERSION=1.9.7
 ENV DOSDP_VERSION=0.19.3
-ENV OWLTOOLS_VERSION=2020-04-06
 ENV RELATION_GRAPH=2.3.2
 ENV DICER_VERSION=0.1.0
 ENV ODK_ROBOT_PLUGIN_VERSION=0.1.0
@@ -62,17 +61,6 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_
 # Install ODK plugin for ROBOT
 RUN mkdir -p /tools/robot-plugins && \
     wget -nv -O /tools/robot-plugins/odk.jar https://github.com/gouttegd/exp-robot-plugin/releases/download/exp-robot-plugin-$ODK_ROBOT_PLUGIN_VERSION/exp.jar
-
-# Install OWLTOOLS.
-RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools \
-        -O /tools/owltools && \
-    wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/ontology-release-runner \
-        -O /tools/ontology-release-runner && \
-    wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools-oort-all.jar \
-        -O /tools/owltools-oort-all.jar && \
-    chmod +x /tools/owltools && \
-    chmod +x /tools/ontology-release-runner && \
-    chmod +x /tools/owltools-oort-all.jar
 
 # Install relation-graph
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELATION_GRAPH/relation-graph-cli-$RELATION_GRAPH.tgz && \
