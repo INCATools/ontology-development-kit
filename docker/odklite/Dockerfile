@@ -6,6 +6,7 @@ ENV DOSDP_VERSION=0.19.3
 ENV OWLTOOLS_VERSION=2020-04-06
 ENV RELATION_GRAPH=2.3.2
 ENV DICER_VERSION=0.1.0
+ENV ODK_ROBOT_PLUGIN_VERSION=0.1.0
 
 WORKDIR /tools
 ENV JAVA_HOME="/usr"
@@ -57,6 +58,10 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_
     wget -nv --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py \
         -O /tools/simple_pattern_tester.py && \
     chmod 755 /tools/simple_pattern_tester.py
+
+# Install ODK plugin for ROBOT
+RUN mkdir -p /tools/robot-plugins && \
+    wget -nv -O /tools/robot-plugins/odk.jar https://github.com/gouttegd/exp-robot-plugin/releases/download/exp-robot-plugin-$ODK_ROBOT_PLUGIN_VERSION/exp.jar
 
 # Install OWLTOOLS.
 RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools \
