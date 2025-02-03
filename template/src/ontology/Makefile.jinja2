@@ -767,9 +767,9 @@ $(SUBSETDIR)/%.tsv: $(SUBSETDIR)/%.owl
 	$(ROBOT) query -f tsv -i $< -s ../sparql/labels.sparql $@
 .PRECIOUS: $(SUBSETDIR)/%.tsv
 
-$(SUBSETDIR)/%.owl: $(ONT).owl | $(SUBSETDIR)
-	$(OWLTOOLS) $< --extract-ontology-subset --fill-gaps --subset $* -o $@.tmp.owl && mv $@.tmp.owl $@ &&\
-	$(ROBOT) annotate --input $@ --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@.tmp.owl && mv $@.tmp.owl $@
+$(SUBSETDIR)/%.owl: $(ONT).owl | $(SUBSETDIR) all_robot_plugins
+	$(ROBOT) odk:subset -i $< --subset $* --fill-gaps true \
+		 annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@
 .PRECIOUS: $(SUBSETDIR)/%.owl
 
 {% if 'obo' in project.export_formats %}
@@ -1352,9 +1352,9 @@ validate-all-tsv: $(ALL_TSV_FILES)
 
 {% if 'obo' in project.edit_format -%}
 .PHONY: normalize_obo_src
-normalize_obo_src: $(SRC)
-	$(OWLTOOLS) $< --merge-axiom-annotations -o -f obo $(TMPDIR)/NORM.obo &&\
-	$(ROBOT) convert -i $(TMPDIR)/NORM.obo -o $(TMPDIR)/NORM.tmp.obo &&\
+normalize_obo_src: $(SRC) | all_robot_plugins
+	$(ROBOT) odk:normalize -i $< --merge-axioms true \
+		 convert -o $(TMPDIR)/NORM.tmp.obo && \
 	mv $(TMPDIR)/NORM.tmp.obo $(SRC)
 {%- endif %}
 
