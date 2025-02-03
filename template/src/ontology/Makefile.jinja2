@@ -766,7 +766,7 @@ $(SUBSETDIR)/%.tsv: $(SUBSETDIR)/%.owl
 .PRECIOUS: $(SUBSETDIR)/%.tsv
 
 $(SUBSETDIR)/%.owl: $(ONT).owl | $(SUBSETDIR) all_robot_plugins
-	$(ROBOT) odk:subset -i $< --subset $* --fill-gaps true \
+	$(ROBOT) odk:subset -i $< --subset $* --fill-gaps true --replace true \
 		 annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@
 .PRECIOUS: $(SUBSETDIR)/%.owl
 
