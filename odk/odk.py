@@ -406,6 +406,9 @@ class ReportConfig(JsonSchemaMixin):
     sparql_test_on: List[str] = field(default_factory=lambda: ['edit'])
     """Chose which file to run the custom sparql checks. Supported 'edit', any release artefact."""
 
+    upper_ontology: Optional[str] = None
+    """IRI of an upper ontology to check the current ontology against."""
+
 @dataclass_json
 @dataclass
 class DocumentationGroup(JsonSchemaMixin):
