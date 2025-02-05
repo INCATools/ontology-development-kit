@@ -289,7 +289,7 @@ all_mappings: $(MAPPING_FILES)
 
 OBO_REPORT = {% for x in project.robot_report.report_on|default(["edit"]) %} {% if x=="edit" %}$(SRC){% else %}{{ x }}{% endif %}-obo-report{% endfor %}
 ALIGNMENT_REPORT = {% for x in project.robot_report.report_on|default(["edit"]) %} {% if x =="edit" %}$(SRC){% else %}{{ x }}{% endif %}-align-report{% endfor %}
-REPORTS = $(OBO_REPORT){% if project.robot_report.upper_ontology is not none %} $(ALIGNMENT_REPORT){% endif %}
+REPORTS = $(OBO_REPORT){% if project.robot_report.upper_ontology is defined %} $(ALIGNMENT_REPORT){% endif %}
 REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
 
 .PHONY: robot_reports
@@ -341,13 +341,26 @@ $(REPORTDIR)/$(SRC)-obo-report.tsv: $(SRCMERGED) | $(REPORTDIR)
 
 $(REPORTDIR)/%-obo-report.tsv: % | $(REPORTDIR)
 	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) {% if project.robot_report.use_base_iris %}{% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} {% endif %}{% endif -%} --print 5 -o $@
-
 {%- if project.robot_report.upper_ontology is defined %}
+
+$(REPORTDIR)/$(SRC)-align-report.tsv: $(SRCMERGED) | $(REPORTDIR) all_robot_plugins
+	$(ROBOT) odk:validate -i $< --reasoner $(REASONER) \
+		 --upper-ontology-iri {{ project.robot_report.upper_ontology }}
+		 {%- if project.robot_report.use_base_iris %} \
+		 {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} \
+		 {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} \
+		 {% endif %}{% else %} \
+		 {% endif %}--report-output $@
+
 $(REPORTDIR)/%-align-report.tsv: % | $(REPORTDIR) all_robot_plugins
-	$(ROBOT) odk:validate -i $< --upper-ontology-iri {{ project.robot_report.upper_ontology }} \
-		--report-output $@ \
-		{% if project.robot_report.use_base_iris %}{% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} {% endif %}{% endif %}
-{% endif %}
+	$(ROBOT) odk:validate -i $< --reasoner $(REASONER) \
+		 --upper-ontology-iri {{ project.robot_report.upper_ontology }}
+		 {%- if project.robot_report.use_base_iris %} \
+		 {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} \
+		 {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} \
+		 {% endif %}{% else %} \
+		 {% endif %}--report-output $@
+{%- endif %}
 
 check_for_robot_updates:
 {%- if project.robot_report.custom_profile %}	
