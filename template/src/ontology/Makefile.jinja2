@@ -804,21 +804,19 @@ endif
 # DOSDP Templates/Patterns
 # ----------------------------------------
 
-ifeq ($(PAT),true)
-
 ALL_PATTERN_FILES=$(wildcard $(PATTERNDIR)/dosdp-patterns/*.yaml)
 ALL_PATTERN_NAMES=$(strip $(patsubst %.yaml,%, $(notdir $(wildcard $(PATTERNDIR)/dosdp-patterns/*.yaml))))
 
 PATTERN_CLEAN_FILES=../patterns/all_pattern_terms.txt \
-	$(DOSDP_OWL_FILES_DEFAULT) $(DOSDP_TERM_FILES_DEFAULT) \{% if project.pattern_pipelines_group is defined %}
-	{% for pipeline in project.pattern_pipelines_group.products -%}
-		$(DOSDP_OWL_FILES_{{ pipeline.id.upper() }}) $(DOSDP_TERM_FILES_{{ pipeline.id.upper() }}) {% endfor %}{% endif %}
+	$(DOSDP_OWL_FILES_DEFAULT) $(DOSDP_TERM_FILES_DEFAULT){% if project.pattern_pipelines_group is defined  -%}
+	{% for pipeline in project.pattern_pipelines_group.products %} \
+	$(DOSDP_OWL_FILES_{{ pipeline.id.upper() }}) $(DOSDP_TERM_FILES_{{ pipeline.id.upper() }}){% endfor %}{% endif %}
 
-# Note to future generations: prepending ./ is a safety measure to ensure that 
-# the environment does not malicously set `PATTERN_CLEAN_FILES` to `\`.
 .PHONY: pattern_clean
 pattern_clean:
 	rm -f $(PATTERN_CLEAN_FILES)
+
+ifeq ($(PAT),true)
 
 .PHONY: patterns
 patterns dosdp:
