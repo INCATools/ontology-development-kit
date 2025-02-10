@@ -60,7 +60,7 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_
 
 # Install ODK plugin for ROBOT
 RUN mkdir -p /tools/robot-plugins && \
-    wget -nv -O /tools/robot-plugins/odk.jar https://github.com/gouttegd/exp-robot-plugin/releases/download/exp-robot-plugin-$ODK_ROBOT_PLUGIN_VERSION/exp.jar
+    wget -nv -O /tools/robot-plugins/odk.jar https://github.com/INCATools/odk-robot-plugin/releases/download/odk-robot-plugin-$ODK_ROBOT_PLUGIN_VERSION/odk.jar
 
 # Install relation-graph
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELATION_GRAPH/relation-graph-cli-$RELATION_GRAPH.tgz && \
