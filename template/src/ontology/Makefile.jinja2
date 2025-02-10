@@ -522,7 +522,7 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_term
 		{% for pattern in project.import_group.exclude_iri_patterns %}remove  --select "{{ pattern }}" {% endfor %} \{% endif %}
 		extract -T $(IMPORTDIR)/merged_terms_combined.txt --force true --copy-ontology-annotations true --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/merged_terms_combined.txt --select complement --select annotation-properties \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true \
 		$(ANNOTATE_CONVERT_FILE)
 {% else %}
 $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_terms_combined.txt
@@ -532,30 +532,33 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_term
 
 {% if 'slme' == project.import_group.module_type %}
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %} $(IMPORTDIR)/%_terms_combined.txt | all_robot_plugins
-	$(ROBOT) odk:annotate -i $< --remove-all true --add-source true \
+	$(ROBOT) annotate -i $< --remove-annotations \
+		odk:normalize --add-source true \
 		extract -T $(IMPORTDIR)/$*_terms_combined.txt --force true --copy-ontology-annotations false --individuals {{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }} \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif 'minimal' == project.import_group.module_type %}
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %} $(IMPORTDIR)/%_terms_combined.txt | all_robot_plugins
-	$(ROBOT) odk:annotate -i $< --remove-all true --add-source true \
+	$(ROBOT) annotate -i $< --remove-annotations \
+		odk:normalize --add-source true \
 		extract -T $(IMPORTDIR)/$*_terms_combined.txt --force true --copy-ontology-annotations true --method BOT \
 		remove --base-iri $(OBOBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/$*_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif 'mirror' == project.import_group.module_type %}
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %} $(IMPORTDIR)/%_terms_combined.txt | all_robot_plugins
-	$(ROBOT) odk:annotate -i $< --remove-all true --add-source true \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+	$(ROBOT) annotate -i $< --remove-annotations \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true --add-source true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif 'filter' == project.import_group.module_type %}
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %} $(IMPORTDIR)/%_terms_combined.txt | all_robot_plugins
 	$(ROBOT) merge -i $< \
-		odk:annotate --remove-all true --add-source true \
+		annotate --remove-annotations \
+		odk:normalize --add-source true \
 		remove --base-iri $(OBOBASE)"/$(shell echo $* | tr a-z A-Z)_" --axioms external --preserve-structure false --trim false \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) -T $(IMPORTDIR)/$*_terms_combined.txt --select complement \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif 'custom' == project.import_group.module_type %}
 $(IMPORTDIR)/%_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/%.owl{% endif %}
@@ -579,33 +582,36 @@ ifeq ($(IMP_LARGE),true)
 {% if (ont.is_large and ('slme' == ont.module_type or (ont.module_type is none and 'slme' == project.import_group.module_type))) or ('fast_slme' == ont.module_type) or (ont.module_type is none and 'fast_slme' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) extract -i $< -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --force true  --copy-ontology-annotations false --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif ('slme' == ont.module_type) or (ont.module_type is none and 'slme' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
-	$(ROBOT) odk:annotate -i $< --remove-all true --add-source true \
+	$(ROBOT) annotate -i $< --remove-annotations \
+		odk:normalize --add-source true \
 		extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --individuals {% if ont.module_type is none %}{{ project.import_group.slme_individuals }} --method {{ project.import_group.module_type_slme }}{% else %}{{ ont.slme_individuals }} --method {{ ont.module_type_slme }}{% endif %} \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif ('filter' == ont.module_type) or (ont.module_type is none and 'filter' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
-	$(ROBOT) odk:annotate -i $< --remove-all true --add-source true \
+	$(ROBOT) annotate -i $< --remove-annotations \
+		odk:normalize --add-source true \
 		extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \
 		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) {% if ont.annotation_properties is defined %}{% for p in ont.annotation_properties %}--term {{ p }} {% endfor %}{% endif %} -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif ('mirror' == ont.module_type) or (ont.module_type is none and 'mirror' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
-	$(ROBOT) odk:annotate -i $< --remove-all true --add-source true \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+	$(ROBOT) annotate -i $< --remove-annotations \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true --add-source true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif ('minimal' == ont.module_type) or (ont.module_type is none and 'minimal' == project.import_group.module_type) %}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
-	$(ROBOT) odk:annotate -i $< --remove-all true --add-source true \
+	$(ROBOT) annotate -i $< --remove-annotations \
+		odk:normalize --add-source true \
 		extract -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --copy-ontology-annotations true --force true --method BOT \
 		remove {% if ont.base_iris is not none %}{% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ ont.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true \
 		remove $(patsubst %, --term %, $(ANNOTATION_PROPERTIES)) {% if ont.annotation_properties is defined %}{% for p in ont.annotation_properties %}--term {{ p }} {% endfor %}{% endif %} -T $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt --select complement --select "classes individuals annotation-properties" \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif ('custom' == ont.module_type) or (ont.module_type is none and 'custom' == project.import_group.module_type) %}
@@ -787,7 +793,7 @@ $(SUBSETDIR)/%.tsv: $(SUBSETDIR)/%.owl
 .PRECIOUS: $(SUBSETDIR)/%.tsv
 
 $(SUBSETDIR)/%.owl: $(ONT).owl | $(SUBSETDIR) all_robot_plugins
-	$(ROBOT) odk:subset -i $< --subset $* --fill-gaps true --replace true \
+	$(ROBOT) odk:subset -i $< --subset $* --fill-gaps true \
 		 annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@
 .PRECIOUS: $(SUBSETDIR)/%.owl
 
@@ -1234,7 +1240,7 @@ $(ONT)-simple.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(IMPORT_FILE
 		remove --axioms equivalent \
 		filter --term-file $(SIMPLESEED) --select "annotations ontology anonymous self" --trim true --signature true \{% if project.release_use_reasoner %}
 		reduce -r $(REASONER) \{% endif %}
-		odk:normalize --base-iri {{ project.uribase }} --inject-subset-declarations true --inject-synonym-declarations true --merge-axioms true \
+		odk:normalize --base-iri {{ project.uribase }} --subset-decls true --synonym-decls true --merge-axioms true \
 		$(SHARED_ROBOT_COMMANDS) annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) {% if project.release_date -%}--annotation oboInOwl:date "$(OBODATE)" {% endif -%}--output $@.tmp.owl && mv $@.tmp.owl $@
 {% endif -%}
 
