@@ -16,6 +16,7 @@ ENV KGCL_JAVA_VERSION=0.5.1
 ENV SSSOM_JAVA_VERSION=1.1.1
 ENV AMMONITE_VERSION=2.5.9
 ENV SCALA_CLI_VERSION=1.5.4
+ENV OWLTOOLS_VERSION=2020-04-06
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
@@ -82,6 +83,17 @@ RUN test "x$TARGETARCH" = xamd64 && ( \
         rm -rf Konclude-v0.7.0-1138-Linux-arm64-GCC && \
         rm Konclude.zip \
     )
+
+# Install OWLTOOLS.
+RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools \
+        -O /tools/owltools && \
+    wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/ontology-release-runner \
+        -O /tools/ontology-release-runner && \
+    wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools-oort-all.jar \
+        -O /tools/owltools-oort-all.jar && \
+    chmod +x /tools/owltools && \
+    chmod +x /tools/ontology-release-runner && \
+    chmod +x /tools/owltools-oort-all.jar
 
 # Install Jena.
 RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERSION.tar.gz -O- | tar xzC /tools && \

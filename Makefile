@@ -33,7 +33,6 @@ test_go_mini:
 test_odklite_programs:
 	@./tests/test-program.sh ROBOT robot --version
 	@./tests/test-program.sh DOSDP-TOOLS dosdp-tools -v
-	@./tests/test-program.sh OWLTOOLS owltools --version
 	@./tests/test-program.sh OORT ontology-release-runner --help
 	@./tests/test-program.sh JINJANATOR jinjanate --version
 	@./tests/test-program.sh DICER-CLI dicer-cli --version
@@ -43,6 +42,7 @@ test_odkfull_programs: test_odklite_programs
 	@./tests/test-program.sh KONCLUDE Konclude -h
 	@./tests/test-program.sh SOUFFLE souffle --version
 	@./tests/test-program.sh JENA jena
+	@./tests/test-program.sh OWLTOOLS owltools --version
 	@./tests/test-program.sh AMMONITE sh amm --help
 	@./tests/test-program.sh SCALA-CLI scala-cli --version
 	@./tests/test-program.sh SPARQL sparql --version
