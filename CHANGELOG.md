@@ -23,7 +23,7 @@ For more detailed changes see:
 
 ## Makefile workflows
 
-- TBD
+- The `$(ont)-idranges.owl` file is now checked for validity as part of the normal test suite [#211](https://github.com/INCATools/ontology-development-kit/issues/211).
 
 ## Runner and Infrastructure
 
