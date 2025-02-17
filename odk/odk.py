@@ -907,6 +907,46 @@ def unpack_files(basedir, txt):
         f.close()
     return tgts
 
+def install_template_files(generator, templatedir, targetdir):
+    """
+    Installs all template-derived files into a target directory.
+    """
+    tgts = []
+    for root, subdirs, files in os.walk(templatedir):
+        tdir = root.replace(templatedir,targetdir+"/")
+        os.makedirs(tdir, exist_ok=True)
+
+        # first copy plain files...
+        for f in files:
+            srcf = os.path.join(root, f)
+            tgtf = os.path.join(tdir, f)
+            logging.info('  Copying: {} -> {}'.format(srcf, tgtf))
+            if not tgtf.endswith(TEMPLATE_SUFFIX):
+                # copy file directly, no template expansions
+                copy(srcf, tgtf)
+                tgts.append(tgtf)
+        logging.info('Applying templates')
+        # ...then apply templates
+        for f in files:
+            srcf = os.path.join(root, f)
+            tgtf = os.path.join(tdir, f)
+            if srcf.endswith(TEMPLATE_SUFFIX):
+                derived_file = tgtf.replace(TEMPLATE_SUFFIX, "")
+                with open(derived_file,"w") as s:
+                    if f.startswith("_dynamic"):
+                        logging.info('  Unpacking: {}'.format(derived_file))
+                        tgts += unpack_files(tdir, generator.generate(srcf))
+                        s.close()
+                        os.remove(derived_file)
+                    else:
+                        logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
+                        s.write(generator.generate(srcf))
+                        tgts.append(derived_file)
+                if not f.startswith("_dynamic"):
+                    copymode(srcf, derived_file)
+    return tgts
+
+
 ## ========================================
 ## Command Line Wrapper
 ## ========================================
@@ -1039,38 +1079,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     if not os.path.exists(templatedir) and templatedir == "/tools/templates/":
         logging.info("No templates folder in /tools/; assume not in docker context")
         templatedir = "./template"
-    for root, subdirs, files in os.walk(templatedir):
-        tdir = root.replace(templatedir,outdir+"/")
-        os.makedirs(tdir, exist_ok=True)
-
-        # first copy plain files...
-        for f in files:
-            srcf = os.path.join(root, f)
-            tgtf = os.path.join(tdir, f)
-            logging.info('  Copying: {} -> {}'.format(srcf, tgtf))
-            if not tgtf.endswith(TEMPLATE_SUFFIX):
-                # copy file directly, no template expansions
-                copy(srcf, tgtf)
-                tgts.append(tgtf)
-        logging.info('Applying templates')
-        # ...then apply templates
-        for f in files:
-            srcf = os.path.join(root, f)
-            tgtf = os.path.join(tdir, f)
-            if srcf.endswith(TEMPLATE_SUFFIX):
-                derived_file = tgtf.replace(TEMPLATE_SUFFIX, "")
-                with open(derived_file,"w") as s:
-                    if f.startswith("_dynamic"):
-                        logging.info('  Unpacking: {}'.format(derived_file))
-                        tgts += unpack_files(tdir, mg.generate(srcf))
-                        s.close()
-                        os.remove(derived_file)
-                    else:
-                        logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
-                        s.write(mg.generate(srcf))
-                        tgts.append(derived_file)
-                if not f.startswith("_dynamic"):
-                    copymode(srcf, derived_file)
+    tgts += install_template_files(mg, templatedir, outdir)
 
     tgt_project_file = "{}/project.yaml".format(outdir)
     if project.export_project_yaml:
