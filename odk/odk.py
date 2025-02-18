@@ -18,6 +18,7 @@ from jinja2 import Template
 from dacite import from_dict
 import yaml
 import os
+import glob
 import subprocess
 import shutil
 from shutil import copy, copymode
@@ -1059,6 +1060,69 @@ def dump_schema(class_name):
         clazz = globals()[class_name]  # Get the class object from the globals dictionary
         print(json.dumps(clazz.json_schema(), sort_keys=True, indent=4))
 
+@cli.command()
+@click.option('-T', '--templatedir', default='/tools/templates/')
+def update(templatedir):
+    """
+    Updates a pre-existing repository. This command is expected to be
+    run from within the src/ontology directory (the directory
+    containing the configuration file).
+    """
+    config_matches = list(glob.glob('*-odk.yaml'))
+    if len(config_matches) == 0:
+        raise click.ClickException("No ODK configuration file found")
+    elif len(config_matches) > 1:
+        raise click.ClickException("More than ODK configuration file found")
+    config = config_matches[0]
+    mg = Generator()
+    mg.load_config(config)
+    project = mg.context.project
+
+    # When updating, for most files, we only install them if
+    # they do not already exist in the repository (typically
+    # because they are new files that didn't exist in the
+    # templates of the previous version of the ODK). But a
+    # handful of files are not reinstalled even if they are
+    # missing (e.g. DOSDP example files) or on the contrary
+    # always reinstalled to overwrite any local changes (e.g.
+    # the main Makefile). We declare the corresponding policies.
+    policies = {}
+    policies['CODE_OF_CONDUCT.md'] = NEVER
+    policies['CONTRIBUTING.md'] = NEVER
+    policies['issue_template.md'] = NEVER
+    policies['README.md'] = NEVER
+    policies['src/patterns/data/default/example.tsv'] = NEVER
+    policies['src/patterns/dosdp-patterns/example.yaml'] = NEVER
+    policies['src/ontology/Makefile'] = ALWAYS
+    policies['src/ontology/run.sh'] = ALWAYS
+    policies['docs/odk-workflows'] = ALWAYS
+    if 'github_actions' in project.ci:
+        for workflow in ['qc', 'diff', 'release-diff']:
+            if workflow in project.workflows:
+                policies['.github/workflows/' + workflow + '.yml'] = ALWAYS
+        if project.documentation is not None and 'docs' in project.workflows:
+            policies['github/workflows/docs.yml'] = ALWAYS
+    # HACK: For the odk-workflows documentation directory,
+    # we want to clean up that directory completely. The
+    # policy dictionary only works on files, so to force
+    # reinstalling the entire directory (also removing any
+    # non-standard file along the way), we forcefully
+    # remove the directory.
+    if project.documentation is not None:
+        shutil.rmtree('../../docs/odk-workflows')
+
+    # Proceed with template instantiation, using the policies
+    # declared above. We instantiate directly at the root of
+    # the repository -- no need for a staging directory.
+    install_template_files(mg, templatedir, '../..', policies)
+
+    print("WARNING: These files should be manually migrated:")
+    print("         mkdocs.yaml, .gitignore, src/ontology/catalog.xml")
+    print("         (if you added a new import or component)")
+    if 'github_actions' in project.ci and 'qc' not in project.workflows:
+        print("WARNING: Your QC workflows have not been updated automatically.")
+        print("         Please update the ODK version number in .github/workflows/qc.yml")
+    print("Ontology repository update successfully completed.")
 
 @cli.command()
 @click.option('-C', '--config',       type=click.Path(exists=True),
