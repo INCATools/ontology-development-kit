@@ -876,7 +876,7 @@ def save_project_yaml(project : OntologyProject, path : str):
     with open(path, "w") as f:
         f.write(yaml.dump(json_obj, default_flow_style=False))
         
-def unpack_files(basedir, txt):
+def unpack_files(basedir, txt, policies={}):
     """
     This unpacks a custom tar-like format in which multiple file paths
     can be specified, separated by ^^^s
@@ -887,16 +887,21 @@ def unpack_files(basedir, txt):
     lines = txt.split("\n")
     f = None
     tgts = []
+    ignore = False
     for line in lines:
         if line.startswith(MARKER):
-            path = os.path.join(basedir, line.replace(MARKER, ""))
-            os.makedirs(os.path.dirname(path), exist_ok=True)
+            # Close previous file, if any
             if f != None:
                 f.close()
-            f = open(path,"w")
-            tgts.append(path)
-            logging.info('  Unpacking into: {}'.format(path))
-        else:
+            filename = line.replace(MARKER, "")
+            path = os.path.join(basedir, filename)
+            ignore = not must_install_file(filename, path, policies)
+            if not ignore:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                f = open(path,"w")
+                tgts.append(path)
+                logging.info('  Unpacking into: {}'.format(path))
+        elif not ignore:
             if f is None:
                 if line == "":
                     continue
@@ -907,7 +912,45 @@ def unpack_files(basedir, txt):
         f.close()
     return tgts
 
-def install_template_files(generator, templatedir, targetdir):
+def get_template_name(templatedir, pathname):
+    """
+    Helper function to get the user-visible name of a template file
+    from its complete pathname in the template directory.
+
+    For example, if the pathname is
+    "/tools/template/src/ontology/run.sh.jinja2", this will return
+    "src/ontology/run.sh".
+    """
+    name = pathname.replace(templatedir, "")
+    if len(name) > 0 and name[0] == '/':
+        name = name[1:]
+    if name.endswith(TEMPLATE_SUFFIX):
+        name = name.replace(TEMPLATE_SUFFIX, "")
+    return name
+
+# Available policies for installing a file
+IF_MISSING, ALWAYS, NEVER = range(3)
+
+def must_install_file(templatefile, targetfile, policies):
+    """
+    Given a template filename, indicate whether the file should be
+    installed according to any per-file policy.
+
+    policies is a dictionary associating a template filename to one
+    of the following three values:
+    * IF_MISSING (default): install the file if it does not already exist
+    * ALWAYS: always install the file, overwrite any existing file
+    * NEVER: never install the file
+    """
+    policy = policies.get(templatefile, IF_MISSING)
+    if policy == ALWAYS:
+        return True
+    elif policy == NEVER:
+        return False
+    else:
+        return not os.path.exists(targetfile)
+
+def install_template_files(generator, templatedir, targetdir, policies={}):
     """
     Installs all template-derived files into a target directory.
     """
@@ -920,10 +963,11 @@ def install_template_files(generator, templatedir, targetdir):
         for f in [f for f in files if not f.endswith(TEMPLATE_SUFFIX)]:
             srcf = os.path.join(root, f)
             tgtf = os.path.join(tdir, f)
-            logging.info('  Copying: {} -> {}'.format(srcf, tgtf))
-            # copy file directly, no template expansions
-            copy(srcf, tgtf)
-            tgts.append(tgtf)
+            if must_install_file(get_template_name(templatedir, srcf), tgtf, policies):
+                logging.info('  Copying: {} -> {}'.format(srcf, tgtf))
+                # copy file directly, no template expansions
+                copy(srcf, tgtf)
+                tgts.append(tgtf)
         logging.info('Applying templates')
         # ...then apply templates
         for f in [f for f in files if f.endswith(TEMPLATE_SUFFIX)]:
@@ -932,13 +976,13 @@ def install_template_files(generator, templatedir, targetdir):
             derived_file = tgtf.replace(TEMPLATE_SUFFIX, "")
             if f.startswith("_dynamic"):
                 logging.info('  Unpacking: {}'.format(derived_file))
-                tgts += unpack_files(tdir, generator.generate(srcf))
-            else:
+                tgts += unpack_files(tdir, generator.generate(srcf), policies)
+            elif must_install_file(get_template_name(templatedir, srcf), derived_file, policies):
+                logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
                 with open(derived_file,"w") as s:
-                    logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
                     s.write(generator.generate(srcf))
-                    tgts.append(derived_file)
-                    copymode(srcf, derived_file)
+                tgts.append(derived_file)
+                copymode(srcf, derived_file)
     return tgts
 
 
