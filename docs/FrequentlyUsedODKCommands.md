@@ -3,7 +3,7 @@
 ## Updates the Makefile to the latest ODK
 
 ```
-sh run.sh make update_repo 
+sh run.sh update_repo 
 ```
 
 ## Recreates and deploys the automated documentation
