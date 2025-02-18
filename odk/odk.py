@@ -917,32 +917,27 @@ def install_template_files(generator, templatedir, targetdir):
         os.makedirs(tdir, exist_ok=True)
 
         # first copy plain files...
-        for f in files:
+        for f in [f for f in files if not f.endswith(TEMPLATE_SUFFIX)]:
             srcf = os.path.join(root, f)
             tgtf = os.path.join(tdir, f)
             logging.info('  Copying: {} -> {}'.format(srcf, tgtf))
-            if not tgtf.endswith(TEMPLATE_SUFFIX):
-                # copy file directly, no template expansions
-                copy(srcf, tgtf)
-                tgts.append(tgtf)
+            # copy file directly, no template expansions
+            copy(srcf, tgtf)
+            tgts.append(tgtf)
         logging.info('Applying templates')
         # ...then apply templates
-        for f in files:
+        for f in [f for f in files if f.endswith(TEMPLATE_SUFFIX)]:
             srcf = os.path.join(root, f)
             tgtf = os.path.join(tdir, f)
-            if srcf.endswith(TEMPLATE_SUFFIX):
-                derived_file = tgtf.replace(TEMPLATE_SUFFIX, "")
+            derived_file = tgtf.replace(TEMPLATE_SUFFIX, "")
+            if f.startswith("_dynamic"):
+                logging.info('  Unpacking: {}'.format(derived_file))
+                tgts += unpack_files(tdir, generator.generate(srcf))
+            else:
                 with open(derived_file,"w") as s:
-                    if f.startswith("_dynamic"):
-                        logging.info('  Unpacking: {}'.format(derived_file))
-                        tgts += unpack_files(tdir, generator.generate(srcf))
-                        s.close()
-                        os.remove(derived_file)
-                    else:
-                        logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
-                        s.write(generator.generate(srcf))
-                        tgts.append(derived_file)
-                if not f.startswith("_dynamic"):
+                    logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
+                    s.write(generator.generate(srcf))
+                    tgts.append(derived_file)
                     copymode(srcf, derived_file)
     return tgts
 
