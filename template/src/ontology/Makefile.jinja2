@@ -1391,9 +1391,10 @@ normalize_src: $(SRC)
 validate_idranges:
 	dicer-cli {{ project.id }}-idranges.owl
 
+# Deprecated: Use 'sh run.sh odk.py update' without using the Makefile.
 .PHONY: update_repo
 update_repo:
-	sh $(SCRIPTSDIR)/update_repo.sh
+	odk.py update
 	
 {% if project.documentation is not none %}
 update_docs:
