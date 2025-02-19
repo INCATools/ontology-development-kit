@@ -687,6 +687,9 @@ class OntologyProject(JsonSchemaMixin):
     release_artefacts : List[str] = field(default_factory=lambda: ['full', 'base'])
     """A list of release artefacts you wish to be exported. Supported: base, full, baselite, simple, non-classified, 
     simple-non-classified, basic."""
+
+    commit_release_artefacts : bool = False
+    """If true, release artefacts are committed to the repository."""
     
     release_use_reasoner : bool = True
     """If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
@@ -1094,10 +1097,16 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         if gitemail is not None:
             os.environ['GIT_AUTHOR_EMAIL'] = gitemail
             os.environ['GIT_COMMITTER_EMAIL'] = gitemail
-        runcmd("cd {dir} && git init && git add {files}".
+        initial_release_target = 'prepare_release'
+        if project.commit_release_artefacts:
+            initial_release_target = 'prepare_initial_release'
+        runcmd("cd {dir} && git init -b {branch} && git add {files} && git commit -m 'initial commit'".
                format(dir=outdir,
+                      branch=project.git_main_branch,
                       files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
-        runcmd("cd {dir}/src/ontology && make && git commit -m 'initial commit' -a && git branch -M {branch} && make prepare_initial_release && git commit -m 'first release'".format(dir=outdir, branch=project.git_main_branch))
+        runcmd("cd {dir}/src/ontology && make {target} && git commit -a -m 'first release'"
+               .format(dir=outdir,
+                       target=initial_release_target))
         print("\n\n####\nNEXT STEPS:")
         print(" 0. Examine {} and check it meets your expectations. If not blow it away and start again".format(outdir))
         print(" 1. Go to: https://github.com/new")
@@ -1108,7 +1117,6 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         print("    E.g.:")
         print("cd {}".format(outdir))
         print("git remote add origin git@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
-        print("git branch -M {branch}\n".format(branch=project.git_main_branch))
         print("git push -u origin {branch}\n".format(branch=project.git_main_branch))
         print("BE BOLD: you can always delete your repo and start again\n")
         print("")
