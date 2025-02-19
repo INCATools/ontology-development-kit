@@ -428,12 +428,8 @@ prepare_release: all_odk
         on your git hosting site such as GitHub or GitLab"
 
 .PHONY: prepare_initial_release
-prepare_initial_release: all_assets
-	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %}
-	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(RELEASED_MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
-	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
-	rm -f $(patsubst %, ./%, $(CLEANFILES)) &&\
-	cd $(RELEASEDIR) && git add $(RELEASE_ASSETS)
+prepare_initial_release: prepare_release
+	git add $(foreach asset,$(RELEASE_ASSETS),$(RELEASEDIR)/$(asset))
 
 .PHONY: prepare_release_fast
 prepare_release_fast:
