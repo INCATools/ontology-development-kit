@@ -19,6 +19,7 @@ from dacite import from_dict
 import yaml
 import os
 import glob
+import fnmatch
 import subprocess
 import shutil
 from shutil import copy, copymode
@@ -877,7 +878,7 @@ def save_project_yaml(project : OntologyProject, path : str):
     with open(path, "w") as f:
         f.write(yaml.dump(json_obj, default_flow_style=False))
         
-def unpack_files(basedir, txt, policies={}):
+def unpack_files(basedir, txt, policies=[]):
     """
     This unpacks a custom tar-like format in which multiple file paths
     can be specified, separated by ^^^s
@@ -937,13 +938,25 @@ def must_install_file(templatefile, targetfile, policies):
     Given a template filename, indicate whether the file should be
     installed according to any per-file policy.
 
-    policies is a dictionary associating a template filename to one
-    of the following three values:
-    * IF_MISSING (default): install the file if it does not already exist
+    policies is a list of (PATTERN,POLICY) tuples where PATTERN is
+    a shell-like globbing pattern and POLICY is the update policy
+    that should be applied to any template whose pathname matches
+    the pattern.
+
+    Patterns are tested in the order they are found in the list,
+    and the first match takes precedence over any subsequent match.
+    If there is no match, the default policy is IF_MISSING.
+
+    Valid policies are:
+    * IF_MISSING: install the file if it does not already exist
     * ALWAYS: always install the file, overwrite any existing file
     * NEVER: never install the file
     """
-    policy = policies.get(templatefile, IF_MISSING)
+    policy = IF_MISSING
+    for pattern, pattern_policy in policies:
+        if fnmatch.fnmatch(templatefile, pattern):
+            policy = pattern_policy
+            break
     if policy == ALWAYS:
         return True
     elif policy == NEVER:
@@ -951,7 +964,7 @@ def must_install_file(templatefile, targetfile, policies):
     else:
         return not os.path.exists(targetfile)
 
-def install_template_files(generator, templatedir, targetdir, policies={}):
+def install_template_files(generator, templatedir, targetdir, policies=[]):
     """
     Installs all template-derived files into a target directory.
     """
@@ -1086,30 +1099,24 @@ def update(templatedir):
     # missing (e.g. DOSDP example files) or on the contrary
     # always reinstalled to overwrite any local changes (e.g.
     # the main Makefile). We declare the corresponding policies.
-    policies = {}
-    policies['CODE_OF_CONDUCT.md'] = NEVER
-    policies['CONTRIBUTING.md'] = NEVER
-    policies['issue_template.md'] = NEVER
-    policies['README.md'] = NEVER
-    policies['src/patterns/data/default/example.tsv'] = NEVER
-    policies['src/patterns/dosdp-patterns/example.yaml'] = NEVER
-    policies['src/ontology/Makefile'] = ALWAYS
-    policies['src/ontology/run.sh'] = ALWAYS
-    policies['docs/odk-workflows'] = ALWAYS
+    policies = [
+            ('CODE_OF_CONDUCT.md', NEVER),
+            ('CONTRIBUTING.md', NEVER),
+            ('issue_template.md', NEVER),
+            ('README.md', NEVER),
+            ('src/patterns/data/default/example.tsv', NEVER),
+            ('src/patterns/dosdp-patterns/example.yaml', NEVER),
+            ('src/ontology/Makefile', ALWAYS),
+            ('src/ontology/run.sh', ALWAYS),
+            ('src/sparql/*', ALWAYS),
+            ('docs/odk-workflows/*', ALWAYS)
+            ]
     if 'github_actions' in project.ci:
         for workflow in ['qc', 'diff', 'release-diff']:
             if workflow in project.workflows:
-                policies['.github/workflows/' + workflow + '.yml'] = ALWAYS
+                policies.append(('.github/workflows/' + workflow + '.yml', ALWAYS))
         if project.documentation is not None and 'docs' in project.workflows:
-            policies['github/workflows/docs.yml'] = ALWAYS
-    # HACK: For the odk-workflows documentation directory,
-    # we want to clean up that directory completely. The
-    # policy dictionary only works on files, so to force
-    # reinstalling the entire directory (also removing any
-    # non-standard file along the way), we forcefully
-    # remove the directory.
-    if project.documentation is not None:
-        shutil.rmtree('../../docs/odk-workflows')
+            policies.append(('.github/workflows/docs.yml', ALWAYS))
 
     # Proceed with template instantiation, using the policies
     # declared above. We instantiate directly at the root of
