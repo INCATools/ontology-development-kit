@@ -14,6 +14,16 @@
 #
 # See README-editors.md for more details.
 
+case "$@" in
+*update_repo*)
+    # Execute a copy of this script so that it can be overwritten
+    # during the update process
+    mkdir -p tmp
+    sed -n '/^set -e/,$p' $0 > tmp/$0
+    exec $SHELL tmp/$0 "$@"
+    ;;
+esac
+
 set -e
 
 # Check for spaces in the current directory path
