@@ -689,9 +689,6 @@ class OntologyProject(JsonSchemaMixin):
     release_artefacts : List[str] = field(default_factory=lambda: ['full', 'base'])
     """A list of release artefacts you wish to be exported. Supported: base, full, baselite, simple, non-classified, 
     simple-non-classified, basic."""
-
-    commit_release_artefacts : bool = False
-    """If true, release artefacts are committed to the repository."""
     
     release_use_reasoner : bool = True
     """If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
@@ -1158,8 +1155,9 @@ def update(templatedir):
 @click.option('-g', '--skipgit',      default=False, is_flag=True)
 @click.option('-n', '--gitname',      default=None)
 @click.option('-e', '--gitemail',     default=None)
+@click.option('-r', '--commit-artefacts', default=False, is_flag=True)
 @click.argument('repo', nargs=-1)
-def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo, skipgit, gitname, gitemail):
+def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo, skipgit, gitname, gitemail, commit_artefacts):
     """
     Seeds an ontology project
     """
@@ -1216,16 +1214,18 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         if gitemail is not None:
             os.environ['GIT_AUTHOR_EMAIL'] = gitemail
             os.environ['GIT_COMMITTER_EMAIL'] = gitemail
-        initial_release_target = 'prepare_release'
-        if project.commit_release_artefacts:
-            initial_release_target = 'prepare_initial_release'
         runcmd("cd {dir} && git init -b {branch} && git add {files} && git commit -m 'initial commit'".
                format(dir=outdir,
                       branch=project.git_main_branch,
                       files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
-        runcmd("cd {dir}/src/ontology && make {target} && if [ -n \"$(git status -s)\" ]; then git commit -a -m 'first release' ; fi"
-               .format(dir=outdir,
-                       target=initial_release_target))
+        runcmd("cd {dir}/src/ontology && make all_assets && cp $(make show_release_assets) ../../"
+               .format(dir=outdir))
+        if commit_artefacts:
+            runcmd("cd {dir}/src/ontology "
+                    "&& for asset in $(make show_release_assets) ; do git add -f ../../$asset ; done"
+                   .format(dir=outdir))
+        runcmd("cd {dir} && if [ -n \"$(git status -s)\" ]; then git commit -a -m 'initial build' ; fi"
+               .format(dir=outdir))
         print("\n\n####\nNEXT STEPS:")
         print(" 0. Examine {} and check it meets your expectations. If not blow it away and start again".format(outdir))
         print(" 1. Go to: https://github.com/new")

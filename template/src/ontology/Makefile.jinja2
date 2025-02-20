@@ -400,6 +400,10 @@ show_assets:
 	echo $(ASSETS)
 	du -sh $(ASSETS)
 
+.PHONY: show_release_assets
+show_release_assets:
+	@echo $(RELEASE_ASSETS)
+
 check_rdfxml_%: %
 	@check-rdfxml {% if project.extra_rdfxml_checks %}--jena --rdflib{% endif %} $<
 
@@ -426,12 +430,6 @@ prepare_release: all_odk
 	rm -f $(CLEANFILES) &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
         on your git hosting site such as GitHub or GitLab"
-{%- if project.commit_release_artefacts %}
-
-.PHONY: prepare_initial_release
-prepare_initial_release: prepare_release
-	git add $(foreach asset,$(RELEASE_ASSETS),$(RELEASEDIR)/$(asset))
-{%- endif %}
 
 .PHONY: prepare_release_fast
 prepare_release_fast:
