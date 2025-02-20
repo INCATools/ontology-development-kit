@@ -1104,7 +1104,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
                format(dir=outdir,
                       branch=project.git_main_branch,
                       files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
-        runcmd("cd {dir}/src/ontology && make {target} && git commit -a -m 'first release'"
+        runcmd("cd {dir}/src/ontology && make {target} && if [ -n \"$(git status -s)\" ]; then git commit -a -m 'first release' ; fi"
                .format(dir=outdir,
                        target=initial_release_target))
         print("\n\n####\nNEXT STEPS:")
