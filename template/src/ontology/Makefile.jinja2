@@ -400,6 +400,10 @@ show_assets:
 	echo $(ASSETS)
 	du -sh $(ASSETS)
 
+.PHONY: show_release_assets
+show_release_assets:
+	@echo $(RELEASE_ASSETS)
+
 check_rdfxml_%: %
 	@check-rdfxml {% if project.extra_rdfxml_checks %}--jena --rdflib{% endif %} $<
 
@@ -426,14 +430,6 @@ prepare_release: all_odk
 	rm -f $(CLEANFILES) &&\
 	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
         on your git hosting site such as GitHub or GitLab"
-
-.PHONY: prepare_initial_release
-prepare_initial_release: all_assets
-	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %}
-	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(RELEASED_MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
-	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
-	rm -f $(patsubst %, ./%, $(CLEANFILES)) &&\
-	cd $(RELEASEDIR) && git add $(RELEASE_ASSETS)
 
 .PHONY: prepare_release_fast
 prepare_release_fast:

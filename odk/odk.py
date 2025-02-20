@@ -1155,8 +1155,9 @@ def update(templatedir):
 @click.option('-g', '--skipgit',      default=False, is_flag=True)
 @click.option('-n', '--gitname',      default=None)
 @click.option('-e', '--gitemail',     default=None)
+@click.option('-r', '--commit-artefacts', default=False, is_flag=True)
 @click.argument('repo', nargs=-1)
-def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo, skipgit, gitname, gitemail):
+def seed(config, clean, outdir, templatedir, dependencies, title, user, source, verbose, repo, skipgit, gitname, gitemail, commit_artefacts):
     """
     Seeds an ontology project
     """
@@ -1213,10 +1214,18 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         if gitemail is not None:
             os.environ['GIT_AUTHOR_EMAIL'] = gitemail
             os.environ['GIT_COMMITTER_EMAIL'] = gitemail
-        runcmd("cd {dir} && git init && git add {files}".
+        runcmd("cd {dir} && git init -b {branch} && git add {files} && git commit -m 'initial commit'".
                format(dir=outdir,
+                      branch=project.git_main_branch,
                       files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
-        runcmd("cd {dir}/src/ontology && make && git commit -m 'initial commit' -a && git branch -M {branch} && make prepare_initial_release && git commit -m 'first release'".format(dir=outdir, branch=project.git_main_branch))
+        runcmd("cd {dir}/src/ontology && make all_assets && cp $(make show_release_assets) ../../"
+               .format(dir=outdir))
+        if commit_artefacts:
+            runcmd("cd {dir}/src/ontology "
+                    "&& for asset in $(make show_release_assets) ; do git add -f ../../$asset ; done"
+                   .format(dir=outdir))
+        runcmd("cd {dir} && if [ -n \"$(git status -s)\" ]; then git commit -a -m 'initial build' ; fi"
+               .format(dir=outdir))
         print("\n\n####\nNEXT STEPS:")
         print(" 0. Examine {} and check it meets your expectations. If not blow it away and start again".format(outdir))
         print(" 1. Go to: https://github.com/new")
@@ -1227,7 +1236,6 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         print("    E.g.:")
         print("cd {}".format(outdir))
         print("git remote add origin git@github.com:{org}/{repo}.git".format(org=project.github_org, repo=project.repo))
-        print("git branch -M {branch}\n".format(branch=project.git_main_branch))
         print("git push -u origin {branch}\n".format(branch=project.git_main_branch))
         print("BE BOLD: you can always delete your repo and start again\n")
         print("")
