@@ -364,7 +364,7 @@ $(REPORTDIR)/%-align-report.tsv: % | $(REPORTDIR) all_robot_plugins
 
 check_for_robot_updates:
 {%- if project.robot_report.custom_profile %}	
-	@cut -f2 "/tools/robot_report_profile.txt" | sort > $(TMPDIR)/sorted_tsv2.txt
+	@cut -f2 "/tools/templates/src/ontology/profile.txt" | sort > $(TMPDIR)/sorted_tsv2.txt
 	@cut -f2 "$(ROBOT_PROFILE)" | sort > $(TMPDIR)/sorted_tsv1.txt
 	@comm -23 $(TMPDIR)/sorted_tsv2.txt $(TMPDIR)/sorted_tsv1.txt > $(TMPDIR)/missing.txt
 	@echo "Missing tests:"

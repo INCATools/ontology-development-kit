@@ -1117,6 +1117,8 @@ def update(templatedir):
                 policies.append(('.github/workflows/' + workflow + '.yml', ALWAYS))
         if project.documentation is not None and 'docs' in project.workflows:
             policies.append(('.github/workflows/docs.yml', ALWAYS))
+    if not project.robot_report.get('custom_profile', False):
+        policies.append(('src/ontology/profile.txt', NEVER))
 
     # Proceed with template instantiation, using the policies
     # declared above. We instantiate directly at the root of
@@ -1190,7 +1192,10 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     if not os.path.exists(templatedir) and templatedir == "/tools/templates/":
         logging.info("No templates folder in /tools/; assume not in docker context")
         templatedir = "./template"
-    tgts += install_template_files(mg, templatedir, outdir)
+    policies = []
+    if not project.robot_report.get('custom_profile', False):
+        policies.append(('src/ontology/profile.txt', NEVER))
+    tgts += install_template_files(mg, templatedir, outdir, policies)
 
     tgt_project_file = "{}/project.yaml".format(outdir)
     if project.export_project_yaml:
