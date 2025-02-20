@@ -1389,9 +1389,10 @@ normalize_src: $(SRC)
 validate_idranges:
 	dicer-cli {{ project.id }}-idranges.owl
 
+# Deprecated: Use 'sh run.sh odk.py update' without using the Makefile.
 .PHONY: update_repo
 update_repo:
-	sh $(SCRIPTSDIR)/update_repo.sh
+	odk.py update
 	
 {% if project.documentation is not none %}
 update_docs:
@@ -1425,7 +1426,7 @@ Usage: [IMAGE=(odklite|odkfull)] [ODK_DEBUG=yes] sh run.sh make [(IMP|MIR|IMP_LA
 Core commands:
 * prepare_release:	Run the entire release pipeline. Use make IMP=false prepare_release to avoid rerunning the imports
 * prepare_release_fast:	Run the entire release pipeline without refreshing imports, recreating components or recompiling patterns.
-* update_repo:		Update the ODK repository setup using the config file {{ project.id }}-odk.yaml
+* update_repo:		Update the ODK repository setup using the config file {{ project.id }}-odk.yaml (DEPRECATED)
 * test:			Running all validation tests
 * test_fast:		Runs the test suite, but without updating imports or components
 * odkversion:		Show the current version of the ODK Makefile and ROBOT.
@@ -1477,13 +1478,16 @@ Additional QC commands (advanced users)
 
 Examples: 
 * sh run.sh make IMP=false prepare_release
-* sh run.sh make update_repo
 * sh run.sh make test
 
 Tricks:
 * Add -B to the end of your command to force re-running it even if nothing has changed
 * Use the IMAGE parameter to the run.sh script to use a different image like odklite
 * Use ODK_DEBUG=yes sh run.sh make ... to print information about timing and debugging
+
+Updating the repository:
+(to apply changes to the ODK configuration or switch to a newer ODK version)
+* sh run.sh update_repo
 
 endef
 export data

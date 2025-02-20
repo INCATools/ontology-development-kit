@@ -18,6 +18,8 @@ from jinja2 import Template
 from dacite import from_dict
 import yaml
 import os
+import glob
+import fnmatch
 import subprocess
 import shutil
 from shutil import copy, copymode
@@ -879,7 +881,7 @@ def save_project_yaml(project : OntologyProject, path : str):
     with open(path, "w") as f:
         f.write(yaml.dump(json_obj, default_flow_style=False))
         
-def unpack_files(basedir, txt):
+def unpack_files(basedir, txt, policies=[]):
     """
     This unpacks a custom tar-like format in which multiple file paths
     can be specified, separated by ^^^s
@@ -890,16 +892,21 @@ def unpack_files(basedir, txt):
     lines = txt.split("\n")
     f = None
     tgts = []
+    ignore = False
     for line in lines:
         if line.startswith(MARKER):
-            path = os.path.join(basedir, line.replace(MARKER, ""))
-            os.makedirs(os.path.dirname(path), exist_ok=True)
+            # Close previous file, if any
             if f != None:
                 f.close()
-            f = open(path,"w")
-            tgts.append(path)
-            logging.info('  Unpacking into: {}'.format(path))
-        else:
+            filename = line.replace(MARKER, "")
+            path = os.path.join(basedir, filename)
+            ignore = not must_install_file(filename, path, policies)
+            if not ignore:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                f = open(path,"w")
+                tgts.append(path)
+                logging.info('  Unpacking into: {}'.format(path))
+        elif not ignore:
             if f is None:
                 if line == "":
                     continue
@@ -909,6 +916,92 @@ def unpack_files(basedir, txt):
     if f != None:
         f.close()
     return tgts
+
+def get_template_name(templatedir, pathname):
+    """
+    Helper function to get the user-visible name of a template file
+    from its complete pathname in the template directory.
+
+    For example, if the pathname is
+    "/tools/template/src/ontology/run.sh.jinja2", this will return
+    "src/ontology/run.sh".
+    """
+    name = pathname.replace(templatedir, "")
+    if len(name) > 0 and name[0] == '/':
+        name = name[1:]
+    if name.endswith(TEMPLATE_SUFFIX):
+        name = name.replace(TEMPLATE_SUFFIX, "")
+    return name
+
+# Available policies for installing a file
+IF_MISSING, ALWAYS, NEVER = range(3)
+
+def must_install_file(templatefile, targetfile, policies):
+    """
+    Given a template filename, indicate whether the file should be
+    installed according to any per-file policy.
+
+    policies is a list of (PATTERN,POLICY) tuples where PATTERN is
+    a shell-like globbing pattern and POLICY is the update policy
+    that should be applied to any template whose pathname matches
+    the pattern.
+
+    Patterns are tested in the order they are found in the list,
+    and the first match takes precedence over any subsequent match.
+    If there is no match, the default policy is IF_MISSING.
+
+    Valid policies are:
+    * IF_MISSING: install the file if it does not already exist
+    * ALWAYS: always install the file, overwrite any existing file
+    * NEVER: never install the file
+    """
+    policy = IF_MISSING
+    for pattern, pattern_policy in policies:
+        if fnmatch.fnmatch(templatefile, pattern):
+            policy = pattern_policy
+            break
+    if policy == ALWAYS:
+        return True
+    elif policy == NEVER:
+        return False
+    else:
+        return not os.path.exists(targetfile)
+
+def install_template_files(generator, templatedir, targetdir, policies=[]):
+    """
+    Installs all template-derived files into a target directory.
+    """
+    tgts = []
+    for root, subdirs, files in os.walk(templatedir):
+        tdir = root.replace(templatedir,targetdir+"/")
+        os.makedirs(tdir, exist_ok=True)
+
+        # first copy plain files...
+        for f in [f for f in files if not f.endswith(TEMPLATE_SUFFIX)]:
+            srcf = os.path.join(root, f)
+            tgtf = os.path.join(tdir, f)
+            if must_install_file(get_template_name(templatedir, srcf), tgtf, policies):
+                logging.info('  Copying: {} -> {}'.format(srcf, tgtf))
+                # copy file directly, no template expansions
+                copy(srcf, tgtf)
+                tgts.append(tgtf)
+        logging.info('Applying templates')
+        # ...then apply templates
+        for f in [f for f in files if f.endswith(TEMPLATE_SUFFIX)]:
+            srcf = os.path.join(root, f)
+            tgtf = os.path.join(tdir, f)
+            derived_file = tgtf.replace(TEMPLATE_SUFFIX, "")
+            if f.startswith("_dynamic"):
+                logging.info('  Unpacking: {}'.format(derived_file))
+                tgts += unpack_files(tdir, generator.generate(srcf), policies)
+            elif must_install_file(get_template_name(templatedir, srcf), derived_file, policies):
+                logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
+                with open(derived_file,"w") as s:
+                    s.write(generator.generate(srcf))
+                tgts.append(derived_file)
+                copymode(srcf, derived_file)
+    return tgts
+
 
 ## ========================================
 ## Command Line Wrapper
@@ -983,6 +1076,63 @@ def dump_schema(class_name):
         clazz = globals()[class_name]  # Get the class object from the globals dictionary
         print(json.dumps(clazz.json_schema(), sort_keys=True, indent=4))
 
+@cli.command()
+@click.option('-T', '--templatedir', default='/tools/templates/')
+def update(templatedir):
+    """
+    Updates a pre-existing repository. This command is expected to be
+    run from within the src/ontology directory (the directory
+    containing the configuration file).
+    """
+    config_matches = list(glob.glob('*-odk.yaml'))
+    if len(config_matches) == 0:
+        raise click.ClickException("No ODK configuration file found")
+    elif len(config_matches) > 1:
+        raise click.ClickException("More than ODK configuration file found")
+    config = config_matches[0]
+    mg = Generator()
+    mg.load_config(config)
+    project = mg.context.project
+
+    # When updating, for most files, we only install them if
+    # they do not already exist in the repository (typically
+    # because they are new files that didn't exist in the
+    # templates of the previous version of the ODK). But a
+    # handful of files are not reinstalled even if they are
+    # missing (e.g. DOSDP example files) or on the contrary
+    # always reinstalled to overwrite any local changes (e.g.
+    # the main Makefile). We declare the corresponding policies.
+    policies = [
+            ('CODE_OF_CONDUCT.md', NEVER),
+            ('CONTRIBUTING.md', NEVER),
+            ('issue_template.md', NEVER),
+            ('README.md', NEVER),
+            ('src/patterns/data/default/example.tsv', NEVER),
+            ('src/patterns/dosdp-patterns/example.yaml', NEVER),
+            ('src/ontology/Makefile', ALWAYS),
+            ('src/ontology/run.sh', ALWAYS),
+            ('src/sparql/*', ALWAYS),
+            ('docs/odk-workflows/*', ALWAYS)
+            ]
+    if 'github_actions' in project.ci:
+        for workflow in ['qc', 'diff', 'release-diff']:
+            if workflow in project.workflows:
+                policies.append(('.github/workflows/' + workflow + '.yml', ALWAYS))
+        if project.documentation is not None and 'docs' in project.workflows:
+            policies.append(('.github/workflows/docs.yml', ALWAYS))
+
+    # Proceed with template instantiation, using the policies
+    # declared above. We instantiate directly at the root of
+    # the repository -- no need for a staging directory.
+    install_template_files(mg, templatedir, '../..', policies)
+
+    print("WARNING: These files should be manually migrated:")
+    print("         mkdocs.yaml, .gitignore, src/ontology/catalog.xml")
+    print("         (if you added a new import or component)")
+    if 'github_actions' in project.ci and 'qc' not in project.workflows:
+        print("WARNING: Your QC workflows have not been updated automatically.")
+        print("         Please update the ODK version number in .github/workflows/qc.yml")
+    print("Ontology repository update successfully completed.")
 
 @cli.command()
 @click.option('-C', '--config',       type=click.Path(exists=True),
@@ -1042,38 +1192,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
     if not os.path.exists(templatedir) and templatedir == "/tools/templates/":
         logging.info("No templates folder in /tools/; assume not in docker context")
         templatedir = "./template"
-    for root, subdirs, files in os.walk(templatedir):
-        tdir = root.replace(templatedir,outdir+"/")
-        os.makedirs(tdir, exist_ok=True)
-
-        # first copy plain files...
-        for f in files:
-            srcf = os.path.join(root, f)
-            tgtf = os.path.join(tdir, f)
-            logging.info('  Copying: {} -> {}'.format(srcf, tgtf))
-            if not tgtf.endswith(TEMPLATE_SUFFIX):
-                # copy file directly, no template expansions
-                copy(srcf, tgtf)
-                tgts.append(tgtf)
-        logging.info('Applying templates')
-        # ...then apply templates
-        for f in files:
-            srcf = os.path.join(root, f)
-            tgtf = os.path.join(tdir, f)
-            if srcf.endswith(TEMPLATE_SUFFIX):
-                derived_file = tgtf.replace(TEMPLATE_SUFFIX, "")
-                with open(derived_file,"w") as s:
-                    if f.startswith("_dynamic"):
-                        logging.info('  Unpacking: {}'.format(derived_file))
-                        tgts += unpack_files(tdir, mg.generate(srcf))
-                        s.close()
-                        os.remove(derived_file)
-                    else:
-                        logging.info('  Compiling: {} -> {}'.format(srcf, derived_file))
-                        s.write(mg.generate(srcf))
-                        tgts.append(derived_file)
-                if not f.startswith("_dynamic"):
-                    copymode(srcf, derived_file)
+    tgts += install_template_files(mg, templatedir, outdir)
 
     tgt_project_file = "{}/project.yaml".format(outdir)
     if project.export_project_yaml:

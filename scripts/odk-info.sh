@@ -23,7 +23,7 @@ case $1 in
     ;;
 
 *)
-    echo "Usage: odkinfo [--tools|--all-python|--all]"
+    echo "Usage: odk-info [--tools|--all-python|--all]"
     exit
     ;;
 esac
@@ -35,7 +35,6 @@ fi
 
 if [ $show_tools_version -eq 1 ]; then
     robot --version
-    amm --version
     echo "DOSDP-Tools v$(dosdp-tools --version | sed -ne 's/^.*version: //;s/,.*$//p')"
     if type -p Konclude > /dev/null ; then
         echo "Konclude $(Konclude -h | sed -nre 's/^.*Version (.*) - .*$/\1/p')"
@@ -48,6 +47,15 @@ if [ $show_tools_version -eq 1 ]; then
     fi
     if type -p runoak > /dev/null ; then
         echo "Ontology Access Kit v$(python3 -m pip show oaklib | sed -ne 's/^Version: //p')"
+    fi
+    if type -p amm > /dev/null ; then
+        amm --version
+    fi
+    if type -p scala-cli > /dev/null ; then
+        scala-cli --version 2>/dev/null | head -n 1 | tr -d :
+    fi
+    if type -p sssom-cli > /dev/null ; then
+        sssom-cli --version | sed -ne 's/^sssom-cli (SSSOM-Java \(.*\))/SSSOM-CLI version \1/p'
     fi
 fi
 

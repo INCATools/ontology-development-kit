@@ -96,6 +96,9 @@ RUN sed -i '/secure_path/d' /etc/sudoers && \
 COPY --chmod=755 scripts/odk-info.sh /tools/odk-info
 RUN sed -i s/@@ODK_IMAGE_VERSION@@/$ODK_VERSION/ /tools/odk-info
 
+# Install a helper script to launch a repository update
+COPY --chmod=755 scripts/update_repo.sh /tools/update_repo
+
 # Install the ODK itself.
 COPY --chmod=755 odk/make-release-assets.py odk/odk.py /tools
 COPY template/ /tools/templates/
