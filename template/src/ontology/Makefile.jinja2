@@ -785,7 +785,8 @@ endif # MIR=true
 # Subsets
 # ----------------------------------------
 $(SUBSETDIR)/%.tsv: $(SUBSETDIR)/%.owl
-	$(ROBOT) query -f tsv -i $< -s ../sparql/labels.sparql $@
+	$(ROBOT) export -i $< --include classes \
+		        --header "ID [IRI]|LABEL" --format tsv --export $@
 .PRECIOUS: $(SUBSETDIR)/%.tsv
 
 $(SUBSETDIR)/%.owl: $(ONT).owl | $(SUBSETDIR) all_robot_plugins
