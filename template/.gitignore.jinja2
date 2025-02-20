@@ -10,7 +10,6 @@ bin/
 .template.db
 
 .github/token.txt
-{%- if not project.commit_release_artefacts %}
 
 /{{ project.id }}.owl
 /{{ project.id }}.obo
@@ -21,7 +20,6 @@ bin/
 /{{ project.id }}-full.*
 /{{ project.id }}-simple.*
 /{{ project.id }}-simple-non-classified.*
-{%- endif %}
 
 src/ontology/mirror
 src/ontology/mirror/*
