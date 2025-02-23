@@ -845,10 +845,7 @@ class Generator(object):
                 h.update(stream.read().encode())
                 config_hash = h.hexdigest()
                 stream.seek(0)
-                try:
-                    obj = yaml.load(stream, Loader=yaml.FullLoader)
-                except yaml.YAMLError as exc:
-                    print(exc)
+                obj = yaml.load(stream, Loader=yaml.FullLoader)
             project = from_dict(data_class=OntologyProject, data=obj)
         if config_hash:
             project.config_hash = config_hash
@@ -999,6 +996,27 @@ def install_template_files(generator, templatedir, targetdir, policies=[]):
                 copymode(srcf, derived_file)
     return tgts
 
+def format_yaml_error(file, exc):
+    """
+    Prints a human-readable error message from a YAML parser error.
+    """
+    msg = "Cannot parse configuration file"
+    if hasattr(exc, 'problem_mark'):
+        err_line = exc.problem_mark.line
+        err_column = exc.problem_mark.column
+        msg += f"\nLine {err_line + 1}, column {err_column + 1}: {exc.problem}"
+        with open(file, 'r') as f:
+            line = f.readline()
+            linenr = 1
+            while line and linenr <= err_line:
+                linenr += 1
+                line = f.readline()
+        msg += "\n" + line.rstrip()
+        msg += "\n" + ' ' * err_column + '^'
+    else:
+        msg += ": unknown YAML error"
+    return msg
+
 
 ## ========================================
 ## Command Line Wrapper
@@ -1022,7 +1040,10 @@ def create_makefile(config, templatedir, input, output):
     For testing purposes
     """
     mg = Generator()
-    mg.load_config(config)
+    try:
+        mg.load_config(config)
+    except yaml.YAMLError as exc:
+        raise click.ClickException(format_yaml_error(config, exc))
     print(mg.generate('{}/src/ontology/Makefile.jinja2'.format(templatedir)))
 
 @cli.command()
@@ -1035,7 +1056,10 @@ def create_dynfile(config, templatedir, input, output):
     For testing purposes
     """
     mg = Generator()
-    mg.load_config(config)
+    try:
+        mg.load_config(config)
+    except yaml.YAMLError as exc:
+        raise click.ClickException(format_yaml_error(config, exc))
     print(mg.generate('{}/_dynamic_files.jinja2'.format(templatedir)))
     
 @cli.command()
@@ -1046,7 +1070,10 @@ def export_project(config, output):
     For testing purposes
     """
     mg = Generator()
-    mg.load_config(config)
+    try:
+        mg.load_config(config)
+    except yaml.YAMLError as exc:
+        raise click.ClickException(format_yaml_error(config, exc))
     project = mg.context.project
     save_project_yaml(project, output)
     
@@ -1088,7 +1115,10 @@ def update(templatedir):
         raise click.ClickException("More than ODK configuration file found")
     config = config_matches[0]
     mg = Generator()
-    mg.load_config(config)
+    try:
+        mg.load_config(config)
+    except yaml.YAMLError as exc:
+        raise click.ClickException(format_yaml_error(config, exc))
     project = mg.context.project
 
     # When updating, for most files, we only install them if
@@ -1167,11 +1197,14 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         if len(repo) > 1:
             raise click.ClickException('max one repo; current={}'.format(repo))
         repo = repo[0]
-    mg.load_config(config,
-                   imports=dependencies,
-                   title=title,
-                   org=user,
-                   repo=repo)
+    try:
+        mg.load_config(config,
+                       imports=dependencies,
+                       title=title,
+                       org=user,
+                       repo=repo)
+    except yaml.YAMLError as exc:
+        raise click.ClickException(format_yaml_error(config, exc))
     project = mg.context.project
     if project.id is None or project.id == "":
         project.id = repo
