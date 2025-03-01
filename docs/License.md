@@ -1,1 +1,0 @@
-Refer to [https://oboacademy.github.io/obook/reference/formatting-license/](https://oboacademy.github.io/obook/reference/formatting-license/).
