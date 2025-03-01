@@ -1,1 +1,0 @@
-See [https://oboacademy.github.io/obook/tutorial/managing-ontology-project/](https://oboacademy.github.io/obook/tutorial/managing-ontology-project/).

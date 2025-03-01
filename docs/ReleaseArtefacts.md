@@ -1,1 +1,0 @@
-Please refer to [https://oboacademy.github.io/obook/reference/release-artefacts/](https://oboacademy.github.io/obook/reference/release-artefacts/)
