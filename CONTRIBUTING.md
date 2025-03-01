@@ -3,6 +3,93 @@
 This is intended for developers only, see [README](README.md) for the
 main docs.
 
+## Development principles
+
+### Project’s aims
+
+The primary aim of the ODK (its mission statement, if you will) is to
+make it possible for any ontology project to benefit from thoroughly
+designed, well tested ontology engineering workflows, even if the
+project does not have the luxury of a full-time ontology pipeline
+engineer always available to fix snafus and keep things running.
+
+From this aim, we derive the following guidelines that developers should
+keep in mind whenever working on the ODK (especially when adding new
+features):
+
+(1) No feature should require from the user to install anything on their
+machine beyond Docker (required to run the ODK images) and Git (needed
+to work on ODK repositories).
+
+(2) As much as possible, features should not require any specialised
+configuration beyond what can be configured in the `*-odk.yaml` ODK
+configuration file.
+
+(3) All standard workflows should be usable by people that do not have
+engineering or programming skills beyond the ability of running simple
+commands on the command line.
+
+(4) Point (3) applies to updating an existing ODK-managed project to a
+newer version of the ODK, which should not require the intervention of an
+engineer.
+
+### Custom/advanced workflows
+
+For the projects that do have the luxury of an ontology pipeline
+engineer, the ODK must not stand in the way of any custom or advanced
+workflow that might be necessary.
+
+An ontology pipeline engineer must always be able to customise any
+standard ODK workflow and to add specialised workflows as needed.
+
+However, whenever custom workflows are used, the promise of smooth
+updates (point 4 in the previous section) no longer holds — it is
+explicitly acceptable for ODK developers to introduce changes that may
+break custom workflows.
+
+### Technological stack and dependencies
+
+#### Docker
+
+Currently, the ODK is provided as a Docker image. While it would be
+desirable _not_ to depend on Docker, this is not realistically feasible
+for now.
+
+Still, as much as possible, developers should refrain from assuming that
+the Docker image will always be used. For example, workflows should not
+invoke a tool by hardcoding its path within the Docker image, but
+instead assume the tool is available in the _PATH_ (so, for example,
+ROBOT should be invoked simply as `robot`, _not_ as `/tools/robot`).
+
+#### Git
+
+Currently, the ODK assumes that an ontology project will be
+version-controlled using Git.
+
+There is no plan to support other version control systems (such as
+Mercurial, Subversion, etc.), and it is fine for developers to continue
+assuming the use of Git.
+
+#### GitHub
+
+Several features in the ODK assumes that an ontology project is or will
+be hosted on GitHub.
+
+This is only fine as long as those features are not *required*. It
+must *always* be possible to host a ODK-managed ontology on any other
+Git hosting service (including self-hosting).
+
+#### Operating systems and architectures.
+
+The ODK should be usable at least on:
+
+* GNU/Linux (any distribution, x86\_64 only);
+* macOS X (any version >= 10.12, x86\_64 and arm64);
+* Windows (versions 10 and 11, 86\_64 only).
+
+Running on other systems, versions, or architectures may be possible but
+is not officially supported.
+
 ## Installation
 
 For running locally without Docker you will need
