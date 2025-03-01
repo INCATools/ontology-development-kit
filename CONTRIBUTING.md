@@ -90,37 +90,53 @@ The ODK should be usable at least on:
 Running on other systems, versions, or architectures may be possible but
 is not officially supported.
 
-## Installation
+## Templating system
 
-For running locally without Docker you will need
-
- * robot
- * owltools
- * python3.6 or higher
-
-See [Dockerfile](Dockerfile) for details on how to obtain these
-
-## How it works
-
-Previously ODK used a perl script to create a new repo. This iterated
-the [template/](template) directory and used special magic for expanding into a
-target folder. This has been replaced by python code
-[odk/odk.py](odk/odk.py) with makes used of Jinja2 templates.
+Creating (“seeding”) a ODK-managed repository is done with the
+[odk/odk.py](odk/odk.py) script (available, within the ODK image, as
+`/tools/odk.py`). The `seed` command of that script instantiates the
+Jinja2 templates found in the [template/](template) directory
+(`/tools/templates` within the ODK image).
 
 For example, the file
 [template/src/ontology/Makefile.jinja2](template/src/ontology/Makefile.jinja2)
 will compile to a file `src/ontology/Makefile` in the target/output
 directory.
 
-Jinja2 templates should be fairly easy to grok for anyone familiar
-with templating systems. The syntax is very similar to Liquid
-templates, which are used extensively on the OBO site. We feed the
-template engine with a project object that is passed in by the user
-(more on that later).
+Jinja2 templates should be fairly easy to grok for anyone familiar with
+templating systems. We feed the template engine with a project object
+that is passed in by the user (see below).
 
-Logic in the templates should be non-existent.
+Logic in the templates should be kept to a minimum (though the
+aforementioned `Makefile.jinja2` template is a great offender of this
+principle).
 
-## Dynamic File Names
+### Some notes on templating and logic
+
+There is a potential for some confusion as to responsibility for logic.
+On the one hand we have dependency logic in the Makefile. But we also
+have minimal logic in deciding what to put in the Makefile.
+
+For example, we could move some logic from the Makefile by using
+for/endfor Jinja constructs and unfolding every product in a group and
+have an explicit non-pattern target in the Makefile. Or we can continue
+to write targets with patterns. Or we can do a mixture of both.
+
+Additionally there is some minimal logic in the python odk code, but
+this is kept to an absolute minimum; the role of the python code is to
+run template expansions.
+
+In general the decision is to keep the templating as simple as possible,
+which leads to a slight mixed two level system.
+
+One gotcha is the two levels of comments. The `{# .. #}` comments are
+template comments for the eyes of developers only. These are ignored
+when compiling down to the target file. Then we also have Makefile
+comments `#` which remain in the target file, and are intended for
+advanced ontology maintainers who need to debug their workflows. These
+are intermingled in Makefile.jinja2
+
+### Dynamic File Names
 
 Sometimes the odk needs to create a file whose name is based on an
 input setting or configuration; sometimes lists of such files need to
@@ -129,13 +145,49 @@ be created.
 For example, if the user specifies 3 external ontology dependencies,
 then we want to see the repo with 3 files `imports/{{ont.id}}_import.owl`
 
-Rather than embed this logic in code, we include all dynamic files in
-a single "tar-esque" formated file: [template/_dynamic_files.jinja2](template/_dynamic_files.jinja2)
+Rather than embed this logic in code, we can use special “dynamic”
+templates (identified by a name starting with `_dynamic`). A dynamic
+template is a “tar-like” bundle containing an arbitrary number of files,
+each file starting with a line of the form:
 
-This file is actually a specification for multiple files, each target
-file specified with `^^^`. Because the parent file is interpreted
-using templates, we can have dynamic file names, and entire files
-created via looping constructs.
+```
+^^^ path/to/file
+```
+
+where `path/to/file` is the complete pathname of the file to create. All
+subsequent lines in the bundle, up to the next `^^^` line, will end up
+in that file.
+
+Because the entire bundle is itself a Jinja2 template, and the bundle is
+extracted _after_ template expansion, this system allows us to have
+
+(1) dynamic file names:
+
+```
+^^^ src/ontology/{{ project.id }}-idranges.owl
+# ID ranges file
+@Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+...
+```
+
+(2) files that are created or not depending on the value of a
+configuration option:
+
+```
+{% if project.use_templates %}
+^^^ src/templates/README.md
+# ROBOT templates
+...
+{%- endif %}
+```
+
+(3) and files that are created serially in a Jinja2 loop:
+
+```
+{% for imp in project.import_group.products %}
+^^^ src/ontology/imports/{{ imp.id }}_import.owl
+...
+```
 
 ## The Project object
 
@@ -145,6 +197,12 @@ annotated with `@dataclass` in the code.
 
 There is a [schema](schema) folder but this is incomplete as the
 dataclasses-scheme module doesn't appear to work (TODO)...
+
+An auto-generated documentation is available in
+[docs/project-schema.md](docs/project-schema.md). That documentation is
+updated by running `make docs` from the top-level directory. Additional
+documentation should at some point be available in
+[docs/schema-options.md](docs/schema-options.md).
 
 There are also example `project.yaml` files in the
 [examples](examples) folder, and these also serve as rudimentary unit
@@ -375,32 +433,6 @@ Sometimes, it may be necessary to delete the multiarch and redo it (roughly once
 docker buildx rm multiarch
 docker buildx create --name multiarch --driver docker-container --use
 ```
-
-## Some notes on templating and logic
-
-There is a potential for some confusion as to responsibility for
-logic. On the one hand we have dependency logic in the Makefile. But
-we also have minimal logic in deciding what to put in the Makefile.
-
-For example, we could move some logic from the Makefile by using
-for/endfor Jinja constructs and unfolding every product in a group and
-have an explicit non-pattern target in the Makefile. Or we can
-continue to write targets with patterns. Or we can do a mixture of
-both.
-
-Additionally there is some minimal logic in the python odk code, but
-this is kept to an absolute minimum; the role of the python code is to
-run template expansions.
-
-In general the decision is to keep the templating as simple as
-possible, which leads to a slight mixed two level system.
-
-One gotcha is the two levels of comments. The `{# .. #}` comments are
-template comments for the eyes of developers only. These are ignored
-when compiling down to the target file. Then we also have Makefile
-comments `#` which remain in the target file, and are intended for
-advanced ontology maintainers who need to debug their workflows. These
-are intermingled in Makefile.jinja2
 
 ## Unit Tests
 
