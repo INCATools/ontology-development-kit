@@ -245,27 +245,10 @@ Commands:
   dump-schema      Dumps the python schema as json schema.
   export-project   For testing purposes
   seed             Seeds an ontology project
+  update           Updates a pre-existing repository.
 ```
 
-The most common command is seed.
-
-## Updating a Makefile and/or repo
-
-Previously with odk there was no path to either upgrading an existing
-project with new settings (i.e. adding an import) OR to take advantage
-of changes to the odk (e.g changes in the core Makefile).
-
-This should now be easier with the new odk, although the
-implementation emphasis has been on the seed command. Some things that
-will make this easier:
-
- * Convention of using a second loaded Makefile for custom changes
- * Maintaining a project.yaml in root folder will allow easy regeneration
-
-TODO: add a refresh command. This could run odk *in place*, but
-preserving protected files. TBD how to determine protected
-files. Obviously the edit file should not be touched. Could use git
-log to determine if any modifications have been made?
+The most common command is `seed`.
 
 ## Setting up a new machine for ODK development
 
