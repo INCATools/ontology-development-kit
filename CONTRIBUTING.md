@@ -582,3 +582,31 @@ directory. This should be done at least (1) whenever a new package is
 added to `requirements.txt.full`, (2) whenever the base image is
 updated. It can also be done at any time during the development cycle to
 ensure that we pick regular updates of any package we use.
+
+## Tools to update
+
+The following table lists all tools that should be checked for updates
+whenever a new release is in preparation.
+
+| Tool | Where to check for updates | Notes |
+| ---- | -------------------------- | ----- |
+| ROBOT | https://github.com/ontodev/robot/releases | |
+| ROBOT KGCL Plugin | https://github.com/gouttegd/kgcl-java/releases | |
+| ROBOT ODK Plugin | https://github.com/INCATools/odk-robot-plugin/releases | |
+| ROBOT SSSOM Plugin | https://github.com/gouttegd/sssom-java/releases | |
+| DOSDP-Tools | https://github.com/INCATools/dosdp-tools/releases | |
+| Relation-Graph | https://github.com/balhoff/relation-graph/releases | |
+| Dicer | https://github.com/gouttegd/dicer/releases | |
+| Soufflé | https://github.com/souffle-lang/souffle/releases | |
+| Fastobo-validator | https://github.com/fastobo/fastobo-validator/releases | |
+| RDFTab | https://github.com/ontodev/rdftab.rs/releases | |
+| Konclude | https://github.com/konclude/Konclude/releases | unlikely to get a new release |
+| OWLTools | https://github.com/owlcollab/owltools/releases | unlikely to get a new release |
+| Jena | https://jena.apache.org/download/ | |
+| Ammonite | https://github.com/lihaoyi/Ammonite/releases | to be removed in ODK 1.7 (replaced by Scala-CLI) |
+| Scala-CLI | https://github.com/VirtusLab/scala-cli/releases | |
+
+Python packages (e.g. the Ontology Access Kit aka `oaklib`) should be
+automatically updated to their latest version whenever Python
+constraints are updated with `make constraints.txt` as explained in the
+previous section.
