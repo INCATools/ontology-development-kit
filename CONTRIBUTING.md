@@ -526,10 +526,19 @@ happen once every 1 to 4 weeks.
 
 ## Pull request rules
 
-1. One PR per feature.
-2. Each PR must link to one or more existing issues.
-3. There should be one commit per logical change. This is important so we can be more effective at cherry picking for patch releases.
-4. Every commit should have an appropriate title and description.
+1. All changes must be introduced through a PR (no commit directly to
+   the `master` branch).
+2. One PR per feature. However, when a PR touches a particular area of
+   the code, it is fine to include unrelated refactoring of that code in
+   the PR, as long as the refactoring happens in separate commit(s).
+3. Complex changes must be broken down in separate commits, each commit
+   implementing a single logical change.
+4. Each commit must have a proper commit message that describes what the
+   change is about.
+
+Contributors submitting PRs that do not follow those rules may be asked
+to re-submit a correct PR, even if the changes introduced by the PR are
+otherwise approved.
 
 ## Adding new programs or Python modules to the ODK
 
