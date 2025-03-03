@@ -284,8 +284,8 @@ published version available on the Docker Hub library.
 
 To test:
 
-```$
-sh make tests
+```sh
+$ make tests
 ```
 
 These will seed a few example repos in the target/ folder, some from
