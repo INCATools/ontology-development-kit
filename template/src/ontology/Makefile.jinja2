@@ -515,8 +515,9 @@ $(IMPORTDIR)/merged_terms_combined.txt: $(ALL_TERMS_COMBINED)
 
 {%     if 'slme' == project.import_group.module_type -%}
 $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_terms_combined.txt | all_robot_plugins
-	$(ROBOT) merge --imput $< \{% if project.import_group.exclude_iri_patterns is not none %}
-		 {% for pattern in project.import_group.exclude_iri_patterns %}remove  --select "{{ pattern }}" {% endfor %} \{% endif %}
+	$(ROBOT) merge --imput $<{% if project.import_group.exclude_iri_patterns is not none -%}
+		 {%- for pattern in project.import_group.exclude_iri_patterns %} \
+		 remove --select "{{ pattern }}"{% endfor %}{% endif %} \
 		 extract --term-file $(IMPORTDIR)/merged_terms_combined.txt \
 		         --force true --copy-ontology-annotations true \
 		         --individuals {{ project.import_group.slme_individuals }} \
@@ -645,10 +646,10 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
 		         --copy-ontology-annotations true --force true --method BOT \
-		 remove {% for iri in ont.base_iris %}--base-iri {{ iri }} {% endfor %}\
-		        --axioms external --preserve-structure false --trim false \
-		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \
-		        {% for p in ont.annotation_properties %}--term {{ p }} {% endfor %}\
+		 remove --axioms external --preserve-structure-false --trim false \{% for iri in ont.base_iris %}
+		        --base-iri {{ iri }} \{% endfor %}
+		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \{% for p in ont.annotation_properties %}
+		        --term {{ p }} \{% endfor %}
 		        --term-file $(IMPORTDIR)/{{ ont.id}}_terms_combined.txt \
 		        --select complement \
 		 odk:normalize --base-iri {{ project.uribase }} \
@@ -668,12 +669,12 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
 		         --copy-ontology-annotations true --force true --method BOT \
-		 remove {% for iri in ont.base_iris %}--base-iri {{iri}} {% endfor %}\
-		        --axioms external --preserve-structure false --trim false \
+		 remove --axioms external --preserve-structure-false --trim false \{% for iri in ont.base_iris %}
+		        --base-iri {{ iri }} \{% endfor %}
 		 odk:normalize --base-iri {{ project.uribase }} --subset-decls true \
 		               --synonym-decls true --merge-axioms true \
-		 remove $(foreach p ,$(ANNOTATION_PROPERTIES), --term $(p)) \
-		        {% for p in ont.annotation_properties %}--term {{ p }} {% endfor %}\
+		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \{% for p in ont.annotation_properties %}
+		        --term {{ p }} \{% endfor %}
 		        --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
 		        --select complement \
 		        --select "classes individual annotation-properties" \
