@@ -128,32 +128,17 @@ that is passed in by the user (see below).
 
 Logic in the templates should be kept to a minimum (though the
 aforementioned `Makefile.jinja2` template is a great offender of this
-principle).
+principle). Whenever possible, complex logic should reside in the
+`odk.py` script, which should provide ready-to-use variables and lists
+for the templates to exploit.
 
-### Some notes on templating and logic
-
-There is a potential for some confusion as to responsibility for logic.
-On the one hand we have dependency logic in the Makefile. But we also
-have minimal logic in deciding what to put in the Makefile.
-
-For example, we could move some logic from the Makefile by using
-for/endfor Jinja constructs and unfolding every product in a group and
-have an explicit non-pattern target in the Makefile. Or we can continue
-to write targets with patterns. Or we can do a mixture of both.
-
-Additionally there is some minimal logic in the python odk code, but
-this is kept to an absolute minimum; the role of the python code is to
-run template expansions.
-
-In general the decision is to keep the templating as simple as possible,
-which leads to a slight mixed two level system.
-
-One gotcha is the two levels of comments. The `{# .. #}` comments are
-template comments for the eyes of developers only. These are ignored
-when compiling down to the target file. Then we also have Makefile
-comments `#` which remain in the target file, and are intended for
-advanced ontology maintainers who need to debug their workflows. These
-are intermingled in Makefile.jinja2
+Templates may contain Jinja2 comments (`{# .. #}`) which are intended
+for ODK *developers* only (as those comments will not appear in the
+produced files). Templates may also contain comments intended for the
+*users*, using whatever comment syntax is appropriate for the kind of
+produced file (e.g. a Makefile template may contain comments as lines
+starting with `#`, a RDF/XML template may contain comments as
+`<!-- ... -->` blocks, etc).
 
 ### Dynamic File Names
 
