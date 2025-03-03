@@ -79,6 +79,25 @@ This is only fine as long as those features are not *required*. It
 must *always* be possible to host a ODK-managed ontology on any other
 Git hosting service (including self-hosting).
 
+#### POSIX compatibility and “GNU-isms”
+
+The ODK image is built on top of a GNU/Linux system, and there is no
+plan to change that anytime soon. However, as much as possible, even for
+processes that are intended to run within a ODK container it is best to
+avoid relying on GNU-specific behaviours or options (so-called
+“GNU-isms”), unless doing so provides a clear benefit (e.g. in
+performance or readability) over a strictly POSIX-compliant alternative.
+
+That rule applies more strongly to wrapper scripts that are intended to
+be run from the host’s shell rather than from within the ODK container
+(e.g. `run.sh`, `seed-via-docker.sh`): those scripts *must* avoid any
+features specific to one particular flavour of the Bourne shell (be it
+`bash`, `dash`, `zsh`, etc.).
+
+The exception to that rule is for the standard ODK-generated Makefile:
+it is explicitly fine for that Makefile to depend on features that are
+specific to GNU Make.
+
 #### Operating systems and architectures.
 
 The ODK should be usable at least on:
