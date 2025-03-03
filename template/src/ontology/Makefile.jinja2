@@ -537,7 +537,7 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_term
 {%     endif -%}
 {%   else %}{# !project.import_group.use_base_merging -#}
 
-{# Generic rule for all imports that use the default module type -#}
+## Default module type ({{ project.import_group.module_type }})
 {%     if 'slme' == project.import_group.module_type -%}
 $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
@@ -603,17 +603,16 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl
 {%     endif -%}
 .PRECIOUS: $(IMPORTDIR)/%_import.owl
 
-{%     if project.import_group.export_obo -%}
-# convert imports to obo.
-# this can be useful for spot-checks and diffs.
-# we set strict mode to false by default. For discussion see https://github.com/owlcs/owlapi/issues/752
-$(IMPORTDIR)/%_import.obo: $(IMPORTDIR)/%_import.owl
-	$(ROBOT) convert --check false -i $< -f obo -o $@.tmp.obo && mv $@.tmp.obo $@
-
-{%     endif -%}
-{# Then the specific rules for imports that use a different type and/or that are "large" -#}
+{#
+ # An import module of a different type than the default type needs its
+ # own specific rule to override the pattern rule above.
+ # A module that is marked as "large" (regardless of its type) also
+ # needs its own rule, so that it can be selectively excluded when
+ # running under IMP_LARGE=false.
+ # We generate those rules here.
+-#}
 {%     for ont in project.import_group.special_products -%}
-## Module for ontology: {{ ont.id }}
+## Module for ontology: {{ ont.id }} ({{ ont.module_type }})
 {%       if ont.is_large -%}
 ifeq ($(IMP_LARGE),true)
 {%       endif -%}
@@ -628,7 +627,6 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true \
 		 $(ANNOTATE_CONVERT_FILE)
-
 {%       elif 'slme' == ont.module_type -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
@@ -641,7 +639,6 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true \
 		 $(ANNOTATE_CONVERT_FILE)
-
 {%       elif 'filter' == ont.module_type -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
@@ -658,7 +655,6 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true \
 		 $(ANNOTATE_CONVERT_FILE)
-
 {%       elif 'mirror' == ont.module_type -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
@@ -666,7 +662,6 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true --add-source true \
 		 $(ANNOTATE_CONVERT_FILE)
-
 {%       elif 'minimal' == ont.module_type -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
@@ -683,19 +678,25 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		        --select complement \
 		        --select "classes individual annotation-properties" \
 		 $(ANNOTATE_CONVERT_FILE)
-
 {%       elif 'custom' -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if 'no_mirror' != ont.mirror_type %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %}
 	@echo "ERROR: You have configured {{ ont.id }} as a custom module;"
 	@echo "       This rule needs to be overwritten in {{ project.id }}.Makefile!"
 	@false
-
 {%       endif -%}
 {%       if ont.is_large -%}
 endif # IMP_LARGE=true
-{%       endif -%}
+{%       endif %}
 {%     endfor -%}
 {%   endif %}{# !use_base_merging -#}
+
+{%   if project.import_group.export_obo -%}
+# Convert any import module to OBO (this can be useful for spot-checks
+# and diffs).
+$(IMPORTDIR)/%_import.obo: $(IMPORTDIR)/%_import.owl
+	$(ROBOT) convert --input $< --check false --format obo --output $@
+
+{%   endif -%}
 endif # IMP=true
 
 .PHONY: refresh-imports
