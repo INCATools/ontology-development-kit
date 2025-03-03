@@ -577,7 +577,7 @@ $(IMPORTDIR)/%_import.obo: $(IMPORTDIR)/%_import.owl
 ifeq ($(IMP_LARGE),true)
 {% endif -%}
 {% if (ont.is_large and 'slme' == ont.module_type) or 'fast_slme' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) extract --input $< \
 		         --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
 		         --force true --copy-ontology-annotations false \
@@ -588,7 +588,7 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 		               --merge-axioms true \
 		 $(ANNOTATE_CONVERT_FILE)
 {% elif 'slme' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
@@ -599,7 +599,7 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 		               --synonym-decls true --merge-axioms true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif 'filter' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
@@ -614,14 +614,14 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 		              --synonym-decls true --merge-axioms true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif 'mirror' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true --add-source true \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif 'minimal' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% else %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %} $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
@@ -637,7 +637,7 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_mergin
 		        --select "classes individual annotation-properties" \
 		$(ANNOTATE_CONVERT_FILE)
 {% elif 'custom' -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if project.import_group.use_base_merging %}$(MIRRORDIR)/merged.owl{% elif 'no_mirror' != ont.mirror_type %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %}
+$(IMPORTDIR)/{{ ont.id }}_import.owl: {% if 'no_mirror' != ont.mirror_type %}$(MIRRORDIR)/{{ ont.id }}.owl{% endif %}
 	@echo "ERROR: You have configured {{ ont.id }} as a custom module;"
 	@echo "       This rule needs to be overwritten in {{ project.id }}.Makefile!"
 	@false
