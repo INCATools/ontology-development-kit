@@ -504,21 +504,17 @@ ANNOTATION_PROPERTIES={% for p in project.import_group.annotation_properties %}{
 
 ifeq ($(IMP),true)
 
-{# Should be able to drop this if robot can just take a big messy list of terms as input. -#}
-$(IMPORTDIR)/%_terms_combined.txt: $(IMPORTSEED) $(IMPORTDIR)/%_terms.txt
-	cat $^ | grep -v ^# | sort | uniq >  $@
-
 {%   if project.import_group.use_base_merging -%}
-ALL_TERMS_COMBINED = $(patsubst %, $(IMPORTDIR)/%_terms_combined.txt, $(IMPORTS))
-$(IMPORTDIR)/merged_terms_combined.txt: $(ALL_TERMS_COMBINED)
-	cat $^ | grep -v ^# | sort | uniq >  $@
+ALL_TERMS = $(foreach imp, $(IMPORTS), $(IMPORTDIR)/$(imp)_terms.txt)
 
 {%     if 'slme' == project.import_group.module_type -%}
-$(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_terms_combined.txt | all_robot_plugins
-	$(ROBOT) merge --imput $<{% if project.import_group.exclude_iri_patterns is not none -%}
+$(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(ALL_TERMS) \
+				$(IMPORTSEED) | all_robot_plugins
+	$(ROBOT) merge --input $<{% if project.import_group.exclude_iri_patterns is not none -%}
 		 {%- for pattern in project.import_group.exclude_iri_patterns %} \
 		 remove --select "{{ pattern }}"{% endfor %}{% endif %} \
-		 extract --term-file $(IMPORTDIR)/merged_terms_combined.txt \
+		 extract $(foreach f, $(ALL_TERMS), --term-file $(f)) \
+		         --term-file $(IMPORTSEED) \
 		         --force true --copy-ontology-annotations true \
 		         --individuals {{ project.import_group.slme_individuals }} \
 		         --method {{ project.import_group.module_type_slme }} \
@@ -530,7 +526,8 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_term
 		 $(ANNOTATE_CONVERT_FILE)
 
 {%     else -%}
-$(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_terms_combined.txt
+$(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(ALL_TERMS) \
+				$(IMPORTSEED)
 	@echo "ERROR: You have configured the merged import as a custom module;"
 	@echo "       This rule needs to be overwritten in {{ project.id }}.Makefile!"
 	@false
@@ -540,10 +537,12 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(IMPORTDIR)/merged_term
 
 ## Default module type ({{ project.import_group.module_type }})
 {%     if 'slme' == project.import_group.module_type -%}
-$(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
+			   $(IMPORTSEED) | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
-		 extract --term-file $(IMPORTDIR)/$*_terms_combined.txt \
+		 extract --term-file $(IMPORTDIR)/$*_terms.txt \
+		         --term-file $(IMPORTSEED) \
 		         --force true --copy-ontology-annotations false \
 		         --individuals {{ project.import_group.slme_individuals }} \
 		         --method {{ project.import_group.module_type_slme }} \
@@ -553,10 +552,12 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms_combined.txt 
 		 $(ANNOTATE_CONVERT_FILE)
 
 {%     elif 'minimal' == project.import_group.module_type -%}
-$(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
+			   $(IMPORTSEED) | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
-		 extract --term-file $(IMPORTDIR)/$*_terms_combined.txt \
+		 extract --term-file $(IMPORTDIR)/$*_terms.txt \
+		         --term-file $(IMPORTSEED) \
 		         --force true --copy-ontology-annotations true \
 		         --method BOT \
 		 remove --base-iri $(OBOBASE)"/$(shell echo $* | tr a-z A-Z)_" \
@@ -566,13 +567,14 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms_combined.txt 
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true \
 		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \
-		        --term-file $(IMPORTDIR)/$*_terms_combined.txt \
+		        --term-file $(IMPORTDIR)/$*_terms.txt \
+		        --term-file $(IMPORTSEED) \
 		        --select complement \
 		        --select "classes individuals annotation-properties" \
 		 $(ANNOTATE_CONVERT_FILE)
 
 {%     elif 'mirror' == project.import_group.module_type -%}
-$(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
@@ -580,7 +582,8 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms_combined.txt 
 		 $(ANNOTATE_CONVERT_FILE)
 
 {%     elif 'filter' == project.import_group.module_type -%}
-$(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
+			   $(IMPORTSEED) | all_robot_plugins
 	$(ROBOT) merge --input $< \
 		 annotate --remove-annotations \
 		 odk:normalize --add-source true \
@@ -588,7 +591,8 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms_combined.txt 
 		        --axioms external \
 		        --preserve-structure false --trim false \
 		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \
-		        --term-file $(IMPORTDIR)/$*_terms_combined.txt \
+		        --term-file $(IMPORTDIR)/$*_terms.txt \
+		        --term-file $(IMPORTSEED) \
 		        --select complement \
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
@@ -618,10 +622,11 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl
 ifeq ($(IMP_LARGE),true)
 {%       endif -%}
 {%       if 'slme' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms.txt $(IMPORTSEED) | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
-		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
+		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt \
+		         --term-file $(IMPORTSEED) \
 		         --copy-ontology-annotations true --force true \
 		         --individuals {{ ont.slme_individuals }} \
 		         --method {{ ont.module_type_slme }} \
@@ -630,33 +635,36 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		               --merge-axioms true \
 		 $(ANNOTATE_CONVERT_FILE)
 {%       elif 'filter' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms.txt $(IMPORTSEED) | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
-		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
+		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt \
+		         --term-file $(IMPORTSEED) \
 		         --copy-ontology-annotations true --force true --method BOT \
 		 remove --axioms external --preserve-structure-false --trim false \{% for iri in ont.base_iris %}
 		        --base-iri {{ iri }} \{% endfor %}
 		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \{% for p in ont.annotation_properties %}
 		        --term {{ p }} \{% endfor %}
-		        --term-file $(IMPORTDIR)/{{ ont.id}}_terms_combined.txt \
+		        --term-file $(IMPORTDIR)/{{ ont.id}}_terms.txt \
+		        --term-file $(IMPORTSEED) \
 		        --select complement \
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true \
 		 $(ANNOTATE_CONVERT_FILE)
 {%       elif 'mirror' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true --add-source true \
 		 $(ANNOTATE_CONVERT_FILE)
 {%       elif 'minimal' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
+$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms.txt $(IMPORTSEED) | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
-		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
+		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt \
+		         --term-file $(IMPORTSEED) \
 		         --copy-ontology-annotations true --force true --method BOT \
 		 remove --axioms external --preserve-structure-false --trim false \{% for iri in ont.base_iris %}
 		        --base-iri {{ iri }} \{% endfor %}
@@ -664,7 +672,8 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		               --synonym-decls true --merge-axioms true \
 		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \{% for p in ont.annotation_properties %}
 		        --term {{ p }} \{% endfor %}
-		        --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
+		        --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt \
+		        --term-file $(IMPORTSEED) \
 		        --select complement \
 		        --select "classes individual annotation-properties" \
 		 $(ANNOTATE_CONVERT_FILE)
