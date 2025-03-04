@@ -382,6 +382,10 @@ class ImportGroup(ProductGroup):
                 p.module_type = self.module_type
                 p.module_type_slme = self.module_type_slme
                 p.slme_individuals = self.slme_individuals
+            elif p.module_type == 'fast_slme':
+                # Accept fast_slme as a synonym for slme, for backwards
+                # compatibility
+                p.module_type = 'slme'
             if p.base_iris is None:
                 p.base_iris = [ 'http://purl.obolibrary.org/obo/' + p.id.upper() ]
             if p.is_large or p.module_type != self.module_type:
