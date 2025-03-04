@@ -617,18 +617,7 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl
 {%       if ont.is_large -%}
 ifeq ($(IMP_LARGE),true)
 {%       endif -%}
-{%       if (ont.is_large and 'slme' == ont.module_type) or 'fast_slme' == ont.module_type -%}
-$(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
-	$(ROBOT) extract --input $< \
-		         --term-file $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt \
-		         --force true --copy-ontology-annotations false \
-		         --individuals {{ ont.slme_individuals }} \
-		         --method {{ ont.module_type_slme }} \
-		 odk:normalize --base-iri {{ project.uribase }} \
-		               --subset-decls true --synonym-decls true \
-		               --merge-axioms true \
-		 $(ANNOTATE_CONVERT_FILE)
-{%       elif 'slme' == ont.module_type -%}
+{%       if 'slme' == ont.module_type -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms_combined.txt | all_robot_plugins
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
