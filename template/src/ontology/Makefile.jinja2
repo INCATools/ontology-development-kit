@@ -647,7 +647,7 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt $(T_IMPORTSEED) \
 		         --copy-ontology-annotations true --force true --method BOT \
-		 remove --axioms external --preserve-structure-false --trim false \{% for iri in ont.base_iris %}
+		 remove --axioms external --preserve-structure false --trim false \{% for iri in ont.base_iris %}
 		        --base-iri {{ iri }} \{% endfor %}
 		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \{% for p in ont.annotation_properties %}
 		        --term {{ p }} \{% endfor %}
@@ -670,7 +670,7 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt $(T_IMPORTSEED) \
 		         --copy-ontology-annotations true --force true --method BOT \
-		 remove --axioms external --preserve-structure-false --trim false \{% for iri in ont.base_iris %}
+		 remove --axioms external --preserve-structure false --trim false \{% for iri in ont.base_iris %}
 		        --base-iri {{ iri }} \{% endfor %}
 		 odk:normalize --base-iri {{ project.uribase }} --subset-decls true \
 		               --synonym-decls true --merge-axioms true \
