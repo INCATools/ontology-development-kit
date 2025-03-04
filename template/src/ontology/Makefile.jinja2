@@ -531,6 +531,7 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(ALL_TERMS) \
 		         --individuals {{ project.import_group.slme_individuals }} \
 		         --method {{ project.import_group.module_type_slme }} \
 		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \
+		        $(foreach f, $(ALL_TERMS), --term-file $(f)) $(T_IMPORTSEED) \
 		        --select complement --select annotation-properties \
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
