@@ -369,6 +369,13 @@ class ImportGroup(ProductGroup):
        When imports are not merged, the annotation is added during the release process to the full release artefact.
     """
 
+    scan_signature : bool = True
+    """If true, the edit file is scanned for additional terms to import.
+       Otherwise, imports are seeded solely from the manually maintained
+       *_terms.txt files. Note that setting this option to False makes
+       Protégé-based declarations of terms to import impossible.
+    """
+
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
             self.products = []
