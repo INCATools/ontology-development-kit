@@ -527,7 +527,7 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(ALL_TERMS) \
 		 {%- for pattern in project.import_group.exclude_iri_patterns %} \
 		 remove --select "{{ pattern }}"{% endfor %}{% endif %} \
 		 extract $(foreach f, $(ALL_TERMS), --term-file $(f)) $(T_IMPORTSEED) \
-		         --force true --copy-ontology-annotations true \
+		         --force true --copy-ontology-annotations false \
 		         --individuals {{ project.import_group.slme_individuals }} \
 		         --method {{ project.import_group.module_type_slme }} \
 		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \
@@ -555,7 +555,7 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
 	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/$*_terms.txt $(T_IMPORTSEED) \
-		         --force true --copy-ontology-annotations false \
+		         --force true --copy-ontology-annotations true \
 		         --individuals {{ project.import_group.slme_individuals }} \
 		         --method {{ project.import_group.module_type_slme }} \
 		 odk:normalize --base-iri {{ project.uribase }} \
