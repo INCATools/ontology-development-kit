@@ -1386,7 +1386,7 @@ normalize_src: $(SRC)
 
 .PHONY: validate_idranges
 validate_idranges:
-	dicer-cli {{ project.id }}-idranges.owl
+	if [ -f {{ project.id }}-idranges.owl ]; then dicer-cli {{ project.id }}-idranges.owl ; fi
 
 # Deprecated: Use 'sh run.sh odk.py update' without using the Makefile.
 .PHONY: update_repo
