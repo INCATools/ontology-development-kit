@@ -290,6 +290,11 @@ class ProductGroup(JsonSchemaMixin):
             for id in self.ids:
                 if id not in [p.id for p in self.products]:
                     self._add_stub(id)
+        self._derive_fields()
+
+    def _derive_fields(self):
+        pass
+
 @dataclass_json
 @dataclass
 class SubsetGroup(ProductGroup):
@@ -364,10 +369,35 @@ class ImportGroup(ProductGroup):
        When imports are not merged, the annotation is added during the release process to the full release artefact.
     """
 
+    scan_signature : bool = True
+    """If true, the edit file is scanned for additional terms to import.
+       Otherwise, imports are seeded solely from the manually maintained
+       *_terms.txt files. Note that setting this option to False makes
+       Protégé-based declarations of terms to import impossible.
+    """
+
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
             self.products = []
         self.products.append(ImportProduct(id=id))
+
+    def _derive_fields(self):
+        self.special_products = []
+        for p in self.products:
+            if p.module_type is None:
+                # Use group-level parameters
+                p.module_type = self.module_type
+                p.module_type_slme = self.module_type_slme
+                p.slme_individuals = self.slme_individuals
+            elif p.module_type == 'fast_slme':
+                # Accept fast_slme as a synonym for slme, for backwards
+                # compatibility
+                p.module_type = 'slme'
+            if p.base_iris is None:
+                p.base_iris = [ 'http://purl.obolibrary.org/obo/' + p.id.upper() ]
+            if p.is_large or p.module_type != self.module_type:
+                # This module will require a distinct rule
+                self.special_products.append(p)
 
 @dataclass_json
 @dataclass
