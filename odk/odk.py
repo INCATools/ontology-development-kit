@@ -103,7 +103,7 @@ class ComponentProduct(JsonSchemaMixin):
     """If true, the component will be sourced by a template"""
 
     use_mappings: bool = False
-    """If true, the component will be sourced from on or more SSSOM mapping files"""
+    """If true, the component will be sourced from one or more SSSOM mapping files"""
     
     template_options: Optional[str] = None
     """ROBOT options passed to the template command"""
@@ -567,7 +567,7 @@ class OntologyProject(JsonSchemaMixin):
     """
 
     id : OntologyHandle = ""
-    """OBO id for this ontology. Must be lowecase Examples: uberon, go, cl, envo, chebi"""
+    """OBO id for this ontology. Must be lowercase Examples: uberon, go, cl, envo, chebi"""
 
     title : str = ""
     """Concise descriptive text about this ontology"""
@@ -692,7 +692,7 @@ class OntologyProject(JsonSchemaMixin):
     
     release_use_reasoner : bool = True
     """If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
-    reason (the classification/subclassOf hierarchy computaton); materialize (the materialisation of simple existential/
+    reason (the classification/subclassOf hierarchy computation); materialize (the materialisation of simple existential/
     object property restrictions); reduce (the removal of redundant subclassOf axioms)."""
     
     release_annotate_inferred_axioms : bool = False
