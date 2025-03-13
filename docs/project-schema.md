@@ -23,7 +23,7 @@
     - **`template_options`** *(string)* ROBOT options passed to the template command.
     - **`templates`** *(list)* A list of ROBOT template names. If set, these will be used to source this component.
       - **Items** *(string)*
-    - **`use_mappings`** *(boolean)*: If true, the component will be sourced from on or more SSSOM mapping files. Default: `false`.
+    - **`use_mappings`** *(boolean)*: If true, the component will be sourced from one or more SSSOM mapping files. Default: `false`.
     - **`use_template`** *(boolean)*: If true, the component will be sourced by a template. Default: `false`.
     - **`directory`** *(string)*: directory where components are maintained. Default: `components`.
     - **`products`** *(list)*
@@ -38,7 +38,7 @@
         - **`template_options`** *(string)* ROBOT options passed to the template command.
         - **`templates`** *(list)* A list of ROBOT template names. If set, these will be used to source this component.
           - **Items** *(string)*
-        - **`use_mappings`** *(boolean)*: If true, the component will be sourced from on or more SSSOM mapping files. Default: `false`.
+        - **`use_mappings`** *(boolean)*: If true, the component will be sourced from one or more SSSOM mapping files. Default: `false`.
         - **`use_template`** *(boolean)*: If true, the component will be sourced by a template. Default: `false`.
 
 
@@ -100,7 +100,7 @@
 - **`gzip_main`** *(boolean)*: if true add a gzipped version of the main artefact. Default: `false`.
 
 
-- **`id`** *(string)*: OBO id for this ontology. Must be lowecase Examples: uberon, go, cl, envo, chebi. Default: `""`.
+- **`id`** *(string)*: OBO id for this ontology. Must be lowercase Examples: uberon, go, cl, envo, chebi. Default: `""`.
 
 
 - **`import_component_format`** *(string)*: The default serialisation for all components and imports. Default: `"ofn"`.
@@ -211,7 +211,7 @@
 
 
 - **`release_use_reasoner`** *(boolean)*: If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
-    reason (the classification/subclassOf hierarchy computaton); materialize (the materialisation of simple existential/
+    reason (the classification/subclassOf hierarchy computation); materialize (the materialisation of simple existential/
     object property restrictions); reduce (the removal of redundant subclassOf axioms). Default: `true`.
 
 
