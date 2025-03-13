@@ -18,5 +18,5 @@ else
   MEMORY="${ROBOT_JAVA_ARGS}"
 fi
 
-echo "Running ODK with ${MEMORY} (Maximum Java Memory)"
+echo "Running ODK with ${MEMORY} (Maximum Java Memory)" >&2
 docker run -e ROBOT_JAVA_ARGS="${MEMORY}" -e JAVA_OPTS="${MEMORY}" -v $PWD/:/work -w /work --rm -ti obolibrary/odkfull "$@"
