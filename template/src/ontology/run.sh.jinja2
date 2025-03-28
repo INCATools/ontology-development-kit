@@ -20,7 +20,7 @@ case "$@" in
     # during the update process
     mkdir -p tmp
     sed -n '/^set -e/,$p' $0 > tmp/$0
-    exec $SHELL tmp/$0 "$@"
+    exec /bin/sh tmp/$0 "$@"
     ;;
 esac
 
