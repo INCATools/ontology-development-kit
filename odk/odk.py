@@ -144,13 +144,13 @@ class ImportProduct(Product):
     module_type : Optional[str] = None
     """Module type. Supported: slme, minimal, custom, mirror"""
     
-    module_type_slme : str = "BOT"
+    module_type_slme : Optional[str] = None
     """SLME module type. Supported: BOT, TOP, STAR"""
     
     annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115'])
     """Define which annotation properties to pull in."""
     
-    slme_individuals : str = "include"
+    slme_individuals : Optional[str] = None
     """See http://robot.obolibrary.org/extract#syntactic-locality-module-extractor-slme"""
     
     use_base: bool = False
@@ -385,17 +385,22 @@ class ImportGroup(ProductGroup):
         self.special_products = []
         for p in self.products:
             if p.module_type is None:
-                # Use group-level parameters
+                # Use group-level module type
                 p.module_type = self.module_type
-                p.module_type_slme = self.module_type_slme
-                p.slme_individuals = self.slme_individuals
             elif p.module_type == 'fast_slme':
                 # Accept fast_slme as a synonym for slme, for backwards
                 # compatibility
                 p.module_type = 'slme'
+            if p.module_type == 'slme':
+                # Use group-level SLME parameters unless overriden
+                if p.module_type_slme is None:
+                    p.module_type_slme = self.module_type_slme
+                if p.slme_individuals is None:
+                    p.slme_individuals = self.slme_individuals
             if p.base_iris is None:
                 p.base_iris = [ 'http://purl.obolibrary.org/obo/' + p.id.upper() ]
-            if p.is_large or p.module_type != self.module_type:
+            if (p.is_large or p.module_type != self.module_type or
+                (p.module_type == 'slme' and p.module_type_slme != self.module_type_slme)):
                 # This module will require a distinct rule
                 self.special_products.append(p)
 
