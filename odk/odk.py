@@ -147,7 +147,7 @@ class ImportProduct(Product):
     module_type_slme : str = "BOT"
     """SLME module type. Supported: BOT, TOP, STAR"""
     
-    annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115'])
+    annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115', 'OMO:0002000'])
     """Define which annotation properties to pull in."""
     
     slme_individuals : str = "include"
@@ -357,7 +357,7 @@ class ImportGroup(ProductGroup):
     export_obo: bool = False
     """If set to true, modules will not only be created in OWL, but also OBO format"""
     
-    annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115'])
+    annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115', 'OMO:0002000'])
     """Define which annotation properties to pull in."""
 
     strip_annotation_properties: bool = True
