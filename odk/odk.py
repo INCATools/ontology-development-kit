@@ -359,6 +359,9 @@ class ImportGroup(ProductGroup):
     
     annotation_properties : List[str] = field(default_factory=lambda: ['rdfs:label', 'IAO:0000115'])
     """Define which annotation properties to pull in."""
+
+    strip_annotation_properties: bool = True
+    """If set to true, strip away annotation properties from imports, apart from explicitly imported properties and properties listed in annotation_properties."""
     
     directory : Directory = "imports/"
     """directory where imports are extracted into to"""

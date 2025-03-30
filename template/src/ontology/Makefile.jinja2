@@ -506,8 +506,10 @@ T_IMPORTSEED = --term-file $(IMPORTSEED)
 {% endif -%}
 
 {% if project.import_group is defined -%}
+{% if project.import_group.strip_annotation_properties -%}
 ANNOTATION_PROPERTIES={% for p in project.import_group.annotation_properties %}{{ p }} {% endfor %}
 
+{% endif -%}
 # ----------------------------------------
 # Import modules
 # ----------------------------------------
@@ -529,10 +531,10 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(ALL_TERMS) \
 		 extract $(foreach f, $(ALL_TERMS), --term-file $(f)) $(T_IMPORTSEED) \
 		         --force true --copy-ontology-annotations false \
 		         --individuals {{ project.import_group.slme_individuals }} \
-		         --method {{ project.import_group.module_type_slme }} \
+		         --method {{ project.import_group.module_type_slme }} \{% if project.import_group.strip_annotation_properties %}
 		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \
 		        $(foreach f, $(ALL_TERMS), --term-file $(f)) $(T_IMPORTSEED) \
-		        --select complement --select annotation-properties \
+		        --select complement --select annotation-properties \{% endif %}
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true \
@@ -557,7 +559,10 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
 		 extract --term-file $(IMPORTDIR)/$*_terms.txt $(T_IMPORTSEED) \
 		         --force true --copy-ontology-annotations true \
 		         --individuals {{ project.import_group.slme_individuals }} \
-		         --method {{ project.import_group.module_type_slme }} \
+		         --method {{ project.import_group.module_type_slme }} \{% if project.import_group.strip_annotation_properties %}
+		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \
+		        --term-file $(IMPORTDIR)/$*_terms.txt $(T_IMPORTSEED) \
+		        --select complement --select annotation-properties \{% endif %}
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true \
@@ -637,7 +642,11 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt $(T_IMPORTSEED) \
 		         --copy-ontology-annotations true --force true \
 		         --individuals {{ ont.slme_individuals }} \
-		         --method {{ ont.module_type_slme }} \
+		         --method {{ ont.module_type_slme }} \{% if project.import_group.strip_annotation_properties %}
+		 remove $(foreach p, $(ANNOTATION_PROPERTIES), --term $(p)) \{% for p in ont.annotation_properties %}
+		        --term {{ p }} \{% endfor %}
+		        --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt $(T_IMPORTSEED) \
+		        --select complement --select annotation-properties \{% endif %}
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
 		               --merge-axioms true \
