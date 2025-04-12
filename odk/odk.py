@@ -518,6 +518,9 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
 
     release_mappings : bool = False
     """If set to True, mappings are copied to the release directory."""
+
+    mapping_extractor : str = "sssom-py"
+    """The tool to use to extract mappings from an ontology ('sssom-py' or 'robot')."""
     
     products : Optional[List[SSSOMMappingSetProduct]] = None
 
