@@ -531,15 +531,19 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
         if len(released_products) > 0:
             self.released_products = released_products
 
-        for product in [p for p in self.products if p.maintenance == "merged"]:
-            if product.source_mappings is None:
-                # Merge all other non-merge sets to make this one
-                product.source_mappings = [p.id for p in self.products if p.maintenance != "merged"]
-            else:
-                # Check that all listed source sets exist
-                for source in product.source_mappings:
-                    if source not in [p.id for p in self.products]:
-                        raise Exception(f"Unknown source mapping set '{source}'")
+        for product in self.products:
+            if product.maintenance == "merged":
+                if product.source_mappings is None:
+                    # Merge all other non-merge sets to make this one
+                    product.source_mappings = [p.id for p in self.products if p.maintenance != "merged"]
+                else:
+                    # Check that all listed source sets exist
+                    for source in product.source_mappings:
+                        if source not in [p.id for p in self.products]:
+                            raise Exception(f"Unknown source mapping set '{source}'")
+            elif product.maintenance == "extract":
+                if product.source_file is None:
+                    product.source_file = "$(EDIT_PREPROCESSED)"
 
 @dataclass_json
 @dataclass

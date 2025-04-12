@@ -1080,7 +1080,7 @@ validate_mappings:
 {%   if project.sssom_mappingset_group is not none -%}
 {%     for mapping in project.sssom_mappingset_group.products -%}
 {%       if mapping.maintenance == "extract" -%}
-$(TMPDIR)/{{ mapping.id }}.obographs.json: {% if mapping.source_file is not none %}{{ mapping.source_file }}{% else %}$(EDIT_PREPROCESSED){% endif %}
+$(TMPDIR)/{{ mapping.id }}.obographs.json: {{ mapping.source_file }}
 	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f json -o $@.tmp.json &&\
 		mv $@.tmp.json $@
