@@ -24,8 +24,6 @@ sssom_mappingset_group:
       source_mappings:
         - modmini-onta
         - modmini-ontb
-    - id: modmini-ontf
-      maintenance: merged
 components:
   products:
     - filename: test-with-sssom.owl
