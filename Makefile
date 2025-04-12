@@ -36,6 +36,7 @@ test_odklite_programs:
 	@./tests/test-program.sh OORT ontology-release-runner --help
 	@./tests/test-program.sh JINJANATOR jinjanate --version
 	@./tests/test-program.sh DICER-CLI dicer-cli --version
+	@./tests/test-program.sh SSSOM-CLI sssom-cli --version
 	@./tests/test-program.sh ODK odk.py
 
 test_odkfull_programs: test_odklite_programs
@@ -49,7 +50,6 @@ test_odkfull_programs: test_odklite_programs
 	@./tests/test-program.sh SPARQLPROG pl2sparql -g halt
 	@./tests/test-program.sh OBO-DASHBOARD obodash --help
 	@./tests/test-program.sh RELATION-GRAPH relation-graph --version
-	@./tests/test-program.sh SSSOM-CLI sssom-cli --version
 	@./tests/test-program.sh OAKLIB runoak --help
 	@./tests/test-program.sh SSSOM-PY sssom --version
 

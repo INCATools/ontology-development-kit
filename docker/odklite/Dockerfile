@@ -6,6 +6,7 @@ ENV DOSDP_VERSION=0.19.3
 ENV RELATION_GRAPH=2.3.2
 ENV DICER_VERSION=0.1.0
 ENV ODK_ROBOT_PLUGIN_VERSION=0.1.0
+ENV SSSOM_JAVA_VERSION=1.4.0
 
 WORKDIR /tools
 ENV JAVA_HOME="/usr"
@@ -62,6 +63,11 @@ RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_
 # Install ODK plugin for ROBOT
 RUN mkdir -p /tools/robot-plugins && \
     wget -nv -O /tools/robot-plugins/odk.jar https://github.com/INCATools/odk-robot-plugin/releases/download/odk-robot-plugin-$ODK_ROBOT_PLUGIN_VERSION/odk.jar
+
+# Install SSSOM-Java (CLI tool & ROBOT plugin)
+RUN wget -nv -O /tools/robot-plugins/sssom.jar https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-robot-plugin-$SSSOM_JAVA_VERSION.jar && \
+    wget -nv -O /tools/sssom-cli https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-cli && \
+    chmod +x /tools/sssom-cli
 
 # Install relation-graph
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELATION_GRAPH/relation-graph-cli-$RELATION_GRAPH.tgz && \

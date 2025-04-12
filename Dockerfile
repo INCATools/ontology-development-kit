@@ -13,7 +13,6 @@ ENV ODK_VERSION=$ODK_VERSION
 # Jena 5.x requires Java 17, so for now we are stuck with Jena 4.x
 ENV JENA_VERSION=4.9.0
 ENV KGCL_JAVA_VERSION=0.5.1
-ENV SSSOM_JAVA_VERSION=1.1.1
 ENV AMMONITE_VERSION=2.5.9
 ENV SCALA_CLI_VERSION=1.5.4
 ENV OWLTOOLS_VERSION=2020-04-06
@@ -130,9 +129,5 @@ RUN chmod +x /tools/obodash && \
     echo "	echo 'skipped ROBOT jar download.....' && touch \$@" >> Makefile && \
     echo "" >> Makefile
 
-# Install ROBOT plugins
-RUN wget -nv -O /tools/sssom-cli https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-cli && \
-    chmod +x /tools/sssom-cli && \
-    mkdir -p /tools/robot-plugins && \
-    wget -nv -O /tools/robot-plugins/sssom.jar https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-robot-plugin-$SSSOM_JAVA_VERSION.jar && \
-    wget -nv -O /tools/robot-plugins/kgcl.jar https://github.com/gouttegd/kgcl-java/releases/download/kgcl-java-$KGCL_JAVA_VERSION/kgcl-robot-plugin-$KGCL_JAVA_VERSION.jar
+# Install KGCL ROBOT plugin
+RUN wget -nv -O /tools/robot-plugins/kgcl.jar https://github.com/gouttegd/kgcl-java/releases/download/kgcl-java-$KGCL_JAVA_VERSION/kgcl-robot-plugin-$KGCL_JAVA_VERSION.jar
