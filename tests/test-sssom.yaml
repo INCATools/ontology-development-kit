@@ -19,6 +19,13 @@ sssom_mappingset_group:
       maintenance: extract
     - id: modmini-ontd
       maintenance: manual
+    - id: modmini-onte
+      maintenance: merged
+      source_mappings:
+        - modmini-onta
+        - modmini-ontb
+    - id: modmini-ontf
+      maintenance: merged
 components:
   products:
     - filename: test-with-sssom.owl

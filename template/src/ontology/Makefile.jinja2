@@ -1093,6 +1093,10 @@ $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: $(TMPDIR)/{{ mapping.id }}.obographs.j
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
 	test -f $@
 
+{%       elif mapping.maintenance == "merged" -%}
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:{% for source in mapping.source_mappings %} $(MAPPINGDIR)/{{ source }}.sssom.tsv{% endfor %}
+	sssom-cli --output $@ $^
+
 {%       elif mapping.maintenance == "mirror" -%}
 ifeq ($(MIR),true)
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:

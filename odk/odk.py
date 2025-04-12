@@ -194,6 +194,9 @@ class SSSOMMappingSetProduct(Product):
     release_mappings: bool = False
     """If set to True, this mapping set is treated as an artifact to be released."""
 
+    source_mappings: Optional[List[str]] = None
+    """The mapping sets to merge to create this product."""
+
 @dataclass_json
 @dataclass
 class BabelonTranslationProduct(Product):
@@ -527,6 +530,16 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
             released_products = [p for p in self.products if p.release_mappings]
         if len(released_products) > 0:
             self.released_products = released_products
+
+        for product in [p for p in self.products if p.maintenance == "merged"]:
+            if product.source_mappings is None:
+                # Merge all other non-merge sets to make this one
+                product.source_mappings = [p.id for p in self.products if p.maintenance != "merged"]
+            else:
+                # Check that all listed source sets exist
+                for source in product.source_mappings:
+                    if source not in [p.id for p in self.products]:
+                        raise Exception(f"Unknown source mapping set '{source}'")
 
 @dataclass_json
 @dataclass
