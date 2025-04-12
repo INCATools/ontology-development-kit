@@ -1103,6 +1103,12 @@ $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
 	wget "{{ mapping.mirror_from }}" -O $@
 endif
 
+{%       elif mapping.maintenance == "custom" -%}
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
+	@echo "ERROR: You have configured {{ mapping.id }} as a custom mapping set;"
+	@echo "       This rule needs to be overwritten in {{ project.id }}.Makefile!"
+	@false
+
 {%       endif -%}
 {%     endfor -%}
 {%   endif -%}
