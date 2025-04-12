@@ -1080,14 +1080,23 @@ validate_mappings:
 {%   if project.sssom_mappingset_group is not none -%}
 {%     for mapping in project.sssom_mappingset_group.products -%}
 {%       if mapping.maintenance == "extract" -%}
+{%         if project.sssom_mappingset_group.mapping_extractor == "sssom-py" -%}
 $(TMPDIR)/{{ mapping.id }}.obographs.json: {{ mapping.source_file }}
-	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
-		convert --check false -f json -o $@.tmp.json &&\
-		mv $@.tmp.json $@
+	$(ROBOT) annotate --input $< \
+		          --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
+		 convert --check false --format json --output $@
 
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: $(TMPDIR)/{{ mapping.id }}.obographs.json
 	sssom parse $< -I obographs-json {{ mapping.sssom_tool_options }} -o $@
 
+{%         elif project.sssom_mappingset_group.mapping_extractor == "robot" -%}
+$(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: {{ mapping.source_file }} | all_robot_plugins
+	$(ROBOT) sssom:xref-extract --input $< \
+		                    --ignore-treat-xrefs \
+		                    --all-xrefs \
+		                    --mapping-file $@
+
+{%         endif -%}
 {%       elif mapping.maintenance == "manual" -%}
 # This mappingset is manually curated, so we only check that the file actually exists.
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
