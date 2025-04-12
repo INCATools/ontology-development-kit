@@ -913,7 +913,7 @@ ifneq ($(SPARQL_EXPORTS_ARGS),)
 	$(ROBOT) query -f tsv --use-graphs true -i $< $(SPARQL_EXPORTS_ARGS)
 endif
 
-{%- if project.use_dosdps %}
+{% if project.use_dosdps -%}
 # ----------------------------------------
 # DOSDP Templates/Patterns
 # ----------------------------------------
@@ -1063,8 +1063,9 @@ else # PAT=false
 $(TMPDIR)/all_pattern_terms.txt: $(PATTERNDIR)/definitions.owl
 	$(ROBOT) query --use-graphs true -f csv -i $< --query $(SPARQLDIR)/terms.sparql $@
 endif
-{% endif %}
-{%- if project.use_mappings %}
+
+{% endif -%}
+{% if project.use_mappings -%}
 # ----------------------------------------
 # SSSOM Mapping Files
 # ----------------------------------------
@@ -1073,9 +1074,12 @@ validate-sssom-%:
 	tsvalid $(MAPPINGDIR)/$*.sssom.tsv --comment "#"
 	sssom validate $(MAPPINGDIR)/$*.sssom.tsv
 
-{%- if project.sssom_mappingset_group is not none %}
-{%- for mapping in project.sssom_mappingset_group.products %}
-{% if mapping.maintenance == "extract" %}
+validate_mappings:
+	$(MAKE_FAST) $(foreach n,$(MAPPINGS), validate-sssom-$(n))
+
+{%   if project.sssom_mappingset_group is not none -%}
+{%     for mapping in project.sssom_mappingset_group.products -%}
+{%       if mapping.maintenance == "extract" -%}
 $(TMPDIR)/{{ mapping.id }}.obographs.json: {% if mapping.source_file is not none %}{{ mapping.source_file }}{% else %}$(EDIT_PREPROCESSED){% endif %}
 	$(ROBOT) annotate --input $< --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
 		convert --check false -f json -o $@.tmp.json &&\
@@ -1083,25 +1087,25 @@ $(TMPDIR)/{{ mapping.id }}.obographs.json: {% if mapping.source_file is not none
 
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: $(TMPDIR)/{{ mapping.id }}.obographs.json
 	sssom parse $< -I obographs-json {{ mapping.sssom_tool_options }} -o $@
-{%- elif mapping.maintenance == "manual" %}
+
+{%       elif mapping.maintenance == "manual" -%}
 # This mappingset is manually curated, so we only check that the file actually exists.
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
 	test -f $@
-{%- elif mapping.maintenance == "mirror" %}
+
+{%       elif mapping.maintenance == "mirror" -%}
 ifeq ($(MIR),true)
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
 	wget "{{ mapping.mirror_from }}" -O $@
 endif
-{%- endif %}
-{%- endfor %}
-{%- endif %}
 
-validate_mappings:
-	$(MAKE_FAST) $(foreach n,$(MAPPINGS), validate-sssom-$(n))
+{%       endif -%}
+{%     endfor -%}
+{%   endif -%}
 
-{% endif %}
+{% endif %}{# !project.use_mappings -#}
 
-{%- if project.use_translations %}
+{% if project.use_translations -%}
 # ----------------------------------------
 # Babelon Translation Files
 # ----------------------------------------
@@ -1177,8 +1181,8 @@ $(TRANSLATIONSDIR)/$(ONT)-all.babelon.tsv: $(TRANSLATIONS_TSV)
 
 $(TRANSLATIONSDIR)/%.babelon.json: $(TRANSLATIONSDIR)/%.babelon.tsv
 	$(BABELONPY) convert $< --output-format json -o $@
-{% endif %}
 
+{% endif -%}
 # ----------------------------------------
 # Release artefacts: export formats
 # ----------------------------------------
