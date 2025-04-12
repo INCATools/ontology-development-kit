@@ -1075,7 +1075,13 @@ validate-sssom-%:
 	sssom validate $(MAPPINGDIR)/$*.sssom.tsv
 
 validate_mappings:
-	$(MAKE_FAST) $(foreach n,$(MAPPINGS), validate-sssom-$(n))
+	$(MAKE_FAST) $(foreach n,$(MAPPINGS),validate-sssom-$(n))
+
+normalize-sssom-%:
+	sssom-cli --output $(MAPPINGDIR)/$*.sssom.tsv $(MAPPINGDIR)/$*.sssom.tsv
+
+normalize_mappings:
+	$(MAKE_FAST) $(foreach n,$(MAPPINGS),normalize-sssom-$(n))
 
 {%   if project.sssom_mappingset_group is not none -%}
 {%     for mapping in project.sssom_mappingset_group.products -%}
