@@ -1,0 +1,273 @@
+{#-
+   CI workflows and the like
+-#}
+{% if project.ci is defined -%}
+{%   if 'travis' in project.ci -%}
+^^^ .travis.yml
+## REMEMBER TO SET UP YOUR GIT REPO FOR TRAVIS
+## Go to: https://travis-ci.org/{{ project.github_org }} for details
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker pull obolibrary/odkfull
+
+# command to run tests
+script: cd src/ontology && sh run.sh make test
+
+#after_success:
+#  coveralls
+
+# whitelist
+branches:
+  only:
+    - {{ project.git_main_branch }}
+    - test-travis
+
+### Add your own lists here
+### See https://github.com/INCATools/ontology-development-kit/issues/35
+notifications:
+  email:
+    - obo-ci-reports-all@groups.io
+{%   endif %}{# ! 'travis' in project.ci -#}
+{%   if 'gitlab-ci' in project.ci -%}
+^^^ .gitlab-ci.yml
+# Basic ODK workflow to run ontology QC checks
+ontology_qc:
+  stage: test
+  image: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
+  # Controls when the job will run.
+  rules:
+    # Run on merge request pipelines when a merge request is open for the branch.
+    # Run on branch pipelines for main when a merge request is not open for the branch.
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  # Script defines a sequence of tasks that will be executed as part of the job
+  script:
+    - cd src/ontology
+    - make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false
+{%   endif %}{# ! 'gitlab-ci' in project.ci -#}
+{%   if 'github_actions' in project.ci -%}
+{%     if 'qc' in project.workflows -%}
+^^^ .github/workflows/qc.yml
+# Basic ODK workflow
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the {{ project.git_main_branch }} branch
+  push:
+    branches: [ {{ project.git_main_branch }} ]
+  pull_request:
+    branches: [ {{ project.git_main_branch }} ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "ontology_qc"
+  ontology_qc:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: obolibrary/odkfull:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Run ontology QC checks
+        env:
+          DEFAULT_BRANCH: {{ project.git_main_branch }}
+        run: cd src/ontology && make ROBOT_ENV='ROBOT_JAVA_ARGS=-Xmx6G' test IMP=false PAT=false MIR=false
+
+{%     endif %}{# ! 'qc' in project.workflows -#}
+{%     if 'diff' in project.workflows -%}
+^^^ .github/workflows/diff.yml
+name: 'Create ROBOT diffs on Pull requests'
+
+on:
+  # Triggers the workflow on pull request events for the master branch
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  edit_file:
+    runs-on: ubuntu-latest
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
+    steps:
+      - uses: actions/checkout@v4
+      # Checks-out main branch under "main" directory
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          path: master
+      - name: Diff classification
+        run: export ROBOT_JAVA_ARGS=-Xmx6G; robot diff --labels True --left master/src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --left-catalog master/src/ontology/catalog-v001.xml --right src/ontology/{{ project.id }}-edit.{{ project.edit_format }} --right-catalog src/ontology/catalog-v001.xml -f markdown -o edit-diff.md
+      - name: Upload diff
+        uses: actions/upload-artifact@v4
+        with:
+          name: edit-diff.md
+          path: edit-diff.md
+  classify_branch:
+    runs-on: ubuntu-latest
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Classify ontology
+        run: cd src/ontology; make IMP=FALSE PAT=FALSE MIR=FALSE {{ project.id }}.owl
+      - name: Upload PR {{ project.id }}.owl
+        uses: actions/upload-artifact@v4
+        with:
+          name: {{ project.id }}-pr.owl
+          path: src/ontology/{{ project.id }}.owl
+          retention-days: 1
+  classify_main:
+    runs-on: ubuntu-latest
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Classify ontology
+        run: cd src/ontology; make IMP=FALSE PAT=FALSE MIR=FALSE {{ project.id }}.owl
+      - name: Upload master {{ project.id }}.owl
+        uses: actions/upload-artifact@v4
+        with:
+          name: {{ project.id }}-master.owl
+          path: src/ontology/{{ project.id }}.owl
+          retention-days: 1
+  diff_classification:
+    needs:
+      - classify_branch
+      - classify_main
+    runs-on: ubuntu-latest
+    container: obolibrary/odklite:{% if env is defined -%}{{env['ODK_VERSION'] or "latest" }}{%- else %}latest{% endif %}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download master classification
+        uses: actions/download-artifact@v4
+        with:
+          name: {{ project.id }}-master.owl
+          path: src/ontology/{{ project.id }}-master.owl
+      - name: Download PR classification
+        uses: actions/download-artifact@v4
+        with:
+          name: {{ project.id }}-pr.owl
+          path: src/ontology/{{ project.id }}-pr.owl
+      - name: Diff classification
+        run: export ROBOT_JAVA_ARGS=-Xmx6G; cd src/ontology; robot diff --labels True --left {{ project.id }}-master.owl/{{ project.id }}.owl --left-catalog catalog-v001.xml --right {{ project.id }}-pr.owl/{{ project.id }}.owl --right-catalog catalog-v001.xml -f markdown -o classification-diff.md
+      - name: Upload diff
+        uses: actions/upload-artifact@v4
+        with:
+          name: classification-diff.md
+          path: src/ontology/classification-diff.md
+  post_comment:
+    needs: [diff_classification, edit_file]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download reasoned diff
+        uses: actions/download-artifact@v4
+        with:
+          name: classification-diff.md
+          path: classification-diff.md
+      - name: Prepare reasoned comment
+        run: "echo \"<details>\n <summary> Here's a diff of how these changes impact the classified ontology: </summary> \n\" >comment.md; cat classification-diff.md/classification-diff.md >>comment.md"
+      - name: Post reasoned comment
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+        uses: NejcZdovc/comment-pr@v1.1.1
+        with:
+          file: "../../comment.md"
+          identifier: "REASONED"
+      - uses: actions/checkout@v4
+      - name: Download edit diff
+        uses: actions/download-artifact@v4
+        with:
+          name: edit-diff.md
+          path: edit-diff.md
+      - name: Prepare edit file comment
+        run: "echo \"<details>\n <summary> Here's a diff of your edit file (unreasoned) </summary> \n\" >edit-comment.md; cat edit-diff.md/edit-diff.md >>edit-comment.md"
+      - name: Post comment
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+        uses: NejcZdovc/comment-pr@v1.1.1
+        with:
+          file: "../../edit-comment.md"
+          identifier: "UNREASONED"
+{%     endif %}{# 'diff' in project.workflows -#}
+{%     if 'release-diff' in project.workflows -%}
+^^^ .github/workflows/release-diff.yml
+name: Post release diff
+
+on:
+  # Triggers the workflow on pull request events for the {{ project.git_main_branch }} branch
+  pull_request:
+    branches: [ {{ project.git_main_branch }} ]
+    paths:
+      - 'src/ontology/reports/release-diff.md'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  post_diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare release comment
+        env:
+            GITHUB_SHA: {% raw %}${{ github.sha }}{% endraw %}
+        run: "echo \"[Here's a diff of how this release impacts {{ project.id }}.owl](https://github.com/obophenotype/{{ project.repo }}/blob/${% raw %}${{ env.GITHUB_SHA }}{% endraw %}/src/ontology/reports/release-diff.md)\" >comment.md"
+      - name: Post reasoned comment
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+        uses: NejcZdovc/comment-pr@v2.0.0
+        with:
+          github_token: {% raw %}${{ env.GITHUB_TOKEN }}{% endraw %}
+          file: "../../comment.md"
+          identifier: "RELEASE-DIFF"
+{%     endif %}{# ! 'release-diff' in project.workflows -#}
+{%     if 'docs' in project.workflows -%}
+^^^ .github/workflows/docs.yml
+# Basic ODK workflow
+name: Docs
+
+# Controls when the action will run. 
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  push:
+    branches:
+      - {{ project.git_main_branch }}
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    name: Deploy docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
+        # Or use mhausenblas/mkdocs-deploy-gh-pages@nomaterial to build without the mkdocs-material theme
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+          CONFIG_FILE: mkdocs.yaml
+{%     endif %}{# ! 'docs' in project.workflows -#}
+{%   endif %}{# ! 'github_actions' in project.ci -#}
+{% endif %}{# ! project.ci is defined -#}
