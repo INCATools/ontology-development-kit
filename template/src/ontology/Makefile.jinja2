@@ -1097,9 +1097,8 @@ $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: $(TMPDIR)/{{ mapping.id }}.obographs.j
 
 {%         elif project.sssom_mappingset_group.mapping_extractor == "robot" -%}
 $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv: {{ mapping.source_file }} | all_robot_plugins
-	$(ROBOT) sssom:xref-extract --input $< \
-		                    --ignore-treat-xrefs \
-		                    --all-xrefs \
+	$(ROBOT) sssom:xref-extract --input $< --replace \
+		                    --ignore-treat-xrefs --all-xrefs \
 		                    --mapping-file $@
 
 {%         endif -%}
