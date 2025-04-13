@@ -1,0 +1,170 @@
+{#
+
+    Templates pack for all SPARQL queries
+
+-#}
+{#
+    SPARQL QUERY to collect all terms that belong to an ontology
+-#}
+^^^ src/sparql/{{ project.id }}_terms.sparql
+SELECT DISTINCT ?term
+WHERE {
+  { ?s1 ?p1 ?term . }
+  UNION
+  { ?term ?p2 ?o2 . }
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
+}
+{#
+    SPARQL QUERY QC checks
+-#}
+{% if project.robot_report.custom_sparql_checks is not defined or 'owldef-self-reference' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/owldef-self-reference-violation.sparql
+PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?term WHERE {
+  { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first ?term ] ] }
+    UNION
+  { ?term owl:equivalentClass [ owl:intersectionOf [ rdf:rest*/rdf:first [ owl:someValuesFrom ?term ] ] ] }
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
+}
+{% endif -%}
+{% if project.robot_report.custom_sparql_checks is not defined or 'redundant-subClassOf' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/redundant-subClassOf-violation.sparql
+PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?term ?xl ?y ?yl ?z ?zl WHERE {
+  ?term rdfs:subClassOf ?y ;
+     rdfs:label ?xl .
+  ?y rdfs:subClassOf+ ?z ;
+     rdfs:label ?yl .
+  ?term rdfs:subClassOf ?z .
+  ?z rdfs:label ?zl .
+  
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
+}
+{% endif -%}
+{% if project.robot_report.custom_sparql_checks is not defined or 'taxon-range' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/taxon-range-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+
+SELECT ?term ?property ?taxon
+WHERE {
+  VALUES ?property { never_in_taxon: present_in_taxon: }
+  ?term ?property ?taxon .
+  FILTER (!isIRI(?taxon) || !STRSTARTS(STR(?taxon), "http://purl.obolibrary.org/obo/NCBITaxon_"))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
+}
+{% endif -%}
+{% if project.robot_report.custom_sparql_checks is not defined or 'iri-range' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/iri-range-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT ?term ?property ?value
+WHERE {
+  VALUES ?property {
+    never_in_taxon:
+    present_in_taxon:
+    foaf:depicted_by
+    oboInOwl:inSubset
+    dcterms:contributor  }
+  ?term ?property ?value .
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
+  FILTER (!isIRI(?value))
+}
+{% endif -%}
+{% if project.robot_report.custom_sparql_checks is not defined or 'iri-range-advanced' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/iri-range-advanced-violation.sparql
+PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
+PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT ?term ?property ?value
+WHERE {
+  VALUES ?property {
+    never_in_taxon:
+    present_in_taxon:
+    rdfs:seeAlso
+    foaf:depicted_by
+    oboInOwl:inSubset
+    dcterms:contributor  }
+  ?term ?property ?value .
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
+  FILTER (!isIRI(?value))
+}
+{% endif -%}
+{% if project.robot_report.custom_sparql_checks is not defined or 'label-with-iri' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/label-with-iri-violation.sparql
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?term ?value
+WHERE {
+  ?term rdfs:label ?value .
+  FILTER (REGEX(?value, "http[s]?[:]"))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
+}
+{% endif -%}
+{% if project.robot_report.custom_sparql_checks is not defined or 'multiple-replaced_by' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/multiple-replaced_by-violation.sparql
+PREFIX replaced_by: <http://purl.obolibrary.org/obo/IAO_0100001>
+
+SELECT DISTINCT ?entity ?property ?value WHERE {
+  VALUES ?property {
+    replaced_by:
+  }
+  ?entity ?property ?value1 .
+  ?entity ?property ?value2 .
+  FILTER(?value1!=?value2)
+  BIND(CONCAT(str(?value1), CONCAT("|", str(?value2))) as ?value)
+}
+{% endif -%}
+{% if project.robot_report.custom_sparql_checks is not defined or 'term-tracker-uri' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/term-tracker-uri-violation.sparql
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX term_tracker_item: <http://purl.obolibrary.org/obo/IAO_0000233>
+
+SELECT ?term ?term_tracker ?term_tracker_type WHERE {
+  ?term term_tracker_item: ?term_tracker .
+  FILTER(DATATYPE(?term_tracker) != xsd:anyURI)
+  BIND(DATATYPE(?term_tracker) as ?term_tracker_type) 
+}
+{% endif -%}
+{% if project.robot_report.custom_sparql_checks is not defined or 'illegal-date' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/illegal-date-violation.sparql
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+
+SELECT DISTINCT ?term ?property ?value WHERE
+{
+  VALUES ?property {dct:date dct:issued dct:created oboInOwl:creation_date}
+  ?term ?property ?value .
+  FILTER (datatype(?value) != xsd:date || !regex(str(?value), '^\\d{4}-\\d\\d-\\d\\d$'))
+  FILTER (datatype(?value) != xsd:dateTime || !regex(str(?value), '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z'))
+}
+{% endif -%}
+{% if project.robot_report.custom_sparql_checks is not defined or 'dc-properties' in project.robot_report.custom_sparql_checks -%}
+^^^ src/sparql/dc-properties-violation.sparql
+# The purpose of this violation is to make sure people update
+# from using the deprecated DC Elements 1.1 namespace (http://purl.org/dc/elements/1.1/)
+# to using the recommended DC Terms namespace (http://purl.org/dc/terms/)
+# See also discussion on https://github.com/oborel/obo-relations/pull/692
+
+SELECT ?term ?predicate WHERE {
+  ?term ?predicate ?value .
+  FILTER(STRSTARTS(STR(?predicate), "http://purl.org/dc/elements/1.1/"))
+  FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
+}
+{% endif -%}
