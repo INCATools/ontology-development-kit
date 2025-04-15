@@ -1609,7 +1609,9 @@ Examples:
 * sh run.sh make test
 
 Tricks:
-* Add -B to the end of your command to force re-running it even if nothing has changed
+* To forcefully rebuild a target even if nothing has changed, either
+  invoke the 'clean' target (which will wipe out intermediate files)
+  or touch a file that your target depends on (typically the -edit file).
 * Use the IMAGE parameter to the run.sh script to use a different image like odklite
 * Use ODK_DEBUG=yes sh run.sh make ... to print information about timing and debugging
 
