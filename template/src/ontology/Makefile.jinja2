@@ -1067,6 +1067,8 @@ else # PAT=false
 # Even if pattern generation is disabled, we still extract a seed from definitions.owl
 $(TMPDIR)/all_pattern_terms.txt: $(PATTERNDIR)/definitions.owl
 	$(ROBOT) query --use-graphs true -f csv -i $< --query $(SPARQLDIR)/terms.sparql $@
+
+dosdp_validation:
 endif
 
 {% endif -%}
