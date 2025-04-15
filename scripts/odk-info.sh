@@ -51,9 +51,6 @@ if [ $show_tools_version -eq 1 ]; then
     if type -p amm > /dev/null ; then
         amm --version
     fi
-    if type -p scala-cli > /dev/null ; then
-        scala-cli --version 2>/dev/null | head -n 1 | tr -d :
-    fi
     if type -p sssom-cli > /dev/null ; then
         sssom-cli --version | sed -ne 's/^sssom-cli (SSSOM-Java \(.*\))/SSSOM-CLI version \1/p'
     fi
