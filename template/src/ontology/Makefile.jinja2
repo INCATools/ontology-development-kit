@@ -750,23 +750,31 @@ all_components: $(OTHER_SRC)
 
 .PHONY: recreate-components
 recreate-components:
-	$(MAKE) COMP=true IMP=false MIR=true PAT=true IMP_LARGE=false all_components -B
+	$(MAKE) {% for component in project.components.products %}--assume-new=$(TMPDIR)/stamp-component-{{ component.filename }} \
+		{% endfor %}COMP=true IMP=false MIR=true PAT=true all_components
 
 .PHONY: no-mirror-recreate-components
 no-mirror-recreate-components:
-	$(MAKE) COMP=true IMP=false MIR=false PAT=true IMP_LARGE=false all_components -B
+	$(MAKE) {% for component in project.components.products %}--assume-new=$(TMPDIR)/stamp-component-{{ component.filename }} \
+		{% endfor %}COMP=true IMP=false MIR=false PAT=true all_components
 
 .PHONY: recreate-%
 recreate-%:
-	$(MAKE) COMP=true IMP=false IMP_LARGE=false MIR=true PAT=true $(COMPONENTSDIR)/$*.owl -B
+	$(MAKE) --assume-new=$(TMPDIR)/stamp-component-$*.owl \
+		COMP=true IMP=false MIR=true PAT=true $(COMPONENTSDIR)/$*.owl
 
 .PHONY: no-mirror-recreate-%
 no-mirror-recreate-%:
-	$(MAKE) COMP=true IMP=false IMP_LARGE=false MIR=false PAT=true $(COMPONENTSDIR)/$*.owl -B
+	$(MAKE) --assume-new=$(TMPDIR)/stamp-component-$*.owl \
+		COMP=true IMP=false MIR=false PAT=true $(COMPONENTSDIR)/$*.owl
 
-$(COMPONENTSDIR)/%.owl: | $(COMPONENTSDIR)
+$(COMPONENTSDIR)/%.owl: $(TMPDIR)/stamp-component-%.owl | $(COMPONENTSDIR)
 	test -f $@ || touch $@
 .PRECIOUS: $(COMPONENTSDIR)/%.owl
+
+$(TMPDIR)/stamp-component-%.owl: | $(TMPDIR)
+	touch $@
+.PRECIOUS: $(TMPDIR)/stamp-component-%.owl
 
 {%   for component in project.components.products -%}
 {%     if component.source is not none -%}
@@ -779,7 +787,7 @@ component-download-{{ component.filename }}: | $(TMPDIR)
 		 annotate --ontology-iri $(ONTBASE)/$@ \
 		          $(ANNOTATE_ONTOLOGY_VERSION) --output $(TMPDIR)/$@.owl
 
-$(COMPONENTSDIR)/{{ component.filename }}: component-download-{{ component.filename }}
+$(COMPONENTSDIR)/{{ component.filename }}: component-download-{{ component.filename }} $(TMPDIR)/stamp-component-{{ component.filename }}
 	@if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl ; then \
 	        echo "Component identical." ; \
 	else \
@@ -793,18 +801,18 @@ $(COMPONENTSDIR)/{{ component.filename }}: component-download-{{ component.filen
 endif # MIR=true
 
 {%     elif component.use_template -%}
-$(COMPONENTSDIR)/{{ component.filename }}:{% for template in component.templates %} $(TEMPLATEDIR)/{{ template }}{% endfor %}
+$(COMPONENTSDIR)/{{ component.filename }}:{% for template in component.templates %} $(TEMPLATEDIR)/{{ template }}{% endfor %} $(TMPDIR)/stamp-component-{{ component.filename }}
 	$(ROBOT) template {% if component.template_options is not none %}{{ component.template_options }}{% endif %} \
-		 $(foreach template,$^,--template $(template)) \
-		 $(ANNOTATE_CONVERT_FILE)
+		 {% for template in component.templates %}--template {{ template }} \
+		 {% endfor %}$(ANNOTATE_CONVERT_FILE)
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 
 {%     elif component.use_mappings -%}
-$(COMPONENTSDIR)/{{ component.filename }}:{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %} | all_robot_plugins
+$(COMPONENTSDIR)/{{ component.filename }}:{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %} $(TMPDIR)/stamp-component-{{ component.filename }} | all_robot_plugins
 	$(ROBOT) --add-prefix 'sssom: https://w3id.org/sssom/' \
 		 --add-prefix 'semapv: http://w3id.org/semapv/vocab/' \
-		 sssom:inject $(foreach set,$^,--sssom $(set)) \
-		              --create --direct \
+		 sssom:inject {% for mapping in component.mappings %}--sssom $(MAPPINGDIR)/{{ mapping }} \
+		              {% endfor %}--create --direct \
 		 $(ANNOTATE_CONVERT_FILE)
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 
