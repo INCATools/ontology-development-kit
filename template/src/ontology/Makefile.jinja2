@@ -40,6 +40,11 @@ CONTEXT_FILE =              config/context.json
 {% endif -%}
 ROBOT=                      robot --catalog $(CATALOG){% if project.use_context %} --add-prefixes $(CONTEXT_FILE){% endif %}
 REASONER=                   {{ project.reasoner }}
+{# Kept for backwards compatibility with existing custom Makefiles -#}
+{% if project.owltools_memory|length -%}
+OWLTOOLS_MEMORY =           {{ project.owltools_memory }}
+{% endif -%}
+OWLTOOLS =                  {% if project.owltools_memory|length %}OWLTOOLS_MEMORY=$(OWLTOOLS_MEMORY) {% endif %}owltools --use-catalog
 RELEASEDIR=                 ../..
 DOCSDIR=                    ../../docs
 REPORTDIR=                  reports
