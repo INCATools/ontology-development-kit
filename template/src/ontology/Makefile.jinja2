@@ -735,9 +735,10 @@ refresh-%:
 .PHONY: no-mirror-refresh-%
 no-mirror-refresh-%:
 	$(MAKE) IMP=true IMP_LARGE=true MIR=false PAT=false $(IMPORTDIR)/$*_import.owl -B
-{%- endif %}{# !project.import_group is defined #}
 
-{% if project.components is not none %}
+{% endif %}{# !project.import_group is defined -#}
+
+{% if project.components is not none -%}
 # ----------------------------------------
 # Components
 # ----------------------------------------
@@ -767,42 +768,50 @@ $(COMPONENTSDIR)/%.owl: | $(COMPONENTSDIR)
 	test -f $@ || touch $@
 .PRECIOUS: $(COMPONENTSDIR)/%.owl
 
-{% for component in project.components.products %}
-{% if component.source is not none %}
+{%   for component in project.components.products -%}
+{%     if component.source is not none -%}
 ifeq ($(MIR),true)
 .PHONY: component-download-{{ component.filename }}
 component-download-{{ component.filename }}: | $(TMPDIR)
-	$(ROBOT) merge -I {{ component.source }} \{%- if component.make_base %}
-	remove {% if component.base_iris is not none %}{% for iri in component.base_iris %}--base-iri {{iri}} {% endfor %}{% else %}--base-iri $(OBOBASE)/{{ project.id.upper() }} {% endif %}--axioms external --preserve-structure false --trim false \{% endif %}
-	annotate --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $(TMPDIR)/$@.owl
+	$(ROBOT) merge -I {{ component.source }} \{% if component.make_base %}
+		 remove {% for iri in component.base_iris %}--base-iri {{ iri }} \
+		        {% endfor %}--axioms external --preserve-structure false --trim false \{% endif %}
+		 annotate --ontology-iri $(ONTBASE)/$@ \
+		          $(ANNOTATE_ONTOLOGY_VERSION) --output $(TMPDIR)/$@.owl
 
 $(COMPONENTSDIR)/{{ component.filename }}: component-download-{{ component.filename }}
-	if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl ; then echo "Component identical."; \
-      else echo "Component is different, updating." &&\
-		cp $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl &&\
-		$(ROBOT) annotate -i $(TMPDIR)/component-download-{{ component.filename }}.owl --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) -o $@; fi
-
+	@if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl ; then \
+	        echo "Component identical." ; \
+	else \
+	        echo "Component different, updating." && \
+	        cp $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl && \
+	        $(ROBOT) annotate --input $(TMPDIR)/component-download-{{ component.filename }}.owl \
+	                          --ontology-iri $(ONTBASE)/$@ $(ANNOTATE_ONTOLOGY_VERSION) \
+	                          --output $@ ; \
+	fi
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 endif # MIR=true
-{% elif component.use_template %}
-$(COMPONENTSDIR)/{{ component.filename }}:{% if component.templates is not none %}{% for template in component.templates %} $(TEMPLATEDIR)/{{ template }}{% endfor %}{% else %} $(TEMPLATEDIR)/{{ component.filename.split('.') | first }}.tsv{% endif %}
+
+{%     elif component.use_template -%}
+$(COMPONENTSDIR)/{{ component.filename }}:{% for template in component.templates %} $(TEMPLATEDIR)/{{ template }}{% endfor %}
 	$(ROBOT) template {% if component.template_options is not none %}{{ component.template_options }}{% endif %} \
-		$(patsubst %, --template %, $^) \
-		$(ANNOTATE_CONVERT_FILE)
-
+		 $(foreach template,$^,--template $(template)) \
+		 $(ANNOTATE_CONVERT_FILE)
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
-{% elif component.use_mappings %}
-$(COMPONENTSDIR)/{{ component.filename }}:{% if component.mappings is not none %}{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %}{% else %} $(MAPPINGDIR)/{{ component.filename.split('.') | first }}sssom.tsv{% endif %}
-	$(SSSOMPY) merge $^ --output $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv &&\
-		$(SSSOMPY) convert $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv {{ component.sssom_tool_options }} --output $(TMPDIR)/{{ component.filename }}-converted.sssom.owl &&\
-		$(ROBOT) merge -i $(TMPDIR)/{{ component.filename }}-converted.sssom.owl \
-		$(ANNOTATE_CONVERT_FILE)
 
+{%     elif component.use_mappings -%}
+$(COMPONENTSDIR)/{{ component.filename }}:{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %}
+	$(SSSOMPY) merge $^ --output $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv
+	$(SSSOMPY) convert $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv {{ component.sssom_tool_options }} \
+		           --output $(TMPDIR)/{{ component.filename }}-converted.sssom.owl
+	$(ROBOT) merge --input $(TMPDIR)/{{ component.filename }}-converted.sssom.owl \
+		 $(ANNOTATE_CONVERT_FILE)
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
-{% endif -%}
-{% endfor -%}
+
+{%     endif -%}
+{%   endfor -%}
 endif # COMP=true
-{% endif -%}
+{% endif %}{# ! project.components is not none -#}
 {% if project.import_group is defined -%}
 # ----------------------------------------
 # Mirroring upstream ontologies
