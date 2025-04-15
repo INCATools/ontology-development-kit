@@ -800,11 +800,11 @@ $(COMPONENTSDIR)/{{ component.filename }}:{% for template in component.templates
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 
 {%     elif component.use_mappings -%}
-$(COMPONENTSDIR)/{{ component.filename }}:{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %}
-	$(SSSOMPY) merge $^ --output $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv
-	$(SSSOMPY) convert $(TMPDIR)/{{ component.filename }}-merged.sssom.tsv {{ component.sssom_tool_options }} \
-		           --output $(TMPDIR)/{{ component.filename }}-converted.sssom.owl
-	$(ROBOT) merge --input $(TMPDIR)/{{ component.filename }}-converted.sssom.owl \
+$(COMPONENTSDIR)/{{ component.filename }}:{% for mapping in component.mappings %} $(MAPPINGDIR)/{{ mapping }}{% endfor %} | all_robot_plugins
+	$(ROBOT) --add-prefix 'sssom: https://w3id.org/sssom/' \
+		 --add-prefix 'semapv: http://w3id.org/semapv/vocab/' \
+		 sssom:inject $(foreach set,$^,--sssom $(set)) \
+		              --create --direct \
 		 $(ANNOTATE_CONVERT_FILE)
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 
