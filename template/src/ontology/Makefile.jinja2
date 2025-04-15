@@ -803,7 +803,7 @@ endif # MIR=true
 {%     elif component.use_template -%}
 $(COMPONENTSDIR)/{{ component.filename }}:{% for template in component.templates %} $(TEMPLATEDIR)/{{ template }}{% endfor %} $(TMPDIR)/stamp-component-{{ component.filename }}
 	$(ROBOT) template {% if component.template_options is not none %}{{ component.template_options }}{% endif %} \
-		 {% for template in component.templates %}--template {{ template }} \
+		 {% for template in component.templates %}--template $(TEMPLATEDIR)/{{ template }} \
 		 {% endfor %}$(ANNOTATE_CONVERT_FILE)
 .PRECIOUS: $(COMPONENTSDIR)/{{ component.filename }}
 
