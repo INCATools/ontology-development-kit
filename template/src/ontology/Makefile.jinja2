@@ -718,23 +718,27 @@ endif # IMP=true
 
 .PHONY: refresh-imports
 refresh-imports:
-	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=true all_imports -B
+	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=true clean all_imports
 
 .PHONY: no-mirror-refresh-imports
 no-mirror-refresh-imports:
-	$(MAKE) IMP=true MIR=false PAT=false IMP_LARGE=true all_imports -B
+	$(MAKE) --assume-new=$(SRC) \
+		$(foreach imp,$(IMPORTS),--assume-new=$(IMPORTDIR)/$(imp)_terms.txt) \
+		IMP=true MIR=false PAT=false IMP_LARGE=true all_imports
 
 .PHONY: refresh-imports-excluding-large
 refresh-imports-excluding-large:
-	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=false all_imports -B
+	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=false clean all_imports
 
 .PHONY: refresh-%
 refresh-%:
-	$(MAKE) IMP=true IMP_LARGE=true MIR=true PAT=false $(IMPORTDIR)/$*_import.owl -B
+	$(MAKE) --assume-new=$(SRC) --assume-new=$(IMPORTDIR)/$*_terms.txt \
+		IMP=true IMP_LARGE=true MIR=true PAT=false $(IMPORTDIR)/$*_import.owl
 
 .PHONY: no-mirror-refresh-%
 no-mirror-refresh-%:
-	$(MAKE) IMP=true IMP_LARGE=true MIR=false PAT=false $(IMPORTDIR)/$*_import.owl -B
+	$(MAKE) --assume-new=$(SRC) --assume-new=$(IMPORTDIR)/$*_terms.txt \
+		IMP=true IMP_LARGE=true MIR=false PAT=false $(IMPORTDIR)/$*_import.owl
 {%- endif %}{# !project.import_group is defined #}
 
 {% if project.components is not none %}
