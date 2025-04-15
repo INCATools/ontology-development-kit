@@ -3,6 +3,7 @@ title: "Template Test Ontology"
 github_org: INCATools
 repo: ttt
 use_templates: true
+use_context: True
 export_formats:
   - owl
 import_group:

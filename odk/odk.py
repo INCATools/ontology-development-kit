@@ -286,16 +286,16 @@ class ProductGroup(JsonSchemaMixin):
     rebuild_if_source_changes : bool = True
     """if false then upstream ontology is re-downloaded any time edit file changes"""
 
-    def fill_missing(self):
+    def fill_missing(self, project):
         if self.products is None:
             self.products = []
         if self.ids is not None:
             for id in self.ids:
                 if id not in [p.id for p in self.products]:
                     self._add_stub(id)
-        self._derive_fields()
+        self._derive_fields(project)
 
-    def _derive_fields(self):
+    def _derive_fields(self, project):
         pass
 
 @dataclass_json
@@ -387,7 +387,7 @@ class ImportGroup(ProductGroup):
             self.products = []
         self.products.append(ImportProduct(id=id))
 
-    def _derive_fields(self):
+    def _derive_fields(self, project):
         self.special_products = []
         for p in self.products:
             if p.module_type is None:
@@ -466,7 +466,7 @@ class DocumentationGroup(JsonSchemaMixin):
 
 @dataclass_json
 @dataclass
-class ComponentGroup(ComponentProduct):
+class ComponentGroup(ProductGroup):
     """
     A configuration section that consists of a list of `ComponentProduct` descriptions
 
@@ -483,6 +483,15 @@ class ComponentGroup(ComponentProduct):
         if self.products is None:
             self.products = []
         self.products.append(ComponentProduct(filename=filename))
+
+    def _derive_fields(self, project):
+        for product in self.products:
+            if product.base_iris is None:
+                product.base_iris = [project.uribase + '/' + project.id.upper()]
+            if product.use_template and product.templates is None:
+                product.templates = [product.filename.split('.')[0] + '.tsv']
+            elif product.use_mappings and product.mappings is None:
+                product.mappings = [product.filename.split('.')[0] + '.sssom.tsv']
 
 @dataclass_json
 @dataclass
@@ -524,7 +533,7 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
     
     products : Optional[List[SSSOMMappingSetProduct]] = None
 
-    def fill_missing(self):
+    def fill_missing(self, project):
         if self.products is None:   # Huh? Ignore.
             return
         if self.release_mappings:   # All sets are released
@@ -843,13 +852,15 @@ class OntologyProject(JsonSchemaMixin):
         (this adds complexity and may be removed)
         """
         if self.import_group is not None:
-            self.import_group.fill_missing()
+            self.import_group.fill_missing(self)
         if self.subset_group is not None:
-            self.subset_group.fill_missing()
+            self.subset_group.fill_missing(self)
         if self.pattern_pipelines_group is not None:
-            self.pattern_pipelines_group.fill_missing()
+            self.pattern_pipelines_group.fill_missing(self)
         if self.sssom_mappingset_group is not None:
-            self.sssom_mappingset_group.fill_missing()
+            self.sssom_mappingset_group.fill_missing(self)
+        if self.components is not None:
+            self.components.fill_missing(self)
 
 @dataclass
 class ExecutionContext(JsonSchemaMixin):
