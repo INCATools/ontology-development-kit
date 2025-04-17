@@ -1054,6 +1054,37 @@ def install_template_files(generator, templatedir, targetdir, policies=[]):
                 copymode(srcf, derived_file)
     return tgts
 
+def update_gitignore(generator, template_file, target_file):
+    """
+    Update a potentially existing .gitignore file while preserving
+    its non-ODK-managed contents.
+    """
+    if not os.path.exists(template_file):
+        # Should not happen as we should always have a .gitignore
+        # template, but just in case
+        return
+
+    existing_lines = []
+    if os.path.exists(target_file):
+        with open(target_file, "r") as f:
+            exclude = False
+            for line in [l.strip() for l in f]:
+                if line == "# ODK-managed rules, do not modify":
+                    exclude = True
+                elif line == "# End of ODK-managed rules":
+                    exclude = False
+                elif not exclude:
+                    existing_lines.append(line)
+
+    already_written = {}
+    with open(target_file, "w") as f:
+        for line in generator.generate(template_file).split("\n"):
+            if len(line) > 0:
+                already_written[line] = 1
+            f.write(line + "\n")
+        for line in [l for l in existing_lines if l not in already_written]:
+            f.write(line + "\n")
+
 def format_yaml_error(file, exc):
     """
     Prints a human-readable error message from a YAML parser error.
@@ -1197,7 +1228,8 @@ def update(templatedir):
             ('src/ontology/Makefile', ALWAYS),
             ('src/ontology/run.sh', ALWAYS),
             ('src/sparql/*', ALWAYS),
-            ('docs/odk-workflows/*', ALWAYS)
+            ('docs/odk-workflows/*', ALWAYS),
+            ('.gitignore', NEVER)
             ]
     if 'github_actions' in project.ci:
         for workflow in ['qc', 'diff', 'release-diff']:
@@ -1213,8 +1245,11 @@ def update(templatedir):
     # the repository -- no need for a staging directory.
     install_template_files(mg, templatedir, '../..', policies)
 
+    # Special procedure to update the .gitignore file
+    update_gitignore(mg, templatedir + '/.gitignore.jinja2', '../../.gitignore')
+
     print("WARNING: These files should be manually migrated:")
-    print("         mkdocs.yaml, .gitignore, src/ontology/catalog.xml")
+    print("         mkdocs.yaml, src/ontology/catalog.xml")
     print("         (if you added a new import or component)")
     if 'github_actions' in project.ci and 'qc' not in project.workflows:
         print("WARNING: Your QC workflows have not been updated automatically.")
