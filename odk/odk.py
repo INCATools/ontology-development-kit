@@ -1079,8 +1079,8 @@ def update_xml_catalog(generator, template_file, target_file):
             if child.tag == CATALOG_URI:
                 # Remove the entry if it corresponds to one already set
                 # by the ODK-managed group.
-                name = child.attrib['name']
-                uri = child.attrib['uri']
+                name = child.attrib.get('name')
+                uri = child.attrib.get('uri')
                 if name and uri and name + '@' + uri in template_entries:
                     to_remove.append(child)
             elif child.tag == CATALOG_GROUP:
