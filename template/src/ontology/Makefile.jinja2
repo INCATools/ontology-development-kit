@@ -718,23 +718,27 @@ endif # IMP=true
 
 .PHONY: refresh-imports
 refresh-imports:
-	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=true all_imports -B
+	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=true clean all_imports
 
 .PHONY: no-mirror-refresh-imports
 no-mirror-refresh-imports:
-	$(MAKE) IMP=true MIR=false PAT=false IMP_LARGE=true all_imports -B
+	$(MAKE) --assume-new=$(SRC) \
+		$(foreach imp,$(IMPORTS),--assume-new=$(IMPORTDIR)/$(imp)_terms.txt) \
+		IMP=true MIR=false PAT=false IMP_LARGE=true all_imports
 
 .PHONY: refresh-imports-excluding-large
 refresh-imports-excluding-large:
-	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=false all_imports -B
+	$(MAKE) IMP=true MIR=true PAT=false IMP_LARGE=false clean all_imports
 
 .PHONY: refresh-%
 refresh-%:
-	$(MAKE) IMP=true IMP_LARGE=true MIR=true PAT=false $(IMPORTDIR)/$*_import.owl -B
+	$(MAKE) --assume-new=$(SRC) --assume-new=$(IMPORTDIR)/$*_terms.txt \
+		IMP=true IMP_LARGE=true MIR=true PAT=false $(IMPORTDIR)/$*_import.owl
 
 .PHONY: no-mirror-refresh-%
 no-mirror-refresh-%:
-	$(MAKE) IMP=true IMP_LARGE=true MIR=false PAT=false $(IMPORTDIR)/$*_import.owl -B
+	$(MAKE) --assume-new=$(SRC) --assume-new=$(IMPORTDIR)/$*_terms.txt \
+		IMP=true IMP_LARGE=true MIR=false PAT=false $(IMPORTDIR)/$*_import.owl
 
 {% endif %}{# !project.import_group is defined -#}
 
@@ -1622,7 +1626,9 @@ Examples:
 * sh run.sh make test
 
 Tricks:
-* Add -B to the end of your command to force re-running it even if nothing has changed
+* To forcefully rebuild a target even if nothing has changed, either
+  invoke the 'clean' target (which will wipe out intermediate files)
+  or touch a file that your target depends on (typically the -edit file).
 * Use the IMAGE parameter to the run.sh script to use a different image like odklite
 * Use ODK_DEBUG=yes sh run.sh make ... to print information about timing and debugging
 
