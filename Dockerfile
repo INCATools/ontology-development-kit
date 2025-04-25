@@ -21,10 +21,6 @@ ENV OWLTOOLS_VERSION=2020-04-06
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
 ENV COURSIER_CACHE="/tools/.coursier-cache"
 
-# Add NodeSource package repository (needed to get recent versions of Node)
-COPY thirdpartykeys/nodesource.gpg /usr/share/keyrings/nodesource.gpg
-RUN echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x jammy main" > /etc/apt/sources.list.d/nodesource.list
-
 # Install tools provided by Ubuntu.
 RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends  \
     build-essential \
