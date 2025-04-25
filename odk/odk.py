@@ -25,6 +25,8 @@ import shutil
 from shutil import copy, copymode
 import logging
 from hashlib import sha256
+from xml.etree import ElementTree
+from defusedxml import ElementTree as DefusedElementTree
 
 logging.basicConfig(level=logging.INFO)
 TEMPLATE_SUFFIX = '.jinja2'
@@ -1085,6 +1087,65 @@ def update_gitignore(generator, template_file, target_file):
         for line in [l for l in existing_lines if l not in already_written]:
             f.write(line + "\n")
 
+def update_xml_catalog(generator, template_file, target_file):
+    """
+    Updates a potentially existing XML catalog file while preserving
+    its non-ODK-managed contents.
+    """
+    if not os.path.exists(template_file):
+        return
+
+    CATALOG_NS = 'urn:oasis:names:tc:entity:xmlns:xml:catalog'
+    XML_NS = 'http://www.w3.org/XML/1998/namespace'
+    CATALOG_GROUP = '{' + CATALOG_NS + '}group'
+    CATALOG_URI = '{' + CATALOG_NS + '}uri'
+    XML_BASE = '{' + XML_NS + '}base'
+
+    template_entries = {}
+    ElementTree.register_namespace('', CATALOG_NS)
+
+    def process_children(node):
+        to_remove = []
+        for child in node:
+            if child.tag == CATALOG_URI:
+                # Remove the entry if it corresponds to one already set
+                # by the ODK-managed group.
+                name = child.attrib.get('name')
+                uri = child.attrib.get('uri')
+                if name and uri and name + '@' + uri in template_entries:
+                    to_remove.append(child)
+            elif child.tag == CATALOG_GROUP:
+                if child.attrib.get('id') == 'odk-managed-catalog':
+                    # Completely exclude that group, so that it is
+                    # entirely replaced by the one from the template.
+                    to_remove.append(child)
+                else:
+                    # Some existing catalog groups have an empty
+                    # xml:base="" attribute; such an attribute is
+                    # incorrect according to the XML spec.
+                    if child.attrib.get(XML_BASE) == '':
+                        child.attrib.pop(XML_BASE)
+                    process_children(child)
+        for child in to_remove:
+            node.remove(child)
+
+    template_root = DefusedElementTree.fromstring(generator.generate(template_file))
+    if os.path.exists(target_file):
+        # Make a list of the entries in the managed catalog
+        odk_managed_group = template_root.find(CATALOG_GROUP)
+        for managed_uri in odk_managed_group.findall(CATALOG_URI):
+            template_entries[managed_uri.attrib['name'] + '@' + managed_uri.attrib['uri']] = 1
+
+        # Add the contents of the existing catalog
+        existing_tree = DefusedElementTree.parse(target_file)
+        process_children(existing_tree.getroot())
+        for child in existing_tree.getroot():
+            template_root.append(child)
+
+    new_catalog = ElementTree.ElementTree(template_root)
+    ElementTree.indent(new_catalog, space='  ', level=0)
+    new_catalog.write(target_file, encoding='UTF-8', xml_declaration=True)
+
 def format_yaml_error(file, exc):
     """
     Prints a human-readable error message from a YAML parser error.
@@ -1227,6 +1288,7 @@ def update(templatedir):
             ('src/patterns/dosdp-patterns/example.yaml', NEVER),
             ('src/ontology/Makefile', ALWAYS),
             ('src/ontology/run.sh', ALWAYS),
+            ('src/ontology/catalog-v001.xml', NEVER),
             ('src/sparql/*', ALWAYS),
             ('docs/odk-workflows/*', ALWAYS),
             ('.gitignore', NEVER)
@@ -1245,12 +1307,12 @@ def update(templatedir):
     # the repository -- no need for a staging directory.
     install_template_files(mg, templatedir, '../..', policies)
 
-    # Special procedure to update the .gitignore file
+    # Special procedures to update some ODK-managed files that
+    # may have been manually edited.
     update_gitignore(mg, templatedir + '/.gitignore.jinja2', '../../.gitignore')
+    update_xml_catalog(mg, templatedir + '/src/ontology/catalog-v001.xml.jinja2', 'catalog-v001.xml')
 
-    print("WARNING: These files should be manually migrated:")
-    print("         mkdocs.yaml, src/ontology/catalog.xml")
-    print("         (if you added a new import or component)")
+    print("WARNING: This file should be manually migrated: mkdocs.yaml")
     if 'github_actions' in project.ci and 'qc' not in project.workflows:
         print("WARNING: Your QC workflows have not been updated automatically.")
         print("         Please update the ODK version number in .github/workflows/qc.yml")
