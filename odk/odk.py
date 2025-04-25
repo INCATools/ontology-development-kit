@@ -706,6 +706,9 @@ class OntologyProject(JsonSchemaMixin):
 
     use_custom_import_module : bool = False
     """if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed."""
+
+    preserve_non_odk_managed_imports : bool = False
+    """if true, import declarations that were added independently of the ODK will be preserved when updating the repository."""
     
     custom_makefile_header : str = """
 # ----------------------------------------
@@ -1115,6 +1118,43 @@ def update_xml_catalog(generator, template_file, target_file):
     ElementTree.indent(new_catalog, space='  ', level=0)
     new_catalog.write(target_file, encoding='UTF-8', xml_declaration=True)
 
+def update_import_declarations(project, pluginsdir='/tools/robot-plugins'):
+    """
+    Updates the project's -edit file to ensure it contains import
+    declarations for all the import modules, components, and
+    pattern-derived files declared in the ODK configuration.
+    """
+    base = project.uribase + '/'
+    if project.uribase_suffix is not None:
+        base += project.uribase
+    else:
+        base += project.id
+
+    if not 'ROBOT_PLUGINS_DIRECTORY' in os.environ:
+        os.environ['ROBOT_PLUGINS_DIRECTORY'] = pluginsdir
+
+    cmd = f'robot odk:import -i {project.id}-edit.{project.edit_format}'
+    if not project.preserve_non_odk_managed_imports:
+        cmd += ' --exclusive true'
+
+    if project.import_group.use_base_merging:
+        cmd += f' --add {base}/imports/merged_import.owl'
+    else:
+        for product in project.import_group.products:
+            cmd += f' --add {base}/imports/{product.id}_import.owl'
+    for component in project.components.products:
+        cmd += f' --add {base}/components/{component.filename}'
+    if project.use_dosdps:
+        cmd += f' --add {base}/patterns/definitions.owl'
+        if project.import_pattern_ontology:
+            cmd += f' --add {base}/patterns/pattern.owl'
+
+    if project.edit_format == 'owl':
+        cmd += f' convert -f ofn -o {project.id}-edit.owl'
+    else:
+        cmd += f' convert --check false -o {project.id}-edit.obo'
+    runcmd(cmd)
+
 def format_yaml_error(file, exc):
     """
     Prints a human-readable error message from a YAML parser error.
@@ -1277,6 +1317,8 @@ def update(templatedir):
 
     # Special procedure to update the XML catalog
     update_xml_catalog(mg, templatedir + '/src/ontology/catalog-v001.xml.jinja2', 'catalog-v001.xml')
+
+    update_import_declarations(project)
 
     print("WARNING: These files should be manually migrated:")
     print("         mkdocs.yaml, .gitignore")
