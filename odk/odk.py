@@ -1175,6 +1175,12 @@ def update_import_declarations(project, pluginsdir='/tools/robot-plugins'):
     if not 'ROBOT_PLUGINS_DIRECTORY' in os.environ:
         os.environ['ROBOT_PLUGINS_DIRECTORY'] = pluginsdir
 
+    ignore_missing_imports = '-Dorg.semantic.web.owlapi.model.parameters.ConfigurationOptions.MISSING_IMPORT_HANDLING_STRATEGY=SILENT'
+    if 'ROBOT_JAVA_ARGS' in os.environ:
+        os.environ['ROBOT_JAVA_ARGS'] += ' ' + ignore_missing_imports
+    else:
+        os.environ['ROBOT_JAVA_ARGS'] = ignore_missing_imports
+
     cmd = f'robot odk:import -i {project.id}-edit.{project.edit_format}'
     if not project.preserve_non_odk_managed_imports:
         cmd += ' --exclusive true'
