@@ -1168,7 +1168,7 @@ def update_import_declarations(project, pluginsdir='/tools/robot-plugins'):
     """
     base = project.uribase + '/'
     if project.uribase_suffix is not None:
-        base += project.uribase
+        base += project.uribase_suffix
     else:
         base += project.id
 
