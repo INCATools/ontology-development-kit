@@ -288,16 +288,16 @@ class ProductGroup(JsonSchemaMixin):
     rebuild_if_source_changes : bool = True
     """if false then upstream ontology is re-downloaded any time edit file changes"""
 
-    def fill_missing(self):
+    def fill_missing(self, project):
         if self.products is None:
             self.products = []
         if self.ids is not None:
             for id in self.ids:
                 if id not in [p.id for p in self.products]:
                     self._add_stub(id)
-        self._derive_fields()
+        self._derive_fields(project)
 
-    def _derive_fields(self):
+    def _derive_fields(self, project):
         pass
 
 @dataclass_json
@@ -389,7 +389,7 @@ class ImportGroup(ProductGroup):
             self.products = []
         self.products.append(ImportProduct(id=id))
 
-    def _derive_fields(self):
+    def _derive_fields(self, project):
         self.special_products = []
         for p in self.products:
             if p.module_type is None:
@@ -468,7 +468,7 @@ class DocumentationGroup(JsonSchemaMixin):
 
 @dataclass_json
 @dataclass
-class ComponentGroup(ComponentProduct):
+class ComponentGroup(ProductGroup):
     """
     A configuration section that consists of a list of `ComponentProduct` descriptions
 
@@ -485,6 +485,15 @@ class ComponentGroup(ComponentProduct):
         if self.products is None:
             self.products = []
         self.products.append(ComponentProduct(filename=filename))
+
+    def _derive_fields(self, project):
+        for product in self.products:
+            if product.base_iris is None:
+                product.base_iris = [project.uribase + '/' + project.id.upper()]
+            if product.use_template and product.templates is None:
+                product.templates = [product.filename.split('.')[0] + '.tsv']
+            elif product.use_mappings and product.mappings is None:
+                product.mappings = [product.filename.split('.')[0] + '.sssom.tsv']
 
 @dataclass_json
 @dataclass
@@ -526,7 +535,7 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
     
     products : Optional[List[SSSOMMappingSetProduct]] = None
 
-    def fill_missing(self):
+    def fill_missing(self, project):
         if self.products is None:   # Huh? Ignore.
             return
         if self.release_mappings:   # All sets are released
@@ -848,13 +857,15 @@ class OntologyProject(JsonSchemaMixin):
         (this adds complexity and may be removed)
         """
         if self.import_group is not None:
-            self.import_group.fill_missing()
+            self.import_group.fill_missing(self)
         if self.subset_group is not None:
-            self.subset_group.fill_missing()
+            self.subset_group.fill_missing(self)
         if self.pattern_pipelines_group is not None:
-            self.pattern_pipelines_group.fill_missing()
+            self.pattern_pipelines_group.fill_missing(self)
         if self.sssom_mappingset_group is not None:
-            self.sssom_mappingset_group.fill_missing()
+            self.sssom_mappingset_group.fill_missing(self)
+        if self.components is not None:
+            self.components.fill_missing(self)
 
 @dataclass
 class ExecutionContext(JsonSchemaMixin):
@@ -1058,6 +1069,37 @@ def install_template_files(generator, templatedir, targetdir, policies=[]):
                 tgts.append(derived_file)
                 copymode(srcf, derived_file)
     return tgts
+
+def update_gitignore(generator, template_file, target_file):
+    """
+    Update a potentially existing .gitignore file while preserving
+    its non-ODK-managed contents.
+    """
+    if not os.path.exists(template_file):
+        # Should not happen as we should always have a .gitignore
+        # template, but just in case
+        return
+
+    existing_lines = []
+    if os.path.exists(target_file):
+        with open(target_file, "r") as f:
+            exclude = False
+            for line in [l.strip() for l in f]:
+                if line == "# ODK-managed rules, do not modify":
+                    exclude = True
+                elif line == "# End of ODK-managed rules":
+                    exclude = False
+                elif not exclude:
+                    existing_lines.append(line)
+
+    already_written = {}
+    with open(target_file, "w") as f:
+        for line in generator.generate(template_file).split("\n"):
+            if len(line) > 0:
+                already_written[line] = 1
+            f.write(line + "\n")
+        for line in [l for l in existing_lines if l not in already_written]:
+            f.write(line + "\n")
 
 def update_xml_catalog(generator, template_file, target_file):
     """
@@ -1299,7 +1341,8 @@ def update(templatedir):
             ('src/ontology/run.sh', ALWAYS),
             ('src/ontology/catalog-v001.xml', NEVER),
             ('src/sparql/*', ALWAYS),
-            ('docs/odk-workflows/*', ALWAYS)
+            ('docs/odk-workflows/*', ALWAYS),
+            ('.gitignore', NEVER)
             ]
     if 'github_actions' in project.ci:
         for workflow in ['qc', 'diff', 'release-diff']:
@@ -1315,13 +1358,14 @@ def update(templatedir):
     # the repository -- no need for a staging directory.
     install_template_files(mg, templatedir, '../..', policies)
 
-    # Special procedure to update the XML catalog
+    # Special procedures to update some ODK-managed files that
+    # may have been manually edited.
+    update_gitignore(mg, templatedir + '/.gitignore.jinja2', '../../.gitignore')
     update_xml_catalog(mg, templatedir + '/src/ontology/catalog-v001.xml.jinja2', 'catalog-v001.xml')
 
     update_import_declarations(project)
 
-    print("WARNING: These files should be manually migrated:")
-    print("         mkdocs.yaml, .gitignore")
+    print("WARNING: This file should be manually migrated: mkdocs.yaml")
     if 'github_actions' in project.ci and 'qc' not in project.workflows:
         print("WARNING: Your QC workflows have not been updated automatically.")
         print("         Please update the ODK version number in .github/workflows/qc.yml")
