@@ -349,7 +349,7 @@ $(REPORTDIR)/%-obo-report.tsv: % | $(REPORTDIR)
 {%- if project.robot_report.upper_ontology is defined and project.robot_report.upper_ontology %}
 
 $(REPORTDIR)/$(SRC)-align-report.tsv: $(SRCMERGED) | $(REPORTDIR) all_robot_plugins
-	$(ROBOT) odk:validate -i $< --reasoner $(REASONER) \
+	$(ROBOT) odk:check-align -i $< --reasoner $(REASONER) \
 		 --upper-ontology-iri {{ project.robot_report.upper_ontology }}
 		 {%- if project.robot_report.use_base_iris %} \
 		 {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} \
@@ -358,7 +358,7 @@ $(REPORTDIR)/$(SRC)-align-report.tsv: $(SRCMERGED) | $(REPORTDIR) all_robot_plug
 		 {% endif %}--report-output $@
 
 $(REPORTDIR)/%-align-report.tsv: % | $(REPORTDIR) all_robot_plugins
-	$(ROBOT) odk:validate -i $< --reasoner $(REASONER) \
+	$(ROBOT) odk:check-align -i $< --reasoner $(REASONER) \
 		 --upper-ontology-iri {{ project.robot_report.upper_ontology }}
 		 {%- if project.robot_report.use_base_iris %} \
 		 {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} \
