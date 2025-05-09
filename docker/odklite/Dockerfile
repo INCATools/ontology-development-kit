@@ -42,9 +42,15 @@ RUN apt-get update && \
 COPY --from=obolibrary/odkbuild:latest /staging/lite /
 
 # Install ROBOT.
-RUN wget -nv $ROBOT_JAR \
-        -O /tools/robot.jar && \
-    wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/bin/robot \
+# ROBOT 1.10.0 release candidate is available from here:
+# https://github.com/ontodev/robot/actions/runs/14932625035/artifacts/3095150701
+# but that link only works in an authenticated GitHub session (e.g. from
+# a web browser while connected to a GitHub account), *not* from an
+# unauthenticated command line client like wget. Manually download the
+# robot.jar archive using that link and put it in the top-level
+# directory.
+COPY robot.jar /tools/robot.jar
+RUN wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/bin/robot \
         -O /tools/robot && \
     chmod 755 /tools/robot &&\
     mkdir -p /tools/templates/src/ontology &&\
