@@ -791,7 +791,7 @@ class OntologyProject(JsonSchemaMixin):
     """Emails to use in travis configurations. """
     
     obo_format_options : str = ""
-    """Additional args to pass to robot when saving to obo. TODO consider changing to a boolean for checks"""
+    """Additional args to pass to robot when saving to obo. The default is '--clean-obo "strict drop-untranslatable-axioms"'."""
 
     catalog_file : str = "catalog-v001.xml"
     """Name of the catalog file to be used by the build."""
@@ -854,7 +854,8 @@ class OntologyProject(JsonSchemaMixin):
         The config can be lazy and just specify an id list.
         These are used to create stub product objects.
 
-        (this adds complexity and may be removed)
+        This method is also intended to perform any checks
+        and initialisations on the entire configuration tree.
         """
         if self.import_group is not None:
             self.import_group.fill_missing(self)
@@ -866,6 +867,11 @@ class OntologyProject(JsonSchemaMixin):
             self.sssom_mappingset_group.fill_missing(self)
         if self.components is not None:
             self.components.fill_missing(self)
+
+        if not '--clean-obo' in self.obo_format_options:
+            if len(self.obo_format_options) > 0:
+                self.obo_format_options += ' '
+            self.obo_format_options += '--clean-obo "strict drop-untranslatable-axioms"'
 
 @dataclass
 class ExecutionContext(JsonSchemaMixin):
