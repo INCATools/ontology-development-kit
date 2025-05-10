@@ -1190,8 +1190,9 @@ def update_import_declarations(project, pluginsdir='/tools/robot-plugins'):
     else:
         for product in project.import_group.products:
             cmd += f' --add {base}/imports/{product.id}_import.owl'
-    for component in project.components.products:
-        cmd += f' --add {base}/components/{component.filename}'
+    if project.components is not None:
+        for component in project.components.products:
+            cmd += f' --add {base}/components/{component.filename}'
     if project.use_dosdps:
         cmd += f' --add {base}/patterns/definitions.owl'
         if project.import_pattern_ontology:
