@@ -916,7 +916,7 @@ $(SUBSETDIR)/%.owl: $(ONT).owl | $(SUBSETDIR) all_robot_plugins
 
 {% if 'obo' in project.export_formats %}
 $(SUBSETDIR)/%.obo: $(SUBSETDIR)/%.owl
-	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@
 {% endif -%}
 {% if 'ttl' in project.export_formats %}
 $(SUBSETDIR)/%.ttl: $(SUBSETDIR)/%.owl
@@ -1248,7 +1248,7 @@ $(TRANSLATIONSDIR)/%.babelon.json: $(TRANSLATIONSDIR)/%.babelon.tsv
 {% if r.startswith('custom-') %}{% set release = r | replace("custom-","") %}{% else %}{% set release = "$(ONT)-" ~ r %}{% endif -%}
 {% if 'obo' in project.export_formats -%}
 {{ release }}.obo: {{ release }}.owl
-	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 {{ release }}.ttl: {{ release }}.owl
@@ -1286,7 +1286,7 @@ $(ONT).owl: $(ONT)-{{ project.primary_release }}.owl
 
 {% if 'obo' in project.export_formats -%}
 $(ONT).obo: $(ONT).owl
-	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+	$(ROBOT) convert --input $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@
 {% endif -%}
 {% if 'ttl' in project.export_formats -%}
 $(ONT).ttl: $(ONT).owl
