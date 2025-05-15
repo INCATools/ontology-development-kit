@@ -110,3 +110,4 @@ COPY --chmod=755 scripts/update_repo.sh /tools/update_repo
 COPY --chmod=755 odk/make-release-assets.py odk/odk.py /tools
 COPY template/ /tools/templates/
 CMD python3 /tools/odk.py
+COPY obo.epm.json /tools
