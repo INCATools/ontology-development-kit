@@ -1518,6 +1518,12 @@ validate-all-tsv: $(ALL_TSV_FILES)
 # Editors Utilities
 # ----------------------------------------
 
+# This is an experimental target people that want to use ODK extended prefix map
+# can use to pull the (currently inofficial) OBO extended prefix map into the workspace
+# Only works with odkfull variant
+tmp/obo.epm.json: /tools/obo.epm.json
+	cp $< $@
+
 {% if 'obo' in project.edit_format -%}
 .PHONY: normalize_obo_src
 normalize_obo_src: $(SRC) | all_robot_plugins
