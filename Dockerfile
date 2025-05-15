@@ -16,6 +16,7 @@ ENV KGCL_JAVA_VERSION=0.5.1
 ENV AMMONITE_VERSION=2.5.9
 ENV SCALA_CLI_VERSION=1.8.0
 ENV OWLTOOLS_VERSION=2020-04-06
+ENV YQ_VERSION=4.45.4
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...
@@ -127,3 +128,14 @@ RUN chmod +x /tools/obodash && \
 
 # Install KGCL ROBOT plugin
 RUN wget -nv -O /tools/robot-plugins/kgcl.jar https://github.com/gouttegd/kgcl-java/releases/download/kgcl-java-$KGCL_JAVA_VERSION/kgcl-robot-plugin-$KGCL_JAVA_VERSION.jar
+
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+        wget -nv https://github.com/mikefarah/yq/releases/download/v$YQ_VERSION/yq_linux_amd64 -O /tools/yq && \
+        chmod 0755 /tools/yq ; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        wget -nv https://github.com/mikefarah/yq/releases/download/v$YQ_VERSION/yq_linux_arm64 -O /tools/yq && \
+        chmod 0755 /tools/yq ; \
+    else \
+        echo "Unsupported TARGETARCH: $TARGETARCH" && exit 1 ; \
+    fi
+
