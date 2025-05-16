@@ -1519,6 +1519,18 @@ validate-all-tsv: $(ALL_TSV_FILES)
 # Editors Utilities
 # ----------------------------------------
 
+# The merge template workflow is commonly used when ontology content is curated in a ROBOT template
+# with the intention to merge it directly into the editors file. The idea is to either create a template
+# manually or create a rule in {{ project.id }}.Makefile to download a template from, e.g., a Google Sheet, and then run
+# `./run.sh MERGE_TEMPLATE=tmp/merge_my_template.tsv merge_template` to merge the template into the editors file.
+
+MERGE_TEMPLATE=tmp/merge_template.tsv
+MERGE_TEMPLATE_OPTIONS= --merge-before
+
+merge_template: $(MERGE_TEMPLATE)
+	$(ROBOT) template $(MERGE_TEMPLATE_OPTIONS) --input $(SRC) \
+			--template $(MERGE_TEMPLATE) convert -f $(EDIT_FORMAT) -o $(SRC)
+
 # This is an experimental target people that want to use ODK Extended Prefix Map (EPM)
 # can use to pull the (currently inofficial) OBO EPM into the workspace.
 # Users are instructed to refer to the EPM only through the variable $(EXTENDED_PREFIX_MAP) as 
