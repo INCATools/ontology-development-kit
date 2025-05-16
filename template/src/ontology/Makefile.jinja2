@@ -789,7 +789,8 @@ component-download-{{ component.filename }}: | $(TMPDIR)
 	$(ROBOT) merge -I {{ component.source }} \{% if component.make_base %}
 		 remove {% for iri in component.base_iris %}--base-iri {{ iri }} \
 		        {% endfor %}--axioms external --preserve-structure false --trim false \{% endif %}
-		 annotate --ontology-iri $(ONTBASE)/$@ \
+		 annotate --link-annotation dc:source "%{version_iri}" \
+		 		  --ontology-iri $(ONTBASE)/$@ \
 		          $(ANNOTATE_ONTOLOGY_VERSION) --output $(TMPDIR)/$@.owl
 
 $(COMPONENTSDIR)/{{ component.filename }}: component-download-{{ component.filename }} $(TMPDIR)/stamp-component-{{ component.filename }}
