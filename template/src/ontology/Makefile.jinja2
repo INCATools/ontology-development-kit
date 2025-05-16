@@ -1532,7 +1532,12 @@ TEMPLATE_URL=
 # The tmp/merge_template.tsv is hardcoded as placeholder for downloading template files
 # from a remote location
 tmp/merge_template.tsv:
-	wget "$(TEMPLATE_URL)" -O $@
+	@if [ -z "$(TEMPLATE_URL)" ]; then \
+		echo "ERROR: No TEMPLATE_URL defined. Please set TEMPLATE_URL to download the merge template."; \
+		exit 1; \
+	else \
+		wget "$(TEMPLATE_URL)" -O $@; \
+	fi
 
 merge_template: $(MERGE_TEMPLATE)
 	$(ROBOT) template $(MERGE_TEMPLATE_OPTIONS) --input $(SRC) \
