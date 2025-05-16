@@ -1522,10 +1522,17 @@ validate-all-tsv: $(ALL_TSV_FILES)
 # The merge template workflow is commonly used when ontology content is curated in a ROBOT template
 # with the intention to merge it directly into the editors file. The idea is to either create a template
 # manually or create a rule in {{ project.id }}.Makefile to download a template from, e.g., a Google Sheet, and then run
-# `./run.sh MERGE_TEMPLATE=tmp/merge_my_template.tsv merge_template` to merge the template into the editors file.
+# `sh run.sh make MERGE_TEMPLATE=tmp/merge_my_template.tsv merge_template` to merge the template into the editors file or
+# `sh run.sh make TEMPLATE_URL=http://example.org/merge_my_template.tsv merge_template` to download and then merge the template
 
 MERGE_TEMPLATE=tmp/merge_template.tsv
 MERGE_TEMPLATE_OPTIONS= --merge-before
+TEMPLATE_URL=
+
+# The tmp/merge_template.tsv is hardcoded as placeholder for downloading template files
+# from a remote location
+tmp/merge_template.tsv:
+	wget "$(TEMPLATE_URL)" -O $@
 
 merge_template: $(MERGE_TEMPLATE)
 	$(ROBOT) template $(MERGE_TEMPLATE_OPTIONS) --input $(SRC) \
