@@ -52,7 +52,7 @@ test_odkfull_programs: test_odklite_programs
 	@./tests/test-program.sh RELATION-GRAPH relation-graph --version
 	@./tests/test-program.sh OAKLIB runoak --help
 	@./tests/test-program.sh SSSOM-PY sssom --version
-	@./tests/test-program.sh YQ yq --version
+	@./tests/test-program.sh YQ-MF yq-mf --version
 
 test_odkdev_programs: test_odkfull_programs
 

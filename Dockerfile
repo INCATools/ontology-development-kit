@@ -129,12 +129,13 @@ RUN chmod +x /tools/obodash && \
 # Install KGCL ROBOT plugin
 RUN wget -nv -O /tools/robot-plugins/kgcl.jar https://github.com/gouttegd/kgcl-java/releases/download/kgcl-java-$KGCL_JAVA_VERSION/kgcl-robot-plugin-$KGCL_JAVA_VERSION.jar
 
+# Install Mike Farah's (mf) YQ command-line YAML, JSON and XML processor
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
-        wget -nv https://github.com/mikefarah/yq/releases/download/v$YQ_VERSION/yq_linux_amd64 -O /tools/yq && \
-        chmod 0755 /tools/yq ; \
+        wget -nv https://github.com/mikefarah/yq/releases/download/v$YQ_VERSION/yq_linux_amd64 -O /tools/yq-mf && \
+        chmod 0755 /tools/yq-mf ; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
-        wget -nv https://github.com/mikefarah/yq/releases/download/v$YQ_VERSION/yq_linux_arm64 -O /tools/yq && \
-        chmod 0755 /tools/yq ; \
+        wget -nv https://github.com/mikefarah/yq/releases/download/v$YQ_VERSION/yq_linux_arm64 -O /tools/yq-mf && \
+        chmod 0755 /tools/yq-mf ; \
     else \
         echo "Unsupported TARGETARCH: $TARGETARCH" && exit 1 ; \
     fi
