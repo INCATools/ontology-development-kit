@@ -1525,7 +1525,7 @@ validate-all-tsv: $(ALL_TSV_FILES)
 # `sh run.sh make MERGE_TEMPLATE=tmp/merge_my_template.tsv merge_template` to merge the template into the editors file or
 # `sh run.sh make TEMPLATE_URL=http://example.org/merge_my_template.tsv merge_template` to download and then merge the template
 
-MERGE_TEMPLATE=tmp/merge_template.tsv
+MERGE_TEMPLATE=$(TMPDIR)/merge_template.tsv
 MERGE_TEMPLATE_OPTIONS= --merge-before
 TEMPLATE_URL=
 
