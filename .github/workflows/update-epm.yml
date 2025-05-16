@@ -15,7 +15,7 @@ jobs:
 
       - name: Update OBO context
         run: |
-          wget "https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json" -O obo.epm.json
+          wget "https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json" -O resources/obo.epm.json
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
