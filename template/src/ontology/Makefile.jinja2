@@ -56,6 +56,7 @@ SUBSETDIR=                  subsets
 SCRIPTSDIR=                 ../scripts
 UPDATEREPODIR=              target
 SPARQLDIR =                 ../sparql
+EXTENDED_PREFIX_MAP=        $(TMPDIR)/obo.epm.json
 COMPONENTSDIR =             {{ project.components.directory|default('components') }}
 {%- if project.robot_report.custom_profile %}
 ROBOT_PROFILE =             profile.txt
@@ -1518,10 +1519,11 @@ validate-all-tsv: $(ALL_TSV_FILES)
 # Editors Utilities
 # ----------------------------------------
 
-# This is an experimental target people that want to use ODK extended prefix map
-# can use to pull the (currently inofficial) OBO extended prefix map into the workspace
-# Only works with odkfull variant
-tmp/obo.epm.json: /tools/obo.epm.json
+# This is an experimental target people that want to use ODK Extended Prefix Map (EPM)
+# can use to pull the (currently inofficial) OBO EPM into the workspace.
+# Users are instructed to refer to the EPM only through the variable $(EXTENDED_PREFIX_MAP) as 
+# its location might change in a feature version of ODK.
+$(EXTENDED_PREFIX_MAP): /tools/obo.epm.json
 	cp $< $@
 
 {% if 'obo' in project.edit_format -%}
