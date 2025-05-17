@@ -913,6 +913,7 @@ class Generator(object):
                 config_hash = h.hexdigest()
                 stream.seek(0)
                 obj = yaml.load(stream, Loader=yaml.FullLoader)
+            update_config_dict(obj)
             project = from_dict(data_class=OntologyProject, data=obj)
         if config_hash:
             project.config_hash = config_hash
@@ -928,6 +929,79 @@ class Generator(object):
             project.import_group.ids = imports
         project.fill_missing()
         self.context = ExecutionContext(project=project)
+
+
+def update_config_dict(obj):
+    """
+    Updates a config dictionary to replace keys that have been renamed
+    or moved.
+    """
+    changes = [
+            # old key path               new key path
+            ('example.old.key',         'example.new.key')
+            ]
+    for old, new in changes:
+        v = pop_key(obj, old)
+        if v is not None:
+            if new is not None:
+                logging.warning(f"Option {old} is deprecated, use {new} instead")
+                put_key(obj, new, v)
+            else:
+                logging.warning(f"Option {old} is deprecated")
+
+def pop_key(obj, path):
+    """
+    Gets the value of the key at the specified path, exploring
+    subdictionaries recursively as needed. The terminal key, if found,
+    is removed from the dictionary.
+
+    For example,
+
+      pop_key(my_dict, 'path.to.key')
+
+    is equivalent to
+
+      my_dict.get('path', {}).get('to', {}).pop('key', None)
+
+    Returns None if any of the keys does not exist, or if one of the
+    parent keys exists but is not a dictionary.
+    """
+    components = path.split('.')
+    n = len(components)
+    for i, component in enumerate(components):
+        if i < n - 1:
+            obj = obj.get(component)
+            if not isinstance(obj, dict):
+                return None
+        else:
+            return obj.pop(component, None)
+
+def put_key(obj, path, value):
+    """
+    Puts a value in a dictionary at the specified path, going through
+    subdictionaries recursively as needed.
+
+    For example,
+
+      put_key(my_dict, 'path.to.key', value)
+
+    is almost equivalent to
+
+      my_dict['path']['to']['key'] = value
+
+    except that intermediate dictionaries are automatically created if
+    they do not already exist.
+    """
+    components = path.split('.')
+    n = len(components)
+    for i, component in enumerate(components):
+        if i < n - 1:
+            if not component in obj:
+                obj[component] = {}
+            obj = obj[component]
+        else:
+            obj[component] = value
+
 
 def save_project_yaml(project : OntologyProject, path : str):
     """
@@ -1275,7 +1349,20 @@ def export_project(config, output):
         raise click.ClickException(format_yaml_error(config, exc))
     project = mg.context.project
     save_project_yaml(project, output)
-    
+
+@cli.command()
+@click.option('-C', '--config', type=click.Path(exists=True))
+@click.option('-o', '--output', required=True)
+def update_config(config, output):
+    """
+    Updates a configuration file to account for renamed or moved options.
+    """
+    with open(config, 'r') as f:
+        cfg = yaml.load(f, Loader=yaml.FullLoader)
+    update_config_dict(cfg)
+    with open(output, 'w') as f:
+        f.write(yaml.dump(cfg, default_flow_style=False))
+
 @cli.command()
 @click.option('-c', '--class_name', type=str, default="OntologyProject")
 def dump_schema(class_name):
