@@ -615,13 +615,29 @@ class RobotPlugin(JsonSchemaMixin):
 
 @dataclass_json
 @dataclass
-class PluginsGroup(JsonSchemaMixin):
+class RobotOptionsGroup(JsonSchemaMixin):
     """
-    A configuration section to list extra ROBOT plugins not provided by the ODK
+    A configuration section for additional options specific to ROBOT.
     """
 
+    reasoner : str = "ELK"
+    """Reasoner to use in robot commands that need one."""
+
+    obo_format_options : str = ""
+    """Additional options to pass to robot convert when exporting to OBO. Default is '--clean-obo "strict drop-untranslatable-axioms"'."""
+
+    relax_options : str = "--include-subclass-of true"
+    """Additional options to pass to robot relax command."""
+
+    reduce_options : str = "--include-subproperties true"
+    """Additional options to pass to robot reduce command."""
+
     plugins : Optional[List[RobotPlugin]] = None
-    """The list of plugins to use"""
+    """List of ROBOT plugins used by this project."""
+
+    report : Dict[str, Any] = field(default_factory=lambda: ReportConfig().to_dict())
+    """Settings for ROBOT report, ROBOT verify and additional reports that are generated."""
+
 
     
 @dataclass_json
@@ -682,9 +698,6 @@ class OntologyProject(JsonSchemaMixin):
     
     export_project_yaml: bool = False
     """Flag to set if you want a full project.yaml to be exported, including all the default options."""
-    
-    reasoner : str = "ELK"
-    """Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values"""
     
     exclude_tautologies : str = "structural"
     """Remove tautologies such as A SubClassOf: owl:Thing or owl:Nothing SubclassOf: A. For more information see http://robot.obolibrary.org/reason#excluding-tautologies"""
@@ -790,15 +803,6 @@ class OntologyProject(JsonSchemaMixin):
     travis_emails : Optional[List[Email]] = None ## ['obo-ci-reports-all@groups.io']
     """Emails to use in travis configurations. """
     
-    obo_format_options : str = ""
-    """Additional args to pass to robot when saving to obo. The default is '--clean-obo "strict drop-untranslatable-axioms"'."""
-
-    robot_relax_options : str = "--include-subclass-of true"
-    """Additional options to pass to robot's relax command."""
-
-    robot_reduce_options : str = "--include-subproperties true"
-    """Additional options to pass to robot's reduce command."""
-
     catalog_file : str = "catalog-v001.xml"
     """Name of the catalog file to be used by the build."""
 
@@ -817,17 +821,14 @@ class OntologyProject(JsonSchemaMixin):
     contributors : Optional[List[Person]] = None
     """List of ontology contributors (currently setting this has no effect)"""
 
-    robot_report : Dict[str, Any] = field(default_factory=lambda: ReportConfig().to_dict())
-    """Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated"""
-
     ensure_valid_rdfxml : bool = True
     """When enabled, ensure that any RDF/XML product file is valid"""
 
     extra_rdfxml_checks : bool = False
     """When enabled, RDF/XML product files are checked against additional parsers"""
 
-    robot_plugins : Optional[PluginsGroup] = None
-    """Block that includes information on the extra ROBOT plugins used by this project"""
+    robot : RobotOptionsGroup = field(default_factory=lambda: RobotOptionsGroup())
+    """Block for ROBOT-related options"""
 
     # product groups
     import_group : Optional[ImportGroup] = None
@@ -874,10 +875,10 @@ class OntologyProject(JsonSchemaMixin):
         if self.components is not None:
             self.components.fill_missing(self)
 
-        if not '--clean-obo' in self.obo_format_options:
-            if len(self.obo_format_options) > 0:
-                self.obo_format_options += ' '
-            self.obo_format_options += '--clean-obo "strict drop-untranslatable-axioms"'
+        if not '--clean-obo' in self.robot.obo_format_options:
+            if len(self.robot.obo_format_options) > 0:
+                self.robot.obo_format_options += ' '
+            self.robot.obo_format_options += '--clean-obo "strict drop-untranslatable-axioms"'
 
 @dataclass
 class ExecutionContext(JsonSchemaMixin):
@@ -957,7 +958,13 @@ def preprocess_config_dict(obj):
     """
     changes = [
             # old key path               new key path
-            ('example.old.key',         'example.new.key')
+            ('reasoner',                'robot.reasoner'),
+            ('obo_format_options',      'robot.obo_format_options'),
+            ('relax_options',           'robot.relax_options'),
+            ('reduce_options',          'robot.reduce_options'),
+            ('robot_plugins.plugins',   'robot.plugins'),
+            ('robot_plugins',           None),
+            ('robot_report',            'robot.report'),
             ]
     for old, new in changes:
         v = pop_key(obj, old)
@@ -1456,7 +1463,7 @@ def update(templatedir):
                 policies.append(('.github/workflows/' + workflow + '.yml', ALWAYS))
         if project.documentation is not None and 'docs' in project.workflows:
             policies.append(('.github/workflows/docs.yml', ALWAYS))
-    if not project.robot_report.get('custom_profile', False):
+    if not project.robot.report.get('custom_profile', False):
         policies.append(('src/ontology/profile.txt', NEVER))
 
     # Proceed with template instantiation, using the policies
@@ -1540,7 +1547,7 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
         logging.info("No templates folder in /tools/; assume not in docker context")
         templatedir = "./template"
     policies = []
-    if not project.robot_report.get('custom_profile', False):
+    if not project.robot.report.get('custom_profile', False):
         policies.append(('src/ontology/profile.txt', NEVER))
     tgts += install_template_files(mg, templatedir, outdir, policies)
 

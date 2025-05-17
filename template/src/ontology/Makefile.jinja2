@@ -39,7 +39,7 @@ CATALOG=                    {{ project.catalog_file }}
 CONTEXT_FILE =              config/context.json
 {% endif -%}
 ROBOT=                      robot --catalog $(CATALOG){% if project.use_context %} --add-prefixes $(CONTEXT_FILE){% endif %}
-REASONER=                   {{ project.reasoner }}
+REASONER=                   {{ project.robot.reasoner }}
 {# Kept for backwards compatibility with existing custom Makefiles -#}
 {% if project.owltools_memory|length -%}
 OWLTOOLS_MEMORY =           {{ project.owltools_memory }}
@@ -57,18 +57,18 @@ SCRIPTSDIR=                 ../scripts
 UPDATEREPODIR=              target
 SPARQLDIR =                 ../sparql
 COMPONENTSDIR =             {{ project.components.directory|default('components') }}
-{%- if project.robot_report.custom_profile %}
+{%- if project.robot.report.custom_profile %}
 ROBOT_PROFILE =             profile.txt
 {%- endif %}
-REPORT_FAIL_ON =            {{ project.robot_report.fail_on|default('None') }}
-REPORT_LABEL =              {% if project.robot_report.use_labels|default(true) %}-l true{% endif %}
-REPORT_PROFILE_OPTS =       {% if project.robot_report.custom_profile %}--profile $(ROBOT_PROFILE){% endif %}
-OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
-SPARQL_VALIDATION_CHECKS =  {% for x in project.robot_report.custom_sparql_checks|default(['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by']) %}{{ x }} {% endfor %}
-SPARQL_EXPORTS =            {% for x in project.robot_report.custom_sparql_exports|default(['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms']) %}{{ x }} {% endfor %}
+REPORT_FAIL_ON =            {{ project.robot.report.fail_on|default('None') }}
+REPORT_LABEL =              {% if project.robot.report.use_labels|default(true) %}-l true{% endif %}
+REPORT_PROFILE_OPTS =       {% if project.robot.report.custom_profile %}--profile $(ROBOT_PROFILE){% endif %}
+OBO_FORMAT_OPTIONS =        {{ project.robot.obo_format_options }}
+SPARQL_VALIDATION_CHECKS =  {% for x in project.robot.report.custom_sparql_checks|default(['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by']) %}{{ x }} {% endfor %}
+SPARQL_EXPORTS =            {% for x in project.robot.report.custom_sparql_exports|default(['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms']) %}{{ x }} {% endfor %}
 ODK_VERSION_MAKEFILE =      {% if env is defined %}{{env['ODK_VERSION'] or "Unknown" }}{% else %}"Unknown"{% endif %}
-RELAX_OPTIONS =             {{ project.robot_relax_options }}
-REDUCE_OPTIONS =            {{ project.robot_reduce_options }}
+RELAX_OPTIONS =             {{ project.robot.relax_options }}
+REDUCE_OPTIONS =            {{ project.robot.reduce_options }}
 
 TODAY ?=                    $(shell date +%Y-%m-%d)
 OBODATE ?=                  $(shell date +'%d:%m:%Y %H:%M')
@@ -150,7 +150,7 @@ all: all_odk
 all_odk: odkversion{% if project.config_hash %} config_check{% endif %} test custom_reports all_assets{% if project.release_diff %} release_diff{% endif %}
 
 .PHONY: test
-test: odkversion validate_idranges {% if project.use_dosdps %}dosdp_validation {% endif %}reason_test sparql_test robot_reports {% if project.robot_report.ensure_owl2dl_profile|default(true) %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
+test: odkversion validate_idranges {% if project.use_dosdps %}dosdp_validation {% endif %}reason_test sparql_test robot_reports {% if project.robot.report.ensure_owl2dl_profile|default(true) %}$(REPORTDIR)/validate_profile_owl2dl_$(ONT).owl.txt{% endif %}
 	echo "Finished running all tests successfully."
 
 .PHONY: test
@@ -192,16 +192,16 @@ export ROBOT_PLUGINS_DIRECTORY=$(TMPDIR)/plugins
 .PHONY: custom_robot_plugins
 custom_robot_plugins:
 
-{% if project.robot_plugins is defined %}
+{% if project.robot.plugins is not none %}
 .PHONY: extra_robot_plugins
-extra_robot_plugins: {% for plugin in project.robot_plugins.plugins %} $(ROBOT_PLUGINS_DIRECTORY)/{{ plugin.name }}.jar {% endfor %}
+extra_robot_plugins: {% for plugin in project.robot.plugins %} $(ROBOT_PLUGINS_DIRECTORY)/{{ plugin.name }}.jar {% endfor %}
 {% endif %}
 
 # Install all ROBOT plugins to the runtime plugins directory
 .PHONY: all_robot_plugins
 all_robot_plugins: $(foreach plugin,$(notdir $(wildcard /tools/robot-plugins/*.jar)),$(ROBOT_PLUGINS_DIRECTORY)/$(plugin)) \
 		   $(foreach plugin,$(notdir $(wildcard ../../plugins/*.jar)),$(ROBOT_PLUGINS_DIRECTORY)/$(plugin)) \
-		   custom_robot_plugins {% if project.robot_plugins is defined %}extra_robot_plugins {% endif %} \
+		   custom_robot_plugins {% if project.robot.plugins is not none %}extra_robot_plugins {% endif %} \
 
 # Default rule to install plugins
 $(ROBOT_PLUGINS_DIRECTORY)/%.jar:
@@ -213,7 +213,7 @@ $(ROBOT_PLUGINS_DIRECTORY)/%.jar:
 	fi
 
 # Specific rules for supplementary plugins defined in configuration
-{% if project.robot_plugins is defined %}{% for plugin in project.robot_plugins.plugins %}
+{% if project.robot.plugins is not none %}{% for plugin in project.robot.plugins %}
 $(ROBOT_PLUGINS_DIRECTORY)/{{ plugin.name }}.jar:
 {%- if plugin.mirror_from %}
 	curl -L -o $@ {{ plugin.mirror_from }}
@@ -293,9 +293,9 @@ all_mappings: $(MAPPING_FILES)
 # QC Reports & Utilities
 # ----------------------------------------
 
-OBO_REPORT = {% for x in project.robot_report.report_on|default(["edit"]) %} {% if x=="edit" %}$(SRC){% else %}{{ x }}{% endif %}-obo-report{% endfor %}
-ALIGNMENT_REPORT = {% for x in project.robot_report.report_on|default(["edit"]) %} {% if x =="edit" %}$(SRC){% else %}{{ x }}{% endif %}-align-report{% endfor %}
-REPORTS = $(OBO_REPORT){% if project.robot_report.upper_ontology is defined and project.robot_report.upper_ontology %} $(ALIGNMENT_REPORT){% endif %}
+OBO_REPORT = {% for x in project.robot.report.report_on|default(["edit"]) %} {% if x=="edit" %}$(SRC){% else %}{{ x }}{% endif %}-obo-report{% endfor %}
+ALIGNMENT_REPORT = {% for x in project.robot.report.report_on|default(["edit"]) %} {% if x =="edit" %}$(SRC){% else %}{{ x }}{% endif %}-align-report{% endfor %}
+REPORTS = $(OBO_REPORT){% if project.robot.report.upper_ontology is defined and project.robot.report.upper_ontology %} $(ALIGNMENT_REPORT){% endif %}
 REPORT_FILES = $(patsubst %, $(REPORTDIR)/%.tsv, $(REPORTS))
 
 .PHONY: robot_reports
@@ -326,9 +326,9 @@ validate_profile_%: $(REPORTDIR)/validate_profile_owl2dl_%.txt
 
 SPARQL_VALIDATION_QUERIES = $(foreach V,$(SPARQL_VALIDATION_CHECKS),$(SPARQLDIR)/$(V)-violation.sparql)
 
-sparql_test: {% for x in project.robot_report.sparql_test_on|default(["edit"]) %} {% if x=="edit" %}$(SRCMERGED){% else %}{{ x }}{% endif %}{% endfor %} | $(REPORTDIR)
+sparql_test: {% for x in project.robot.report.sparql_test_on|default(["edit"]) %} {% if x=="edit" %}$(SRCMERGED){% else %}{{ x }}{% endif %}{% endfor %} | $(REPORTDIR)
 ifneq ($(SPARQL_VALIDATION_QUERIES),)
-  {% for x in project.robot_report.sparql_test_on|default(["edit"]) -%}
+  {% for x in project.robot.report.sparql_test_on|default(["edit"]) -%}
   {%- if x=="edit" -%}
   {% set input = "$(SRCMERGED)"%}
   {%- else -%}
@@ -343,16 +343,16 @@ endif
 # ----------------------------------------
 
 $(REPORTDIR)/$(SRC)-obo-report.tsv: $(SRCMERGED) | $(REPORTDIR)
-	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) {% if project.robot_report.use_base_iris %}{% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} {% endfor -%}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} {% endif -%}{% endif -%} --print 5 -o $@
+	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) {% if project.robot.report.use_base_iris %}{% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} {% endfor -%}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} {% endif -%}{% endif -%} --print 5 -o $@
 
 $(REPORTDIR)/%-obo-report.tsv: % | $(REPORTDIR)
-	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) {% if project.robot_report.use_base_iris %}{% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} {% endif %}{% endif -%} --print 5 -o $@
-{%- if project.robot_report.upper_ontology is defined and project.robot_report.upper_ontology %}
+	$(ROBOT) report -i $< $(REPORT_LABEL) $(REPORT_PROFILE_OPTS) --fail-on $(REPORT_FAIL_ON) {% if project.robot.report.use_base_iris %}{% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} {% endif %}{% endif -%} --print 5 -o $@
+{%- if project.robot.report.upper_ontology is defined and project.robot.report.upper_ontology %}
 
 $(REPORTDIR)/$(SRC)-align-report.tsv: $(SRCMERGED) | $(REPORTDIR) all_robot_plugins
 	$(ROBOT) odk:check-align -i $< --reasoner $(REASONER) \
-		 --upper-ontology-iri {{ project.robot_report.upper_ontology }}
-		 {%- if project.robot_report.use_base_iris %} \
+		 --upper-ontology-iri {{ project.robot.report.upper_ontology }}
+		 {%- if project.robot.report.use_base_iris %} \
 		 {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} \
 		 {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} \
 		 {% endif %}{% else %} \
@@ -360,8 +360,8 @@ $(REPORTDIR)/$(SRC)-align-report.tsv: $(SRCMERGED) | $(REPORTDIR) all_robot_plug
 
 $(REPORTDIR)/%-align-report.tsv: % | $(REPORTDIR) all_robot_plugins
 	$(ROBOT) odk:check-align -i $< --reasoner $(REASONER) \
-		 --upper-ontology-iri {{ project.robot_report.upper_ontology }}
-		 {%- if project.robot_report.use_base_iris %} \
+		 --upper-ontology-iri {{ project.robot.report.upper_ontology }}
+		 {%- if project.robot.report.use_base_iris %} \
 		 {% if project.namespaces is not none %}{% for iri in project.namespaces %}--base-iri {{ iri }} \
 		 {% endfor %}{% else %}--base-iri $(URIBASE)/{{ project.id.upper() }}_ --base-iri $(URIBASE)/{{ project.id }} \
 		 {% endif %}{% else %} \
@@ -369,7 +369,7 @@ $(REPORTDIR)/%-align-report.tsv: % | $(REPORTDIR) all_robot_plugins
 {%- endif %}
 
 check_for_robot_updates:
-{%- if project.robot_report.custom_profile %}	
+{%- if project.robot.report.custom_profile %}
 	@cut -f2 "/tools/templates/src/ontology/profile.txt" | sort > $(TMPDIR)/sorted_tsv2.txt
 	@cut -f2 "$(ROBOT_PROFILE)" | sort > $(TMPDIR)/sorted_tsv1.txt
 	@comm -23 $(TMPDIR)/sorted_tsv2.txt $(TMPDIR)/sorted_tsv1.txt > $(TMPDIR)/missing.txt
@@ -395,7 +395,7 @@ ASSETS = \
 
 RELEASE_ASSETS = \
   $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}\
-  $(SUBSET_FILES){% if project.robot_report.release_reports %} \
+  $(SUBSET_FILES){% if project.robot.report.release_reports %} \
   $(REPORT_FILES){% endif %}
 
 .PHONY: all_assets
