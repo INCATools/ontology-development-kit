@@ -68,8 +68,8 @@ OBO_FORMAT_OPTIONS =        {{ project.obo_format_options }}
 SPARQL_VALIDATION_CHECKS =  {% for x in project.robot_report.custom_sparql_checks|default(['owldef-self-reference', 'iri-range', 'label-with-iri', 'multiple-replaced_by']) %}{{ x }} {% endfor %}
 SPARQL_EXPORTS =            {% for x in project.robot_report.custom_sparql_exports|default(['basic-report', 'class-count-by-prefix', 'edges', 'xrefs', 'obsoletes', 'synonyms']) %}{{ x }} {% endfor %}
 ODK_VERSION_MAKEFILE =      {% if env is defined %}{{env['ODK_VERSION'] or "Unknown" }}{% else %}"Unknown"{% endif %}
-RELAX_OPTIONS =             --include-subclass-of true
-REDUCE_OPTIONS =            --include-subproperties true
+RELAX_OPTIONS =             {{ project.robot_relax_options }}
+REDUCE_OPTIONS =            {{ project.robot_reduce_options }}
 
 TODAY ?=                    $(shell date +%Y-%m-%d)
 OBODATE ?=                  $(shell date +'%d:%m:%Y %H:%M')

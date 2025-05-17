@@ -793,6 +793,12 @@ class OntologyProject(JsonSchemaMixin):
     obo_format_options : str = ""
     """Additional args to pass to robot when saving to obo. The default is '--clean-obo "strict drop-untranslatable-axioms"'."""
 
+    robot_relax_options : str = "--include-subclass-of true"
+    """Additional options to pass to robot's relax command."""
+
+    robot_reduce_options : str = "--include-subproperties true"
+    """Additional options to pass to robot's reduce command."""
+
     catalog_file : str = "catalog-v001.xml"
     """Name of the catalog file to be used by the build."""
 
