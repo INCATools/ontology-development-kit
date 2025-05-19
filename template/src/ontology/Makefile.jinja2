@@ -56,6 +56,7 @@ SUBSETDIR=                  subsets
 SCRIPTSDIR=                 ../scripts
 UPDATEREPODIR=              target
 SPARQLDIR =                 ../sparql
+EXTENDED_PREFIX_MAP=        $(TMPDIR)/obo.epm.json
 COMPONENTSDIR =             {{ project.components.directory|default('components') }}
 {%- if project.robot.report.custom_profile %}
 ROBOT_PROFILE =             profile.txt
@@ -792,8 +793,7 @@ component-download-{{ component.filename }}: | $(TMPDIR)
 	$(ROBOT) merge -I {{ component.source }} \{% if component.make_base %}
 		 remove {% for iri in component.base_iris %}--base-iri {{ iri }} \
 		        {% endfor %}--axioms external --preserve-structure false --trim false \{% endif %}
-		 annotate --ontology-iri $(ONTBASE)/$@ \
-		          $(ANNOTATE_ONTOLOGY_VERSION) --output $(TMPDIR)/$@.owl
+		 annotate --annotation owl:versionInfo $(VERSION) --output $(TMPDIR)/$@.owl
 
 $(COMPONENTSDIR)/{{ component.filename }}: component-download-{{ component.filename }} $(TMPDIR)/stamp-component-{{ component.filename }}
 	@if cmp -s $(TMPDIR)/component-download-{{ component.filename }}.owl $(TMPDIR)/component-download-{{ component.filename }}.tmp.owl ; then \
@@ -1523,6 +1523,13 @@ validate-all-tsv: $(ALL_TSV_FILES)
 # Editors Utilities
 # ----------------------------------------
 
+# This is an experimental target people that want to use ODK Extended Prefix Map (EPM)
+# can use to pull the (currently inofficial) OBO EPM into the workspace.
+# Users are instructed to refer to the EPM only through the variable $(EXTENDED_PREFIX_MAP) as 
+# its location might change in a feature version of ODK.
+$(EXTENDED_PREFIX_MAP): /tools/obo.epm.json
+	cp $< $@
+
 {% if 'obo' in project.edit_format -%}
 .PHONY: normalize_obo_src
 normalize_obo_src: $(SRC) | all_robot_plugins
@@ -1537,7 +1544,7 @@ normalize_src: $(SRC)
 
 .PHONY: validate_idranges
 validate_idranges:
-	if [ -f {{ project.id }}-idranges.owl ]; then dicer-cli {{ project.id }}-idranges.owl ; fi
+	if [ -f {{ project.id }}-idranges.owl ]; then dicer-cli policy {{ project.id }}-idranges.owl ; fi
 
 # Deprecated: Use 'sh run.sh odk.py update' without using the Makefile.
 .PHONY: update_repo

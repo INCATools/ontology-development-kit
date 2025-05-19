@@ -1,0 +1,28 @@
+name: Update OBO Extended Prefix Map
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * 1"
+jobs:
+  update_context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Work around permission issue
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Update OBO context
+        run: |
+          wget "https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json" -O resources/obo.epm.json
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        if: ${{ success() }}
+        with:
+          commit-message: Update OBO Extended Prefix Map from Bioregistry.
+          title: 'Update OBO Extended Prefix Map'
+          body: |
+            This pull request updates OBO extended prefix map (epm).
+          assignees: matentzn

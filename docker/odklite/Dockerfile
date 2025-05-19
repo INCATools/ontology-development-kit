@@ -4,9 +4,9 @@ LABEL maintainer="obo-tools@googlegroups.com"
 ENV ROBOT_VERSION=1.9.8
 ENV DOSDP_VERSION=0.19.3
 ENV RELATION_GRAPH=2.3.2
-ENV DICER_VERSION=0.1.0
+ENV DICER_VERSION=0.2.0
 ENV ODK_ROBOT_PLUGIN_VERSION=0.2.0
-ENV SSSOM_JAVA_VERSION=1.4.0
+ENV SSSOM_JAVA_VERSION=1.5.1
 
 WORKDIR /tools
 ENV JAVA_HOME="/usr"
@@ -110,3 +110,4 @@ COPY --chmod=755 scripts/update_repo.sh /tools/update_repo
 COPY --chmod=755 odk/make-release-assets.py odk/odk.py /tools
 COPY template/ /tools/templates/
 CMD python3 /tools/odk.py
+COPY resources/obo.epm.json /tools
