@@ -394,6 +394,15 @@ ASSETS = \
   $(SUBSET_FILES) \
   $(MAPPING_FILES)
 
+{# This does not include mappings (which can optionally be released),
+   because those are stored in src/mappings, and the fact that this is
+   one directory _above_ the directory where this Makefile is would
+   cause problems down the road (notably, it would prevent the use of a
+   single rsync commmand to copy all release assets except mappings to
+   the release directory). Basically, this is "all release assets that
+   are in this src/ontology directory".
+   This also does not include pattern-derived files, and it is unclear
+   whether this is by design or not, see #1243. -#}
 RELEASE_ASSETS = \
   $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}\
   $(SUBSET_FILES){% if project.robot_report.release_reports %} \
@@ -406,10 +415,6 @@ all_assets: $(ASSETS) {% if project.ensure_valid_rdfxml %}check_rdfxml_assets{% 
 show_assets:
 	echo $(ASSETS)
 	du -sh $(ASSETS)
-
-.PHONY: show_release_assets
-show_release_assets:
-	@echo $(RELEASE_ASSETS)
 
 check_rdfxml_%: %
 	@check-rdfxml {% if project.extra_rdfxml_checks %}--jena --rdflib{% endif %} $<
@@ -426,21 +431,40 @@ KEEPRELATIONS=keeprelations.txt
 {% endif -%}
 
 CLEANFILES=$(MAIN_FILES) $(SRCMERGED) $(EDIT_PREPROCESSED)
+
 # This should be executed by the release manager whenever time comes to make a release.
 # It will ensure that all assets/files are fresh, and will copy to release folder
-
 .PHONY: prepare_release
-prepare_release: all_odk
-	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %}
-	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(RELEASED_MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
-	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
-	rm -f $(CLEANFILES) &&\
-	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
+prepare_release: all_odk copy_release_files
+	rm -f $(CLEANFILES)
+	@echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
         on your git hosting site such as GitHub or GitLab"
 
 .PHONY: prepare_release_fast
 prepare_release_fast:
 	$(MAKE) prepare_release IMP=false PAT=false MIR=false COMP=false
+
+# This rule does the bulk of the work for prepare_release, copying all
+# files to the release directory. It is mostly intended for internal
+# use, by the prepare_release rule itself or by other ODK scripts.
+.PHONY: copy_release_files
+copy_release_files:
+	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR){% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %}
+	mkdir -p $(RELEASEDIR)/mappings
+	cp -rf $(RELEASED_MAPPING_FILES) $(RELEASEDIR)/mappings{% endif %}{% endif %}{% if project.use_dosdps %}
+	mkdir -p $(RELEASEDIR)/patterns
+	cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns{% endif %}
+
+# All released assets, in their final location within the release
+{# ODK devs: keep that in sync with the copy_release_files rule above
+   -- that is, this should list all files copied by that rule (except
+   the pattern-derived files, whose status is unclear; see #1243). -#}
+RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), $(RELEASEDIR)/$(n)){% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %} \
+			     $(foreach n,$(RELEASED_MAPPINGS), $(RELEASEDIR)/mappings/$(n).sssom.tsv){% endif %}{% endif %}
+
+.PHONY: show_release_assets
+show_release_assets:
+	@echo $(RELEASE_ASSETS_AFTER_RELEASE)
 
 CURRENT_RELEASE=$(ONTBASE).owl
 
@@ -1493,7 +1517,6 @@ public_release:
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {% else  %}
 
-RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), $(RELEASEDIR)/$(n)) $(foreach n,$(RELEASED_MAPPINGS), $(RELEASEDIR)/mappings/$(n).sssom.tsv)
 GHVERSION=v$(VERSION)
 
 .PHONY: public_release

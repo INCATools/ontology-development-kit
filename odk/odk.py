@@ -1483,11 +1483,11 @@ def seed(config, clean, outdir, templatedir, dependencies, title, user, source, 
                format(dir=outdir,
                       branch=project.git_main_branch,
                       files=" ".join([t.replace(outdir, ".", 1) for t in tgts])))
-        runcmd("cd {dir}/src/ontology && make all_assets && cp $(make show_release_assets) ../../"
+        runcmd("cd {dir}/src/ontology && make all_assets copy_release_files"
                .format(dir=outdir))
         if commit_artefacts:
             runcmd("cd {dir}/src/ontology "
-                    "&& for asset in $(make show_release_assets) ; do git add -f ../../$asset ; done"
+                    "&& for asset in $(make show_release_assets) ; do git add -f $asset ; done"
                    .format(dir=outdir))
         runcmd("cd {dir} && if [ -n \"$(git status -s)\" ]; then git commit -a -m 'initial build' ; fi"
                .format(dir=outdir))
