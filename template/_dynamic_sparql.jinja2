@@ -17,7 +17,7 @@ WHERE {
 {#
     SPARQL QUERY QC checks
 -#}
-{% if project.robot_report.custom_sparql_checks is not defined or 'owldef-self-reference' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'owldef-self-reference' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/owldef-self-reference-violation.sparql
 PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
@@ -31,7 +31,7 @@ SELECT ?term WHERE {
   FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif -%}
-{% if project.robot_report.custom_sparql_checks is not defined or 'redundant-subClassOf' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'redundant-subClassOf' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/redundant-subClassOf-violation.sparql
 PREFIX oio: <http://www.geneontology.org/formats/oboInOwl#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -48,7 +48,7 @@ SELECT ?term ?xl ?y ?yl ?z ?zl WHERE {
   FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif -%}
-{% if project.robot_report.custom_sparql_checks is not defined or 'taxon-range' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'taxon-range' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/taxon-range-violation.sparql
 PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
 PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
@@ -61,7 +61,7 @@ WHERE {
   FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif -%}
-{% if project.robot_report.custom_sparql_checks is not defined or 'iri-range' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'iri-range' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/iri-range-violation.sparql
 PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
 PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
@@ -82,7 +82,7 @@ WHERE {
   FILTER (!isIRI(?value))
 }
 {% endif -%}
-{% if project.robot_report.custom_sparql_checks is not defined or 'iri-range-advanced' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'iri-range-advanced' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/iri-range-advanced-violation.sparql
 PREFIX never_in_taxon: <http://purl.obolibrary.org/obo/RO_0002161>
 PREFIX present_in_taxon: <http://purl.obolibrary.org/obo/RO_0002175>
@@ -105,7 +105,7 @@ WHERE {
   FILTER (!isIRI(?value))
 }
 {% endif -%}
-{% if project.robot_report.custom_sparql_checks is not defined or 'label-with-iri' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'label-with-iri' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/label-with-iri-violation.sparql
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
@@ -116,7 +116,7 @@ WHERE {
   FILTER(isIRI(?term) && ({% if project.namespaces %}{% for ns in project.namespaces %}STRSTARTS(str(?term), "{{ ns }}"){% if not loop.last %} || {% endif %}{% endfor %}{% else %}STRSTARTS(str(?term), "{{ project.uribase }}/{{ project.id.upper() }}_"){% endif %}))
 }
 {% endif -%}
-{% if project.robot_report.custom_sparql_checks is not defined or 'multiple-replaced_by' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'multiple-replaced_by' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/multiple-replaced_by-violation.sparql
 PREFIX replaced_by: <http://purl.obolibrary.org/obo/IAO_0100001>
 
@@ -130,7 +130,7 @@ SELECT DISTINCT ?entity ?property ?value WHERE {
   BIND(CONCAT(str(?value1), CONCAT("|", str(?value2))) as ?value)
 }
 {% endif -%}
-{% if project.robot_report.custom_sparql_checks is not defined or 'term-tracker-uri' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'term-tracker-uri' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/term-tracker-uri-violation.sparql
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX term_tracker_item: <http://purl.obolibrary.org/obo/IAO_0000233>
@@ -141,7 +141,7 @@ SELECT ?term ?term_tracker ?term_tracker_type WHERE {
   BIND(DATATYPE(?term_tracker) as ?term_tracker_type) 
 }
 {% endif -%}
-{% if project.robot_report.custom_sparql_checks is not defined or 'illegal-date' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'illegal-date' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/illegal-date-violation.sparql
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -155,7 +155,7 @@ SELECT DISTINCT ?term ?property ?value WHERE
   FILTER (datatype(?value) != xsd:dateTime || !regex(str(?value), '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z'))
 }
 {% endif -%}
-{% if project.robot_report.custom_sparql_checks is not defined or 'dc-properties' in project.robot_report.custom_sparql_checks -%}
+{% if project.robot.report.custom_sparql_checks is not defined or 'dc-properties' in project.robot.report.custom_sparql_checks -%}
 ^^^ src/sparql/dc-properties-violation.sparql
 # The purpose of this violation is to make sure people update
 # from using the deprecated DC Elements 1.1 namespace (http://purl.org/dc/elements/1.1/)
