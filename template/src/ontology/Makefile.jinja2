@@ -435,7 +435,8 @@ CLEANFILES=$(MAIN_FILES) $(SRCMERGED) $(EDIT_PREPROCESSED)
 # This should be executed by the release manager whenever time comes to make a release.
 # It will ensure that all assets/files are fresh, and will copy to release folder
 .PHONY: prepare_release
-prepare_release: all_odk copy_release_files
+prepare_release: all_odk
+	$(MAKE) copy_release_files
 	rm -f $(CLEANFILES)
 	@echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
         on your git hosting site such as GitHub or GitLab"
