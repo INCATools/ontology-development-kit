@@ -1556,6 +1556,24 @@ update_docs:
 	mkdocs gh-deploy --config-file ../../mkdocs.yaml
 {%- endif %}
 
+.PHONY: release_changelog
+release_changelog: $(REPORTDIR)/changelog.md $(REPORTDIR)/changelog.csv $(REPORTDIR)/changelog.yaml
+
+$(TMPDIR)/latest_release.obo: $(TMPDIR)
+	wget $(ONTBASE)/$(ONT)-base.obo -O $@ || { \
+		echo "Latest release couldn't be found, creating an empty OBO file instead"; \
+		echo "format-version: 1.2" > $@; \
+	}
+
+$(REPORTDIR)/changelog.md: $(TMPDIR)/latest_release.obo $(ONT)-base.obo
+	runoak -i simpleobo:$< diff -X simpleobo:$(word 2, $^) -o $@ --output-type md
+
+$(REPORTDIR)/changelog.csv: $(TMPDIR)/latest_release.obo $(ONT)-base.obo
+	runoak -i simpleobo:$< diff -X simpleobo:$(word 2, $^) -o $@ --output-type csv --statistics --group-by-property oio:hasOBONamespace
+
+$(REPORTDIR)/changelog.yaml: $(TMPDIR)/latest_release.obo $(ONT)-base.obo
+	runoak -i simpleobo:$< diff -X simpleobo:$(word 2, $^) -o $@ --output-type yaml
+
 # Note to future generations: computing the real path relative to the
 # current directory is a way to ensure we only clean up directories that
 # are located below the current directory, regardless of the contents of
@@ -1627,6 +1645,7 @@ Additional build commands (advanced users)
 * all_assets:		Build all assets
 * show_assets:		Print a list of all assets that would be build by the release pipeline
 * all_mappings:		Update all SSSOM mapping sets
+* release_changelog: Generates a markdown changelog report summarizing ontology changes along with KGCL outputs.
 
 Additional QC commands (advanced users)
 * robot_reports:	Run all configured ROBOT reports
