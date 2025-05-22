@@ -1564,10 +1564,10 @@ $(TMPDIR)/latest_release.obo: $(TMPDIR)
 		echo "Latest release couldn't be found, creating an empty OBO file instead"; \
 		echo "format-version: 1.2" > $@.tmp.owl; \
 	}
-	$(ROBOT) convert -i $@.tmp.owl --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo && rm $@.tmp.owl
+	$(ROBOT) convert -i $@.tmp.owl --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@ && rm $@.tmp.owl
 
 $(TMPDIR)/current_release.obo: $(ONT)-base.owl
-	$(ROBOT) convert -i $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@.tmp.obo && grep -v ^owl-axioms $@.tmp.obo > $@ && rm $@.tmp.obo
+	$(ROBOT) convert -i $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@
 
 $(REPORTDIR)/changelog.md: $(TMPDIR)/latest_release.obo $(TMPDIR)/current_release.obo
 	runoak -i simpleobo:$< diff -X simpleobo:$(word 2, $^) -o $@ --output-type md
