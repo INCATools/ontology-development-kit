@@ -312,9 +312,6 @@ class SubsetGroup(ProductGroup):
     products : Optional[List[SubsetProduct]] = None
     """all subset products"""
     
-    directory : Directory = "subsets/"
-    """directory where subsets are placed after extraction from ontology"""
-    
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
             self.products = []
@@ -367,9 +364,6 @@ class ImportGroup(ProductGroup):
 
     strip_annotation_properties: bool = True
     """If set to true, strip away annotation properties from imports, apart from explicitly imported properties and properties listed in annotation_properties."""
-    
-    directory : Directory = "imports/"
-    """directory where imports are extracted into to"""
     
     annotate_defined_by : bool = False
     """If set to true, the annotation rdfs:definedBy is added for each external class. 
@@ -478,9 +472,6 @@ class ComponentGroup(ProductGroup):
     products : Optional[List[ComponentProduct]] = None
     """all component products"""
 
-    directory : Directory = "components"
-    """directory where components are maintained"""
-
     def _add_stub(self, filename : str):
         if self.products is None:
             self.products = []
@@ -510,9 +501,6 @@ class PatternPipelineGroup(ProductGroup):
     matches: Optional[List[PatternPipelineProduct]] = None
     """pipelines specifically configured for matching, NOT generating."""
     
-    directory : Directory = "../patterns/"
-    """directory where pattern source lives, also where TSV exported to"""
-
     def _add_stub(self, id : OntologyHandle):
         if self.products is None:
             self.products = []
@@ -525,8 +513,6 @@ class SSSOMMappingSetGroup(JsonSchemaMixin):
     A configuration section that consists of a list of `SSSOMMappingSetProduct` descriptions
     """
     
-    directory : Directory = "../mappings"
-
     release_mappings : bool = False
     """If set to True, mappings are copied to the release directory."""
 
@@ -566,8 +552,6 @@ class BabelonTranslationSetGroup(JsonSchemaMixin):
     A configuration section that consists of a list of `BabelonTranslationProduct` descriptions
     """
     
-    directory : Directory = "../translations"
-
     release_merged_translations : bool = False
     """If true, a big table and JSON file is created which contains all translations."""
     
@@ -594,9 +578,6 @@ class ExportGroup(ProductGroup):
     
     products : Optional[List[ExportProduct]] = None
     """all export products"""
-
-    directory : Directory = "reports/"
-    """directory where exports are placed"""
 
 
 @dataclass_json
