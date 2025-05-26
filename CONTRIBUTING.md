@@ -399,6 +399,9 @@ There should be no more than 2 such version updates per year (ideally
   of the system are still variable (in particular unix package versions),
   there are occasionally situations where the build fails or, less likely,
   the subsequent tests.
+  When encountering a problem with missing dependencies during an `apt-get install`
+  it is recommended to attempt a build that forcefully clears the cache first:
+  `make build-no-cache`.
 * Do any amount of testing as needed to be confident we are ready for
   release. For major releases, it makes sense to test the ODK on at
   least 10 ontologies. In 2024 we typically test:
