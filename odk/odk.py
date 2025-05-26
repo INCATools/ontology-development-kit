@@ -697,7 +697,7 @@ class OntologyProject(JsonSchemaMixin):
     use_custom_import_module : bool = False
     """if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed."""
 
-    preserve_non_odk_managed_imports : bool = False
+    preserve_non_odk_managed_imports : bool = True
     """if true, import declarations that were added independently of the ODK will be preserved when updating the repository."""
     
     custom_makefile_header : str = """
