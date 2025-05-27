@@ -117,7 +117,7 @@ jsonlines==4.0.0
 jsonpath-rw==1.4.0
 jsonpickle==4.1.0
 jsonpointer==3.0.0
-jsonschema==4.23.0
+jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
 jsonschema2md==1.5.2
 jsonstreams==0.6.0
@@ -126,7 +126,7 @@ jupyter-console==6.6.3
 jupyter-events==0.12.0
 jupyter-lsp==2.2.5
 jupyter_client==8.6.3
-jupyter_core==5.8.0
+jupyter_core==5.8.1
 jupyter_server==2.16.0
 jupyter_server_terminals==0.5.3
 jupyterlab==4.4.3
@@ -175,7 +175,7 @@ neo4j==5.28.1
 nest-asyncio==1.6.0
 networkx==3.4.2
 nh3==0.2.21
-notebook==7.4.2
+notebook==7.4.3
 notebook_shim==0.2.4
 numpy==1.26.4
 oaklib==0.6.22
@@ -334,4 +334,4 @@ widgetsnbextension==4.0.14
 wrapt==1.17.2
 xmltodict==0.14.2
 yamldown==0.1.8
-zipp==3.21.0
+zipp==3.22.0
