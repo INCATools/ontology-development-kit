@@ -66,3 +66,8 @@ Example:
 ```
 sh run.sh make validate_profile_hp-edit.owl
 ```
+## Generate the release changelog
+
+```
+sh run.sh make release_changelog
+```
