@@ -21,6 +21,8 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         if: ${{ success() }}
         with:
+          branch: update-obo-epm
+          delete-branch: true
           commit-message: Update OBO Extended Prefix Map from Bioregistry.
           title: 'Update OBO Extended Prefix Map'
           body: |
