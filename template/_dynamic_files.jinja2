@@ -22,19 +22,21 @@
 ^^^ src/ontology/{{ project.id }}-edit.{{ project.edit_format }}
 {% if project.edit_format == "obo" -%}
 format-version: 1.2
-{%   if project.import_group is defined -%}
-{%     if project.import_group.use_base_merging -%}
+{%   if project.manage_import_declarations -%}
+{%     if project.import_group is defined -%}
+{%       if project.import_group.use_base_merging -%}
 import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl
-{%     else -%}
-{%       for imp in project.import_group.products -%}
+{%       else -%}
+{%         for imp in project.import_group.products -%}
 import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl
-{%       endfor -%}
+{%         endfor -%}
+{%       endif -%}
 {%     endif -%}
-{%   endif -%}
-{%   if project.use_dosdps -%}
+{%     if project.use_dosdps -%}
 import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/definitions.owl
-{%     if project.import_pattern_ontology -%}
+{%       if project.import_pattern_ontology -%}
 import: {{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/pattern.owl
+{%       endif -%}
 {%     endif -%}
 {%   endif -%}
 ontology: {{project.id}}
@@ -73,20 +75,22 @@ Prefix(dcterms:=<http://purl.org/dc/terms/>)
 
 
 Ontology(<{{ project.uribase }}/{{ project.id }}.owl>
-{%   if project.import_group is defined %}
-{%     if project.import_group.use_base_merging -%}
+{%   if project.manage_import_declarations -%}
+{%     if project.import_group is defined %}
+{%       if project.import_group.use_base_merging -%}
 Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/merged_import.owl>)
-{%     else -%}
-{%       for imp in project.import_group.products -%}
+{%       else -%}
+{%         for imp in project.import_group.products -%}
 Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/imports/{{ imp.id }}_import.owl>)
-{%       endfor -%}
-{%     endif -%}
-{%   endif %}
+{%         endfor -%}
+{%       endif -%}
+{%     endif %}
 
-{%   if project.use_dosdps -%}
+{%     if project.use_dosdps -%}
 Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/definitions.owl>)
-{%     if project.import_pattern_ontology -%}
+{%       if project.import_pattern_ontology -%}
 Import(<{{ project.uribase }}/{% if project.uribase_suffix is not none %}{{ project.uribase_suffix }}{% else %}{{ project.id }}{% endif %}/patterns/pattern.owl>)
+{%       endif -%}
 {%     endif -%}
 {%   endif -%}
 Annotation(dcterms:description "{{ project.description }}")
