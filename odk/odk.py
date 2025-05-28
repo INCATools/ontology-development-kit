@@ -697,8 +697,8 @@ class OntologyProject(JsonSchemaMixin):
     use_custom_import_module : bool = False
     """if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed."""
 
-    preserve_non_odk_managed_imports : bool = True
-    """if true, import declarations that were added independently of the ODK will be preserved when updating the repository."""
+    manage_import_declarations : bool = True
+    """if true, import declarations in the -edit file and redirections in the XML catalog will be entirely managed by the ODK."""
     
     custom_makefile_header : str = """
 # ----------------------------------------
@@ -1174,10 +1174,7 @@ def update_import_declarations(project, pluginsdir='/tools/robot-plugins'):
     else:
         os.environ['ROBOT_JAVA_ARGS'] = ignore_missing_imports
 
-    cmd = f'robot odk:import -i {project.id}-edit.{project.edit_format}'
-    if not project.preserve_non_odk_managed_imports:
-        cmd += ' --exclusive true'
-
+    cmd = f'robot odk:import -i {project.id}-edit.{project.edit_format} --exclusive true'
     if project.import_group.use_base_merging:
         cmd += f' --add {base}/imports/merged_import.owl'
     else:
@@ -1361,9 +1358,13 @@ def update(templatedir):
     # Special procedures to update some ODK-managed files that
     # may have been manually edited.
     update_gitignore(mg, templatedir + '/.gitignore.jinja2', '../../.gitignore')
-    update_xml_catalog(mg, templatedir + '/src/ontology/catalog-v001.xml.jinja2', 'catalog-v001.xml')
 
-    update_import_declarations(project)
+    if project.manage_import_declarations:
+        update_xml_catalog(mg, templatedir + '/src/ontology/catalog-v001.xml.jinja2', 'catalog-v001.xml')
+        update_import_declarations(project)
+    else:
+        print("WARNING: You may need to update the -edit file and the XML catalog")
+        print("         if you have added/removed/modified any import or component.")
 
     print("WARNING: This file should be manually migrated: mkdocs.yaml")
     if 'github_actions' in project.ci and 'qc' not in project.workflows:
