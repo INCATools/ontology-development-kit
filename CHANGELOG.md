@@ -1,3 +1,5 @@
+# v1.7 (TBD)
+
 # v1.6
 
 For more detailed changes see:
