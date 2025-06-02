@@ -1175,11 +1175,12 @@ def update_import_declarations(project, pluginsdir='/tools/robot-plugins'):
         os.environ['ROBOT_JAVA_ARGS'] = ignore_missing_imports
 
     cmd = f'robot odk:import -i {project.id}-edit.{project.edit_format} --exclusive true'
-    if project.import_group.use_base_merging:
-        cmd += f' --add {base}/imports/merged_import.owl'
-    else:
-        for product in project.import_group.products:
-            cmd += f' --add {base}/imports/{product.id}_import.owl'
+    if project.import_group is not None:
+        if project.import_group.use_base_merging:
+            cmd += f' --add {base}/imports/merged_import.owl'
+        else:
+            for product in project.import_group.products:
+                cmd += f' --add {base}/imports/{product.id}_import.owl'
     if project.components is not None:
         for component in project.components.products:
             cmd += f' --add {base}/components/{component.filename}'
