@@ -176,7 +176,7 @@ odkversion:
 config_check:
 	@if [ "$$(tr -d '\r' < $(ONT)-odk.yaml | sha256sum | cut -c1-64)" = "$(CONFIG_HASH)" ]; then \
 		echo "Repository is up-to-date." ; else \
-		echo "Your ODK configuration has changed since this Makefile was generated. You may need to run 'make update_repo'." ; fi
+		echo "Your ODK configuration has changed since this Makefile was generated. You may need to run 'sh run.sh update_repo'." ; fi
 {% endif %}
 
 $(TMPDIR) $(REPORTDIR) $(MIRRORDIR) $(IMPORTDIR) $(COMPONENTSDIR) $(SUBSETDIR):
