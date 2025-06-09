@@ -4251,7 +4251,7 @@
         ]
     },
     {
-        "pattern": "^\\d+$",
+        "pattern": "^(\\d+)|([a-zA-Z_]+)$",
         "prefix": "NCBITaxon",
         "prefix_synonyms": [
             "NCBITaxonomyID",
@@ -15303,6 +15303,7 @@
             "http://n2t.net/hgnc.symbol:",
             "http://oncomx.org/searchview/?gene=",
             "http://portal.hubmapconsortium.org/genes/",
+            "http://re-solute.eu/knowledgebase/gene/",
             "http://wolfe.gen.tcd.ie/cgi/browser/ygob.pl?gene=",
             "http://www.depod.bioss.uni-freiburg.de/showp.php?gene=",
             "http://www.genenames.org/cgi-bin/gene_symbol_report?match=",
@@ -15331,6 +15332,7 @@
             "https://n2t.net/hgnc.symbol:",
             "https://oncomx.org/searchview/?gene=",
             "https://portal.hubmapconsortium.org/genes/",
+            "https://re-solute.eu/knowledgebase/gene/",
             "https://wolfe.gen.tcd.ie/cgi/browser/ygob.pl?gene=",
             "https://www.depod.bioss.uni-freiburg.de/showp.php?gene=",
             "https://www.genenames.org/cgi-bin/gene_symbol_report?match=",
@@ -15399,11 +15401,13 @@
     },
     {
         "prefix": "hipsci",
-        "uri_prefix": "https://www.hipsci.org/lines/#/lines/",
+        "uri_prefix": "https://www.hipsci.org/#/lines/",
         "uri_prefix_synonyms": [
             "http://bioregistry.io/hipsci:",
+            "http://www.hipsci.org/#/lines/",
             "http://www.hipsci.org/lines/#/lines/",
-            "https://bioregistry.io/hipsci:"
+            "https://bioregistry.io/hipsci:",
+            "https://www.hipsci.org/lines/#/lines/"
         ]
     },
     {
@@ -15517,7 +15521,7 @@
         ]
     },
     {
-        "pattern": "^\\w+$",
+        "pattern": "^[A-Z][A-Z0-9_]+\\.PE\\d+$",
         "prefix": "hogenom",
         "uri_prefix": "http://pbil.univ-lyon1.fr/cgi-bin/view-tree.pl?db=HOGENOM5&query=",
         "uri_prefix_synonyms": [
@@ -15567,15 +15571,17 @@
         ]
     },
     {
-        "pattern": "^SEQF\\d+$",
+        "pattern": "^SEQF\\d+(?:\\.\\d+)?$",
         "prefix": "homd.seq",
-        "uri_prefix": "http://www.homd.org/modules.php?op=modload&name=GenomeList&file=index&link=detailinfo&seqid=",
+        "uri_prefix": "https://v31.homd.org/genome/genome_description?gid=",
         "uri_prefix_synonyms": [
             "http://bio2rdf.org/homd.seq:",
             "http://bioregistry.io/homd.seq:",
             "http://identifiers.org/homd.seq/",
             "http://identifiers.org/homd.seq:",
             "http://n2t.net/homd.seq:",
+            "http://v31.homd.org/genome/genome_description?gid=",
+            "http://www.homd.org/modules.php?op=modload&name=GenomeList&file=index&link=detailinfo&seqid=",
             "https://bio2rdf.org/homd.seq:",
             "https://bioregistry.io/homd.seq:",
             "https://identifiers.org/homd.seq/",
@@ -24385,6 +24391,7 @@
             "http://bioregistry.io/scop.sun:",
             "http://bioregistry.io/scop.sunid:",
             "http://bioregistry.io/scop:",
+            "http://caps.ncbs.res.in/gendis3/superfamily_display/",
             "http://identifiers.org/scop/",
             "http://identifiers.org/scop:",
             "http://n2t.net/scop:",
@@ -24394,6 +24401,7 @@
             "https://bioregistry.io/scop.sun:",
             "https://bioregistry.io/scop.sunid:",
             "https://bioregistry.io/scop:",
+            "https://caps.ncbs.res.in/gendis3/superfamily_display/",
             "https://identifiers.org/scop/",
             "https://identifiers.org/scop:",
             "https://n2t.net/scop:",
@@ -26851,11 +26859,13 @@
     {
         "pattern": "^UP\\d{9}$",
         "prefix": "uniprot.proteome",
-        "uri_prefix": "https://www.uniprot.org/proteomes/",
+        "uri_prefix": "http://purl.uniprot.org/proteomes/",
         "uri_prefix_synonyms": [
             "http://bioregistry.io/uniprot.proteome:",
             "http://www.uniprot.org/proteomes/",
-            "https://bioregistry.io/uniprot.proteome:"
+            "https://bioregistry.io/uniprot.proteome:",
+            "https://purl.uniprot.org/proteomes/",
+            "https://www.uniprot.org/proteomes/"
         ]
     },
     {
