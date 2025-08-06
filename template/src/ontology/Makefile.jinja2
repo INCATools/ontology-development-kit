@@ -57,7 +57,7 @@ SCRIPTSDIR=                 ../scripts
 UPDATEREPODIR=              target
 SPARQLDIR =                 ../sparql
 EXTENDED_PREFIX_MAP=        $(TMPDIR)/obo.epm.json
-COMPONENTSDIR =             {{ project.components.directory|default('components') }}
+COMPONENTSDIR =             components
 {%- if project.robot.report.custom_profile %}
 ROBOT_PROFILE =             profile.txt
 {%- endif %}
@@ -91,7 +91,7 @@ PATTERN_RELEASE_FILES=      $(PATTERNDIR)/definitions.owl $(PATTERNDIR)/pattern.
 {% endif %}
 
 {%- if project.use_mappings %}
-MAPPINGDIR=                 {% if project.sssom_mappingset_group is not none %}{{project.sssom_mappingset_group.directory|default("../mappings")}}{% endif %}
+MAPPINGDIR=                 ../mappings
 MAPPING_TESTER=             sssom validate
 SSSOMPY=                    sssom
 MAPPINGS=                   {% if project.sssom_mappingset_group is not none %}{%- for mapping in project.sssom_mappingset_group.products %}{{ mapping.id }} {% endfor %}{% endif %}
@@ -99,7 +99,7 @@ MAPPING_RELEASE_FILES=      $(foreach n,$(MAPPINGS), $(MAPPINGDIR)/$(n).sssom.ts
 {% endif %}
 
 {%- if project.use_translations %}
-TRANSLATIONSDIR=            {% if project.babelon_translation_group is not none %}{{project.babelon_translation_group.directory|default("../translations")}}{% endif %}
+TRANSLATIONSDIR=            ../translations
 BABELONPY=                  babelon -q
 TRANSLATIONS_OWL=           {%- for translation in project.babelon_translation_group.products %}$(TRANSLATIONSDIR)/{{ translation.id }}.babelon.owl {% if translation.include_robot_template_synonyms %} $(TRANSLATIONSDIR)/{{ translation.id }}.synonyms.owl {% endif %}{% endfor %}
 TRANSLATIONS_TSV=           {%- for translation in project.babelon_translation_group.products %}$(TRANSLATIONSDIR)/{{ translation.id }}-preprocessed.babelon.tsv {% endfor %}
@@ -176,7 +176,7 @@ odkversion:
 config_check:
 	@if [ "$$(tr -d '\r' < $(ONT)-odk.yaml | sha256sum | cut -c1-64)" = "$(CONFIG_HASH)" ]; then \
 		echo "Repository is up-to-date." ; else \
-		echo "Your ODK configuration has changed since this Makefile was generated. You may need to run 'make update_repo'." ; fi
+		echo "Your ODK configuration has changed since this Makefile was generated. You may need to run 'sh run.sh update_repo'." ; fi
 {% endif %}
 
 $(TMPDIR) $(REPORTDIR) $(MIRRORDIR) $(IMPORTDIR) $(COMPONENTSDIR) $(SUBSETDIR):
@@ -394,6 +394,13 @@ ASSETS = \
   $(SUBSET_FILES) \
   $(MAPPING_FILES)
 
+{# This does not include mappings (which can optionally be released),
+   because those are stored in src/mappings, and the fact that this is
+   one directory _above_ the directory where this Makefile is would
+   cause problems down the road (notably, it would prevent the use of a
+   single rsync commmand to copy all release assets except mappings to
+   the release directory). Basically, this is "all release assets that
+   are in this src/ontology directory". -#}
 RELEASE_ASSETS = \
   $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}\
   $(SUBSET_FILES){% if project.robot.report.release_reports %} \
@@ -406,10 +413,6 @@ all_assets: $(ASSETS) {% if project.ensure_valid_rdfxml %}check_rdfxml_assets{% 
 show_assets:
 	echo $(ASSETS)
 	du -sh $(ASSETS)
-
-.PHONY: show_release_assets
-show_release_assets:
-	@echo $(RELEASE_ASSETS)
 
 check_rdfxml_%: %
 	@check-rdfxml {% if project.extra_rdfxml_checks %}--jena --rdflib{% endif %} $<
@@ -426,21 +429,38 @@ KEEPRELATIONS=keeprelations.txt
 {% endif -%}
 
 CLEANFILES=$(MAIN_FILES) $(SRCMERGED) $(EDIT_PREPROCESSED)
+
 # This should be executed by the release manager whenever time comes to make a release.
 # It will ensure that all assets/files are fresh, and will copy to release folder
-
 .PHONY: prepare_release
 prepare_release: all_odk
-	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR) &&\{% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %}
-	mkdir -p $(RELEASEDIR)/mappings && cp -rf $(RELEASED_MAPPING_FILES) $(RELEASEDIR)/mappings &&\{% endif %}{% endif %}{% if project.use_dosdps %}
-	mkdir -p $(RELEASEDIR)/patterns && cp -rf $(PATTERN_RELEASE_FILES) $(RELEASEDIR)/patterns &&\{% endif %}
-	rm -f $(CLEANFILES) &&\
-	echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
+	$(MAKE) copy_release_files
+	rm -f $(CLEANFILES)
+	@echo "Release files are now in $(RELEASEDIR) - now you should commit, push and make a release \
         on your git hosting site such as GitHub or GitLab"
 
 .PHONY: prepare_release_fast
 prepare_release_fast:
 	$(MAKE) prepare_release IMP=false PAT=false MIR=false COMP=false
+
+# This rule does the bulk of the work for prepare_release, copying all
+# files to the release directory. It is mostly intended for internal
+# use, by the prepare_release rule itself or by other ODK scripts.
+.PHONY: copy_release_files
+copy_release_files:
+	rsync -R $(RELEASE_ASSETS) $(RELEASEDIR){% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %}
+	mkdir -p $(RELEASEDIR)/mappings
+	cp -rf $(RELEASED_MAPPING_FILES) $(RELEASEDIR)/mappings{% endif %}{% endif %}
+
+# All released assets, in their final location within the release
+{# ODK devs: keep that in sync with the copy_release_files rule above
+   -- that is, this should list all files copied by that rule. -#}
+RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), $(RELEASEDIR)/$(n)){% if project.sssom_mappingset_group is defined %}{% if project.sssom_mappingset_group.released_products is defined %} \
+			     $(foreach n,$(RELEASED_MAPPINGS), $(RELEASEDIR)/mappings/$(n).sssom.tsv){% endif %}{% endif %}
+
+.PHONY: show_release_assets
+show_release_assets:
+	@echo $(RELEASE_ASSETS_AFTER_RELEASE)
 
 CURRENT_RELEASE=$(ONTBASE).owl
 
@@ -561,8 +581,8 @@ $(IMPORTDIR)/merged_import.owl: $(MIRRORDIR)/merged.owl $(ALL_TERMS) \
 {%     if 'slme' == project.import_group.module_type -%}
 $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
 			   $(IMPORTSEED) | all_robot_plugins
-	$(ROBOT) annotate --input $< --remove-annotations --interpolate true \
-		          --link-annotation dc:source "%{version_iri}" \
+	$(ROBOT) annotate --input $< --remove-annotations \
+		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/$*_terms.txt $(T_IMPORTSEED) \
 		         --force true --copy-ontology-annotations true \
 		         --individuals {{ project.import_group.slme_individuals }} \
@@ -578,8 +598,8 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
 {%     elif 'minimal' == project.import_group.module_type -%}
 $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
 			   $(IMPORTSEED) | all_robot_plugins
-	$(ROBOT) annotate --input $< --remove-annotations --interpolate true \
-		          --link-annotation dc:source "%{version_iri}" \
+	$(ROBOT) annotate --input $< --remove-annotations \
+		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/$*_terms.txt $(T_IMPORTSEED) \
 		         --force true --copy-ontology-annotations true \
 		         --method BOT \
@@ -597,10 +617,10 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
 
 {%     elif 'mirror' == project.import_group.module_type -%}
 $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl | all_robot_plugins
-	$(ROBOT) annotate --input $< --remove-annotations --interpolate true \
-		          --link-annotation dc:source "%{version_iri}" \
+	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
+		               --add-source true \
 		 repair --merge-axiom-annotations true \
 		 $(ANNOTATE_CONVERT_FILE)
 
@@ -608,8 +628,8 @@ $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl | all_robot_plugins
 $(IMPORTDIR)/%_import.owl: $(MIRRORDIR)/%.owl $(IMPORTDIR)/%_terms.txt \
 			   $(IMPORTSEED) | all_robot_plugins
 	$(ROBOT) merge --input $< \
-		 annotate --remove-annotations --interpolate true \
-		          --link-annotation dc:source "%{version_iri}" \
+		 annotate --remove-annotations \
+		 odk:normalize --add-source true \
 		 remove --base-iri $(OBOBASE)"/$(shell echo $* | tr a-z A-Z)_" \
 		        --axioms external \
 		        --preserve-structure false --trim false \
@@ -645,8 +665,8 @@ ifeq ($(IMP_LARGE),true)
 {%       endif -%}
 {%       if 'slme' == ont.module_type -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms.txt $(IMPORTSEED) | all_robot_plugins
-	$(ROBOT) annotate --input $< --remove-annotations --interpolate true \
-		          --link-annotation dc:source "%{version_iri}" \
+	$(ROBOT) annotate --input $< --remove-annotations \
+		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt $(T_IMPORTSEED) \
 		         --copy-ontology-annotations true --force true \
 		         --individuals {{ ont.slme_individuals }} \
@@ -661,8 +681,8 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		 $(ANNOTATE_CONVERT_FILE)
 {%       elif 'filter' == ont.module_type -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms.txt $(IMPORTSEED) | all_robot_plugins
-	$(ROBOT) annotate --input $< --remove-annotations --interpolate true \
-		          --link-annotation dc:source "%{version_iri}" \
+	$(ROBOT) annotate --input $< --remove-annotations \
+		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt $(T_IMPORTSEED) \
 		         --copy-ontology-annotations true --force true --method BOT \
 		 remove --axioms external --preserve-structure false --trim false \{% for iri in ont.base_iris %}
@@ -677,16 +697,16 @@ $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)
 		 $(ANNOTATE_CONVERT_FILE)
 {%       elif 'mirror' == ont.module_type -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl | all_robot_plugins
-	$(ROBOT) annotate --input $< --remove-annotations --interpolate true \
-		          --link-annotation dc:source "%{version_iri}" \
+	$(ROBOT) annotate --input $< --remove-annotations \
 		 odk:normalize --base-iri {{ project.uribase }} \
 		               --subset-decls true --synonym-decls true \
+		               --add-source true \
 		 repair --merge-axiom-annotations true \
 		 $(ANNOTATE_CONVERT_FILE)
 {%       elif 'minimal' == ont.module_type -%}
 $(IMPORTDIR)/{{ ont.id }}_import.owl: $(MIRRORDIR)/{{ ont.id }}.owl $(IMPORTDIR)/{{ ont.id }}_terms.txt $(IMPORTSEED) | all_robot_plugins
-	$(ROBOT) annotate --input $< --remove-annotations --interpolate true \
-		          --link-annotation dc:source "%{version_iri}" \
+	$(ROBOT) annotate --input $< --remove-annotations \
+		 odk:normalize --add-source true \
 		 extract --term-file $(IMPORTDIR)/{{ ont.id }}_terms.txt $(T_IMPORTSEED) \
 		         --copy-ontology-annotations true --force true --method BOT \
 		 remove --axioms external --preserve-structure false --trim false \{% for iri in ont.base_iris %}
@@ -1493,7 +1513,6 @@ public_release:
 	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
 {% else  %}
 
-RELEASE_ASSETS_AFTER_RELEASE=$(foreach n,$(RELEASE_ASSETS), $(RELEASEDIR)/$(n)) $(foreach n,$(RELEASED_MAPPINGS), $(RELEASEDIR)/mappings/$(n).sssom.tsv)
 GHVERSION=v$(VERSION)
 
 .PHONY: public_release
@@ -1544,7 +1563,9 @@ normalize_src: $(SRC)
 
 .PHONY: validate_idranges
 validate_idranges:
-	if [ -f {{ project.id }}-idranges.owl ]; then dicer-cli policy {{ project.id }}-idranges.owl ; fi
+	if [ -f {{ project.id }}-idranges.owl ]; then \
+		dicer-cli policy --assume-manchester --show-owlapi-error {{ project.id }}-idranges.owl ; \
+	fi
 
 # Deprecated: Use 'sh run.sh odk.py update' without using the Makefile.
 .PHONY: update_repo

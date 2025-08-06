@@ -1,4 +1,6 @@
-# v1.6 (Planned)
+# v1.7 (TBD)
+
+# v1.6
 
 For more detailed changes see:
 
@@ -7,33 +9,120 @@ For more detailed changes see:
 
 ## Highlights (Read this!)
 
-- TBD
+- Updating an existing repository (to migrate it to a newer ODK version or to apply changes made in the ODK configuration) is now made with `sh run.sh update_repo` (instead of `sh run.sh make update_repo`). When migrating to ODK 1.6 for the first time, that command will need to be run _twice_.
+- The SPARQL-based checks now cover the _entire_ ontology, including the components (they previously only covered the contents of the `-edit` file). This may cause your workflows to break due to invalid contents in the components that previously went undetected.
+- The test suite now includes a check that the ID policy file (`src/ontology/$(ONT)-idranges.owl`) is valid. This may cause your workflows to break if the policy file is syntactically incorrect or contains invalid ranges.
+
+Other less drastic changes that users should still probably pay close attention to are highlighted, in the following sections, with a ⚠️ symbol.
 
 ## New and updated tooling
 
-- New [ROBOT Version 1.9.6](https://github.com/ontodev/robot/releases/tag/v1.9.6). This came with a great number of updates and upgrades, see release notes.
-- J2cli, a command-line tool to process Jinja2 templates, has been replaced by [Jinjanator](https://github.com/kpfleming/jinjanator). If your custom workflows invoke the `j2` tool, you will need to update them to use `jinjanate` instead.
-- New program `dicer-cli` to manage the ID range file.
-- Ammonite, the Scala interpreter, is no longer provided in the ODKLite image. If you need Ammonite, you must now use the ODKFull image. Be warned that Ammonite is slated for complete removal in a future ODK release, you should use Scala-CLI instead.
-- The Scala-CLI Scala runner has been added to the ODKFull image.
-
-## New configuration options
-
-- TBD
+- Base system updated to Ubuntu 24.04.
+- Updated tools:
+    - [ROBOT version 1.9.8](https://github.com/ontodev/robot/releases/tag/v1.9.8)
+    - [KGCL plugin version 0.5.1](https://github.com/gouttegd/kgcl-java/releases/tag/kgcl-java-0.5.1)
+    - [SSSOM plugin and SSSOM-CLI tool version 1.5.1](https://github.com/gouttegd/sssom-java/releases/tag/sssom-java-1.5.1)
+    - [Soufflé version 2.5](https://github.com/souffle-lang/souffle/releases/tag/2.5)
+- Notable updated Python packages:
+    - `curies` 0.10.19
+    - `kgcl-schema` 0.6.9
+    - `kgx` 2.5.1
+    - `linkml` 1.9.2
+    - `llm` 0.25
+    - `oaklib` 0.6.22
+    - `pronto` 2.7.0
+    - `sssom` 0.4.16
+- New tools:
+    - ⚠️ J2cli, a command-line tool to process Jinja2 templates, has been replaced by [Jinjanator](https://github.com/kpfleming/jinjanator). If your custom workflows invoke the `j2` tool, you will need to update them to use `jinjanate` instead.
+    - [Scala-CLI version 1.8.0](https://github.com/VirtusLab/scala-cli/releases/tag/v1.8.0). This is intended to replace Ammonite as the Scala interpreter; Ammonite is still included in ODK 1.6, but only in the `odkfull` image – it will be removed completely in a future ODK release.
+    - [Dicer-CLI](https://incenp.org/dvlpt/dicer/dicer-cli/index.html), a new tool to manage the ID policy file (`src/ontology/$(ont)-idranges.owl`).
+    - New [ODK plugin](https://incatools.github.io/odk-robot-plugin/index.html), providing some extra commands for ROBOT, notably:
+        - `odk:subset` to create subsets (replacement for `owltools --reasoner-query --make-ontology-from-results` and `owltools --extract-ontology-subset`);
+        - `odk:check-align` to check alignment against an upper-level ontology.
+    - New [yq-mf](https://github.com/mikefarah/yq) tool, a YAML, JSON, and XML processor.
+- Other changes:
+    - ⚠️ OWLTools is now only provided in the `odkfull` image.
+    - The [sparqlprog](https://github.com/cmungall/sparqlprog) tools are still provided, but considered deprecated and will be removed in a future release.
 
 ## Makefile workflows
 
 - The `$(ont)-idranges.owl` file is now checked for validity as part of the normal test suite [#211](https://github.com/INCATools/ontology-development-kit/issues/211).
+- The test suite can now check whether the ontology is “aligned” with another, upper-level ontology ([PR #1174](https://github.com/INCATools/ontology-development-kit/pull/1174)).
+    - In this context, an ontology is said to be “aligned” if all its terms are classified under terms from the upper-level ontology.
+    - To enable this feature, specify the IRI of the upper ontology to align against with the `upper_ontology` option in the configuration file.
+    - Note that if enabled, this feature will cause the test suite to _fail_ if the ontology is not aligned.
+- The stripping of annotation properties from import modules (forcefully introduced in ODK 1.5) can now be disabled if needed, by setting the `import_group.strip_annotation_properties` ODK option to `false` ([PR #1206](https://github.com/INCATools/ontology-development-kit/pull/1206)).
+- ⚠️ OBO artefacts are now “clean” by default, meaning that (1) they cannot contain terms with more than one label, one definition, or one comment, and (2) non-OBO axioms (which would normally be stored in a `owl-axioms` header tag) are stripped.
+    - This relies on the new `--clean-obo` option provided by ROBOT 1.9.8, see [its documentation](https://robot.obolibrary.org/convert#converting-to-obo-format) for details.
+    - This is controlled by the `obo_format_options` ODK option, which by default is set to `--clean-obo "strict drop-untranslatable-axioms"`.
+- When invoking `robot relax`, _SubClassOf_ axioms are now relaxed by default, in addition to _EquivalentClasses_ axioms.
+    - This is controlled by the new `robot_relax_options` ODK option, which is set to `--include-subclass-of true` by default.
+- ⚠️ When invoking `robot reduce`, _SubPropertyOf_ axioms and property chains are now taken into account to evaluate whether an axiom is logically redundant.
+    - This is controlled by the new `robot_reduce_options` ODK option, which is set to `--include-subproperties true` by default.
+- If a context file has been set in the ODK configuration (option `use_context: true`), the context file will be passed to all invocations of `robot` ([PR #1211](https://github.com/INCATools/ontology-development-kit/pull/1211)).
+    - Related: the location of the context file is now `src/ontology/config/context.json`, instead of `src/config/context.json` ([PR #1150](https://github.com/INCATools/ontology-development-kit/pull/1150)).
+- The standard Makefile now includes a new `REASONER` variable (set to the reasoner configured with the `reasoner` option in the ODK configuration file) ([PR #1140](https://github.com/INCATools/ontology-development-kit/pull/1140)).
+    - This allows custom workflows in `$(ont).Makefile` to be sure they are always using the same reasoner as the standard Makefile.
+- The release workflow can now produce release artefacts in the [SQLite/SemSQL format](https://github.com/INCATools/semantic-sql) (used notably by the Ontology Access Kit) ([PR #1148](https://github.com/INCATools/ontology-development-kit/)).
+    - To enable SQLite/SemSQL output, add the value `db` to the `export_format` option in the ODK configuration.
+- New targets allow to automatically generate some documentations from DOSDP patterns ([PR #1121](https://github.com/INCATools/ontology-development-kit/pull/1121)).
+- It is now possible to publish only _some_ of the SSSOM mapping sets, instead of all of them ([PR #1120](https://github.com/INCATools/ontology-development-kit/pull/1120)).
+- A SSSOM mapping set can be automatically constructed by merging other sets ([PR #1208](https://github.com/INCATools/ontology-development-kit/pull/1208)).
+- Overall, several sections of the standard Makefile have been refactored to make them cleaner and more readable (PRs [#1194](https://github.com/INCATools/ontology-development-kit/pull/1194), [#1168](https://github.com/INCATools/ontology-development-kit/pull/1168), [#1214](https://github.com/INCATools/ontology-development-kit/pull/1214), [#1216](https://github.com/INCATools/ontology-development-kit/pull/1216)).
 
 ## Runner and Infrastructure
 
-- TBD
+- The `run.sh` script now allows to easily share a local OAK cache with the container, by setting a `ODK_SHARE_OAK_CACHE` environment variable ([PR #1109](https://github.com/INCATools/ontology-development-kit/pull/1109)):
+    - set `ODK_SHARE_OAK_CACHE=user` to automatically share the local user’s own cache (`~/.data/oaklib`, assuming a default Pystow configuration);
+    - set `ODK_SHARE_OAC_CACHE=<path/to/cache>` to share a cache located at an arbitrary location.
+- By default, the `run.sh` script will automatically configure ROBOT (and other Java programs) to use up to 90% of the total amount of memory allocated to Docker ([PR #1111](https://github.com/INCATools/ontology-development-kit/pull/1111)).
+    - This allows configuring max memory settings in one place only (in the configuration of the Docker daemon).
+    - This can always be overriden once and for all by setting the `robot_java_args` option in the ODK configuration file, or occasionally by setting the `ODK_JAVA_OPTS` environment variable when calling the `run.sh` script.
+- The `run.sh` script now detects environment variables indicating the use of a network proxy (`http_proxy`, `https_proxy`) and ensures that Java programs within the container are aware of them ([PR #1119](https://github.com/INCATools/ontology-development-kit/pull/1119)).
+
+## Seeding/updating a repository
+
+- When seeding a new repository, by default release artefacts are _not_ committed to the repository (PRs [#1183](https://github.com/INCATools/ontology-development-kit/pull/1183), [#1246](https://github.com/INCATools/ontology-development-kit/pull/1246)).
+    - Pass the `--commit-artefacts` option (or `-r`) to the seeding command to force the release artefacts to be committed.
+    - If the `--commit-artefacts` option has not been used at seeding time, the release artefacts can still be manually committed to the repository at a later time, but this will require the `--force` option to `git add`.
+- If the use of a custom ROBOT validation profile has been enabled in the configuration (option `custom_profile: true`), the custom profile file will be initialised with the standard profile from the current version of ROBOT ([PR #1187](https://github.com/INCATools/ontology-development-kit/pull/1187)).
+- The newly seeded repository no longer includes a default Code of Conduct ([PR #1253](https://github.com/INCATools/ontology-development-kit/pull/1253)). Project owners who want a Code of Conduct will have to add one manually.
+- The directories containing the import modules, SSSOM mappings, components, subsets, patterns, and translations are no longer configurable ([PR #1250](https://github.com/INCATools/ontology-development-kit/pull/1250)).
+    - While the options to configure those directories existed, changing the default directories has in fact never been supported.
+- The `odk.py` script now tries to handle error conditions more gracefully, and to report more helpful error messages (PRs [#1097](https://github.com/INCATools/ontology-development-kit/pull/1097), [#1190](https://github.com/INCATools/ontology-development-kit/pull/1190)).
+- The process to _update_ an existing repository (be it to migrate it to a newer ODK version, or to apply configuration changes) has been overhauled ([PR #1180](https://github.com/INCATools/ontology-development-kit/pull/1180)). The new process is no longer considered _experimental_ (updating a repo is now a fully supported feature).
+    - ⚠️ The update command is now `sh run.sh update_repo`.
+    - ⚠️ The old command `sh run.sh make update_repo` will _not_ work when migrating to ODK 1.6. Once the migration is done, that command will work again, but it should be considered deprecated and is better avoided.
+    - ⚠️ When migrating to ODK 1.6, and *only* when migrating to ODK 1.6, the `sh run.sh update_repo` will need to be run **twice**. Once the migration is done, any future update will only require one invocation of the command.
+    - ⚠️ As part of the update process, the `-edit` file will be automatically updated if needed to ensure that its import declarations match the import modules and components declared in the ODK configuration. Likewise, the XML catalog will be automatically updated to ensure it contains all the appropriate redirections. If for any reason this is not desired, and you prefer/need to keep manual control of the `-edit` file and the XML catalog, add the `manage_import_declarations: false` option to your ODK configuration file.
+
+## Other notable changes
+
+- The `.gitignore` file is now managed by the ODK, which will automatically add/remove ignore patterns as needed ([PR #1218](https://github.com/INCATools/ontology-development-kit/pull/1218)).
+    - Nonetheless, user-added ignore patterns, if any, will always be preserved.
+- The ODK now provides a copy of the OBO [Extended Prefix Map](https://curies.readthedocs.io/en/latest/struct.html#extended-prefix-maps) ([#PR 1235](https://github.com/INCATools/ontology-development-kit/pull/1235)).
+    - To use the map in a custom workflow, make your target depend on `$(EXTENDED_PREFIX_MAP)` and refer to the map using that variable.
 
 ## Bugfixes
 
 - Added back `class-count-by-prefix.sparql` ([#1030](https://github.com/INCATools/ontology-development-kit/issues/1030)).
 - Disabled `table-reader` mkdocs plugin ([#1028](https://github.com/INCATools/ontology-development-kit/issues/1028)).
 - SPARQL-based tests on the `-edit` file now also cover any component included in the ontology, as well as any pattern-derived contents ([#1154](https://github.com/INCATools/ontology-development-kit/issues/1154)).
+- Fixed missing dependency for `oak similarity` ([#1032](https://github.com/INCATools/ontology-development-kit/issues/1032)).
+- Fixed incorrect handling of `ODK_BINDS` option in the `run.sh` script ([PR #1050](https://github.com/INCATools/ontology-development-kit/pull/1050)).
+- Added a check in `run.sh` that the path to the current directory does not contain spaces ([#1078](https://github.com/INCATools/ontology-development-kit/issues/1078)).
+- Fixed ownership of the SSH socket in the Docker container ([PR #1096](https://github.com/INCATools/ontology-development-kit/pull/1096)).
+- Fixed seeding issue on macOS ([#1105]((https://github.com/INCATools/ontology-development-kit/issues/1105)).
+- Fixed a possible failure of the OBO checks induced by quirks of the OBO serialisation format ([#1107](https://github.com/INCATools/ontology-development-kit/issues/1107)).
+- Fixed publishing of SSSOM mapping sets (option `sssom_mappingset_group.release_mappings`) ([#1036](https://github.com/INCATools/ontology-development-kit/issues/1036)).
+- Fixed bogus default repository name when seeding ([PR #1122](https://github.com/INCATools/ontology-development-kit/pull/1122)).
+- Fixed bogus installation of the `sparqlprog` tools, which made then unusable when not running under a privileged user account ([#1134](https://github.com/INCATools/ontology-development-kit/issues/1134)).
+- Fixed installation of some of Obographviz’s NPM dependencies with absurdly large UID/GID ([#1157](https://github.com/INCATools/ontology-development-kit/issues/1157)).
+- Configured Ammonite _not_ to store cached files in `/tools/.coursier-cache`, which prevented it from being used unless running under a privileged user account ([PR #1160](https://github.com/INCATools/ontology-development-kit/pull/1160)).
+- Fixed the check intended to warn that the Makefile is out-of-date compared to the ODK configuration file, which did not work properly on Windows ([#1170](https://github.com/INCATools/ontology-development-kit/issues/1170)).
+- Fixed “noisy” diffs (due to impredictably changing blank node IDs) in subset TSV files ([#798](https://github.com/INCATools/ontology-development-kit/issues/798)).
+- Fixed handling of the `module_type_slme` option, which was ignored when using at the level of an individual import module if the option was also used at the level of the entire import group ([#1204](https://github.com/INCATools/ontology-development-kit/issues/1204)).
+- Fixed building of SSSOM-derived components ([#1213](https://github.com/INCATools/ontology-development-kit/issues/1213)).
 
 # v1.5
 
