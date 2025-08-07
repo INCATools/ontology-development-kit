@@ -44,7 +44,6 @@ test_odkfull_programs: test_odklite_programs
 	@./tests/test-program.sh SOUFFLE souffle --version
 	@./tests/test-program.sh JENA jena
 	@./tests/test-program.sh OWLTOOLS owltools --version
-	@./tests/test-program.sh AMMONITE sh amm --help
 	@./tests/test-program.sh SCALA-CLI scala-cli --version
 	@./tests/test-program.sh SPARQL sparql --version
 	@./tests/test-program.sh OBO-DASHBOARD obodash --help

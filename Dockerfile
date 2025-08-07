@@ -13,7 +13,6 @@ ENV ODK_VERSION=$ODK_VERSION
 # Jena 5.x requires Java 17, so for now we are stuck with Jena 4.x
 ENV JENA_VERSION=4.9.0
 ENV KGCL_JAVA_VERSION=0.5.1
-ENV AMMONITE_VERSION=2.5.9
 ENV SCALA_CLI_VERSION=1.8.0
 ENV OWLTOOLS_VERSION=2020-04-06
 ENV YQ_VERSION=4.45.4
@@ -93,12 +92,6 @@ RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_V
 # Install Jena.
 RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERSION.tar.gz -O- | tar xzC /tools && \
     mv /tools/apache-jena-$JENA_VERSION /tools/apache-jena
-
-# Install Ammonite
-RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VERSION/2.13-$AMMONITE_VERSION \
-        -O /tools/amm && \
-    chmod 755 /tools/amm && \
-    java -cp /tools/amm ammonite.AmmoniteMain /dev/null
 
 # Install Scala-CLI
 RUN wget -nv https://github.com/VirtusLab/scala-cli/releases/download/v$SCALA_CLI_VERSION/scala-cli.jar \
