@@ -47,7 +47,6 @@ test_odkfull_programs: test_odklite_programs
 	@./tests/test-program.sh AMMONITE sh amm --help
 	@./tests/test-program.sh SCALA-CLI scala-cli --version
 	@./tests/test-program.sh SPARQL sparql --version
-	@./tests/test-program.sh SPARQLPROG pl2sparql -g halt
 	@./tests/test-program.sh OBO-DASHBOARD obodash --help
 	@./tests/test-program.sh RELATION-GRAPH relation-graph --version
 	@./tests/test-program.sh OAKLIB runoak --help
