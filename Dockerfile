@@ -4,7 +4,7 @@ ARG ODKLITE_TAG=latest
 FROM obolibrary/odklite:${ODKLITE_TAG}
 LABEL maintainer="obo-tools@googlegroups.com"
 
-ENV PATH="/tools/apache-jena/bin:/usr/local/share/swi-prolog/pack/sparqlprog/bin:$PATH"
+ENV PATH="/tools/apache-jena/bin/:$PATH"
 
 ARG ODK_VERSION 0.0.0
 ENV ODK_VERSION=$ODK_VERSION
@@ -13,7 +13,6 @@ ENV ODK_VERSION=$ODK_VERSION
 # Jena 5.x requires Java 17, so for now we are stuck with Jena 4.x
 ENV JENA_VERSION=4.9.0
 ENV KGCL_JAVA_VERSION=0.5.1
-ENV AMMONITE_VERSION=2.5.9
 ENV SCALA_CLI_VERSION=1.8.0
 ENV OWLTOOLS_VERSION=2020-04-06
 ENV YQ_VERSION=4.45.4
@@ -42,7 +41,6 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     npm \
     graphviz \
     python3-psycopg2 \
-    swi-prolog \
     libpcre3
 
 # Install run-time dependencies for Soufflé.
@@ -95,21 +93,12 @@ RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_V
 RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERSION.tar.gz -O- | tar xzC /tools && \
     mv /tools/apache-jena-$JENA_VERSION /tools/apache-jena
 
-# Install Ammonite
-RUN wget -nv https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VERSION/2.13-$AMMONITE_VERSION \
-        -O /tools/amm && \
-    chmod 755 /tools/amm && \
-    java -cp /tools/amm ammonite.AmmoniteMain /dev/null
-
 # Install Scala-CLI
 RUN wget -nv https://github.com/VirtusLab/scala-cli/releases/download/v$SCALA_CLI_VERSION/scala-cli.jar \
         -O /tools/scala-cli.jar && \
     echo "#!/bin/bash" > /tools/scala-cli && \
     echo "java -jar /tools/scala-cli.jar \"\$@\"" >> /tools/scala-cli && \
     chmod 0755 /tools/scala-cli
-
-# Install SPARQLProg.
-RUN swipl -g "pack_install(sparqlprog, [interactive(false),global(true)])" -g halt
 
 # Install obographviz
 RUN npm install -g obographviz && \
