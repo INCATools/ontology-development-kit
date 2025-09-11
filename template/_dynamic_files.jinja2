@@ -398,6 +398,20 @@ subject_id	predicate_id	object_id	mapping_justification
 {%     endfor -%}
 {%   endif -%}
 {% endif %}{# ! project.use_mappings -#}
+{% if project.bridge_group is not none -%}
+^^^ src/scripts/bridging.rules
+prefix {{ project.id | upper }}: <{{ project.uribase }}/{{ project.id | upper }}_>
+
+# Make sure {{ project.id | upper }} entities are on the subject side
+object=={{ project.id | upper }}:* -> invert();
+
+# Ignore any mapping to something else than {{ project.id | upper }}
+!subject=={{ project.id | upper }}:* -> stop();
+
+predicate==skos:exactMatch -> create_axiom("%subject_id EquivalentTo: %object_id");
+predicate==skos:broadMatch -> create_axiom("%subject_id SubClassOf: %object_id");
+predicate==skos:narrowMatch -> create_axiom("%object_id SubClassOf: %subject_id");
+{% endif %}{# ! project.bridge_group is not none -#}
 {% if project.use_translations -%}
 ^^^ src/translations/README.md
 # Directory for managing translation files
