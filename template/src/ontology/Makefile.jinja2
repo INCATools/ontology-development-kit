@@ -97,6 +97,9 @@ SSSOMPY=                    sssom
 MAPPINGS=                   {% if project.sssom_mappingset_group is not none %}{%- for mapping in project.sssom_mappingset_group.products %}{{ mapping.id }} {% endfor %}{% endif %}
 MAPPING_RELEASE_FILES=      $(foreach n,$(MAPPINGS), $(MAPPINGDIR)/$(n).sssom.tsv)
 {% endif %}
+{% if project.bridge_group is not none -%}
+BRIDGEDIR=                  bridges
+{% endif -%}
 
 {%- if project.use_translations %}
 TRANSLATIONSDIR=            ../translations
@@ -179,7 +182,8 @@ config_check:
 		echo "Your ODK configuration has changed since this Makefile was generated. You may need to run 'sh run.sh update_repo'." ; fi
 {% endif %}
 
-$(TMPDIR) $(REPORTDIR) $(MIRRORDIR) $(IMPORTDIR) $(COMPONENTSDIR) $(SUBSETDIR):
+$(TMPDIR) $(REPORTDIR) $(MIRRORDIR) $(IMPORTDIR) $(COMPONENTSDIR) $(SUBSETDIR)
+{%- if project.bridge_group is not none %} $(BRIDGEDIR){% endif %}:
 	mkdir -p $@
 
 # ----------------------------------------
@@ -289,7 +293,21 @@ RELEASED_MAPPING_FILES = $(foreach p, $(RELEASED_MAPPINGS), $(MAPPINGDIR)/$(p).s
 .PHONY: all_mappings
 all_mappings: $(MAPPING_FILES)
 
+# ----------------------------------------
+# Bridge assets
+# ----------------------------------------
 
+{% if project.bridge_group is not none -%}
+BRIDGES ={% for bridge in project.bridge_group.products %} {{ bridge.id }}{% endfor %}
+BRIDGE_FILES = $(foreach bridge, $(BRIDGES), $(BRIDGEDIR)/$(bridge).owl)
+
+.PHONY: all_bridges
+all_bridges: $(BRIDGE_FILES)
+
+{% else -%}
+BRIDGE_FILES =
+
+{% endif -%}
 # ----------------------------------------
 # QC Reports & Utilities
 # ----------------------------------------
@@ -392,7 +410,8 @@ ASSETS = \
   $(TRANSLATION_FILES) \{% endif %}
   $(REPORT_FILES) \
   $(SUBSET_FILES) \
-  $(MAPPING_FILES)
+  $(MAPPING_FILES) \
+  $(BRIDGE_FILES)
 
 {# This does not include mappings (which can optionally be released),
    because those are stored in src/mappings, and the fact that this is
@@ -404,7 +423,8 @@ ASSETS = \
 RELEASE_ASSETS = \
   $(MAIN_FILES) {% if project.import_group is defined %}{% if project.import_group.release_imports %}$(IMPORT_FILES) {% endif %}{% endif %}\
   $(SUBSET_FILES){% if project.robot.report.release_reports %} \
-  $(REPORT_FILES){% endif %}
+  $(REPORT_FILES){% endif %}\
+  $(BRIDGE_FILES)
 
 .PHONY: all_assets
 all_assets: $(ASSETS) {% if project.ensure_valid_rdfxml %}check_rdfxml_assets{% endif %}
@@ -428,7 +448,7 @@ check_rdfxml_assets: $(foreach product,$(MAIN_PRODUCTS),check_rdfxml_$(product).
 KEEPRELATIONS=keeprelations.txt
 {% endif -%}
 
-CLEANFILES=$(MAIN_FILES) $(SRCMERGED) $(EDIT_PREPROCESSED)
+CLEANFILES=$(MAIN_FILES) $(BRIDGE_FILES) $(SRCMERGED) $(EDIT_PREPROCESSED)
 
 # This should be executed by the release manager whenever time comes to make a release.
 # It will ensure that all assets/files are fresh, and will copy to release folder
@@ -1180,6 +1200,31 @@ $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
 {%   endif -%}
 
 {% endif %}{# !project.use_mappings -#}
+
+{% if project.bridge_group is not none -%}
+# ----------------------------------------
+# Bridge files
+# ----------------------------------------
+
+{%   for bridge in project.bridge_group.products -%}
+{%     if bridge.bridge_type == "sssom" -%}
+$(BRIDGEDIR)/{{ bridge.id }}.owl: $(SCRIPTSDIR)/{{ bridge.ruleset }}{% for source in bridge.sources %} \
+		$(MAPPINGDIR)/{{ source }}.sssom.tsv{% endfor %} \
+		| $(BRIDGEDIR) all_robot_plugins
+	$(ROBOT) sssom:inject {% for source in bridge.sources %}--sssom $(MAPPINGDIR)/{{ source }}.sssom.tsv \
+		              {% endfor %}--ruleset $(SCRIPTSDIR)/{{ bridge.ruleset }} \
+		              --create --bridge-format OFN \
+		              --bridge-file $@
+
+{%     elif bridge.bridge_type == "custom" -%}
+$(BRIDGEDIR)/{{ bridge.id }}.owl:
+	@echo "ERROR: You have configured {{ bridge.id }} as a custom bridge;"
+	@echo "       This rule needs to be overwritten in {{ project.id}}.Makefile!"
+	@false
+
+{%     endif -%}
+{%   endfor -%}
+{% endif %}{# !project.bridge_group is not none -#}
 
 {% if project.use_translations -%}
 # ----------------------------------------
