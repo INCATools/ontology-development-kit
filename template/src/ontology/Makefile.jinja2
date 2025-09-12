@@ -1208,11 +1208,11 @@ $(MAPPINGDIR)/{{ mapping.id }}.sssom.tsv:
 
 {%   for bridge in project.bridge_group.products -%}
 {%     if bridge.bridge_type == "sssom" -%}
-$(BRIDGEDIR)/{{ bridge.id }}.owl: $(SCRIPTSDIR)/{{ bridge.ruleset }}{% for source in bridge.sources %} \
+$(BRIDGEDIR)/{{ bridge.id }}.owl: $(SCRIPTSDIR)/bridge-{{ bridge.ruleset }}.sssomt{% for source in bridge.sources %} \
 		$(MAPPINGDIR)/{{ source }}.sssom.tsv{% endfor %} \
 		| $(BRIDGEDIR) all_robot_plugins
 	$(ROBOT) sssom:inject {% for source in bridge.sources %}--sssom $(MAPPINGDIR)/{{ source }}.sssom.tsv \
-		              {% endfor %}--ruleset $(SCRIPTSDIR)/{{ bridge.ruleset }} \
+		              {% endfor %}--ruleset $(SCRIPTSDIR)/bridge-{{ bridge.ruleset }}.sssomt \
 		              --create --bridge-format OFN \
 		              --bridge-file $@
 
