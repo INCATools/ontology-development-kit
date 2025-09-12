@@ -1214,6 +1214,7 @@ $(BRIDGEDIR)/{{ bridge.id }}.owl: $(SCRIPTSDIR)/bridge-{{ bridge.ruleset }}.ssso
 	$(ROBOT) sssom:inject {% for source in bridge.sources %}--sssom $(MAPPINGDIR)/{{ source }}.sssom.tsv \
 		              {% endfor %}--ruleset $(SCRIPTSDIR)/bridge-{{ bridge.ruleset }}.sssomt \
 		              --create --bridge-format OFN \
+		              --bridge-iri $(ONTBASE)/bridges/{{ bridge.id }}.owl \
 		              --bridge-file $@
 
 {%     elif bridge.bridge_type == "custom" -%}
