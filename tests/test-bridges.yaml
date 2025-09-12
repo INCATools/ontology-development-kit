@@ -21,3 +21,5 @@ bridge_group:
         - modmini-onta
         - modmini-ontb
     - id: modmini-ontc
+      objects:
+        - https://w3id.org/sssom/
