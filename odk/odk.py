@@ -576,11 +576,17 @@ class BridgeGroup(ProductGroup):
 
     def _derive_fields(self, project):
         for product in [p for p in self.products if p.bridge_type == "sssom"]:
+            if project.sssom_mappingset_group is None:
+                raise Exception("The project defines a SSSOM-derived bridge but has no SSSOM group")
+
             if product.sources is None:
                 # Default source is a mapping set with the same name as
                 # the bridge itself
-                # FIXME: we do not check that such a mapping set exists!
                 product.sources = [product.id]
+
+            for source in product.sources:
+                if source not in [p.id for p in project.sssom_mappingset_group.products]:
+                    raise Exception(f"Missing source SSSOM set '{source}' for bridge '{product.id}'")
 
 @dataclass_json
 @dataclass
