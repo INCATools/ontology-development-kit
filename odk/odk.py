@@ -214,9 +214,6 @@ class BridgeProduct(Product):
     ruleset: str = "default"
     """The SSSOM/T-OWL ruleset to use to derive the bridge."""
 
-    objects: Optional[List[str]] = None
-    """If set, the input mapping set(s) will be filtered to only contain mappings with an object in one of the listed namespaces."""
-
 @dataclass_json
 @dataclass
 class BabelonTranslationProduct(Product):
@@ -579,32 +576,11 @@ class BridgeGroup(ProductGroup):
 
     def _derive_fields(self, project):
         for product in [p for p in self.products if p.bridge_type == "sssom"]:
-            product.extra_prefixes = []
-            product.filter = None
-
             if product.sources is None:
                 # Default source is a mapping set with the same name as
                 # the bridge itself
                 # FIXME: we do not check that such a mapping set exists!
                 product.sources = [product.id]
-
-            if product.objects is not None:
-                # Object filtering implies the use of a specific ruleset
-                # instead of the default ruleset, even if no custom
-                # ruleset name has been provided
-                if product.ruleset == "default":
-                    product.ruleset = product.id
-
-                # For every targeted object namespace, we inject a
-                # prefix name Px and a filter "object==Px:*"
-                filters = []
-                for i, obj in enumerate(product.objects):
-                    product.extra_prefixes.append((f"P{i}", obj))
-                    filters.append(f"object==P{i}:*")
-                if len(filters) > 1:
-                    product.filter = "(" + " || ".join(filters) + ")"
-                else:
-                    product.filter = " || ".join(filters)
 
 @dataclass_json
 @dataclass
