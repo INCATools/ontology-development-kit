@@ -1213,9 +1213,11 @@ $(BRIDGEDIR)/{{ bridge.id }}.owl: $(SCRIPTSDIR)/bridge-{{ bridge.ruleset }}.ssso
 		| $(BRIDGEDIR) all_robot_plugins
 	$(ROBOT) sssom:inject {% for source in bridge.sources %}--sssom $(MAPPINGDIR)/{{ source }}.sssom.tsv \
 		              {% endfor %}--ruleset $(SCRIPTSDIR)/bridge-{{ bridge.ruleset }}.sssomt \
-		              --create --bridge-format OFN \
-		              --bridge-iri $(ONTBASE)/bridges/{{ bridge.id }}.owl \
-		              --bridge-file $@
+		              --create \
+		 annotate --ontology-iri $(ONTBASE)/bridges/{{ bridge.id }}.owl \
+		          --version-iri $(ONTBASE)/releases/$(VERSION)/bridges/{{ bridge.id }}.owl \
+		          --annotation owl:versionInfo $(VERSION) \
+		 convert -f ofn -o $@
 
 {%     elif bridge.bridge_type == "custom" -%}
 $(BRIDGEDIR)/{{ bridge.id }}.owl:
