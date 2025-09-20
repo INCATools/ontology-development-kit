@@ -104,17 +104,6 @@ RUN wget -nv https://github.com/VirtusLab/scala-cli/releases/download/v$SCALA_CL
 RUN npm install -g obographviz && \
     chown -R root:root /usr/local/lib/node_modules
 
-# Install OBO-Dashboard.
-COPY scripts/obodash /tools
-RUN chmod +x /tools/obodash && \
-    git clone --depth 1 https://github.com/OBOFoundry/OBO-Dashboard.git && \
-    cd OBO-Dashboard && \
-    python3 -m pip install -r requirements.txt --break-system-packages && \
-    echo " " >> Makefile && \
-    echo "build/robot.jar:" >> Makefile && \
-    echo "	echo 'skipped ROBOT jar download.....' && touch \$@" >> Makefile && \
-    echo "" >> Makefile
-
 # Install KGCL ROBOT plugin
 RUN wget -nv -O /tools/robot-plugins/kgcl.jar https://github.com/gouttegd/kgcl-java/releases/download/kgcl-java-$KGCL_JAVA_VERSION/kgcl-robot-plugin-$KGCL_JAVA_VERSION.jar
 
