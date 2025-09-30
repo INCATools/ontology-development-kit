@@ -6,7 +6,6 @@ dataclasses-jsonschema
 jinja2
 jsonpath_rw
 jsonschema
-PyGithub
 pyyaml
 ruamel.yaml
 dosdp

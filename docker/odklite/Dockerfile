@@ -36,7 +36,8 @@ RUN apt-get update && \
         rsync \
         time \
         sudo \
-        sqlite3
+        sqlite3 \
+        gh
 
 # Install Python environment (copied over from the builder image).
 COPY --from=obolibrary/odkbuild:latest /staging/lite /
@@ -107,7 +108,7 @@ RUN sed -i s/@@ODK_IMAGE_VERSION@@/$ODK_VERSION/ /tools/odk-info
 COPY --chmod=755 scripts/update_repo.sh /tools/update_repo
 
 # Install the ODK itself.
-COPY --chmod=755 odk/make-release-assets.py odk/odk.py /tools
+COPY --chmod=755 odk/odk.py /tools
 COPY template/ /tools/templates/
 CMD python3 /tools/odk.py
 COPY resources/obo.epm.json /tools

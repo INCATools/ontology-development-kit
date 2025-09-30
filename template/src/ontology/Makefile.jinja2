@@ -1507,69 +1507,35 @@ $(ONT)-basic.owl: $(EDIT_PREPROCESSED) $(OTHER_SRC) $(SIMPLESEED) $(KEEPRELATION
 explain_unsat: $(EDIT_PREPROCESSED) 
 	$(ROBOT) explain -i $< -M unsatisfiability --unsatisfiable random:10 --explanation $(TMPDIR)/$@.md
 
-{%- if project.public_release != 'none'  %}
+{% if project.public_release == 'github' -%}
 # ----------------------------------------
-# GitHub release (HIGHLY experimental)
+# GitHub release
 # ----------------------------------------
-
-RELEASEFILES={% if project.public_release_assets is not none -%}{% for gha in project.public_release_assets %} {{ gha }}{% endfor -%}{% else -%}$(ASSETS){% endif %}
-TAGNAME=v$(TODAY)
-{% endif %}
-
-{% if project.public_release == 'github_curl'  %}
-USER=unknown
-GH_ASSETS = $(patsubst %, $(TMPDIR)/gh_release_asset_%.txt, $(RELEASEFILES))
-GITHUB_REPO={{ project.github_org }}/{{ project.repo }}
-
-$(TMPDIR)/release_get.txt: | $(TMPDIR)
-	curl -s https://api.github.com/repos/${GITHUB_REPO}/releases/tags/${TAGNAME} > $@
-
-$(TMPDIR)/release_op.txt: $(TMPDIR)/release_get.txt | $(TMPDIR)
-	$(eval RELEASEID=$(shell cat $(TMPDIR)/release_get.txt | jq '.id'))
-	if ! [ "$(RELEASEID)" -eq "$(RELEASEID)" ] ; then \
-		curl -s -X POST \
-			https://api.github.com/repos/${GITHUB_REPO}/releases \
-			-H 'Accept: */*' \
-			-H 'Content-Type: application/json' \
-			-u ${USER} \
-			-d '{ "tag_name": "${TAGNAME}", "target_commitish": "master", "name": "${TAGNAME}", "body": "Ontology release ${TODAY}", "draft": false, "prerelease": false }' > $@; \
-	else \
-		cp $< $@; \
-	fi;
-
-$(TMPDIR)/gh_release_id.txt: $(TMPDIR)/release_op.txt | $(TMPDIR)
-	echo $(shell cat $(TMPDIR)/release_op.txt | jq '.id') > $@;
-
-$(TMPDIR)/gh_release_asset_%.txt: $(TMPDIR)/gh_release_id.txt % | $(TMPDIR)
-	curl -X POST \
-		"https://uploads.github.com/repos/${GITHUB_REPO}/releases/$(shell cat $(TMPDIR)/gh_release_id.txt)/assets?name=$*&label=$*" \
-		--data-binary @$* \
-		-u ${USER} \
-		-H 'Accept: */*' \
-		-H 'Cache-Control: no-cache' \
-		-H 'Connection: keep-alive' \
-		-H 'Content-Type: application/octet-stream' > $@
-
-public_release: $(TMPDIR)/gh_release_id.txt $(GH_ASSETS) | $(TMPDIR)
-{% endif %}
-{%- if project.public_release == 'github_python'  %}
-GITHUB_RELEASE_PYTHON=make-release-assets.py
-
-.PHONY: public_release
-public_release:
-	ls -alt $(ASSETS)
-	$(GITHUB_RELEASE_PYTHON) --release $(TAGNAME) $(RELEASEFILES)
-{% else  %}
 
 GHVERSION=v$(VERSION)
 
 .PHONY: public_release
 public_release:
-	@test $(GHVERSION)
-	ls -alt $(RELEASE_ASSETS_AFTER_RELEASE)
-	gh release create $(GHVERSION) --title "$(VERSION) Release" --draft $(RELEASE_ASSETS_AFTER_RELEASE) --generate-notes
+	@echo "Pushing public release $(GHVERSION)..."
+	@ls -alt $(RELEASE_ASSETS_AFTER_RELEASE)
+	@gh release create $(GHVERSION) \
+		           --title "$(VERSION) Release" \
+		           --generate-notes \
+		           $(RELEASE_ASSETS_AFTER_RELEASE)
 
-{%- endif %}
+{% else -%}
+# ----------------------------------------
+# Public release
+# ----------------------------------------
+
+.PHONY: public_release
+public_release:
+	@echo "ERROR: No release management system configured (or system unsupported)."
+	@echo "       Fix your configuration or override this target with a custom"
+	@echo "       public release workflow in {{ project.id }}.Makefile."
+	@false
+
+{% endif -%}
 
 # ----------------------------------------
 # General Validation

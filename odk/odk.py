@@ -765,8 +765,8 @@ class OntologyProject(JsonSchemaMixin):
     use_context: bool = False
     """If True, a context file is created that allows the user to specify prefixes used across the project."""
     
-    public_release : str = "none"
-    """if true add functions to run automated releases (experimental). Current options are: github_curl, github_python."""
+    public_release : Optional[str] = None
+    """Add supports for automatically pushing releases to the hosting service. Currently the only supported option is 'github'."""
 
     public_release_assets : Optional[List[str]] = None
     """A list of files that gets added to a github/gitlab/etc release (as assets). If this option is not set (None), the standard ODK assets will be deployed."""
@@ -908,6 +908,10 @@ class OntologyProject(JsonSchemaMixin):
             if len(self.robot.obo_format_options) > 0:
                 self.robot.obo_format_options += ' '
             self.robot.obo_format_options += '--clean-obo "strict drop-untranslatable-axioms"'
+
+        # Backwards compatibility support for deprecated 'public_release' settings
+        if self.public_release == 'github_curl' or self.public_release == 'github_python':
+            self.public_release = 'github'
 
 @dataclass
 class ExecutionContext(JsonSchemaMixin):
