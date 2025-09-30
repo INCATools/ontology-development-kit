@@ -36,7 +36,6 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     libbusiness-isbn-perl \
     pkg-config \
     xlsx2csv \
-    gh \
     nodejs \
     npm \
     graphviz \
