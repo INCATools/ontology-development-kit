@@ -1591,6 +1591,28 @@ update_docs:
 	mkdocs gh-deploy --config-file ../../mkdocs.yaml
 {%- endif %}
 
+.PHONY: release_changelog
+release_changelog: $(REPORTDIR)/changelog.md $(REPORTDIR)/changelog.csv $(REPORTDIR)/changelog.yaml
+
+$(TMPDIR)/latest_release.obo: $(TMPDIR)
+	wget $(ONTBASE)/$(ONT)-base.owl -O $@.tmp.owl || { \
+		echo "Latest release couldn't be found, creating an empty OBO file instead"; \
+		echo "format-version: 1.2" > $@.tmp.owl; \
+	}
+	$(ROBOT) convert -i $@.tmp.owl --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@ && rm $@.tmp.owl
+
+$(TMPDIR)/current_release.obo: $(ONT)-base.owl
+	$(ROBOT) convert -i $< --check false -f obo $(OBO_FORMAT_OPTIONS) -o $@
+
+$(REPORTDIR)/changelog.md: $(TMPDIR)/latest_release.obo $(TMPDIR)/current_release.obo
+	runoak -i simpleobo:$< diff -X simpleobo:$(word 2, $^) -o $@ --output-type md
+
+$(REPORTDIR)/changelog.csv: $(TMPDIR)/latest_release.obo $(TMPDIR)/current_release.obo
+	runoak -i simpleobo:$< diff -X simpleobo:$(word 2, $^) -o $@ --output-type csv --statistics --group-by-property oio:hasOBONamespace
+
+$(REPORTDIR)/changelog.yaml: $(TMPDIR)/latest_release.obo $(TMPDIR)/current_release.obo
+	runoak -i simpleobo:$< diff -X simpleobo:$(word 2, $^) -o $@ --output-type yaml
+
 # Note to future generations: computing the real path relative to the
 # current directory is a way to ensure we only clean up directories that
 # are located below the current directory, regardless of the contents of
@@ -1662,6 +1684,7 @@ Additional build commands (advanced users)
 * all_assets:		Build all assets
 * show_assets:		Print a list of all assets that would be build by the release pipeline
 * all_mappings:		Update all SSSOM mapping sets
+* release_changelog: Generates a markdown changelog report summarizing ontology changes along with KGCL outputs. This function converts OWL ontologies to OBO format for diffing, which may result in information loss due to OBO's limited expressivity compared to OWL.
 
 Additional QC commands (advanced users)
 * robot_reports:	Run all configured ROBOT reports
