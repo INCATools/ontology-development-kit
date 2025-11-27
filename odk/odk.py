@@ -417,7 +417,9 @@ class ImportGroup(ProductGroup):
             if p.base_iris is None:
                 p.base_iris = [ 'http://purl.obolibrary.org/obo/' + p.id.upper() ]
             if (p.is_large or p.module_type != self.module_type or
-                (p.module_type == 'slme' and p.module_type_slme != self.module_type_slme)):
+                (p.module_type == 'slme' and
+                 (p.module_type_slme != self.module_type_slme or
+                  p.slme_individuals != self.slme_individuals))):
                 # This module will require a distinct rule
                 self.special_products.append(p)
 
