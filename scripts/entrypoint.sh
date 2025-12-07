@@ -13,11 +13,14 @@ mkdir -p /home/odkuser
 chown odkuser:odkuser /home/odkuser
 [ -d /home/odkuser/.data ] && chown odkuser:odkuser /home/odkuser/.data
 [ -d /home/odkuser/.data/oaklib ] && chown odkuser:odkuser /home/odkuser/.data/oaklib
-if [ ! -d /tools/.coursier-cache ] ; then
-    mkdir /tools/.coursier-cache
-    chown odkuser:odkuser /tools/.coursier-cache
+if [ ! -d /odk/tools/.coursier-cache ] ; then
+    mkdir /odk/tools/.coursier-cache
+    chown odkuser:odkuser /odk/tools/.coursier-cache
 fi
 PATH=$PATH:/home/odkuser/.local/bin
 [ -S /run/host-services/ssh-auth.sock ] && chown odkuser /run/host-services/ssh-auth.sock
+
+ODK_RESOURCES_DIR=/odk/resources
+export ODK_RESOURCES_DIR
 
 exec sudo -H -E -u odkuser "$@"
