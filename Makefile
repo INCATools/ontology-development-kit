@@ -5,7 +5,7 @@
 # this can be changed to seed-via-docker.sh;
 # but this should NOT be the default for environments like travis which
 # run in a docker container anyway
-CMD = ./odk/odk.py seed
+CMD = odk seed
 
 EMAIL_ARGS=
 
@@ -37,7 +37,7 @@ test_odklite_programs:
 	@./tests/test-program.sh JINJANATOR jinjanate --version
 	@./tests/test-program.sh DICER-CLI dicer-cli --version
 	@./tests/test-program.sh SSSOM-CLI sssom-cli --version
-	@./tests/test-program.sh ODK odk.py --help
+	@./tests/test-program.sh ODK odk --help
 
 test_odkfull_programs: test_odklite_programs
 	@./tests/test-program.sh KONCLUDE Konclude -h
