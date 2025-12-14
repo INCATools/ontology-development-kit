@@ -63,11 +63,6 @@ tests/*.yaml: .FORCE
 	$(CMD) -c -C $@
 
 
-.PHONY: docs
-docs:
-	@ODK_IMAGE=odklite ./odk.sh ./odk/odk.py dump-schema > schema/project-schema.json
-	@ODK_IMAGE=odklite ./odk.sh python ./odk/schema_documentation.py
-
 # Building docker image
 VERSION = "v1.7"
 IM=obolibrary/odkfull

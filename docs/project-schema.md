@@ -1,6 +1,8 @@
 
 ## ODK Project Configuration Schema
 
+**Warning**: This documentation is not kept up-to-date and may not reflect the latest ODK configuration schema.
+
 - **`allow_equivalents`** *(string)*: can be all, none or asserted-only (see ROBOT documentation: http://robot.obolibrary.org/reason). Default: `"asserted-only"`.
 
 
