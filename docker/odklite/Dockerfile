@@ -49,7 +49,7 @@ RUN mkdir -p /odk/tools /odk/resources/robot/plugins /odk/bin
 RUN wget -nv $ROBOT_JAR \
         -O /odk/tools/robot.jar && \
     echo "#!/bin/sh" > /odk/bin/robot && \
-    echo "exec java -jar \$ROBOT_JAVA_ARGS /odk/tools/robot.jar \"$@\"" >> /odk/bin/robot && \
+    echo "exec java \$ROBOT_JAVA_ARGS -jar /odk/tools/robot.jar \"\$@\"" >> /odk/bin/robot && \
     chmod 755 /odk/bin/robot && \
     wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/robot-core/src/main/resources/report_profile.txt \
         -O /odk/resources/robot/profile.txt
