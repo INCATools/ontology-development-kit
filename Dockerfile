@@ -83,7 +83,7 @@ RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_V
     wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools-oort-all.jar \
         -O /odk/tools/owltools-oort-all.jar && \
     echo "#!/bin/sh" > /odk/bin/ontology-release-runner && \
-    echo "exec java -jar /odk/tools/owltools-oort-all.jar \"$@\"" >> /odk/bin/ontology-release-runner && \
+    echo "exec java -jar /odk/tools/owltools-oort-all.jar \"\$@\"" >> /odk/bin/ontology-release-runner && \
     chmod +x /odk/bin/owltools && \
     chmod +x /odk/bin/ontology-release-runner
 
