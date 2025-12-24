@@ -104,6 +104,13 @@ RUN sed -i s/@@ODK_IMAGE_VERSION@@/$ODK_VERSION/ /odk/bin/odk-info
 # Install a helper script to launch a repository update
 COPY --chmod=755 scripts/update_repo.sh /odk/bin/update_repo
 
+# The odk script used to be named `odk.py` and to be located at
+# /tools/odk.py, and both the name (with the `.py` extension) and the
+# full path have been hardcoded at several places, so we need some
+# symlinks for compatibility.
+RUN mkdir /tools && ln -s /usr/local/bin/odk /tools/odk.py && \
+    ln -s /usr/local/bin/odk /odk/bin/odk.py
+
 # Install the OBO extended prefix map
 COPY resources/obo.epm.json /odk/resources
 
