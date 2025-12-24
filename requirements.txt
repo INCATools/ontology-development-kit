@@ -1,7 +1,7 @@
 # Core dependencies
+./core[workflows]
 linkml
 oaklib
-odk-core[workflows]
 semsimian
 
 # Secondary dependencies
