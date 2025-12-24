@@ -32,6 +32,6 @@ virtualenv -p ${PYTHON_VERSION:-3.12} tmpdir
 . tmpdir/bin/activate
 [ -f pip-constraints.txt ] && export PIP_CONSTRAINT=$(pwd)/pip-constraints.txt
 python3 -m pip install -r requirements.txt
-python3 -m pip freeze > constraints.txt
+python3 -m pip freeze | grep -v ^odk-core > constraints.txt
 
 test -n "$(head constraints.txt)"
