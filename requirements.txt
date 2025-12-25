@@ -13,10 +13,6 @@ jupyter
 kgx
 matplotlib
 matplotlib_venn
-mkdocs
-mkdocs-material
-mkdocs-mermaid2-plugin
-mkdocs-table-reader-plugin
 networkx
 numpy
 ontobio
