@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-
-java -jar /tools/droid.jar
