@@ -157,7 +157,7 @@ publish-multiarch-dev:
 
 # This should use the same base image as the one used to build the ODK itself.
 constraints.txt: requirements.txt
-	docker run -v $$PWD:/work -w /work --rm -ti ubuntu:24.04 /work/update-constraints.sh --in-docker
+	docker run -v $$PWD:/work -w /work --rm -ti ubuntu:24.04 /work/scripts/update-constraints.sh --in-docker
 
 clean-tests:
 	rm -rf target/*
