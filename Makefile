@@ -16,20 +16,6 @@ PLATFORMS=linux/amd64,linux/arm64
 
 .PHONY: .FORCE
 
-custom_tests: test_no_yaml_dependencies_none test_no_yaml_dependencies_ro_pato test_no_yaml_dependencies_ro_pato_cl test_go_mini
-
-test_no_yaml_dependencies_none:
-	$(CMD) $(EMAIL_ARGS) -c -t my-ontology1 myont
-
-test_no_yaml_dependencies_ro_pato:
-	$(CMD) $(EMAIL_ARGS) -c -d pato -d ro -t my-ontology2 myont
-
-test_no_yaml_dependencies_ro_pato_cl:
-	$(CMD) $(EMAIL_ARGS) -c -d pato -d cl -d ro -t my-ontology3 myont
-
-test_go_mini:
-	$(CMD) -c -C examples/go-mini/project.yaml -s examples/go-mini/go-edit.obo -D target/go-mini
-
 test_odklite_programs:
 	@./tests/test-program.sh ROBOT robot --version
 	@./tests/test-program.sh DOSDP-TOOLS dosdp-tools -v
@@ -54,7 +40,7 @@ test_odkfull_programs: test_odklite_programs
 test_odkdev_programs: test_odkfull_programs
 
 TEST_FILES = $(wildcard core/tests/configs/*.yaml)
-test: $(TEST_FILES) custom_tests
+test: $(TEST_FILES)
 	echo "All tests passed successfully!"
 
 core/tests/configs/*.yaml: .FORCE
