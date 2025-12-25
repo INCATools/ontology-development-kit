@@ -19,7 +19,7 @@ jobs:
       - name: Build constraints.txt
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace ubuntu:24.04 \
-          sh update-constraints.sh --in-docker
+          sh scripts/update-constraints.sh --in-docker
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         if: ${{ success() }}
