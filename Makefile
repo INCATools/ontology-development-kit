@@ -53,13 +53,11 @@ test_odkfull_programs: test_odklite_programs
 
 test_odkdev_programs: test_odkfull_programs
 
-TESTS = $(notdir $(wildcard tests/*.yaml))
-TEST_FILES = $(foreach n,$(TESTS), tests/$(n))
-#TEST_FILES = tests/test-release.yaml
+TEST_FILES = $(wildcard core/tests/configs/*.yaml)
 test: $(TEST_FILES) custom_tests
 	echo "All tests passed successfully!"
 
-tests/*.yaml: .FORCE
+core/tests/configs/*.yaml: .FORCE
 	$(CMD) -c -C $@
 
 
