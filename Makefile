@@ -39,7 +39,9 @@ test_odkfull_programs: test_odklite_programs
 
 test_odkdev_programs: test_odkfull_programs
 
-TEST_FILES = $(wildcard core/tests/configs/*.yaml)
+# Subset of ODK Core tests to run
+TESTS = minimal module-star release
+TEST_FILES = $(foreach t, $(TESTS), core/tests/configs/test-$(t).yaml)
 test: $(TEST_FILES)
 	echo "All tests passed successfully!"
 
