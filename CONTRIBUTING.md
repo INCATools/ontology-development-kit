@@ -51,15 +51,23 @@ break custom workflows.
 
 #### Docker
 
-Currently, the ODK is provided as a Docker image. While it would be
-desirable _not_ to depend on Docker, this is not realistically feasible
-for now.
+Currently, the ODK is provided as a Docker image. However, at least on
+GNU/Linux and macOS, it should be possible to seed/update a repository
+and run any workflow within it _without_ Docker, provided all the
+required tools (e.g. ROBOT, dosdp-tools, etc.) are available on the
+system. The role of the Docker is merely to provide a convenient way of
+ensuring that all the tools are readily available.
 
-Still, as much as possible, developers should refrain from assuming that
-the Docker image will always be used. For example, workflows should not
-invoke a tool by hardcoding its path within the Docker image, but
-instead assume the tool is available in the _PATH_ (so, for example,
-ROBOT should be invoked simply as `robot`, _not_ as `/tools/robot`).
+Therefore, developers must refrain from assuming that the Docker image
+will always be used. For example, workflows must not invoke a tool by
+hardcoding its path within the Docker image, but instead assume the
+tools is available in the _PATH_ (so, for example, ROBOT should be
+invoked simply as `robot`, _not_ as `/odk/bin/robot`).
+
+Likewise, all resource files provided by the ODK must be accessed only
+through the `ODK_RESOURCES_DIR` environment variable (defaulting to
+`/odk/resources` – the directory for resources within the Docker image –
+only when that variable does not exist).
 
 #### Git
 
@@ -111,14 +119,14 @@ is not officially supported.
 
 ## Templating system
 
-Creating (“seeding”) a ODK-managed repository is done with the
-[odk/odk.py](odk/odk.py) script (available, within the ODK image, as
-`/tools/odk.py`). The `seed` command of that script instantiates the
-Jinja2 templates found in the [template/](template) directory
-(`/tools/templates` within the ODK image).
+Creating (“seeding”) a ODK-managed repository is done with the `odk`
+command from the [ODK Core](https://github.com/INCATools/odkcore). The
+`seed` subcommand instantiates the Jinja2 templates found in the
+[templates/](https://github.com/INCATools/odkcore/tree/main/src/incatools/odk/templates)
+directory of that project.
 
 For example, the file
-[template/src/ontology/Makefile.jinja2](template/src/ontology/Makefile.jinja2)
+[Makefile.jinja2](https://github.com/INCATools/odkcore/tree/main/src/incatools/odk/templates/src/ontology/Makefile.jinja2)
 will compile to a file `src/ontology/Makefile` in the target/output
 directory.
 
@@ -199,20 +207,17 @@ Currently the datamodel is specified as python dataclasses, for now
 the best way to see the complete spec is to look at the classes
 annotated with `@dataclass` in the code.
 
-There is a [schema](schema) folder but this is incomplete as the
-dataclasses-scheme module doesn't appear to work (TODO)...
-
 An auto-generated documentation is available in
-[docs/project-schema.md](docs/project-schema.md). That documentation is
-updated by running `make docs` from the top-level directory. Additional
-documentation should at some point be available in
-[docs/schema-options.md](docs/schema-options.md).
+[docs/project-schema.md](docs/project-schema.md), however that
+documentation is outdated and currently cannot be refreshed.
 
-There are also example `project.yaml` files in the
-[examples](examples) folder, and these also serve as rudimentary unit
-tests.
-
-See for example [examples/go-mini/project.yaml](examples/go-mini/project.yaml)
+At some point, a complete (and up-to-date) documentation for the schema
+should be found in the [ODK Core](https://github.com/INCATools/odkcore)
+project. Until then, the
+[examples](https://github.com/INCATools/odkcore/tree/main/examples) and
+[tests/configs](https://github.com/INCATools/odkcore/tree/main/tests/configs)
+directories in that project provide some examples of ODK configuration
+files.
 
 The basic data model is:
 
@@ -236,25 +241,25 @@ Note that in all cases a `project.yaml` file is generated.
 
 ## ODK commands
 
-```
-$ ./odk/odk.py --help
-Usage: odk.py [OPTIONS] COMMAND [ARGS]...
+```sh
+$ odk --help
+Usage: odk [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --help  Show this message and exit.
 
 Commands:
-  create-dynfile   For testing purposes
-  create-makefile  For testing purposes
-  dump-schema      Dumps the python schema as json schema.
-  export-project   For testing purposes
-  seed             Seeds an ontology project
-  update           Updates a pre-existing repository.
+  export-project  Exports the full configuration for a project.
+  generate-file   Generates a single template-derived file.
+  install         Installs a ODK environment.
+  seed            Seeds an ontology project.
+  update          Updates a pre-existing repository.
+  update-config   Updates a configuration file to account for renamed or...
 ```
 
 The most common command is `seed`.
 
-## Building the ODK
+## Building the ODK images
 
 ### Setting up a new machine for ODK development
 
@@ -375,8 +380,12 @@ They all have slightly different procedures which we will detail below.
 
 Major releases contain changes to the workflow system of the ODK, e.g.
 changes to the `Makefile` and various supporting scripts such as
-`run.sh`. They require users to update their repository with `sh run.sh
+`run.sh`. They require users to update their repository with `sh run.sha
 update_repo`.
+
+As a general rule, any update of the ODK Core submodule (which provides
+the seeding script and the workflow templates) is ground for a new major
+release.
 
 Major releases are typically incremented (a bit confusingly) on the
 "minor" version number of ODK, i.e. 1.4, 1.5, 1.6 etc.  There are
@@ -552,16 +561,51 @@ otherwise approved.
 How and where to add a component to the ODK depends on the nature of the
 component and whether it is to be added to `odkfull` or `odklite`.
 
-As a general rule, new components should probably be added to `odkfull`,
-as `odklite` is intended to be kept small. Components should only be
-added to `odklite` if they are required in rules from the ODK-generated
-standard Makefile. Note that any component added to `odklite` will
-automatically be part of `odkfull`.
+As a general rule, a component should only be added to `odklite` if the
+component is required by the ODK-generated standard Makefile.  If the
+component is proposed for addition because it is believed that it could
+be useful for some custom, non-standard workflows, then it should be
+added to `odkfull` instead.
+
+Note that any component added to `odklite` will automatically be part of
+`odkfull`.
+
+### Adding a new component to `odklite`
+
+If the new component is a Python module, then all that is needed is to
+declare it as an additional dependency in the `workflows` dependency
+group of the [ODK Core](https://github.com/INCATools/odkcore) project.
+The change will be taken into account the next time the ODK Core
+submodule is updated.
+
+If the new component is any other kind of program, then the `odk
+install` command of the ODK Core project should be amended so that it
+takes care of installing the component in a newly created environment.
+The `odk install` command is invoked when building the `odklite` image,
+so any component installed by that command will automatically become
+part of that image – again, the change will be effective the next time
+the ODK Core submodule is updated.
+
+Programs _may_ also be explicitly installed in the `odklite` image by
+amending [the Dockerfile for odklite](docker/odklite/Dockerfile). The
+`odk install` command will _not_ re-install any program that is already
+present in the `odklite` image, so installation commands in the
+Dockerfile will always take precedence over what the `odk install`
+command does. This allows, for example, overriding the versions of some
+programs. Note that, when doing so, you should follow the same
+recommendations as given in the next section about adding a component to
+`odkfull`.
+
+### Adding a new component to `odkfull`
+
+If the component is a Python module (that is not already a dependency of
+ODK Core), then add it to the `requirements.txt` file. Please try to
+avoid version constraints in that file unless you can explain why you
+need one.
 
 Is the component available as a standard Ubuntu package? Then add it to
 the list of packages in the `apt-get install` invocation in [the main
-Dockerfile](Dockerfile) (for inclusion into `odkfull`) or in [the
-Dockerfile for odklite](docker/odklite/Dockerfile).
+Dockerfile](Dockerfile) (for inclusion into `odkfull`).
 
 Is the component available as a pre-built binary? Be careful that many
 projets only provide pre-built binaries for the x86 architecture. Using
@@ -570,25 +614,24 @@ version of the ODK (notably used on Apple computers equipped with M1
 CPUs, aka "Apple Silicon").
 
 Java programs available as pre-built jars can be installed by adding new
-`RUN` commands at the end of either the main Dockerfile (for `odkfull`)
-or the Dockerfile for `odklite`.
+`RUN` commands at the end of the main Dockerfile.
 
-If the component needs to be built from source, do so in [the Dockerfile for odkbuild](docker/builder/Dockerfile), 
-and install the compiled file(s) in either the `/staging/full` tree or the `/staging/lite` tree, for
-inclusion in `odkfull` or `odklite` respectively.
+If the component needs to be built from source, do so in [the Dockerfile
+for odkbuild](docker/builder/Dockerfile), and install the compiled
+file(s) in the `/staging/full` tree, from which it will be automatically
+copied into the `odkfull` image.
 
-If the component is a Python package, add it to the `requirements.txt.full`
-file, and *also* in the `requirements.txt.lite` file if it is to be part
-of `odklite`. Please try to avoid version constraints unless you can
-explain why you need one.
+### Python constraints
 
 Python packages are "frozen" so that any subsequent build of the ODK
 will always include the exact same version of every single package. To
 update the frozen list, run `make constraints.txt` in the top-level
 directory. This should be done at least (1) whenever a new package is
-added to `requirements.txt.full`, (2) whenever the base image is
-updated. It can also be done at any time during the development cycle to
-ensure that we pick regular updates of any package we use.
+added to `requirements.txt`, (2) whenever the ODK Core submodule is
+updated, if the new version has new dependencies compared to the current
+version, and (3) whenever the base image is updated. It can also be done
+at any time during the development cycle to ensure that we pick regular
+updates of any package we use.
 
 ## Tools to update
 
