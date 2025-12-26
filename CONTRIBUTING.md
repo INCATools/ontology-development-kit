@@ -55,8 +55,8 @@ Currently, the ODK is provided as a Docker image. However, at least on
 GNU/Linux and macOS, it should be possible to seed/update a repository
 and run any workflow within it _without_ Docker, provided all the
 required tools (e.g. ROBOT, dosdp-tools, etc.) are available on the
-system. The role of the Docker is merely to provide a convenient way of
-ensuring that all the tools are readily available.
+system. The role of the Docker image is merely to provide a convenient
+way of ensuring that all the tools are readily available.
 
 Therefore, developers must refrain from assuming that the Docker image
 will always be used. For example, workflows must not invoke a tool by
@@ -258,6 +258,62 @@ Commands:
 ```
 
 The most common command is `seed`.
+
+## Project organisation
+
+The entire Ontology Development Kit project is developed over the
+following distinct repositories:
+
+* [ODK Core](https://github.com/INCATools/odkcore): the `odk` main
+  program used to seed and update repositories, and the workflow
+  templates;
+* this repository: the Docker images;
+* [ODK Runner](https://github.com/INCATools/odkrunner): the `odkrun`
+  program, which is the recommended way of invoking ODK workflows;
+* [ODK ROBOT Plugin](https://github.com/INCATools/odk-robot-plugin): a
+  plugin for ROBOT providing some additional commands used in ODK
+  workflows.
+
+While the ODK Core Python package is published on its own in the Python
+Package Index (so that it can be installed independently of the ODK
+Docker images, should anyone wish to do so), for building the Docker
+images we directly “import” the ODK Core into this repository as a Git
+submodule under the `core/` directory. Because of that, ODK developers
+should be careful of using Git’s `--recurse-submodules` option whenever
+cloning or updating their local repository (or using the `git submodule
+init/update` commands appropriately) to ensure the submodule is updated
+as needed.
+
+To update the ODK Core module used in the Docker images, simply `cd`
+into the `core/` subdirectory, and update the submodule so that the
+checked out repository matches the version of the ODK Core module you
+wish to use.
+
+For example, assuming the version currently in use is `odkcore-0.1.0`
+and you want to udpate to `odkcore-0.2.0`:
+
+```sh
+$ cd core
+$ git fetch # get any new commits and branches from upstream
+$ git checkout odkcore-0.2.0 # check out the version to use
+```
+
+You can then go back to the top-level directory and build a Docker image
+that will use the new `odkcore-0.2.0`:
+
+```sh
+$ cd ..
+$ make build
+```
+
+If you want the change to be persistent (that is, you want to
+permanently use `odkcore-0.2.0` from now on), you should then commit the
+updated submodule:
+
+```sh
+$ git add core
+$ git commit -m "Update ODK Core to version 0.2.0"
+```
 
 ## Building the ODK images
 
