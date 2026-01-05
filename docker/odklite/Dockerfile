@@ -8,11 +8,11 @@ ENV DICER_VERSION=0.2.1
 ENV ODK_ROBOT_PLUGIN_VERSION=0.3.0
 ENV SSSOM_JAVA_VERSION=1.10.0
 
-WORKDIR /tools
+WORKDIR /odk
 ENV JAVA_HOME="/usr"
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-ENV PATH="/tools:/tools/dosdptools/bin:/tools/relation-graph/bin:$PATH"
+ENV PATH="/odk/bin:$PATH"
 
 ARG ODK_VERSION=0.0.0
 ENV ODK_VERSION=$ODK_VERSION
@@ -42,50 +42,47 @@ RUN apt-get update && \
 # Install Python environment (copied over from the builder image).
 COPY --from=obolibrary/odkbuild:latest /staging/lite /
 
+# Create base directories
+RUN mkdir -p /odk/tools /odk/resources/robot/plugins /odk/bin
+
 # Install ROBOT.
 RUN wget -nv $ROBOT_JAR \
-        -O /tools/robot.jar && \
-    wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/bin/robot \
-        -O /tools/robot && \
-    chmod 755 /tools/robot &&\
-    mkdir -p /tools/templates/src/ontology &&\
+        -O /odk/tools/robot.jar && \
+    echo "#!/bin/sh" > /odk/bin/robot && \
+    echo "exec java \$ROBOT_JAVA_ARGS -jar /odk/tools/robot.jar \"\$@\"" >> /odk/bin/robot && \
+    chmod 755 /odk/bin/robot && \
     wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/robot-core/src/main/resources/report_profile.txt \
-        -O /tools/templates/src/ontology/profile.txt
+        -O /odk/resources/robot/profile.txt
 
 # Install DOSDPTOOLS.
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_VERSION/dosdp-tools-$DOSDP_VERSION.tgz && \
     tar zxf dosdp-tools-$DOSDP_VERSION.tgz && \
     rm dosdp-tools-$DOSDP_VERSION.tgz && \
-    mv dosdp-tools-$DOSDP_VERSION /tools/dosdptools && \
+    mv dosdp-tools-$DOSDP_VERSION /odk/tools/dosdptools && \
+    ln -s /odk/tools/dosdptools/bin/dosdp-tools /odk/bin/dosdp-tools && \
     wget -nv --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py \
-        -O /tools/simple_pattern_tester.py && \
-    chmod 755 /tools/simple_pattern_tester.py
+        -O /odk/bin/simple_pattern_tester.py && \
+    chmod 755 /odk/bin/simple_pattern_tester.py
 
 # Install ODK plugin for ROBOT
-RUN mkdir -p /tools/robot-plugins && \
-    wget -nv -O /tools/robot-plugins/odk.jar https://github.com/INCATools/odk-robot-plugin/releases/download/odk-robot-plugin-$ODK_ROBOT_PLUGIN_VERSION/odk.jar
+RUN wget -nv -O /odk/resources/robot/plugins/odk.jar https://github.com/INCATools/odk-robot-plugin/releases/download/odk-robot-plugin-$ODK_ROBOT_PLUGIN_VERSION/odk.jar
 
 # Install SSSOM-Java (CLI tool & ROBOT plugin)
-RUN wget -nv -O /tools/robot-plugins/sssom.jar https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-robot-plugin-$SSSOM_JAVA_VERSION.jar && \
-    wget -nv -O /tools/sssom-cli https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-cli && \
-    chmod +x /tools/sssom-cli
+RUN wget -nv -O /odk/resources/robot/plugins/sssom.jar https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-robot-plugin-$SSSOM_JAVA_VERSION.jar && \
+    wget -nv -O /odk/bin/sssom-cli https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-cli && \
+    chmod +x /odk/bin/sssom-cli
 
 # Install relation-graph
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELATION_GRAPH/relation-graph-cli-$RELATION_GRAPH.tgz && \
     tar -zxvf relation-graph-cli-$RELATION_GRAPH.tgz && \
-    mv relation-graph-cli-$RELATION_GRAPH /tools/relation-graph && \
-    chmod +x /tools/relation-graph
+    rm relation-graph-cli-$RELATION_GRAPH.tgz && \
+    mv relation-graph-cli-$RELATION_GRAPH /odk/tools/relation-graph && \
+    ln -s /odk/tools/relation-graph/bin/relation-graph /odk/bin/relation-graph
 
 # Install the Dicer CLI tool
 RUN wget -nv https://github.com/gouttegd/dicer/releases/download/dicer-$DICER_VERSION/dicer-cli \
-        -O /tools/dicer-cli && \
-    chmod +x /tools/dicer-cli
-
-# Install RDF/XML validation script
-COPY --chmod=755 scripts/check-rdfxml.sh /tools/check-rdfxml
-
-# Install script to convert JSON context prefix map to CSV prefix map
-COPY --chmod=755 scripts/context2csv.py /tools/context2csv
+        -O /odk/bin/dicer-cli && \
+    chmod +x /odk/bin/dicer-cli
 
 # Make sure we run under an existing user account with UID/GID
 # matching the UID/GID of the calling user
@@ -101,14 +98,24 @@ RUN sed -i '/secure_path/d' /etc/sudoers && \
     echo "[safe]\n    directory = *" >> /etc/gitconfig
 
 # Install a script that provides information about the ODK and its tools
-COPY --chmod=755 scripts/odk-info.sh /tools/odk-info
-RUN sed -i s/@@ODK_IMAGE_VERSION@@/$ODK_VERSION/ /tools/odk-info
+COPY --chmod=755 scripts/odk-info.sh /odk/bin/odk-info
+RUN sed -i s/@@ODK_IMAGE_VERSION@@/$ODK_VERSION/ /odk/bin/odk-info
 
 # Install a helper script to launch a repository update
-COPY --chmod=755 scripts/update_repo.sh /tools/update_repo
+COPY --chmod=755 scripts/update_repo.sh /odk/bin/update_repo
 
-# Install the ODK itself.
-COPY --chmod=755 odk/odk.py /tools
-COPY template/ /tools/templates/
-CMD python3 /tools/odk.py
-COPY resources/obo.epm.json /tools
+# The odk script used to be named `odk.py` and to be located at
+# /tools/odk.py, and both the name (with the `.py` extension) and the
+# full path have been hardcoded at several places, so we need some
+# symlinks for compatibility.
+RUN mkdir /tools && ln -s /usr/local/bin/odk /tools/odk.py && \
+    ln -s /usr/local/bin/odk /odk/bin/odk.py
+
+# Install the OBO extended prefix map
+COPY resources/obo.epm.json /odk/resources
+
+# Install anything that may be missing from ODK-Core
+RUN odk install /odk
+
+# Run the ODK-Core by default
+CMD odk

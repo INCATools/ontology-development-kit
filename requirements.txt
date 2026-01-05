@@ -1,0 +1,29 @@
+# Core dependencies
+./core[workflows]
+linkml
+oaklib
+semsimian
+
+# Secondary dependencies
+PyGithub
+curies
+funowl
+jsonschema2md
+jupyter
+kgx
+matplotlib
+matplotlib_venn
+networkx
+numpy
+ontobio
+ontodev-cogs
+ontodev-gizmos
+pandas
+plotly
+pyspellchecker
+rdflib
+requests
+seaborn
+tabulate
+upsetplot
+jinjanator

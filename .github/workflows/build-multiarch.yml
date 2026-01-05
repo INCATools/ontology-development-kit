@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Set up the QEMU static binaries
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx

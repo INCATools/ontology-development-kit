@@ -37,8 +37,7 @@ RUN apt-get update && \
 # Therefore we install all of them on the builder image (where we have
 # all the build tools required to compile them if needed), and we'll
 # copy the entire Python tree to the final images.
-COPY requirements.txt.full /build/requirements.txt
-COPY requirements.txt.lite /build/requirements.txt.lite
+COPY requirements.txt /build/requirements.txt
 COPY constraints.txt /build/constraints.txt
 COPY pip-constraints.txt /build/pip-constraints.txt
 RUN find /usr/lib/python3/dist-packages -type d -name '*-info' | \
@@ -49,17 +48,19 @@ RUN find /usr/lib/python3/dist-packages -type d -name '*-info' | \
              cat pip-constraints.txt.new ;\
         fi
 # First the packages needed by the odklite image.
-RUN PIP_CONSTRAINT=/build/pip-constraints.txt python3 -m pip install \
-        -r /build/requirements.txt.lite \
+RUN --mount=type=bind,target=/build/core,source=core \
+    PIP_CONSTRAINT=/build/pip-constraints.txt python3 -m pip install \
         -c /build/constraints.txt \
         --no-warn-script-location \
-        --root /staging/lite
+        --root /staging/lite \
+        './core[workflows]'
 # Then those needed by the odkfull image.
 # After installing those packages, we forcibly remove from the odkfull
 # staging tree any file already present in the odklite staging tree
 # (caused by packages installed in both trees) to avoid needlessly
 # increasing the size of the odkfull image.
-RUN PIP_CONSTRAINT=/build/pip-constraints.txt python3 -m pip install \
+RUN --mount=type=bind,target=/build/core,source=core \
+    PIP_CONSTRAINT=/build/pip-constraints.txt python3 -m pip install \
         -c /build/constraints.txt \
         -r /build/requirements.txt \
         --no-warn-script-location \

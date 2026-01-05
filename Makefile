@@ -5,7 +5,7 @@
 # this can be changed to seed-via-docker.sh;
 # but this should NOT be the default for environments like travis which
 # run in a docker container anyway
-CMD = ./odk/odk.py seed
+CMD = odk seed
 
 EMAIL_ARGS=
 
@@ -16,34 +16,20 @@ PLATFORMS=linux/amd64,linux/arm64
 
 .PHONY: .FORCE
 
-custom_tests: test_no_yaml_dependencies_none test_no_yaml_dependencies_ro_pato test_no_yaml_dependencies_ro_pato_cl test_go_mini
-
-test_no_yaml_dependencies_none:
-	$(CMD) $(EMAIL_ARGS) -c -t my-ontology1 myont
-
-test_no_yaml_dependencies_ro_pato:
-	$(CMD) $(EMAIL_ARGS) -c -d pato -d ro -t my-ontology2 myont
-
-test_no_yaml_dependencies_ro_pato_cl:
-	$(CMD) $(EMAIL_ARGS) -c -d pato -d cl -d ro -t my-ontology3 myont
-
-test_go_mini:
-	$(CMD) -c -C examples/go-mini/project.yaml -s examples/go-mini/go-edit.obo -D target/go-mini
-
 test_odklite_programs:
 	@./tests/test-program.sh ROBOT robot --version
 	@./tests/test-program.sh DOSDP-TOOLS dosdp-tools -v
-	@./tests/test-program.sh OORT ontology-release-runner --help
-	@./tests/test-program.sh JINJANATOR jinjanate --version
 	@./tests/test-program.sh DICER-CLI dicer-cli --version
 	@./tests/test-program.sh SSSOM-CLI sssom-cli --version
-	@./tests/test-program.sh ODK odk.py --help
+	@./tests/test-program.sh ODK odk --help
 
 test_odkfull_programs: test_odklite_programs
 	@./tests/test-program.sh KONCLUDE Konclude -h
 	@./tests/test-program.sh SOUFFLE souffle --version
 	@./tests/test-program.sh JENA jena
 	@./tests/test-program.sh OWLTOOLS owltools --version
+	@./tests/test-program.sh OORT ontology-release-runner --help
+	@./tests/test-program.sh JINJANATOR jinjanate --version
 	@./tests/test-program.sh SCALA-CLI scala-cli --version
 	@./tests/test-program.sh SPARQL sparql --version
 	@./tests/test-program.sh RELATION-GRAPH relation-graph --version
@@ -53,20 +39,15 @@ test_odkfull_programs: test_odklite_programs
 
 test_odkdev_programs: test_odkfull_programs
 
-TESTS = $(notdir $(wildcard tests/*.yaml))
-TEST_FILES = $(foreach n,$(TESTS), tests/$(n))
-#TEST_FILES = tests/test-release.yaml
-test: $(TEST_FILES) custom_tests
+# Subset of ODK Core tests to run
+TESTS = minimal module-star release
+TEST_FILES = $(foreach t, $(TESTS), core/tests/configs/test-$(t).yaml)
+test: $(TEST_FILES)
 	echo "All tests passed successfully!"
 
-tests/*.yaml: .FORCE
+core/tests/configs/*.yaml: .FORCE
 	$(CMD) -c -C $@
 
-
-.PHONY: docs
-docs:
-	@ODK_IMAGE=odklite ./odk.sh ./odk/odk.py dump-schema > schema/project-schema.json
-	@ODK_IMAGE=odklite ./odk.sh python ./odk/schema_documentation.py
 
 # Building docker image
 VERSION = "v1.7"
@@ -129,7 +110,6 @@ test-lite: build-odklite
 	$(MAKE) test-flavor FLAVOR=lite
 
 tests: test-full
-	make test_odkfull_programs
 
 test-no-build:
 	$(MAKE) test-flavor FLAVOR=full
@@ -176,8 +156,8 @@ publish-multiarch-dev:
 		.
 
 # This should use the same base image as the one used to build the ODK itself.
-constraints.txt: requirements.txt.full
-	docker run -v $$PWD:/work -w /work --rm -ti ubuntu:24.04 /work/update-constraints.sh --in-docker
+constraints.txt: requirements.txt
+	docker run -v $$PWD:/work -w /work --rm -ti ubuntu:24.04 /work/scripts/update-constraints.sh --in-docker
 
 clean-tests:
 	rm -rf target/*

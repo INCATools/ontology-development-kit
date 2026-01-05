@@ -35,7 +35,7 @@ For more details, see
 
 # Steering Committee
 
-* @gouttegd Damien Goutte-Gattat (ODK Lead, FlyBase)
+* @gouttegd Damien Goutte-Gattat (ODK Lead, German BioImaging e.V.)
 * @matentzn Nicolas Matentzoglu (ODK Deputy, Semanticly)
 * @cmungall Chris Mungall (ODK Founder, LBNL)
 
@@ -113,7 +113,7 @@ An example of how you can customise your imports for example is documented [here
 
 The ODK is designed for creating a new repo for a new ontology. It can also be used to help figure out how to migrate an existing git repository to the ODK structure. There are different ways to do this.
 
- * Manually compare your ontology against the [template](https://github.com/INCATools/ontology-development-kit/tree/master/template) folder and make necessary adjustments
+ * Manually compare your ontology against the [templates](https://github.com/INCATools/odkcore/tree/main/src/incatools/odk/templates) folder and make necessary adjustments
  * Run the seed script as if creating a new repo. Manually compare this with your existing repo and use `git mv` to rearrange, and adding any missing files by copying them across and doing a `git add`
  * Create a new repo de novo and abandon your existing one, using, for example, github issue mover to move tickets across.
 
@@ -137,7 +137,10 @@ The ODK also comes with built in options to generate your own shiny documentatio
 
 ## Alternative to Docker
 
-You can run the seed script without docker using Python3.6 or
-higher and Java. See requirements.txt for python requirements.
+You can use the `odk install` command of the [ODK
+Core](https://github.com/INCATools/odkcore) module to install a “native
+ODK environment” that allows using the ODK without using Docker. See the
+documentation of ODK Core for more details.
 
-*This is, however, not recommended.*
+Of note, native ODK environments are only supported for GNU/Linux and
+macOS. To use the ODK on Windows, Docker is mandatory.

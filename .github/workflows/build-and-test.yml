@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Create dummy Git user name
         run: git config --global user.name Alice
       - name: Create dummy Git user email
