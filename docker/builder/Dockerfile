@@ -37,7 +37,7 @@ RUN apt-get update && \
 # Therefore we install all of them on the builder image (where we have
 # all the build tools required to compile them if needed), and we'll
 # copy the entire Python tree to the final images.
-COPY requirements.txt /build/requirements.txt
+COPY python-requirements.txt /build/requirements.txt
 COPY constraints.txt /build/constraints.txt
 COPY pip-constraints.txt /build/pip-constraints.txt
 RUN find /usr/lib/python3/dist-packages -type d -name '*-info' | \
