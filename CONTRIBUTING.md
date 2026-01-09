@@ -711,6 +711,7 @@ whenever a new release is in preparation.
 | Jena | https://jena.apache.org/download/ | |
 | Ammonite | https://github.com/lihaoyi/Ammonite/releases | to be removed in ODK 1.7 (replaced by Scala-CLI) |
 | Scala-CLI | https://github.com/VirtusLab/scala-cli/releases | |
+| Mike Farah’s YQ | https://github.com/mikefarah/yq/releases | |
 
 Python packages (e.g. the Ontology Access Kit aka `oaklib`) should be
 automatically updated to their latest version whenever Python
