@@ -1,0 +1,877 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://incatools.github.io/ontology-development-kit/project-schema/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../schema-options/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.17">
+    
+    
+      
+        <title>ODK Schema - Ontology Development Kit (ODK)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.bcfcd587.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#odk-project-configuration-schema" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Ontology Development Kit (ODK)" class="md-header__button md-logo" aria-label="Ontology Development Kit (ODK)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Ontology Development Kit (ODK)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ODK Schema
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/INCATools/ontology-development-kit/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Ontology Development Kit (ODK)" class="md-nav__button md-logo" aria-label="Ontology Development Kit (ODK)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Ontology Development Kit (ODK)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/INCATools/ontology-development-kit/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ODK User Docs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            ODK User Docs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    ODK Schema
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    ODK Schema
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#odk-project-configuration-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      ODK Project Configuration Schema
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../schema-options/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ODK Schema Options
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ODKDevelopmentSnapshot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using the Development Snapshot
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FrequentlyUsedODKCommands/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Frequently used ODK commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#odk-project-configuration-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      ODK Project Configuration Schema
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/INCATools/ontology-development-kit/edit/master/docs/project-schema.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+
+
+  <h1>ODK Schema</h1>
+
+<h2 id="odk-project-configuration-schema">ODK Project Configuration Schema<a class="headerlink" href="#odk-project-configuration-schema" title="Permanent link">&para;</a></h2>
+<p><strong>Warning</strong>: This documentation is not kept up-to-date and may not reflect the latest ODK configuration schema.</p>
+<ul>
+<li>
+<p><strong><code>allow_equivalents</code></strong> <em>(string)</em>: can be all, none or asserted-only (see ROBOT documentation: http://robot.obolibrary.org/reason). Default: <code>"asserted-only"</code>.</p>
+</li>
+<li>
+<p><strong><code>catalog_file</code></strong> <em>(string)</em>: Name of the catalog file to be used by the build. Default: <code>"catalog-v001.xml"</code>.</p>
+</li>
+<li>
+<p><strong><code>ci</code></strong> <em>(list)</em>: continuous integration defaults; currently available: travis, github_actions, gitlab-ci. Default: <code>["github_actions"]</code>.</p>
+</li>
+<li>
+<p><strong>Items</strong> <em>(string)</em></p>
+</li>
+<li>
+<p><strong><code>components</code></strong>:</p>
+<ul>
+<li><strong><code>base_iris</code></strong> <em>(list)</em> A list of URI prefixes used to identify terms belonging to the component.</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+<li><strong><code>filename</code></strong> <em>(string)</em> The filename of this component.</li>
+<li><strong><code>make_base</code></strong> <em>(boolean)</em>: if make_base is true, the file is turned into a base (works with <code>source</code>). Default: <code>false</code>.</li>
+<li><strong><code>mappings</code></strong> <em>(list)</em> A list of SSSOM template names. If set, these will be used to source this component.</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+<li><strong><code>source</code></strong> <em>(string)</em> The URL source for which the component should be obtained.</li>
+<li><strong><code>sssom_tool_options</code></strong> <em>(string)</em>: SSSOM toolkit options passed to the sssom command used to generate this product command. Default: <code>""</code>.</li>
+<li><strong><code>template_options</code></strong> <em>(string)</em> ROBOT options passed to the template command.</li>
+<li><strong><code>templates</code></strong> <em>(list)</em> A list of ROBOT template names. If set, these will be used to source this component.</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+<li><strong><code>use_mappings</code></strong> <em>(boolean)</em>: If true, the component will be sourced from one or more SSSOM mapping files. Default: <code>false</code>.</li>
+<li><strong><code>use_template</code></strong> <em>(boolean)</em>: If true, the component will be sourced by a template. Default: <code>false</code>.</li>
+<li><strong><code>directory</code></strong> <em>(string)</em>: directory where components are maintained. Default: <code>components</code>.</li>
+<li><strong><code>products</code></strong> <em>(list)</em><ul>
+<li><strong><code>base_iris</code></strong> <em>(list)</em> A list of URI prefixes used to identify terms belonging to the component.</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+<li><strong><code>filename</code></strong> <em>(string)</em> The filename of this component.</li>
+<li><strong><code>make_base</code></strong> <em>(boolean)</em>: if make_base is true, the file is turned into a base (works with <code>source</code>). Default: <code>false</code>.</li>
+<li><strong><code>mappings</code></strong> <em>(list)</em> A list of SSSOM template names. If set, these will be used to source this component.</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+<li><strong><code>source</code></strong> <em>(string)</em> The URL source for which the component should be obtained.</li>
+<li><strong><code>sssom_tool_options</code></strong> <em>(string)</em>: SSSOM toolkit options passed to the sssom command used to generate this product command. Default: <code>""</code>.</li>
+<li><strong><code>template_options</code></strong> <em>(string)</em> ROBOT options passed to the template command.</li>
+<li><strong><code>templates</code></strong> <em>(list)</em> A list of ROBOT template names. If set, these will be used to source this component.</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+<li><strong><code>use_mappings</code></strong> <em>(boolean)</em>: If true, the component will be sourced from one or more SSSOM mapping files. Default: <code>false</code>.</li>
+<li><strong><code>use_template</code></strong> <em>(boolean)</em>: If true, the component will be sourced by a template. Default: <code>false</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>contact</code></strong> <em>(string)</em> Single contact for ontology as required by OBO.</p>
+</li>
+<li>
+<p><strong><code>contributors</code></strong> <em>(list)</em> List of ontology contributors (currently setting this has no effect).</p>
+</li>
+<li>
+<p><strong>Items</strong> <em>(string)</em></p>
+</li>
+<li>
+<p><strong><code>create_obo_metadata</code></strong> <em>(boolean)</em>: if true OBO Markdown and PURL configs are created. Default: <code>true</code>.</p>
+</li>
+<li>
+<p><strong><code>creators</code></strong> <em>(list)</em> List of ontology creators (currently setting this has no effect).</p>
+</li>
+<li>
+<p><strong>Items</strong> <em>(string)</em></p>
+</li>
+<li>
+<p><strong><code>custom_makefile_header</code></strong> <em>(string)</em>: A multiline string that is added to the Makefile. Default: <code>"\n# ----------------------------------------\n# More information: https://github.com/INCATools/ontology-development-kit/\n"</code>.</p>
+</li>
+<li>
+<p><strong><code>description</code></strong> <em>(string)</em>: Provide a short description of the ontology. Default: <code>"None"</code>.</p>
+</li>
+<li>
+<p><strong><code>documentation</code></strong>:</p>
+<ul>
+<li><strong><code>documentation_system</code></strong> <em>(string)</em>: Currently, only mkdocs is supported.  Default: <code>"mkdocs"</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>dosdp_tools_options</code></strong> <em>(string)</em>: default parameters for dosdp-tools. Default: <code>"--obo-prefixes=true"</code>.</p>
+</li>
+<li>
+<p><strong><code>edit_format</code></strong> <em>(string)</em>: Format in which the edit file is managed, either obo or owl. Default: <code>"owl"</code>.</p>
+</li>
+<li>
+<p><strong><code>ensure_valid_rdfxml</code></strong> <em>(boolean)</em>: When enabled, ensure that any RDF/XML product file is valid. Default: <code>true</code>.</p>
+</li>
+<li>
+<p><strong><code>exclude_tautologies</code></strong> <em>(string)</em>: Remove tautologies such as A SubClassOf: owl:Thing or owl:Nothing SubclassOf: A. For more information see http://robot.obolibrary.org/reason#excluding-tautologies. Default: <code>"structural"</code>.</p>
+</li>
+<li>
+<p><strong><code>export_formats</code></strong> <em>(list)</em>: A list of export formats you wish your release artefacts to be exported to, such as owl, obo, gz, ttl. Default: <code>["owl", "obo"]</code>.</p>
+</li>
+<li>
+<p><strong>Items</strong> <em>(string)</em></p>
+</li>
+<li>
+<p><strong><code>export_project_yaml</code></strong> <em>(boolean)</em>: Flag to set if you want a full project.yaml to be exported, including all the default options. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>extra_rdfxml_checks</code></strong> <em>(boolean)</em>: When enabled, RDF/XML product files are checked against additional parsers. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>git_main_branch</code></strong> <em>(string)</em>: The main branch for your repo, such as main, or (now discouraged) master. Default: <code>"main"</code>.</p>
+</li>
+<li>
+<p><strong><code>git_user</code></strong> <em>(string)</em>: GIT user name (necessary for generating releases). Default: <code>""</code>.</p>
+</li>
+<li>
+<p><strong><code>github_org</code></strong> <em>(string)</em>: Name of github org or username where repo will live. Examples: obophenotype, cmungall. Default: <code>""</code>.</p>
+</li>
+<li>
+<p><strong><code>gzip_main</code></strong> <em>(boolean)</em>: if true add a gzipped version of the main artefact. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>id</code></strong> <em>(string)</em>: OBO id for this ontology. Must be lowercase Examples: uberon, go, cl, envo, chebi. Default: <code>""</code>.</p>
+</li>
+<li>
+<p><strong><code>import_component_format</code></strong> <em>(string)</em>: The default serialisation for all components and imports. Default: <code>"ofn"</code>.</p>
+</li>
+<li>
+<p><strong><code>import_group</code></strong>:</p>
+<ul>
+<li><strong><code>disabled</code></strong> <em>(boolean)</em>: if set then this is not used. Default: <code>false</code>.</li>
+<li><strong><code>ids</code></strong> <em>(list)</em> potentially deprecated, specify explicit product list instead.</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+<li><strong><code>rebuild_if_source_changes</code></strong> <em>(boolean)</em>: if false then upstream ontology is re-downloaded any time edit file changes. Default: <code>true</code>.</li>
+<li><strong><code>annotate_defined_by</code></strong> <em>(boolean)</em>: If set to true, the annotation rdfs:definedBy is added for each external class. 
+   In the case of use_base_merging is also true, this will be added to the imports/merged_import.owl file.
+   When imports are not merged, the annotation is added during the release process to the full release artefact.
+ Default: <code>False</code>.</li>
+<li><strong><code>annotation_properties</code></strong> <em>(list)</em>: Define which annotation properties to pull in. Default: <code>['rdfs:label', 'IAO:0000115']</code>.</li>
+<li><strong><code>base_merge_drop_equivalent_class_axioms</code></strong> <em>(boolean)</em>: If set to true, equivalent class axioms will be removed before extracting a module with the base-merging process. Default: <code>True</code>.</li>
+<li><strong><code>directory</code></strong> <em>(string)</em>: directory where imports are extracted into to. Default: <code>imports/</code>.</li>
+<li><strong><code>exclude_iri_patterns</code></strong> <em>(list)</em>: List of IRI patterns. If set, IRIs matching and IRI pattern will be removed from the import. Default: ``.</li>
+<li><strong><code>export_obo</code></strong> <em>(boolean)</em>: If set to true, modules will not only be created in OWL, but also OBO format. Default: <code>False</code>.</li>
+<li><strong><code>mirror_max_time_download</code></strong> <em>(integer)</em>: Corresponds to the cURL --max-time parameter (in seconds), see http://www.ipgp.fr/~arnaudl/NanoCD/software/win32/curl/docs/curl.html. Default: <code>200</code>.</li>
+<li><strong><code>mirror_retry_download</code></strong> <em>(integer)</em>: Corresponds to the cURL --retry parameter, see http://www.ipgp.fr/~arnaudl/NanoCD/software/win32/curl/docs/curl.html. Default: <code>4</code>.</li>
+<li><strong><code>module_type</code></strong> <em>(string)</em>: Module type. Supported: slme, minimal, custom. Default: <code>slme</code>.</li>
+<li><strong><code>module_type_slme</code></strong> <em>(string)</em>: SLME module type. Supported: BOT, TOP, STAR. Default: <code>BOT</code>.</li>
+<li><strong><code>products</code></strong> <em>(list)</em><ul>
+<li><strong><code>description</code></strong> <em>(string)</em> A concise textual description of the product.</li>
+<li><strong><code>id</code></strong> <em>(string, required)</em> ontology project identifier / shorthand; e.g. go, obi, envo.</li>
+<li><strong><code>maintenance</code></strong> <em>(string)</em>: A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies. Default: <code>"manual"</code>.</li>
+<li><strong><code>rebuild_if_source_changes</code></strong> <em>(boolean)</em>: If false then previously downloaded versions of external ontologies are used. Default: <code>true</code>.</li>
+<li><strong><code>robot_settings</code></strong>:<ul>
+<li><strong><code>memory_gb</code></strong> <em>(integer)</em> Amount of memory in GB to provide for tool such as robot.</li>
+</ul>
+</li>
+<li><strong><code>annotation_properties</code></strong> <em>(list)</em>: Define which annotation properties to pull in. Default: <code>['rdfs:label', 'IAO:0000115']</code>.</li>
+<li><strong><code>base_iris</code></strong> <em>(list)</em>: if specified this URL is used rather than the default OBO PURL for the main OWL product. Default: ``.</li>
+<li><strong><code>is_large</code></strong> <em>(boolean)</em>: if large, ODK may take measures to reduce the memory footprint of the import. Default: <code>False</code>.</li>
+<li><strong><code>make_base</code></strong> <em>(boolean)</em>: if make_base is true, try to extract a base file from the mirror. Default: <code>False</code>.</li>
+<li><strong><code>mirror_from</code></strong> <em>(string)</em>: if specified this URL is used rather than the default OBO PURL for the main OWL product. Default: ``.</li>
+<li><strong><code>mirror_type</code></strong> <em>(string)</em>: Define the type of the mirror for your import. Supported: base, custom, no_mirror. Default: ``.</li>
+<li><strong><code>module_type</code></strong> <em>(string)</em>: Module type. Supported: slme, minimal, custom, mirror. Default: ``.</li>
+<li><strong><code>module_type_slme</code></strong> <em>(string)</em>: SLME module type. Supported: BOT, TOP, STAR. Default: <code>BOT</code>.</li>
+<li><strong><code>slme_individuals</code></strong> <em>(string)</em>: See http://robot.obolibrary.org/extract#syntactic-locality-module-extractor-slme. Default: <code>include</code>.</li>
+<li><strong><code>use_base</code></strong> <em>(boolean)</em>: if use_base is true, try use the base IRI instead of normal one to mirror from. Default: <code>False</code>.</li>
+<li><strong><code>use_gzipped</code></strong> <em>(boolean)</em>: if use_gzipped is true, try use the base IRI instead of normal one to mirror from. Default: <code>False</code>.</li>
+</ul>
+</li>
+<li><strong><code>release_imports</code></strong> <em>(boolean)</em>: If set to True, imports are copied to the release directory. Default: <code>False</code>.</li>
+<li><strong><code>slme_individuals</code></strong> <em>(string)</em>: See http://robot.obolibrary.org/extract#syntactic-locality-module-extractor-slme. Default: <code>include</code>.</li>
+<li><strong><code>use_base_merging</code></strong> <em>(boolean)</em>: If set to true, mirrors will be merged before determining a suitable seed. This can be a quite costly process. Default: <code>False</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>import_pattern_ontology</code></strong> <em>(boolean)</em>: if true import pattern.owl. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>license</code></strong> <em>(string)</em>: Which license is ontology supplied under - must be an IRI. Default: <code>"https://creativecommons.org/licenses/unspecified"</code>.</p>
+</li>
+<li>
+<p><strong><code>namespaces</code></strong> <em>(list)</em> A list of namespaces that are considered at home in this ontology. Used for certain filter commands.</p>
+</li>
+<li>
+<p><strong>Items</strong> <em>(string)</em></p>
+</li>
+<li>
+<p><strong><code>obo_format_options</code></strong> <em>(string)</em>: Additional args to pass to robot when saving to obo. TODO consider changing to a boolean for checks. Default: <code>""</code>.</p>
+</li>
+<li>
+<p><strong><code>owltools_memory</code></strong> <em>(string)</em>: OWLTools memory, for example 4GB. Default: <code>""</code>.</p>
+</li>
+<li>
+<p><strong><code>pattern_pipelines_group</code></strong>:</p>
+<ul>
+<li><strong><code>disabled</code></strong> <em>(boolean)</em>: if set then this is not used. Default: <code>false</code>.</li>
+<li><strong><code>ids</code></strong> <em>(list)</em> potentially deprecated, specify explicit product list instead.</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+<li><strong><code>rebuild_if_source_changes</code></strong> <em>(boolean)</em>: if false then upstream ontology is re-downloaded any time edit file changes. Default: <code>true</code>.</li>
+<li><strong><code>directory</code></strong> <em>(string)</em>: directory where pattern source lives, also where TSV exported to. Default: <code>../patterns/</code>.</li>
+<li><strong><code>matches</code></strong> <em>(list)</em><ul>
+<li><strong><code>description</code></strong> <em>(string)</em> A concise textual description of the product.</li>
+<li><strong><code>id</code></strong> <em>(string, required)</em> ontology project identifier / shorthand; e.g. go, obi, envo.</li>
+<li><strong><code>maintenance</code></strong> <em>(string)</em>: A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies. Default: <code>"manual"</code>.</li>
+<li><strong><code>rebuild_if_source_changes</code></strong> <em>(boolean)</em>: If false then previously downloaded versions of external ontologies are used. Default: <code>true</code>.</li>
+<li><strong><code>robot_settings</code></strong>:<ul>
+<li><strong><code>memory_gb</code></strong> <em>(integer)</em> Amount of memory in GB to provide for tool such as robot.</li>
+</ul>
+</li>
+<li><strong><code>dosdp_tools_options</code></strong> <em>(string)</em>: Default: <code>--obo-prefixes=true</code>.</li>
+<li><strong><code>ontology</code></strong> <em>(string)</em>: Default: <code>$(SRC)</code>.</li>
+</ul>
+</li>
+<li><strong><code>products</code></strong> <em>(list)</em></li>
+<li>...</li>
+</ul>
+</li>
+<li>
+<p><strong><code>primary_release</code></strong> <em>(string)</em>: Which release file should be published as the primary release artefact, i.e. foo.owl. Default: <code>"full"</code>.</p>
+</li>
+<li>
+<p><strong><code>public_release</code></strong> <em>(string)</em>: if true add functions to run automated releases (experimental). Current options are: github_curl, github_python. Default: <code>"none"</code>.</p>
+</li>
+<li>
+<p><strong><code>public_release_assets</code></strong> <em>(list)</em> A list of files that gets added to a github/gitlab/etc release (as assets). If this option is not set (None), the standard ODK assets will be deployed.</p>
+</li>
+<li>
+<p><strong>Items</strong> <em>(string)</em></p>
+</li>
+<li>
+<p><strong><code>reasoner</code></strong> <em>(string)</em>: Name of reasoner to use in ontology pipeline, see robot reason docs for allowed values. Default: <code>"ELK"</code>.</p>
+</li>
+<li>
+<p><strong><code>release_artefacts</code></strong> <em>(list)</em>: A list of release artefacts you wish to be exported. Supported: base, full, baselite, simple, non-classified, 
+    simple-non-classified, basic. Default: <code>["full", "base"]</code>.</p>
+</li>
+<li>
+<p><strong>Items</strong> <em>(string)</em></p>
+</li>
+<li>
+<p><strong><code>release_date</code></strong> <em>(boolean)</em>: if true, releases will be tagged with a release date (oboInOwl:date). Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>release_diff</code></strong> <em>(boolean)</em>: When enabled, a diff is generated between the current release and the new one. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>release_materialize_object_properties</code></strong> <em>(list)</em> Define which object properties to materialise at release time.</p>
+</li>
+<li>
+<p><strong>Items</strong> <em>(string)</em></p>
+</li>
+<li>
+<p><strong><code>release_use_reasoner</code></strong> <em>(boolean)</em>: If set to True, the reasoner will be used during the release process. The reasoner is used for three operations:
+    reason (the classification/subclassOf hierarchy computation); materialize (the materialisation of simple existential/
+    object property restrictions); reduce (the removal of redundant subclassOf axioms). Default: <code>true</code>.</p>
+</li>
+<li>
+<p><strong><code>remove_owl_nothing</code></strong> <em>(boolean)</em>: Flag to set if you want odk to remove owl:Nothing from releases. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>repo</code></strong> <em>(string)</em>: Name of repo (do not include org). E.g. cell-ontology. Default: <code>""</code>.</p>
+</li>
+<li>
+<p><strong><code>robot_java_args</code></strong> <em>(string)</em>: Java args to pass to ROBOT at runtime, such as -Xmx6G. Default: <code>""</code>.</p>
+</li>
+<li>
+<p><strong><code>robot_report</code></strong> <em>(object)</em>: Block that includes settings for ROBOT report, ROBOT verify and additional reports that are generated. Default: <code>{"custom_profile": false, "custom_sparql_checks": ["owldef-self-reference", "iri-range", "label-with-iri", "multiple-replaced_by", "dc-properties"], "custom_sparql_exports": ["basic-report", "class-count-by-prefix", "edges", "xrefs", "obsoletes", "synonyms"], "ensure_owl2dl_profile": true, "fail_on": null, "release_reports": false, "report_on": ["edit"], "sparql_test_on": ["edit"], "use_base_iris": true, "use_labels": true}</code>.</p>
+</li>
+<li>
+<p><strong><code>robot_settings</code></strong>:</p>
+<ul>
+<li><strong><code>memory_gb</code></strong> <em>(integer)</em> Amount of memory in GB to provide for tool such as robot.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>robot_version</code></strong> <em>(string)</em> Only set this if you want to pin to a specific robot version.</p>
+</li>
+<li>
+<p><strong><code>sssom_mappingset_group</code></strong>:</p>
+<ul>
+<li><strong><code>directory</code></strong> <em>(string)</em>: Default: <code>"../mappings"</code>.</li>
+<li><strong><code>products</code></strong> <em>(list)</em><ul>
+<li><strong><code>description</code></strong> <em>(string)</em> A concise textual description of the product.</li>
+<li><strong><code>id</code></strong> <em>(string, required)</em> ontology project identifier / shorthand; e.g. go, obi, envo.</li>
+<li><strong><code>maintenance</code></strong> <em>(string)</em>: A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies. Default: <code>"manual"</code>.</li>
+<li><strong><code>rebuild_if_source_changes</code></strong> <em>(boolean)</em>: If false then previously downloaded versions of external ontologies are used. Default: <code>true</code>.</li>
+<li><strong><code>robot_settings</code></strong>:</li>
+<li><strong><code>memory_gb</code></strong> <em>(integer)</em> Amount of memory in GB to provide for tool such as robot.</li>
+</ul>
+</li>
+<li><strong><code>mirror_from</code></strong> <em>(string)</em>: if specified this URL is used to mirror the mapping set. Default: ``.</li>
+<li><strong><code>source_file</code></strong> <em>(string)</em>: The name of the file from which the mappings should be extracted. Default: ``.</li>
+<li><strong><code>sssom_tool_options</code></strong> <em>(string)</em>: SSSOM toolkit options passed to the sssom command used to generate this product command. Default: ``.</li>
+<li><strong><code>release_mappings</code></strong> <em>(boolean)</em>: If set to True, mappings are copied to the release directory. Default: <code>false</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>subset_group</code></strong>:</p>
+<ul>
+<li><strong><code>disabled</code></strong> <em>(boolean)</em>: if set then this is not used. Default: <code>false</code>.</li>
+<li><strong><code>ids</code></strong> <em>(list)</em> potentially deprecated, specify explicit product list instead.</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+<li><strong><code>rebuild_if_source_changes</code></strong> <em>(boolean)</em>: if false then upstream ontology is re-downloaded any time edit file changes. Default: <code>true</code>.</li>
+<li><strong><code>directory</code></strong> <em>(string)</em>: directory where subsets are placed after extraction from ontology. Default: <code>subsets/</code>.</li>
+<li><strong><code>products</code></strong> <em>(list)</em><ul>
+<li><strong><code>description</code></strong> <em>(string)</em> A concise textual description of the product.</li>
+<li><strong><code>id</code></strong> <em>(string, required)</em> ontology project identifier / shorthand; e.g. go, obi, envo.</li>
+<li><strong><code>maintenance</code></strong> <em>(string)</em>: A setting that can be used to change certain assets that are typically managed automatically (by ODK) to manual or other maintenance strategies. Default: <code>"manual"</code>.</li>
+<li><strong><code>rebuild_if_source_changes</code></strong> <em>(boolean)</em>: If false then previously downloaded versions of external ontologies are used. Default: <code>true</code>.</li>
+<li><strong><code>robot_settings</code></strong>:<ul>
+<li><strong><code>memory_gb</code></strong> <em>(integer)</em> Amount of memory in GB to provide for tool such as robot.</li>
+</ul>
+</li>
+<li><strong><code>creators</code></strong> <em>(list)</em>: list of people that are credited as creators/maintainers of the subset. Default: ``.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>title</code></strong> <em>(string)</em>: Concise descriptive text about this ontology. Default: <code>""</code>.</p>
+</li>
+<li>
+<p><strong><code>travis_emails</code></strong> <em>(list)</em> Emails to use in travis configurations. </p>
+</li>
+<li>
+<p><strong>Items</strong> <em>(string)</em></p>
+</li>
+<li>
+<p><strong><code>uribase</code></strong> <em>(string)</em>: Base URI for PURLs. For an example see https://gitlab.c-path.org/c-pathontology/critical-path-ontology. Default: <code>"http://purl.obolibrary.org/obo"</code>.</p>
+</li>
+<li>
+<p><strong><code>uribase_suffix</code></strong> <em>(string)</em> Suffix for the uri base. If not set, the suffix will be the ontology id by default.</p>
+</li>
+<li>
+<p><strong><code>use_context</code></strong> <em>(boolean)</em>: If True, a context file is created that allows the user to specify prefixes used across the project. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>use_custom_import_module</code></strong> <em>(boolean)</em>: if true add a custom import module which is managed through a robot template. This can also be used to manage your module seed. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>use_dosdps</code></strong> <em>(boolean)</em>: if true use dead simple owl design patterns. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>use_edit_file_imports</code></strong> <em>(boolean)</em>: If True, ODK will release the ontology with imports explicitly specified by owl:imports in the edit file.
+    If False, ODK will build and release the ontology with <em>all</em> imports and <em>all</em> components specified in the ODK config file. Default: <code>true</code>.</p>
+</li>
+<li>
+<p><strong><code>use_env_file_docker</code></strong> <em>(boolean)</em>: if true environment variables are collected by the docker wrapper and passed into the container. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>use_external_date</code></strong> <em>(boolean)</em>: Flag to set if you want odk to use the host <code>date</code> rather than the docker internal <code>date</code>. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>use_mappings</code></strong> <em>(boolean)</em>: if true use SSSOM mapping files. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>use_templates</code></strong> <em>(boolean)</em>: if true use ROBOT templates. Default: <code>false</code>.</p>
+</li>
+<li>
+<p><strong><code>workflows</code></strong> <em>(list)</em>: Workflows that are synced when updating the repo. Currently available: docs, diff, qc, release-diff. Default: <code>["docs"]</code>.</p>
+</li>
+<li><strong>Items</strong> <em>(string)</em></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.1e8ae164.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
