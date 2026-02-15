@@ -39,7 +39,7 @@ jobs:
       - name: Build the images
         run: make build
       - name: Export the ODKFull image to an archiv
-        run: docker image save -o ${{ runner.temp }}/odkfull.tar
+        run: docker image save -o ${{ runner.temp }}/odkfull.tar obolibrary/odkfull:latest
       - name: Upload exported archive
         uses: actions/upload-artifact@v4
         with:
