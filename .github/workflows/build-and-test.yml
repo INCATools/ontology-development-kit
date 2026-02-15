@@ -25,7 +25,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_image:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
@@ -38,5 +38,39 @@ jobs:
         run: git config --global user.email alice@example.org
       - name: Build the images
         run: make build
-      - name: Run the tests
-        run: make test-full
+      - name: Export the ODKFull image to an archiv
+        run: docker image save -o ${{ runner.temp }}/odkfull.tar
+      - name: Upload exported archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: odkfull-image
+          path: ${{ runner.temp }}/odkfull.tar
+
+  test_workflows:
+    strategy:
+      matrix:
+        os: [unbuntu-latest, macos-15-intel, windows-latest]
+    runs-on: ${{ matrix.os }}
+    needs: build_image
+    steps:
+      - name: Download the ODKFull archive
+        uses: actions/download-artifact@v4
+        with:
+          name: odkfull-image
+          path: ${{ runner.temp }}
+      - name: Load the ODKFull image
+        run: docker load --input ${{ runner.temp }}/odkfull.tar
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Create dummy Git user name
+        run: git config --global user.name Alice
+      - name: Create dummy Git user email
+        run: git config --global user.email alice@example.org
+      - name: Run the tests (GNU/Linux and macOS)
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: make test-no-build
+      - name: Run the tests (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: make test CMD=seed-via-docker.bat ODK_IMAGE=odkfull
