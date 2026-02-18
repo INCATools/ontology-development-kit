@@ -1,6 +1,6 @@
 
 # Building docker image
-VERSION = "v1.9.9"
+VERSION = "v1.9.10"
 IM=obolibrary/robot
 
 CACHE=
