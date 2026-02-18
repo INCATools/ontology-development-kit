@@ -18,7 +18,7 @@ PLATFORMS=linux/amd64,linux/arm64
 
 test_odklite_programs:
 	@./tests/test-program.sh ROBOT robot --version
-	@./tests/test-program.sh DOSDP-TOOLS dosdp-tools -v
+	@./tests/test-program.sh DOSDP-TOOLS dosdp-tools --version
 	@./tests/test-program.sh DICER-CLI dicer-cli --version
 	@./tests/test-program.sh SSSOM-CLI sssom-cli --version
 	@./tests/test-program.sh ODK odk --help

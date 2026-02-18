@@ -79,13 +79,13 @@ RUN test "x$TARGETARCH" = xamd64 && ( \
 
 # Install OWLTOOLS.
 RUN wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools \
-        -O /odk/bin/owltools && \
-    wget -nv https://github.com/owlcollab/owltools/releases/download/$OWLTOOLS_VERSION/owltools-oort-all.jar \
-        -O /odk/tools/owltools-oort-all.jar && \
+        -O /odk/tools/owltools.jar && \
+    echo "#!/bin/sh" > /odk/bin/owltools && \
+    echo "exec java \$JAVA_OPTS -DentityExpansionLimit=4086000 -Djava.awt.headless=true -jar /odk/tools/owltools.jar \"\$@\"" >> /odk/bin/owltools && \
     echo "#!/bin/sh" > /odk/bin/ontology-release-runner && \
-    echo "exec java -jar /odk/tools/owltools-oort-all.jar \"\$@\"" >> /odk/bin/ontology-release-runner && \
-    chmod +x /odk/bin/owltools && \
-    chmod +x /odk/bin/ontology-release-runner
+    echo "exec java \$JAVA_OPTS -cp /odk/tools/owltools.jar owltools.ontologyrelease.OboOntologyReleaseRunner \"\$@\"" >> /odk/bin/ontology-release-runner && \
+    chmod 755 /odk/bin/owltools && \
+    chmod 755 /odk/bin/ontology-release-runner
 
 # Install Jena.
 RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERSION.tar.gz -O- | tar xzC /odk/tools && \
@@ -96,7 +96,7 @@ RUN wget -nv http://archive.apache.org/dist/jena/binaries/apache-jena-$JENA_VERS
 RUN wget -nv https://github.com/VirtusLab/scala-cli/releases/download/v$SCALA_CLI_VERSION/scala-cli.jar \
         -O /odk/tools/scala-cli.jar && \
     echo "#!/bin/sh" > /odk/bin/scala-cli && \
-    echo "exec java -jar /odk/tools/scala-cli.jar \"\$@\"" >> /odk/bin/scala-cli && \
+    echo "exec java \$JAVA_OPTS -jar /odk/tools/scala-cli.jar \"\$@\"" >> /odk/bin/scala-cli && \
     chmod 0755 /odk/bin/scala-cli
 
 # Install obographviz

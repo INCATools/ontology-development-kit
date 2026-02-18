@@ -49,7 +49,7 @@ RUN mkdir -p /odk/tools /odk/resources/robot/plugins /odk/bin
 RUN wget -nv $ROBOT_JAR \
         -O /odk/tools/robot.jar && \
     echo "#!/bin/sh" > /odk/bin/robot && \
-    echo "exec java \$ROBOT_JAVA_ARGS -jar /odk/tools/robot.jar \"\$@\"" >> /odk/bin/robot && \
+    echo "exec java \$JAVA_OPTS -jar /odk/tools/robot.jar \"\$@\"" >> /odk/bin/robot && \
     chmod 755 /odk/bin/robot && \
     wget -nv https://raw.githubusercontent.com/ontodev/robot/v$ROBOT_VERSION/robot-core/src/main/resources/report_profile.txt \
         -O /odk/resources/robot/profile.txt
@@ -57,9 +57,15 @@ RUN wget -nv $ROBOT_JAR \
 # Install DOSDPTOOLS.
 RUN wget -nv https://github.com/INCATools/dosdp-tools/releases/download/v$DOSDP_VERSION/dosdp-tools-$DOSDP_VERSION.tgz && \
     tar zxf dosdp-tools-$DOSDP_VERSION.tgz && \
-    rm dosdp-tools-$DOSDP_VERSION.tgz && \
-    mv dosdp-tools-$DOSDP_VERSION /odk/tools/dosdptools && \
-    ln -s /odk/tools/dosdptools/bin/dosdp-tools /odk/bin/dosdp-tools && \
+    mv dosdp-tools-$DOSDP_VERSION/lib /odk/tools/dosdp-tools && \
+    rm -rf dosdp-tools-$DOSDP_VERSION dosdp-tools-$DOSDP_VERSION.tgz && \
+    echo "#!/bin/sh" > /odk/bin/dosdp-tools && \
+    echo -n "exec java \$JAVA_OPTS -cp \"" >> /odk/bin/dosdp-tools && \
+    ls /odk/tools/dosdp-tools | while read jar ; do \
+        echo "/odk/tools/dosdp-tools/$jar" ; \
+    done | tr '\n' ':' >> /odk/bin/dosdp-tools && \
+    echo "\" org.monarchinitiative.dosdp.cli.Main \"\$@\"" >> /odk/bin/dosdp-tools && \
+    chmod 755 /odk/bin/dosdp-tools && \
     wget -nv --no-check-certificate https://raw.githubusercontent.com/INCATools/dead_simple_owl_design_patterns/master/src/simple_pattern_tester.py \
         -O /odk/bin/simple_pattern_tester.py && \
     chmod 755 /odk/bin/simple_pattern_tester.py
@@ -75,9 +81,15 @@ RUN wget -nv -O /odk/resources/robot/plugins/sssom.jar https://github.com/goutte
 # Install relation-graph
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELATION_GRAPH/relation-graph-cli-$RELATION_GRAPH.tgz && \
     tar -zxvf relation-graph-cli-$RELATION_GRAPH.tgz && \
-    rm relation-graph-cli-$RELATION_GRAPH.tgz && \
-    mv relation-graph-cli-$RELATION_GRAPH /odk/tools/relation-graph && \
-    ln -s /odk/tools/relation-graph/bin/relation-graph /odk/bin/relation-graph
+    mv relation-graph-cli-$RELATION_GRAPH/lib /odk/tools/relation-graph && \
+    rm -rf relation-graph-cli-$RELATION_GRAPH relation-graph-cli-$RELATION_GRAPH.tgz && \
+    echo "#!/bin/sh" > /odk/bin/relation-graph && \
+    echo -n "exec java \$JAVA_OPTS -cp \"" >> /odk/bin/relation-graph && \
+    ls /odk/tools/relation-graph | while read jar ; do \
+        echo "/odk/tools/relation-graph/$jar" ; \
+    done | tr '\n' ':' >> /odk/bin/relation-graph && \
+    echo "\" org.renci.relationgraph.Main \"\$@\"" >> /odk/bin/relation-graph && \
+    chmod 755 /odk/bin/relation-graph
 
 # Install the Dicer CLI tool
 RUN wget -nv https://github.com/gouttegd/dicer/releases/download/dicer-$DICER_VERSION/dicer-cli \
