@@ -1,3 +1,22 @@
+# v1.6.1
+
+- Updates:
+    - ROBOT updated to version 1.9.10
+    - ODK ROBOT plugin updated to version 0.3.1
+    - SSSOM-Java updated to version 1.10.0
+    - RelationGraph updated to version 2.3.3
+    - Notable Python packages:
+        - `curies` 0.11.0
+        - `kgx` 2.6.0
+        - `linkml` 1.9.4 and `linkml-runtime` 1.9.5
+        - `networkx` 3.5
+        - `oaklib` (Ontology Access Kit) 0.6.23
+        - `rdflib` 7.2.1
+        - `sssom` 0.4.17
+- Bugfixes:
+    - Fix `run.sh` incompatibility with the Dash shell ([#1301](https://github.com/INCATools/ontology-development-kit/issues/1301))
+    - Fix `update_repo` on an ontology that does not use imports ([#1278](https://github.com/INCATools/ontology-development-kit/issues/1278))
+
 # v1.6
 
 For more detailed changes see:
