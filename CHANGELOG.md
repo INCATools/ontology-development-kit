@@ -6,13 +6,15 @@
     - SSSOM-Java updated to version 1.10.0
     - RelationGraph updated to version 2.3.3
     - Notable Python packages:
-        - `curies` 0.11.0
+        - `curies` 0.12.9
+        - `fastobo` 0.14.1
         - `kgx` 2.6.0
-        - `linkml` 1.9.4 and `linkml-runtime` 1.9.5
-        - `networkx` 3.5
+        - `linkml` 1.10.0 and `linkml-runtime` 1.10.0
+        - `networkx` 3.6.1
         - `oaklib` (Ontology Access Kit) 0.6.23
-        - `rdflib` 7.2.1
-        - `sssom` 0.4.17
+        - `pandas` 3.0.1
+        - `rdflib` 7.6.0
+        - `sssom` 0.4.18
 - Bugfixes:
     - Fix `run.sh` incompatibility with the Dash shell ([#1301](https://github.com/INCATools/ontology-development-kit/issues/1301))
     - Fix `update_repo` on an ontology that does not use imports ([#1278](https://github.com/INCATools/ontology-development-kit/issues/1278))
