@@ -16,7 +16,7 @@ ENV KGCL_JAVA_VERSION=0.5.1
 ENV AMMONITE_VERSION=2.5.9
 ENV SCALA_CLI_VERSION=1.8.0
 ENV OWLTOOLS_VERSION=2020-04-06
-ENV YQ_VERSION=4.45.4
+ENV YQ_VERSION=4.50.1
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/tools/.coursier-cache ...

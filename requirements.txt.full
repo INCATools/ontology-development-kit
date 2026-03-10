@@ -20,7 +20,9 @@ jupyter
 matplotlib_venn
 matplotlib
 numpy
-ontobio
+# For some reason pip insists on wanting to downgrade that one so far
+# that it ends on a version that does not even compile
+ontobio >= 2.9.12
 pandas
 PyGithub
 pyyaml
