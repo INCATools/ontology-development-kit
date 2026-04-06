@@ -4921,12 +4921,10 @@
         "uri_prefix_synonyms": [
             "http://bioregistry.io/OEO:",
             "http://bioregistry.io/oeo:",
-            "http://openenergy-platform.org/ontology/oeo/OEO_",
             "http://openenergyplatform.org/ontology/oeo/",
             "http://openenergyplatform.org/ontology/oeo/OEO_",
             "https://bioregistry.io/OEO:",
             "https://bioregistry.io/oeo:",
-            "https://openenergy-platform.org/ontology/oeo/OEO_",
             "https://openenergyplatform.org/ontology/oeo/"
         ]
     },
@@ -6257,6 +6255,7 @@
             "SNOMEDCT_US_2023_10_01",
             "SNOMEDCT_US_2023_11_01",
             "SNOMEDCT_US_2024_03_01",
+            "SNOMEDCT_US_2025_09_01",
             "SNOMED_CT",
             "SNOMED_CT_US_2018_03_01",
             "SNOWMEDCT",
@@ -6293,6 +6292,7 @@
             "snomedct_us_2023_10_01",
             "snomedct_us_2023_11_01",
             "snomedct_us_2024_03_01",
+            "snomedct_us_2025_09_01",
             "snomedctct",
             "snomedctct_2018_03_01",
             "snomedctct_2019_03_01",
@@ -6335,6 +6335,7 @@
             "http://bioregistry.io/SNOMEDCT_US_2023_10_01:",
             "http://bioregistry.io/SNOMEDCT_US_2023_11_01:",
             "http://bioregistry.io/SNOMEDCT_US_2024_03_01:",
+            "http://bioregistry.io/SNOMEDCT_US_2025_09_01:",
             "http://bioregistry.io/SNOMED_CT:",
             "http://bioregistry.io/SNOMED_CT_US_2018_03_01:",
             "http://bioregistry.io/SNOWMEDCT:",
@@ -6380,6 +6381,7 @@
             "https://bioregistry.io/SNOMEDCT_US_2023_10_01:",
             "https://bioregistry.io/SNOMEDCT_US_2023_11_01:",
             "https://bioregistry.io/SNOMEDCT_US_2024_03_01:",
+            "https://bioregistry.io/SNOMEDCT_US_2025_09_01:",
             "https://bioregistry.io/SNOMED_CT:",
             "https://bioregistry.io/SNOMED_CT_US_2018_03_01:",
             "https://bioregistry.io/SNOWMEDCT:",
@@ -13356,23 +13358,6 @@
         ]
     },
     {
-        "pattern": "^[A-Z\\-]+$",
-        "prefix": "datanator.metabolite",
-        "prefix_synonyms": [
-            "DATANATOR.METABOLITE"
-        ],
-        "uri_prefix": "https://www.datanator.info/metabolite/",
-        "uri_prefix_synonyms": [
-            "http://bioregistry.io/datanator.metabolite:",
-            "http://identifiers.org/datanator.metabolite/",
-            "http://identifiers.org/datanator.metabolite:",
-            "http://www.datanator.info/metabolite/",
-            "https://bioregistry.io/datanator.metabolite:",
-            "https://identifiers.org/datanator.metabolite/",
-            "https://identifiers.org/datanator.metabolite:"
-        ]
-    },
-    {
         "pattern": "^.*?--%3E.*?$",
         "prefix": "datanator.reaction",
         "prefix_synonyms": [
@@ -13735,6 +13720,18 @@
             "http://bioregistry.io/dcat:",
             "https://bioregistry.io/dcat:",
             "https://www.w3.org/ns/dcat#"
+        ]
+    },
+    {
+        "prefix": "dcatap",
+        "prefix_synonyms": [
+            "DCATAP"
+        ],
+        "uri_prefix": "http://data.europa.eu/r5r/",
+        "uri_prefix_synonyms": [
+            "http://bioregistry.io/dcatap:",
+            "https://bioregistry.io/dcatap:",
+            "https://data.europa.eu/r5r/"
         ]
     },
     {
@@ -14744,6 +14741,18 @@
             "http://bioregistry.io/doap:",
             "https://bioregistry.io/doap:",
             "https://usefulinc.com/ns/doap#"
+        ]
+    },
+    {
+        "prefix": "docbias",
+        "prefix_synonyms": [
+            "DOCBIAS"
+        ],
+        "uri_prefix": "https://nobias-project.eu/nobias/",
+        "uri_prefix_synonyms": [
+            "http://bioregistry.io/docbias:",
+            "http://nobias-project.eu/nobias/",
+            "https://bioregistry.io/docbias:"
         ]
     },
     {
@@ -16553,6 +16562,18 @@
             "https://identifiers.org/epd/",
             "https://identifiers.org/epd:",
             "https://n2t.net/epd:"
+        ]
+    },
+    {
+        "prefix": "epos",
+        "prefix_synonyms": [
+            "EPOS"
+        ],
+        "uri_prefix": "https://www.epos-eu.org/epos-dcat-ap#",
+        "uri_prefix_synonyms": [
+            "http://bioregistry.io/epos:",
+            "http://www.epos-eu.org/epos-dcat-ap#",
+            "https://bioregistry.io/epos:"
         ]
     },
     {
@@ -21629,21 +21650,31 @@
         "pattern": "^[A-Z]{14}\\-[A-Z]{10}(\\-[A-Z])?$",
         "prefix": "inchikey",
         "prefix_synonyms": [
-            "INCHIKEY"
+            "DATANATOR.METABOLITE",
+            "INCHIKEY",
+            "datanator.metabolite"
         ],
         "uri_prefix": "https://www.chemspider.com/search?params=",
         "uri_prefix_synonyms": [
+            "http://bioregistry.io/datanator.metabolite:",
             "http://bioregistry.io/inchikey:",
+            "http://identifiers.org/datanator.metabolite/",
+            "http://identifiers.org/datanator.metabolite:",
             "http://identifiers.org/inchikey/",
             "http://identifiers.org/inchikey:",
             "http://n2t.net/inchikey:",
             "http://scholia.toolforge.org/inchikey/",
             "http://www.chemspider.com/search?params=",
+            "http://www.datanator.info/metabolite/",
+            "https://bioregistry.io/datanator.metabolite:",
             "https://bioregistry.io/inchikey:",
+            "https://identifiers.org/datanator.metabolite/",
+            "https://identifiers.org/datanator.metabolite:",
             "https://identifiers.org/inchikey/",
             "https://identifiers.org/inchikey:",
             "https://n2t.net/inchikey:",
-            "https://scholia.toolforge.org/inchikey/"
+            "https://scholia.toolforge.org/inchikey/",
+            "https://www.datanator.info/metabolite/"
         ]
     },
     {
@@ -21918,10 +21949,10 @@
         "prefix_synonyms": [
             "IOFCORE"
         ],
-        "uri_prefix": "https://spec.industrialontologies.org/ontology/core/Core/",
+        "uri_prefix": "https://spec.industrialontologies.org/ontology/",
         "uri_prefix_synonyms": [
             "http://bioregistry.io/iofcore:",
-            "http://spec.industrialontologies.org/ontology/core/Core/",
+            "http://spec.industrialontologies.org/ontology/",
             "https://bioregistry.io/iofcore:"
         ]
     },
@@ -25818,7 +25849,9 @@
         "uri_prefix": "http://purls.helmholtz-metadaten.de/mwo/mwo_",
         "uri_prefix_synonyms": [
             "http://bioregistry.io/mwo:",
+            "http://purls.helmholtz-metadaten.de/mwo/",
             "https://bioregistry.io/mwo:",
+            "https://purls.helmholtz-metadaten.de/mwo/",
             "https://purls.helmholtz-metadaten.de/mwo/mwo_"
         ]
     },
@@ -27953,6 +27986,18 @@
             "http://bioregistry.io/ogc.sf:",
             "https://bioregistry.io/ogc.sf:",
             "https://www.opengis.net/ont/sf#"
+        ]
+    },
+    {
+        "prefix": "ohdab",
+        "prefix_synonyms": [
+            "OHDAB"
+        ],
+        "uri_prefix": "https://database.factgrid.de/entity/",
+        "uri_prefix_synonyms": [
+            "http://bioregistry.io/ohdab:",
+            "http://database.factgrid.de/entity/",
+            "https://bioregistry.io/ohdab:"
         ]
     },
     {
@@ -39187,36 +39232,36 @@
     },
     {
         "pattern": "^[0-9]+\\.[0-9]+$",
-        "prefix": "vmhgene",
+        "prefix": "vmh.gene",
         "prefix_synonyms": [
-            "VMHGENE"
+            "VMH.GENE"
         ],
         "uri_prefix": "https://www.vmh.life/#gene/",
         "uri_prefix_synonyms": [
-            "http://bioregistry.io/vmhgene:",
+            "http://bioregistry.io/vmh.gene:",
             "http://identifiers.org/vmhgene/",
             "http://identifiers.org/vmhgene:",
             "http://www.vmh.life/#gene/",
-            "https://bioregistry.io/vmhgene:",
+            "https://bioregistry.io/vmh.gene:",
             "https://identifiers.org/vmhgene/",
             "https://identifiers.org/vmhgene:"
         ]
     },
     {
         "pattern": "^[a-zA-Z0-9_\\(\\_\\)\\[\\]]+$",
-        "prefix": "vmhmetabolite",
+        "prefix": "vmh.metabolite",
         "prefix_synonyms": [
-            "VMHMETABOLITE"
+            "VMH.METABOLITE"
         ],
         "uri_prefix": "https://www.vmh.life/#metabolite/",
         "uri_prefix_synonyms": [
-            "http://bioregistry.io/vmhmetabolite:",
+            "http://bioregistry.io/vmh.metabolite:",
             "http://identifiers.org/vmhmetabolite/",
             "http://identifiers.org/vmhmetabolite:",
             "http://n2t.net/vmhmetabolite:",
             "http://vmh.uni.lu/#metabolite/",
             "http://www.vmh.life/#metabolite/",
-            "https://bioregistry.io/vmhmetabolite:",
+            "https://bioregistry.io/vmh.metabolite:",
             "https://identifiers.org/vmhmetabolite/",
             "https://identifiers.org/vmhmetabolite:",
             "https://n2t.net/vmhmetabolite:",
@@ -39225,19 +39270,19 @@
     },
     {
         "pattern": "^[a-zA-Z0-9_\\(\\_\\)\\[\\]]+$",
-        "prefix": "vmhreaction",
+        "prefix": "vmh.reaction",
         "prefix_synonyms": [
-            "VMHREACTION"
+            "VMH.REACTION"
         ],
         "uri_prefix": "https://www.vmh.life/#reaction/",
         "uri_prefix_synonyms": [
-            "http://bioregistry.io/vmhreaction:",
+            "http://bioregistry.io/vmh.reaction:",
             "http://identifiers.org/vmhreaction/",
             "http://identifiers.org/vmhreaction:",
             "http://n2t.net/vmhreaction:",
             "http://vmh.uni.lu/#reaction/",
             "http://www.vmh.life/#reaction/",
-            "https://bioregistry.io/vmhreaction:",
+            "https://bioregistry.io/vmh.reaction:",
             "https://identifiers.org/vmhreaction/",
             "https://identifiers.org/vmhreaction:",
             "https://n2t.net/vmhreaction:",
