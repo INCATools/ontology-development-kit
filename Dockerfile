@@ -12,10 +12,10 @@ ENV ODK_VERSION=$ODK_VERSION
 # Software versions
 # Jena 5.x requires Java 17, so for now we are stuck with Jena 4.x
 ENV JENA_VERSION=4.9.0
-ENV KGCL_JAVA_VERSION=0.5.1
+ENV KGCL_JAVA_VERSION=0.6.0
 ENV SCALA_CLI_VERSION=1.8.0
 ENV OWLTOOLS_VERSION=2020-04-06
-ENV YQ_VERSION=4.50.1
+ENV YQ_VERSION=4.53.2
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/odk/tools/.coursier-cache ...
