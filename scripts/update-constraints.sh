@@ -14,9 +14,7 @@ if [ $in_docker -eq 1 ]; then
 
     # Get the list of the Python packages that were actually installed
     # so we can instruct PIP to use the same versions of said packages.
-    find /usr/lib/python3/dist-packages -type d -name '*-info' | \
-        sed -E 's,/usr/lib/python3/dist-packages/(.+)-([^-]+)\.(egg|dist)-info,\1==\2,' | \
-        sort > pip-constraints.txt
+    pip list --format=freeze > pip-constraints.txt
 
     # Now additionally install virtualenv, which we will need to
     # install all ODK packages in a separate environment.
