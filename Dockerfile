@@ -39,8 +39,7 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     nodejs \
     npm \
     graphviz \
-    python3-psycopg2 \
-    libpcre3
+    python3-psycopg2
 
 # Install run-time dependencies for Soufflé.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
@@ -60,11 +59,11 @@ COPY --from=obolibrary/odkbuild:latest /staging/full /
 # run-time dependencies (the binary is not statically linked).
 ARG TARGETARCH
 RUN test "x$TARGETARCH" = xamd64 && ( \
-        wget -nv https://github.com/konclude/Konclude/releases/download/v0.7.0-1138/Konclude-v0.7.0-1138-Linux-x64-GCC-Static-Qt5.12.10.zip \
+        wget -nv https://github.com/konclude/Konclude/releases/download/v0.7.0-1138/Konclude-v0.7.0-1138-Linux-Docker-Compiled-x64-GCC4.8.4-Static-Qt5.12.10.zip \
             -O /odk/Konclude.zip && \
         unzip Konclude.zip && \
-        mv Konclude-v0.7.0-1138-Linux-x64-GCC-Static-Qt5.12.10/Binaries/Konclude /odk/bin/Konclude && \
-        rm -rf Konclude-v0.7.0-1138-Linux-x64-GCC-Static-Qt5.12.10 && \
+        mv Konclude-v0.7.0-1138-Linux-Docker-Compiled-x64-GCC4.8.4-Static-Qt5.12.10/Binaries/Konclude /odk/bin/Konclude && \
+        rm -rf Konclude-v0.7.0-1138-Linux-Docker-Compiled-x64-GCC4.8.4-Static-Qt5.12.10 && \
         rm Konclude.zip \
     ) || ( \
         DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \

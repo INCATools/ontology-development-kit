@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 LABEL maintainer="obo-tools@googlegroups.com"
 
 ENV ROBOT_VERSION=1.9.10
@@ -28,6 +28,7 @@ RUN apt-get update && \
         python3-pip \
         python-is-python3 \
         python3-six \
+        python3-typing-extensions \
         make \
         unzip \
         wget \

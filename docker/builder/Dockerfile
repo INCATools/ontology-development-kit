@@ -3,7 +3,7 @@
 # (typically because pre-compiled binaries don't exist for arm64) and
 # we don't want to build directly on the final image (to avoid
 # cluttering the image with build-time dependencies).
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 WORKDIR /build
 
 # Software versions
@@ -27,7 +27,8 @@ RUN apt-get update && \
         rustc \
         cargo \
         python3-dev \
-        python3-pip
+        python3-pip \
+        python3-setuptools
 
 # Build the Python packages.
 # On x86_64, most if not all of these packages should be available as

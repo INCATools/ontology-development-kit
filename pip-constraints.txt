@@ -1,3 +1,13 @@
-pip==24.0
-setuptools==68.1.2
-wheel==0.42.0
+autocommand==2.2.2
+inflect==7.5.0
+jaraco.context==6.0.1
+jaraco.functools==4.1.0
+jaraco.text==4.0.0
+more-itertools==10.8.0
+packaging==26.0
+pip==25.1.1
+setuptools==78.1.1
+typeguard==4.4.4
+typing_extensions==4.15.0
+wheel==0.46.3
+zipp==3.23.0
