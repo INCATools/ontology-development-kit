@@ -10,7 +10,7 @@ if [ $in_docker -eq 1 ]; then
     # ODK builder image.
     apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        python3-dev python3-pip
+        python3-dev python3-pip python3-setuptools
 
     # Get the list of the Python packages that were actually installed
     # so we can instruct PIP to use the same versions of said packages.

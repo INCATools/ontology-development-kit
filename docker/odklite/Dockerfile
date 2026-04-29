@@ -28,6 +28,7 @@ RUN apt-get update && \
         python3-pip \
         python-is-python3 \
         python3-six \
+        python3-typing-extensions \
         make \
         unzip \
         wget \
