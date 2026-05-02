@@ -126,6 +126,10 @@ RUN mkdir /tools && ln -s /usr/local/bin/odk /tools/odk.py && \
 # Install the OBO extended prefix map
 COPY resources/obo.epm.json /odk/resources
 
+# Install wrapper scripts for compatibility with pre-1.7 Makefiles
+COPY --chmod=755 scripts/compat-check-rdfxml.sh /odk/bin/check-rdfxml
+COPY --chmod=755 scripts/compat-context2csv.sh /odk/bin/context2csv
+
 # Install anything that may be missing from ODK-Core
 RUN odk install /odk
 
