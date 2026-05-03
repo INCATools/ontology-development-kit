@@ -116,18 +116,29 @@ RUN sed -i s/@@ODK_IMAGE_VERSION@@/$ODK_VERSION/ /odk/bin/odk-info
 # Install a helper script to launch a repository update
 COPY --chmod=755 scripts/update_repo.sh /odk/bin/update_repo
 
-# The odk script used to be named `odk.py` and to be located at
-# /tools/odk.py, and both the name (with the `.py` extension) and the
-# full path have been hardcoded at several places, so we need some
-# symlinks for compatibility.
-RUN mkdir /tools && ln -s /usr/local/bin/odk /tools/odk.py && \
-    ln -s /usr/local/bin/odk /odk/bin/odk.py
-
 # Install the OBO extended prefix map
 COPY resources/obo.epm.json /odk/resources
 
 # Install anything that may be missing from ODK-Core
 RUN odk install /odk
+
+# Compatibility layer for work with pre-1.7 repositories.
+# (1) We need symlinks for several files and directories that have
+#     changed in 1.7 but which have been hardcoded in several places in
+#     pre-1.7 repos:
+#     (a) the `odk` script;
+#     (b) the directory containing the ROBOT plugins;
+#     (c) the directory containing the templates.
+RUN mkdir -p /tools && \
+    ln -s /usr/local/bin/odk /tools/odk.py && \
+    ln -s /usr/local/bin/odk /odk/bin/odk.py && \
+    ln -s /odk/resources/robot/plugins /tools/robot-plugins && \
+    ln -s /usr/local/lib/python3.12/dist-packages/incatools/odk/templates /tools/templates
+
+# (2) We need wrappers for old individual scripts that have been
+#     consolidated into `odk-helper`.
+COPY --chmod=755 scripts/compat-check-rdfxml.sh /odk/bin/check-rdfxml
+COPY --chmod=755 scripts/compat-context2csv.sh /odk/bin/context2csv
 
 # Run the ODK-Core by default
 CMD odk
