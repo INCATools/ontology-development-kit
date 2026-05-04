@@ -134,7 +134,7 @@ RUN mkdir -p /tools && \
     ln -s /usr/local/bin/odk /tools/odk.py && \
     ln -s /usr/local/bin/odk /odk/bin/odk.py && \
     ln -s /odk/resources/robot/plugins /tools/robot-plugins && \
-    ln -s /usr/local/lib/python3.12/dist-packages/incatools/odk/templates /tools/templates
+    ln -s /usr/local/lib/python3.14/dist-packages/incatools/odk/templates /tools/templates
 
 # (2) We need wrappers for old individual scripts that have been
 #     consolidated into `odk-helper`.
