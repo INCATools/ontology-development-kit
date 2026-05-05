@@ -293,8 +293,8 @@ SQLAlchemy-Utils==0.38.3
 sqlite-fts4==1.0.3
 sqlite-migrate==0.1b0
 sqlite-utils==3.38
-sssom==0.4.18
-sssom-schema==1.1.0a3
+sssom==0.4.20
+sssom-schema==1.1.0a4
 stack-data==0.6.3
 stringcase==1.2.0
 tabulate==0.10.0
