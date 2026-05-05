@@ -1,16 +1,40 @@
-# Core dependencies
+# Core dependency
+# This is the ONLY dependency that should be required for ODK-Lite. If
+# you want to add a Python package to ODK-Lite (which should only happen
+# if said package is required by a standard ODK workflow), do NOT add it
+# here, but instead add it to the "workflows" dependency group in the
+# ODK-Core project.
 ./core[workflows]
+
+# First-tier dependencies
+# The following dependencies are those for which we should make sure to
+# always provide the most recent version, unless we have a compelling
+# reason not to do so (e.g. if the latest version of a package is known
+# to break a workflow).
+# This list MAY include dependencies that are already listed in the
+# dependencies of the ODK-Core package.
 linkml
 oaklib
 semsimian
 
-# Secondary dependencies
-PyGithub
+# Second-tier dependencies
+# Those are all the other Python packages that should be provided in the
+# ODK-Full image, but for which we do not necessarily always try to
+# provide the most recent version.
+# This list MAY include dependencies that are already indirectly brought
+# by ODK-Core (dependencies of dependencies of ODK-Core) -- this is,
+# strictly speaking, redundant, but: (1) it's sometimes easier to list
+# the dependency here than to check whether it is already an indirect
+# dependency of ODK-Core, and (2) it ensures the package will still be
+# provided even if at some point it is no longer an indirect dependency
+# of ODK Core.
 curies
 funowl
+jinjanator
 jsonschema2md
 jupyter
 kgx
+linkml-map
 matplotlib
 matplotlib_venn
 networkx
@@ -20,10 +44,10 @@ ontodev-cogs
 ontodev-gizmos
 pandas
 plotly
+PyGithub
 pyspellchecker
 rdflib
 requests
 seaborn
 tabulate
 upsetplot
-jinjanator
