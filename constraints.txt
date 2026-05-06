@@ -7,6 +7,7 @@ appdirs==1.4.4
 argon2-cffi==25.1.0
 argon2-cffi-bindings==25.1.0
 arrow==1.4.0
+asteval==0.9.33
 asttokens==3.0.1
 async-lru==2.3.0
 attrs==26.1.0
@@ -42,6 +43,7 @@ dataclasses-json==0.6.7
 dataclasses-jsonschema==2.16.0
 debugpy==1.8.20
 decorator==5.2.1
+deepdiff==6.7.1
 deepl==1.30.0
 defusedxml==0.7.1
 Deprecated==1.3.1
@@ -59,6 +61,8 @@ executing==2.2.1
 fastjsonschema==2.21.2
 fastobo==0.14.1
 filelock==3.29.0
+flexcache==0.3
+flexparser==0.4
 fonttools==4.62.1
 fqdn==1.5.1
 funowl==0.2.3
@@ -136,6 +140,7 @@ lark==1.3.1
 librt==0.9.0
 lightrdf==0.4.0
 linkml==1.10.0
+linkml-map==0.3.8
 linkml-renderer==0.3.1
 linkml-runtime==1.10.0
 llm==0.31
@@ -191,6 +196,7 @@ parso==0.8.6
 pathspec==1.1.1
 pexpect==4.9.0
 pillow==12.2.0
+Pint==0.25.3
 platformdirs==4.9.6
 plotly==6.7.0
 pluggy==1.6.0
@@ -304,6 +310,7 @@ typing-inspect==0.9.0
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 tzdata==2026.2
+ucumvert==0.1.2
 UpSetPlot==0.9.0
 uri-template==1.3.0
 uritemplate==4.2.0
