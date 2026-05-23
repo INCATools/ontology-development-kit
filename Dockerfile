@@ -25,7 +25,7 @@ ENV COURSIER_CACHE="/odk/tools/.coursier-cache"
 RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends  \
     build-essential \
     openssh-client \
-    openjdk-11-jdk-headless \
+    openjdk-21-jdk-headless \
     maven \
     python3-dev \
     subversion \

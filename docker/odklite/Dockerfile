@@ -24,7 +24,7 @@ ENV ROBOT_JAR=$ROBOT_JAR
 RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
         git \
-        openjdk-11-jre-headless \
+        openjdk-21-jre-headless \
         python3-pip \
         python-is-python3 \
         python3-six \
