@@ -33,13 +33,23 @@ funowl
 jinjanator
 jsonschema2md
 jupyter
-kgx
+# kgx between 2.3.3 and 2.6.0 (included) has been pinning a version of
+# PyArrow that is too old to be available as a pre-compiled wheel,
+# forcing us to compile it (which is a PITA because it requires the
+# non-Python Arrow library to be available on the build system). We need
+# to force either kgx < 2.3.3 (before the introduction of the PyArrow
+# dependency) or kgx >= 2.7.0 (after the pinning has been relaxed); we
+# do the latter.
+kgx >= 2.7.0
 linkml-map
 matplotlib
 matplotlib_venn
 networkx
 numpy
-ontobio
+# We know ontobio-2.9.12 should work fine (this has been the version
+# provided with the ODK for quite some time), but for some reason pip
+# regularly wants to downgrade it to a 2-years old version.
+ontobio >= 2.9.12
 ontodev-cogs
 ontodev-gizmos
 pandas
