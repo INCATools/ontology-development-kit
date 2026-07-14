@@ -18,7 +18,7 @@ jobs:
           submodules: recursive
       - name: Build constraints.txt
         run: |
-          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace ubuntu:24.04 \
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace ubuntu:26.04 \
           sh scripts/update-constraints.sh --in-docker
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
