@@ -18,7 +18,13 @@ if [ $in_docker -eq 1 ]; then
 
     # Now additionally install virtualenv, which we will need to
     # install all ODK packages in a separate environment.
-    apt-get install -y --no-install-recommends python3-virtualenv
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python3-virtualenv
+
+    # And also install anything we might need to build a Python
+    # package from source (as we sometimes do in the builder image).
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        build-essential cmake clang rustc cargo
 
     # Make sure we are using below the same version of Python as the
     # one in the ODK
