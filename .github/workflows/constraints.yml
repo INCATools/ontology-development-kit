@@ -6,27 +6,26 @@ on:
 jobs:
   constraints:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 1
     steps:
-      - name: Check Docker version
-        # This is to fail early in case docker is not available on the base image..
-        run: docker --version
       - name: Checkout main branch
         uses: actions/checkout@v7
         with:
           submodules: recursive
+
+      - name: Work around permission issue
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Build constraints.txt
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace ubuntu:26.04 \
           sh scripts/update-constraints.sh --in-docker
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         if: ${{ success() }}
         with:
           branch: update-constraints
           delete-branch: true
-          token: ${{ secrets.WORKFLOW_TOKEN }}
           commit-message: Update constraints.txt
           title: 'Update constraints.txt'
           body: |
