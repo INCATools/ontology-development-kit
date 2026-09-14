@@ -106,9 +106,11 @@ ENTRYPOINT ["/usr/local/sbin/odkuser-entrypoint.sh"]
 # - disable secure_path (we want to be able to use sudo with our custom PATH)
 # - remove default user account (we create our own)
 # - force Git to accept working on a repository owned by someone else
+# - force pip to accept install packages in the system environment
 RUN sed -i '/secure_path/d' /etc/sudoers && \
     userdel -r ubuntu && \
-    echo "[safe]\n    directory = *" >> /etc/gitconfig
+    echo "[safe]\n    directory = *" >> /etc/gitconfig && \
+    echo "[global]\nbreak-system-packages = true" > /etc/pip.conf
 
 # Install a script that provides information about the ODK and its tools
 COPY --chmod=755 scripts/odk-info.sh /odk/bin/odk-info
