@@ -30,6 +30,7 @@ semsimian
 # of ODK Core.
 curies
 funowl
+linkml-owl
 jinjanator
 jsonschema2md
 jupyter
