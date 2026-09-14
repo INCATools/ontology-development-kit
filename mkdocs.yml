@@ -24,6 +24,8 @@ nav:
   - ODK User Docs:
     - ODK Schema: project-schema.md
     - ODK Schema Options: schema-options.md
+    - Using ROBOT plugins: UsingRobotPlugins.md
+    - Synonyms: Synonyms.md
     - Using the Development Snapshot: ODKDevelopmentSnapshot.md
     - Frequently used ODK commands: FrequentlyUsedODKCommands.md
   
