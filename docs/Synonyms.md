@@ -1,1 +1,1 @@
-Please refer to https://oboacademy.github.io/obook/reference/synonyms-obo/
+Please refer to https://oboacademy.github.io/obook/lesson/synonyms/
