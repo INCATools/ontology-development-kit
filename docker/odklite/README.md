@@ -4,10 +4,12 @@ This Docker image is designed to be small. It is designed to be executed once a 
 
 # Components
 
-Based on Ubuntu 20.04 with a JRE installed.
+Based on Ubuntu 26.04 with a JRE installed.
 
  - robot
  - dosdp-tools
- - owltools
+ - relation-graph
+ - dicer-cli
+ - sssom-cli
 
-No owltools or oort
+The owltools and oort tools are not provided in this image; use the odkfull image if you need them.

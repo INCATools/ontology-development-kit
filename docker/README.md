@@ -15,7 +15,7 @@ can also be built separately by using the [corresponding
 Makefile](https://github.com/INCATools/ontology-development-kit/blob/master/docker/odklite/Makefile).
 
 The `odkbuild` image is a build artifact solely used as a staging area
-to build the `odklite` and `odkfull` images. It is not indended for any
+to build the `odklite` and `odkfull` images. It is not intended for any
 other use.
 
 The `robot` image is a minimalist image containing only _ROBOT_. It is
