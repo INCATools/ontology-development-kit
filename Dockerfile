@@ -38,7 +38,8 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
     nodejs \
     npm \
     graphviz \
-    python3-psycopg2
+    python3-psycopg2 \
+    just
 
 # Install run-time dependencies for Soufflé.
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
