@@ -1,6 +1,6 @@
 # Using ROBOT Plugins
 
-Since version 1.9.5, the ROBOT tool allows to use [plugins](http://robot.obolibrary.org/plugins) that provide supplementary commands that are not part of the default command set.
+Since version 1.9.5, the ROBOT tool allows the use of [plugins](http://robot.obolibrary.org/plugins) that provide supplementary commands that are not part of the default command set.
 
 ## Declaring the plugins to be used
 
@@ -29,7 +29,7 @@ ${ROBOT_PLUGINS_DIRECTORY}/uberon.jar:
 
 ### Using custom rules
 
-If for whatever reason you do not want to modify your ODK configuration, you can still set up a plugin by adding a rule such as the one above in the custom Makefile, and listing the plugin in the `custom_robot_plugins` variable. For example, again with the KGCL lplugin:
+If for whatever reason you do not want to modify your ODK configuration, you can still set up a plugin by adding a rule such as the one above in the custom Makefile, and listing the plugin in the `custom_robot_plugins` variable. For example, again with the Uberon plugin:
 
 ```Make
 ${ROBOT_PLUGINS_DIRECTORY}/uberon.jar:
@@ -54,6 +54,6 @@ Some plugins are already bundled with the ODK and don’t need to be declared or
 More default plugins may be added in future ODK versions.
 
 
-## Using a plugin a custom workflow
+## Using a plugin in a custom workflow
 
 Any Make rule that involves the use of a ROBOT plugin MUST depend on the `all_robot_plugins` target. This will ensure that all plugins have been properly set up in the runtime ROBOT plugins directory.
