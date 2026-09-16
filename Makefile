@@ -121,7 +121,6 @@ test-lite-no-build:
 #### Publishing #####
 
 publish-no-build:
-	docker push $(DEV):$(VERSION)
 	docker push $(IM):latest
 	docker push $(IM):$(VERSION)
 	$(MAKE) -C docker/odklite publish-no-build
