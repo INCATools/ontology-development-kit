@@ -7,6 +7,7 @@ ENV RELATION_GRAPH=2.3.4
 ENV DICER_VERSION=0.2.2
 ENV ODK_ROBOT_PLUGIN_VERSION=0.3.3
 ENV SSSOM_JAVA_VERSION=1.11.3
+ENV KGCL_JAVA_VERSION=0.6.1
 
 WORKDIR /odk
 ENV JAVA_HOME="/usr"
@@ -78,6 +79,9 @@ RUN wget -nv -O /odk/resources/robot/plugins/odk.jar https://github.com/INCATool
 RUN wget -nv -O /odk/resources/robot/plugins/sssom.jar https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-robot-plugin-$SSSOM_JAVA_VERSION.jar && \
     wget -nv -O /odk/bin/sssom-cli https://github.com/gouttegd/sssom-java/releases/download/sssom-java-$SSSOM_JAVA_VERSION/sssom-cli && \
     chmod +x /odk/bin/sssom-cli
+
+# Install KGCL ROBOT plugin
+RUN wget -nv -O /odk/resources/robot/plugins/kgcl.jar https://github.com/gouttegd/kgcl-java/releases/download/kgcl-java-$KGCL_JAVA_VERSION/kgcl-robot-plugin-$KGCL_JAVA_VERSION.jar
 
 # Install relation-graph
 RUN wget -nv https://github.com/balhoff/relation-graph/releases/download/v$RELATION_GRAPH/relation-graph-cli-$RELATION_GRAPH.tgz && \

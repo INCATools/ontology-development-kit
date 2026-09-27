@@ -11,7 +11,6 @@ ENV ODK_VERSION=$ODK_VERSION
 
 # Software versions
 ENV JENA_VERSION=6.1.0
-ENV KGCL_JAVA_VERSION=0.6.1
 ENV SCALA_CLI_VERSION=1.8.0
 ENV OWLTOOLS_VERSION=2020-04-06
 ENV YQ_VERSION=4.53.2
@@ -100,9 +99,6 @@ RUN wget -nv https://github.com/VirtusLab/scala-cli/releases/download/v$SCALA_CL
 # Install obographviz
 RUN npm install -g obographviz && \
     chown -R root:root /usr/local/lib/node_modules
-
-# Install KGCL ROBOT plugin
-RUN wget -nv -O /odk/resources/robot/plugins/kgcl.jar https://github.com/gouttegd/kgcl-java/releases/download/kgcl-java-$KGCL_JAVA_VERSION/kgcl-robot-plugin-$KGCL_JAVA_VERSION.jar
 
 # Install Mike Farah's (mf) YQ command-line YAML, JSON and XML processor
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
