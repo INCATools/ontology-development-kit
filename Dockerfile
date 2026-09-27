@@ -10,10 +10,10 @@ ARG ODK_VERSION 0.0.0
 ENV ODK_VERSION=$ODK_VERSION
 
 # Software versions
-ENV JENA_VERSION=6.1.0
-ENV SCALA_CLI_VERSION=1.8.0
+ENV JENA_VERSION=6.2.0
+ENV SCALA_CLI_VERSION=1.17.1
 ENV OWLTOOLS_VERSION=2020-04-06
-ENV YQ_VERSION=4.53.2
+ENV YQ_VERSION=4.53.6
 
 # Avoid repeated downloads of script dependencies by mounting the local coursier cache:
 # docker run -v $HOME/.coursier/cache/v1:/odk/tools/.coursier-cache ...
