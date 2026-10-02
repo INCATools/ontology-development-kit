@@ -1,9 +1,9 @@
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 LABEL maintainer="obo-tools@googlegroups.com" 
 
 WORKDIR /tools
 
-ENV ROBOT=v1.9.10
+ENV ROBOT=v1.9.11
 ARG ROBOT_JAR=https://github.com/ontodev/robot/releases/download/$ROBOT/robot.jar
 ENV ROBOT_JAR=${ROBOT_JAR}
 
