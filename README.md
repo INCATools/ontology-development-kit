@@ -36,7 +36,6 @@ For more details, see
   - Learn about the [different kinds of release artefacts](https://oboacademy.github.io/obook/reference/release-artefacts/).
   - Learn about the [ODK Project Configuration Schema](https://github.com/INCATools/ontology-development-kit/blob/master/docs/project-schema.md)
     for allowed parameters in your `[project]-odk.yaml`.
-
 - Community:
   - If you have issues, file them here:
     https://github.com/INCATools/ontology-development-kit/issues.
@@ -133,7 +132,7 @@ The ODK is provided as a set of [Docker](https://docker.com/) images:
 * `obolibrary/odkfull` (providing a richer set of tools that may be used
   in custom workflows).
 
-Docker is the primarily supported containerization engine to use the ODK
+Docker is the primary supported containerization engine to use the ODK
 images. On macOS and Windows, the `docker` tool is typically installed
 as part of _Docker Desktop_. On GNU/Linux, it should be available in
 your distribution’s package repository (possibly under various names,
@@ -164,7 +163,7 @@ Note that native environments:
 * are only supported on GNU/Linux and macOS – on Windows, there is no
   alternative to the use of the Docker images;
 * are _highly experimental_ and not guaranteed to work – use them at
-  your own risks!
+  your own risk!
 
 # Tips and Tricks
 
