@@ -9,13 +9,17 @@ https://www.wikidata.org/wiki/Q112336713
 
 <img src="https://github.com/jmcmurry/closed-illustrations/raw/master/logos/odk-logos/odk-logo_black-banner.png" />
 
-Manage your ontology's life cycle with the Ontology Development Kit (ODK)! The ODK is
-- a toolbox of various ontology related tools such as ROBOT, owltools, dosdp-tools and many more, bundled as a docker image
-- a set of executable workflows for managing your ontology's continuous integration, quality control, releases and dynamic imports
+Manage your ontology's life cycle with the Ontology Development Kit (ODK)! The
+ODK is
+- a toolbox of various ontology related tools such as ROBOT, owltools,
+  dosdp-tools and many more, bundled as a docker image;
+- a set of executable workflows for managing your ontology's continuous
+  integration, quality control, releases and dynamic imports.
 
 For more details, see
 
  * [2022 Paper](https://doi.org/10.1093/database/baac087)
+ * [FOSDEM 2022 Presentation](https://archive.fosdem.org/2022/schedule/event/open_research_ontology_development_kit/)
  * [2018 Article](https://douroucouli.wordpress.com/2018/08/06/new-version-of-ontology-development-kit-now-with-docker-support/)
  * [ICBO Workshop Slides 2018](https://docs.google.com/presentation/d/1nIybviEEJiRKHO2rkBMZsQ0QjtsHyU01_-9beZqD_Z4/edit?usp=sharing)
  * [ICBO Workshop Slides 2017](https://docs.google.com/presentation/d/1JPAaDl6Nitxet9NVqWI30eIygcerYAjdMIGmxbRtIn0/edit?usp=sharing)
@@ -24,23 +28,29 @@ For more details, see
 # Where to get help
 
 - _How-to guides_:
-  - How to [create your first repository](https://oboacademy.github.io/obook/howto/odk-create-repo/) with the ODK
-  - How to [add license, title and description to your ontology](https://oboacademy.github.io/obook/reference/formatting-license/)
-  - How to [import large ontologies efficiently](https://oboacademy.github.io/obook/howto/deal-with-large-ontologies/)
+  - How to [create your first repository](https://oboacademy.github.io/obook/howto/odk-create-repo/)
+    with the ODK.
+  - How to [add license, title and description to your ontology](https://oboacademy.github.io/obook/reference/formatting-license/).
+  - How to [import large ontologies efficiently](https://oboacademy.github.io/obook/howto/deal-with-large-ontologies/).
 - Reference:
-  - Learn about the [different kinds of release artefacts](https://oboacademy.github.io/obook/reference/release-artefacts/)
-  - Learn about the [ODK Project Configuration Schema](https://github.com/INCATools/ontology-development-kit/blob/master/docs/project-schema.md) for allowed parameters in your `[project]-odk.yaml`
+  - Learn about the [different kinds of release artefacts](https://oboacademy.github.io/obook/reference/release-artefacts/).
+  - Learn about the [ODK Project Configuration Schema](https://github.com/INCATools/ontology-development-kit/blob/master/docs/project-schema.md)
+    for allowed parameters in your `[project]-odk.yaml`.
 - Community:
-  -  If you have issues, file them here: https://github.com/INCATools/ontology-development-kit/issues
-  -  We also have an active community on Slack; you can request access by making a ticket [here](https://github.com/INCATools/ontology-development-kit/issues) as well
+  - If you have issues, file them here:
+    https://github.com/INCATools/ontology-development-kit/issues.
+  - We also have an active community on Slack; you can request access by
+    making a ticket
+    [here](https://github.com/INCATools/ontology-development-kit/issues) as
+    well.
 
-# Steering Committee
+# Development team
 
 * @gouttegd Damien Goutte-Gattat (ODK Lead, German BioImaging e.V.)
 * @matentzn Nicolas Matentzoglu (ODK Deputy, Semanticly)
 * @cmungall Chris Mungall (ODK Founder, LBNL)
 
-# Core team
+# Past contributors
 
 * @anitacaron Anita Caron (Novo Nordisk)
 * @balhoff Jim Balhoff (RENCI)
@@ -58,20 +68,31 @@ https://github.com/INCATools/ontology-development-kit/graphs/contributors
 https://doi.org/10.1093/database/baac087
 
 # Outstanding contributions
-Outstanding contributors are groups and institutions that have helped with organising the ODK development, providing funding,
-advice and infrastructure. We are very grateful for all your contributions - the project would not exist without you!
+Outstanding contributors are groups and institutions that have helped with
+organising the ODK development, providing funding, advice and infrastructure.
+We are very grateful for all your contributions - the project would not exist
+without you!
 
 ## Monarch Initiative
 <img src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600493-72ee4b00-ca3c-11eb-87c3-57742fca7af5.png" width="300" />
 
-The Monarch Initiative is a consortium of medical, biological and computational experts that provide major ontology services such as the Human Phenotype Ontology, [Mondo](https://mondo.monarchinitiative.org/) and an integrative data and [analytic platform](https://monarchinitiative.org/) connecting phenotypes to genotypes across species, bridging basic and applied research with semantics-based analysis.
+The Monarch Initiative is a consortium of medical, biological and
+computational experts that provide major ontology services such as the Human
+Phenotype Ontology, [Mondo](https://mondo.monarchinitiative.org/) and an
+integrative data and [analytic platform](https://monarchinitiative.org/)
+connecting phenotypes to genotypes across species, bridging basic and applied
+research with semantics-based analysis.
 
 https://monarchinitiative.org/
 
 ## European Bioinformatics Institute
 <img src="https://user-images.githubusercontent.com/7070631/121600529-813c6700-ca3c-11eb-8590-871a963a3cfd.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600529-813c6700-ca3c-11eb-8590-871a963a3cfd.png" width="300" />
 
-The Samples, Phenotypes and Ontologies (SPOT) team, led by Helen Parkinson, is concerned with high throughput mammalian phenotyping, Semantics as a Service and human genetics resources. Members of the SPOT team including David Osumi-Sutherland have made major contributions to ODK, and provided advice, use cases and funding.
+The Samples, Phenotypes and Ontologies (SPOT) team, led by Helen Parkinson, is
+concerned with high throughput mammalian phenotyping, Semantics as a Service
+and human genetics resources. Members of the SPOT team including David
+Osumi-Sutherland have made major contributions to ODK, and provided advice,
+use cases and funding.
 
 https://www.ebi.ac.uk/spot/
 
@@ -83,65 +104,122 @@ https://hobi.med.ufl.edu/research-2/biomedical-informatics-3/
 ## Knocean Inc.
 <img src="https://user-images.githubusercontent.com/7070631/121600426-56eaa980-ca3c-11eb-9315-b03234bb6b06.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/121600426-56eaa980-ca3c-11eb-9315-b03234bb6b06.png" width="300" />
 
-Knocean Inc. offers consulting and development services for science informatics, in particular in the area of biomedical ontologies and ontology tooling.
+Knocean Inc. offers consulting and development services for science
+informatics, in particular in the area of biomedical ontologies and ontology
+tooling.
 
 http://knocean.com/
 
 ## Critical Path Institute
 <img src="https://user-images.githubusercontent.com/7070631/122019745-049ee500-cdbc-11eb-9ed0-3ac3ca717d9b.png" data-canonical-src="https://user-images.githubusercontent.com/7070631/122019745-049ee500-cdbc-11eb-9ed0-3ac3ca717d9b.png" width="300" />
 
-The Critical Path For Alzheimer’s Disease (CPAD) is a public-private partnership aimed at creating new tools and methods that can be applied to increase the efficiency of the development process of new treatments for Alzheimer disease (AD) and related neurodegenerative disorders with impaired cognition and function.
+The Critical Path For Alzheimer’s Disease (CPAD) is a public-private
+partnership aimed at creating new tools and methods that can be applied to
+increase the efficiency of the development process of new treatments for
+Alzheimer disease (AD) and related neurodegenerative disorders with impaired
+cognition and function.
 
 https://c-path.org/
 
 # Requirements
 
-## Docker
+## Container platform
 
-Using the ODK docker image requires Docker Engine version 20.10.8 or greater for v1.3.1.
+The ODK is provided as a set of [Docker](https://docker.com/) images:
+
+* `obolibrary/odklite` (providing the essential tools required by all
+  standard ODK workflows);
+* `obolibrary/odkfull` (providing a richer set of tools that may be used
+  in custom workflows).
+
+Docker is the primary supported containerization engine to use the ODK
+images. On macOS and Windows, the `docker` tool is typically installed
+as part of _Docker Desktop_. On GNU/Linux, it should be available in
+your distribution’s package repository (possibly under various names,
+for example `docker.io` on Debian and `moby-engine` on Fedora).
+
+The ODK has also been tested to work with
+[Singularity](https://docs.sylabs.io/guides/latest/user-guide/#) and (on
+macOS only) [Apple Container](https://github.com/apple/container).
+
+## ODK Runner
+
+While ODK-managed repositories will contain a `run.sh`/`run.bat` script
+to facilitate calling the `docker` tool, the best way of running an ODK
+workflow is to use the dedicated `odkrun` command, which is [available
+separately](https://github.com/INCATools/odkrunner).
+
+Using `odkrun` is _not_ mandatory, though – just strongly recommended.
+
+## Alternative to Docker images
+
+You can use the `odk install` command of the [ODK
+Core](https://github.com/INCATools/odkcore) module to install a “native
+ODK environment” that allows using the ODK without using a Docker image
+at all. See the documentation of ODK Core for more details.
+
+Note that native environments:
+
+* are only supported on GNU/Linux and macOS – on Windows, there is no
+  alternative to the use of the Docker images;
+* are _highly experimental_ and not guaranteed to work – use them at
+  your own risk!
 
 # Tips and Tricks
 
 ## Customizing your ODK installation
 
-You will likely want to customize the build process, and of course to edit the ontology.
+Should you want to customize the build process of your ontology: _Never_ do so
+by editing the main, ODK-generated Makefile. Put all custom workflows
+(including workflows that override the standard ODK workflows) in the “custom”
+Makefile, that you will find at `src/ontology/myont.Makefile` (assuming
+`myont` is the name of your ontology).
 
-We recommend that you do not edit the main Makefile, but instead the supplemental one (e.g. myont.Makefile) is src/ontology
-
-An example of how you can customise your imports for example is documented [here](http://pato-ontology.github.io/pato/odk-workflows/RepoManagement/)
+An example of how you can customise your imports for example is documented
+[here](http://pato-ontology.github.io/pato/odk-workflows/RepoManagement/).
 
 ## Migrating an existing ontology repo to the ODK
 
-The ODK is designed for creating a new repo for a new ontology. It can also be used to help figure out how to migrate an existing git repository to the ODK structure. There are different ways to do this.
+The ODK is designed for creating a new repo for a new ontology. It can also be
+used to help figure out how to migrate an existing git repository to the ODK
+structure. There are different ways to do this.
 
- * Manually compare your ontology against the [templates](https://github.com/INCATools/odkcore/tree/main/src/incatools/odk/templates) folder and make necessary adjustments
- * Run the seed script as if creating a new repo. Manually compare this with your existing repo and use `git mv` to rearrange, and adding any missing files by copying them across and doing a `git add`
- * Create a new repo de novo and abandon your existing one, using, for example, github issue mover to move tickets across.
+* Manually compare your ontology against the
+  [templates](https://github.com/INCATools/odkcore/tree/main/src/incatools/odk/templates)
+  folder and make necessary adjustments.
+* Run the seed script as if creating a new repo. Manually compare this with
+  your existing repo and use `git mv` to rearrange, and adding any missing
+  files by copying them across and doing a `git add`.
+* Create a new repo de novo and abandon your existing one, using, for example,
+  github issue mover to move tickets across.
 
-Obviously the second method is not ideal as you lose your git history. Note even with `git mv` history tracking becomes harder.
+Obviously the last method is not ideal as you lose your Git history (then
+again, since most ontology projects don't seem to have a usable Git history to
+begin with, this may not be a great loss). Note even with `git mv` history
+tracking becomes harder.
 
-If you have built your ontology using a previous version of ODK,
-migration of your setup is unfortunately a manual process. In general
-you do not absolutely *need* to upgrade your setup, but doing so will
-bring advantages in terms of aligning with emerging standards ways of
-doing things. The less customization you do on your repo the easier it
-should be to migrate.
+## Migrating to a newer version of the ODK
 
-Consult the [CHANGELOG.md](CHANGELOG.md) file for changes made between
-releases to assist in upgrading.
+If you have built your ontology using a previous version of ODK, migrating to
+a newer version can be done automatically using the provided `update_repo`
+command.
+
+Note that customized workflows are _not_ guaranteed to keep working after such
+a migration and may require additional work. Consult the
+[changelog](CHANGELOG.md) file for changes made between releases to assist
+with migration of custom workflows.
+
+In general you do not absolutely *need* to migrate your repo to a newer
+version, but doing so will bring advantages in terms of aligning with emerging
+standard ways of doing things. Also, ODK developers may not be able to provide
+support if you run into issues while using an outdated ODK version.
 
 ## More documentation
 
-You will find additional documentation in the src/ontology/README-editors.md file in your repo.
+You will find additional documentation in the src/ontology/README-editors.md
+file in your repo.
 
-The ODK also comes with built in options to generate your own shiny documentation; see for example the [PATO documentation here](http://pato-ontology.github.io/pato/) which is almost entirely autogenerated from the ODK.
-
-## Alternative to Docker
-
-You can use the `odk install` command of the [ODK
-Core](https://github.com/INCATools/odkcore) module to install a “native
-ODK environment” that allows using the ODK without using Docker. See the
-documentation of ODK Core for more details.
-
-Of note, native ODK environments are only supported for GNU/Linux and
-macOS. To use the ODK on Windows, Docker is mandatory.
+The ODK also comes with built in options to generate your own shiny
+documentation; see for example the [PATO documentation
+here](http://pato-ontology.github.io/pato/) which is almost entirely
+autogenerated from the ODK.

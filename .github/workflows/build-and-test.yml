@@ -13,15 +13,9 @@ on:
       - 'LICENSE'
       - 'docs/**'
       - 'mkdocs.yml'
-      - 'INSTALL.sh'
-      - 'env.sh'
-      - 'odk.sh'
-      - 'odk2.sh'
-      - 'seed-via-docker-131.sh'
-      - '*.bat'
-      - 'upgrade*sh'
       - '.github/workflows/build-multiarch.yml'
       - '.github/workflows/docs.yml'
+      - 'scripts/wrappers/**'
   workflow_dispatch:
 
 jobs:
