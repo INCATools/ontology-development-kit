@@ -147,5 +147,8 @@ RUN mkdir -p /tools && \
 COPY --chmod=755 scripts/compat-check-rdfxml.sh /odk/bin/check-rdfxml
 COPY --chmod=755 scripts/compat-context2csv.sh /odk/bin/context2csv
 
+# ODK workflows need to know where to find the resources
+ENV ODK_RESOURCES_DIR=/odk/resources
+
 # Run the ODK-Core by default
 CMD odk

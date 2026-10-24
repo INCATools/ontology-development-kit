@@ -20,7 +20,4 @@ fi
 PATH=$PATH:/home/odkuser/.local/bin
 [ -S /run/host-services/ssh-auth.sock ] && chown odkuser /run/host-services/ssh-auth.sock
 
-ODK_RESOURCES_DIR=/odk/resources
-export ODK_RESOURCES_DIR
-
 exec sudo -H -E -u odkuser "$@"
