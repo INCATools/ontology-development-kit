@@ -596,21 +596,55 @@ happen once every 1 to 4 weeks.
 * Your build has been successful when the `dev` image appears as updated
   [on Dockerhub](https://hub.docker.com/r/obolibrary/odkfull/tags).
 
-## Pull request rules
+## Contribution rules
 
-1. All changes must be introduced through a PR (no commit directly to
-   the `master` branch).
-2. One PR per feature. However, when a PR touches a particular area of
+### How to submit bug reports or feature requests
+
+Bug reports or feature requests can be submitted by opening an issue on
+<https://github.com/INCATools/ontology-development-kit/issues>. They may
+also be sent by e-mail to <devel@incenp.org>. When using e-mail, please
+prefix the subject with `[odk] `.
+
+### How to submit contributions
+
+Please discuss the change you wish to make first, either through an
+issue or by e-mail (see above), before submitting anything.
+
+Contributions can only be submitted by opening a pull request on
+<https://github.com/INCATools/ontology-development-kit/pulls>. Any
+contribution sent by e-mail is likely to be ignored, unless it is a very
+trivial patch.
+
+Pull requests should follow the following rules:
+
+1. One PR per feature. However, when a PR touches a particular area of
    the code, it is fine to include unrelated refactoring of that code in
    the PR, as long as the refactoring happens in separate commit(s).
-3. Complex changes must be broken down in separate commits, each commit
+2. Complex changes must be broken down in separate commits, each commit
    implementing a single logical change.
-4. Each commit must have a proper commit message that describes what the
-   change is about.
+3. Each commit must have a [proper, meaningful commit
+   message](https://incenp.org/dvlpt/docs/vcs-good-practices/index.html).
 
 Contributors submitting PRs that do not follow those rules may be asked
 to re-submit a correct PR, even if the changes introduced by the PR are
 otherwise approved.
+
+Building the `odkfull` image (`make build`) with your changes and
+running the test suite (`make test-full`) is _recommended_ prior to
+submitting a pull request, however we acknowledge that this can take
+quite a while and therefore we do not strictly require this from
+contributors.
+
+### About “generative AI”
+
+Contributions of any kind (code, documentation, tests…) that have been
+fully or partially made by genAI tools are discouraged and will be taken
+as an admission from you that you are perfectly fine with the
+environmental, social, economical, and political external costs
+associated with such tools.
+
+Bug reports or feature requests openly or obviously written by genAI
+tools are equally discouraged and may be ignored.
 
 ## Adding new programs or Python modules to the ODK
 
