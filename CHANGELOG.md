@@ -46,7 +46,7 @@ The ODK allows outsourcing the maintenance of DOSDP patterns. The `src/patterns/
 
 It has always been the intention that the remote patterns should be updated automatically whenever the `patterns` workflow is run, but because of a bug in how this was done, in previous versions of the ODK, this never actually happened. Remote patterns were only refreshed if/when the user explicitly requested them to be refreshed by running the `update_patterns` workflow.
 
-In ODK 1.7, the aforementioned bug has been fixed, and remote patterns _will_ be automatically refreshed whenver the normal `patterns` workflow is invoked (either on its own, or as part of a larger workflow such as `prepare_release`, unless run under `PAT=false`).
+In ODK 1.7, the aforementioned bug has been fixed, and remote patterns _will_ be automatically refreshed whenever the normal `patterns` workflow is invoked (either on its own, or as part of a larger workflow such as `prepare_release`, unless run under `PAT=false`).
 
 This may cause unexpected issues if a remote pattern has changed since the last time it was manually refreshed. To mitigate such issues, it is now possible to comment out individual pattern files in the `src/patterns/dosdp-patterns/external.txt` file (by prepending a `#`).
 
@@ -74,6 +74,16 @@ This may cause unexpected issues if a custom workflow is using the mirrors witho
 
 * update the custom workflow to ensure it can work with OFN input, or
 * override the `$(MIRRORDIR)/foo.owl` rule to force the mirror to be written in OWL/RDF syntax as before.
+
+### ⚠️ Introduction of ODK-Core ([#1309](https://github.com/INCATools/ontology-development-kit/pull/1309))
+Most of the code that makes up the Ontology Development Kit has been moved to a separate project ([ODK-Core](https://github.com/INCATools/odkcore)). While this is a change that should be transparent for most users, it is a change that has involved a reorganization of the contents of the ODK image, which _may_ impact custom workflows that have been hardcoding the paths to some tools or ODK resources (which is something that should never be done anyway).
+
+In particular:
+* the executables for most tools have been moved to `/odk/bin`.
+* ROBOT plugins have been moved to `$(ODK_RESOURCES_DIR)/robot/plugins/`;
+* the OBO “extended prefix map” has been moved to `$(ODK_RESOURCES_DIR)/obo.epm.json`;
+* the `check-rdfxml` helper script has been replaced by `odk-helper check-rdfxml`;
+* the `context2csv` helper script has been replaced by `odk-helper context2csv`.
 
 ### Finer control of the compression of release artefacts ([#1298](https://github.com/INCATools/ontology-development-kit/issues/1298))
 The `gzip_main` configuration option, which indicates that the “main” release artefacts should be compressed prior to release, has been deprecated.
@@ -113,7 +123,7 @@ This instructs the ODK to download the `bar` variant of ontology `foo`, that is 
 ### Added support for ORCIDIO ([#1312](https://github.com/INCATools/ontology-development-kit/issues/1312))
 An import module with the ID `orcidio` is automatically recognized and treated specially as a module intended to contain [ORCIDIO](https://github.com/cthoyt/orcidio) individuals representing the contributors to the ontology.
 
-If you have been a custom workflow to achieve the same thing (e.g. following [this tutorial](https://oboacademy.github.io/obook/howto/odk-add-orcidio-module/)), the custom workflow should still work as before, but you should consider replacing it with the new built-in feature.
+If you have been using a custom workflow to achieve the same thing (e.g. following [this tutorial](https://oboacademy.github.io/obook/howto/odk-add-orcidio-module/)), the custom workflow should still work as before, but you should consider replacing it with the new built-in feature.
 
 ### Excluding an import from the merged module ([#1189](https://github.com/INCATools/ontology-development-kit/issues/1189))
 In ODK up to version 1.6.1, the `use_base_merging: true` option unconditionally applied to all import modules.
@@ -134,7 +144,7 @@ import_group:
 
 With such a configuration, the `foo` and `bar` imports will end up (after SLME extraction) in the `merged_import` module, while the `baz` import (after “minimal” extraction) will remain separate. Without the `exclude_from_merge: true` option, the `baz` import would end up in the `merged_import` module and would use the same parameters as the other imports (the `module_type: minimal` option would be ignored).
 
-### New `apply-patches` helper workflow ([#1283](https://github.com/INCATools/ontology-development-kit/issues/1283))
+### New `apply_patches` helper workflow ([#1283](https://github.com/INCATools/ontology-development-kit/issues/1283))
 ODK 1.7 includes a brand new helper workflow intended to facilitate applying “batches of patches” to the ontology.
 
 A “patch”, as far as this workflow is concerned, is either:
@@ -145,7 +155,7 @@ A “patch”, as far as this workflow is concerned, is either:
 To use the workflow:
 
 1. Store the patches in `$(TMPDIR)/patches`.
-2. Call `sh run.sh make apply-patches`.
+2. Call `sh run.sh make apply_patches`.
 
 ### Basic support for automatically generated bridge files ([#626](https://github.com/INCATools/ontology-development-kit/issues/626))
 A new type of product has been added: bridges. A “bridge” is a (typically) small ontology intended to facilitate the integration of two (or more) ontologies together, by providing “bridging axioms” that establish relationships between the entities of those ontologies.
@@ -170,30 +180,20 @@ bridge_group:
 ```
 
 The above configuration defines two bridges:
-* one derived from the `my-mappings-1.sssom.tsv` and `my-mappings-2.sssom.tsv` mapping sets, using the derivation rules (expressed in the [SSSOM/T-OWL language](https://incenp.org/dvlpt/sssom-java/sssom-ext/sssomt-owl.html) set forth in `$(SCRIPTSDIR)/my-bridging-rules.sssomt`;
+* one derived from the `my-mappings-1.sssom.tsv` and `my-mappings-2.sssom.tsv` mapping sets, using the derivation rules (expressed in the [SSSOM/T-OWL language](https://incenp.org/dvlpt/sssom-java/sssom-ext/sssomt-owl.html)) set forth in `$(SCRIPTSDIR)/my-bridging-rules.sssomt`;
 * one produced by a custom rule `$(BRIDGEDIR)/my-custom-bridge.owl` (to be defined by the ontology maintainer in the custom Makefile).
 
 ### New standard rule to install additional Python dependencies ([#1039](https://github.com/INCATools/ontology-development-kit/issues/1039))
 If you have custom workflows that require the installation of additional Python packages beyond those already provided in the ODK image, you can now list the Python packages you need in the `src/ontology/config/python-packages.txt` file. The packages listed there will be automatically installed in the ODK environment whenever the special Make target `install_python_dependencies` is invoked (so make sure that any custom workflow that requires the additional Python packages depends on that special target).
-
-### ⚠️ Introduction of ODK-Core ([#1309](https://github.com/INCATools/ontology-development-kit/pull/1309))
-Most of the code that make up the Ontology Development Kit has been moved to a separate project ([ODK-Core](https://github.com/gouttegd/odkcore)). While this is a change that should be transparent for most users, it is a change that has involved a reorganization of the contents of the ODK image, which _may_ impact custom workflows that have been hardcoding the paths to some tools or ODK resources (which is something that should never be done anyway).
-
-In particular:
-* the executable for most tools have been moved to `/odk/bin`.
-* ROBOT plugins have been moved to `$(ODK_RESOURCES_DIR)/robot/plugins/`;
-* the OBO “extended prefix map” has been moved to `$(ODK_RESOURCES_DIR)/obo.epm.json`;
-* the `check-rdfxml` helper script has been replaced by `odk-helper check-rdfxml`;
-* the `context2csv` helper script has been replaced by `odk-helper context2csv`.
 
 ## Other changes
 
 * The `update` operation has been made more robust when imports are automatically managed and the list of import modules and/or components has changed ([#51](https://github.com/INCATools/odkcore/pull/51)).
 * ⚠️ The `public_release: github_curl` and `public_release: github_python` option have been deprecated ([#1296](https://github.com/INCATools/ontology-development-kit/issues/1296)).
     * GitHub-CLI (`gh`) is now always used for pushing releases to GitHub.
-    * `public_release: github_curl` and `public_release: python` are silently interpreted as `public_release: github`.
+    * `public_release: github_curl` and `public_release: github_python` are silently interpreted as `public_release: github`.
 * ⚠️ The `catalog_file` option has been removed ([#1360](https://github.com/INCATools/ontology-development-kit/issues/1360)).
-* A new `enable_depandabot` option has been added to monitor the GitHub Actions used in GitHub workflows ([#34](https://github.com/INCATools/odkcore/pull/34)).
+* A new `enable_dependabot` option has been added to monitor the GitHub Actions used in GitHub workflows ([#34](https://github.com/INCATools/odkcore/pull/34)).
 * Components are automatically re-generated after seeding/updating ([#35](https://github.com/INCATools/odkcore/pull/35)).
 * The output of SPARQL checks is now sorted ([#1385](https://github.com/INCATools/ontology-development-kit/issues/1385)).
 * The standard generated Makefile has been refactored and made more readable ([#1217](https://github.com/INCATools/ontology-development-kit/issues/1217)).
